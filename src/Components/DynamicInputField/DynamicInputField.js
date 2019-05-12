@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import Autosuggest from 'react-autosuggest'
 import './DynamicInputField.css'
 
@@ -23,21 +23,21 @@ const data = [
   
   // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
   function escapeRegexCharacters(str) {
-      console.log("escapeRegexCharacters called")
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   }
   
   function getSuggestions(value) {
     console.log("getSuggestions called with " + value)
-    const escapedValue = escapeRegexCharacters(value.trim())
     
+    const escapedValue = escapeRegexCharacters(value.trim())
+
     if (escapedValue === '') {
       return []
     }
   
     const regex = new RegExp('^' + escapedValue, 'i')
   
-    return data.filter(language => regex.test(data.name))
+    return data.filter(datum => regex.test(datum.name))
   }
   
   function getSuggestionValue(suggestion) {
@@ -45,7 +45,6 @@ const data = [
   }
   
   function renderSuggestion(suggestion) {
-    console.log("renderSuggestion called with " + suggestion.name)
     return (
       <span>{suggestion.name}</span>
     )

@@ -8,6 +8,7 @@ function App() {
 
 
   const change = (id, newValue)=>{console.log(`${id} changed to ${newValue}`)}
+
   return (
     <div className="App">
       <header className="App-header">
