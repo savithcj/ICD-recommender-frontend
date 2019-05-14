@@ -18,6 +18,10 @@ const data = [
     {
         name: 'Clojure',
         year: 2007
+    },
+    {
+        name: 'Test',
+        year: 2019
     }
   ]
   
