@@ -2,7 +2,7 @@ import React from 'react'
 import Autosuggest from 'react-autosuggest'
 import './DynamicInputField.css'
 
-const data = [
+let data = [
     {
         name: 'C',
         year: 1972
@@ -41,16 +41,16 @@ const data = [
   
     const regex = new RegExp('^' + escapedValue, 'i')
   
-    return data.filter(datum => regex.test(datum.name))
+    return data.filter(datum => regex.test(datum.lhs))
   }
   
   function getSuggestionValue(suggestion) {
-    return suggestion.name
+    return suggestion.lhs
   }
   
   function renderSuggestion(suggestion) {
     return (
-      <span>{suggestion.name}</span>
+      <span>{suggestion.lhs}</span>
     )
   }
   
@@ -60,7 +60,8 @@ const data = [
   
       this.state = {
         value: '',
-        suggestions: []
+        suggestions: [],
+        data:null
       }  
     }
   
@@ -87,6 +88,8 @@ const data = [
     }
   
     render() {
+      data = this.props.data
+
       const { id, placeholder } = this.props
       const { value, suggestions } = this.state
       const inputProps = {
