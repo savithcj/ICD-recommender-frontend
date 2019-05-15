@@ -55,14 +55,19 @@ let data = [
   }
   
   class DynamicInputField extends React.Component {
-    constructor() {
-      super()
-  
+    constructor(props) {
+      super(props)
+      
+      console.log(props)
+
       this.state = {
         value: '',
         suggestions: [],
-        data:null
       }  
+
+      data = this.props.rules
+
+      console.log(props.rules)
     }
   
     onChange = (_, { newValue }) => {
@@ -88,7 +93,7 @@ let data = [
     }
   
     render() {
-      data = this.props.data
+      
 
       const { id, placeholder } = this.props
       const { value, suggestions } = this.state
