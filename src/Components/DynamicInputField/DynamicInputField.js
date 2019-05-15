@@ -2,28 +2,7 @@ import React from 'react'
 import Autosuggest from 'react-autosuggest'
 import './DynamicInputField.css'
 
-let data = [
-    {
-        name: 'C',
-        year: 1972
-    },
-    {
-        name: 'C#',
-        year: 2000
-    },
-    {
-        name: 'C++',
-        year: 1983
-    },
-    {
-        name: 'Clojure',
-        year: 2007
-    },
-    {
-        name: 'Test',
-        year: 2019
-    }
-  ]
+let data = null
   
   // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
   function escapeRegexCharacters(str) {
@@ -31,7 +10,6 @@ let data = [
   }
   
   function getSuggestions(value) {
-    console.log("getSuggestions called with " + value)
     
     const escapedValue = escapeRegexCharacters(value.trim())
 
@@ -58,16 +36,13 @@ let data = [
     constructor(props) {
       super(props)
       
-      console.log(props)
-
       this.state = {
         value: '',
         suggestions: [],
       }  
 
-      data = this.props.rules
+      data = this.props.data
 
-      console.log(props.rules)
     }
   
     onChange = (_, { newValue }) => {

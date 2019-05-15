@@ -39,7 +39,7 @@ class App extends Component {
         <DynamicInputField
           id="input1"
           onChange={(id, newValue) => this.changed(id, newValue)}
-          rules={this.state.rules} />
+          data={this.state.rules} />
       )
     }
 
