@@ -68,7 +68,7 @@ let data = null
     }
   
     render() {
-      
+
 
       const { id, placeholder } = this.props
       const { value, suggestions } = this.state
