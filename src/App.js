@@ -15,19 +15,29 @@ class App extends Component {
     this.getAndSetRules()
   }
 
-  changed = (id, newValue) => { 
-    console.log(`${id} changed to ${newValue}`) 
+
+  changed = (id, newValue) => {
+
+    this.getAndSetRules(newValue)
   }
 
   handleAddButton = () => {
   }
 
-  getAndSetRules() {
-    fetch('http://localhost:8000/api/rules/?format=json')
-      .then(response => response.json())
-      .then(result => {
-        this.setState({rules: result})
-      })
+  getAndSetRules(codeName) {
+
+    if (codeName !== "") {
+
+      const url = 'http://localhost:8000/api/children/' + codeName + '/?format=json'
+
+      console.log(url)
+
+      fetch(url)
+        .then(response => response.json())
+        .then(result => {
+          this.setState({ rules: result })
+        })
+    }
   }
 
   render() {
@@ -40,8 +50,9 @@ class App extends Component {
       inputField = (
         <DynamicInputField
           id="input1"
-          data={this.state.rules} 
-          />
+          onChange={this.changed}
+          data={this.state.rules}
+        />
       )
     }
 

@@ -28,16 +28,16 @@ class DynamicInputField extends React.Component {
 
     const regex = new RegExp('^' + escapedValue, 'i')
 
-    return this.props.data.filter(datum => regex.test(datum.lhs))
+    return this.props.data.filter(datum => regex.test(datum.code))
   }
 
   getSuggestionValue = (suggestion) => {
-    return suggestion.lhs
+    return suggestion.code
   }
 
   renderSuggestion = (suggestion) => {
     return (
-      <span>{suggestion.lhs}</span>
+      <span>{suggestion.code}</span>
     )
   }
 
@@ -48,7 +48,7 @@ class DynamicInputField extends React.Component {
       value: newValue
     })
 
-    console.log(`${id} changed to ${newValue}`)
+    onChange(id, newValue)
   }
 
   onSuggestionsFetchRequested = ({ value }) => {
