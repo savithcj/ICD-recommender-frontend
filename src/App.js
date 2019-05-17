@@ -15,7 +15,9 @@ class App extends Component {
     this.getAndSetRules()
   }
 
-  changed = (id, newValue) => { console.log(`${id} changed to ${newValue}`) }
+  changed = (id, newValue) => { 
+    console.log(`${id} changed to ${newValue}`) 
+  }
 
   handleAddButton = () => {
   }
@@ -38,7 +40,6 @@ class App extends Component {
       inputField = (
         <DynamicInputField
           id="input1"
-          onChange={(id, newValue) => this.changed(id, newValue)}
           data={this.state.rules} 
           />
       )
