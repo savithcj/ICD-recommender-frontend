@@ -8,9 +8,19 @@ class DynamicInputField extends React.Component {
 
     this.state = {
       value: ""
-      // suggestions: []
     };
   }
+
+  onChange = (_, { newValue }) => {
+    // Defines what happens to DynamicInputField when the inputbox changes
+    this.setState({
+      value: newValue
+    });
+  };
+
+  // escapeRegexCharacters = str => {
+  //   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // };
 
   getSuggestions = value => {
     return this.props.data;
@@ -23,10 +33,12 @@ class DynamicInputField extends React.Component {
   };
 
   getSuggestionValue = suggestion => {
+    // Defines what gets entered into the input box when an item is selected from the auto suggestion list
     return suggestion.code;
   };
 
   renderSuggestion = suggestion => {
+    // Defines the content of auto suggestion list
     return (
       <span>
         {suggestion.description === ""
@@ -36,40 +48,21 @@ class DynamicInputField extends React.Component {
     );
   };
 
-  onChange = (_, { newValue }) => {
-    // const { id, onChange } = this.props;
-
-    this.setState({
-      value: newValue
-    });
-
-    // onChange(id, newValue);
-  };
-
   onSuggestionsFetchRequested = ({ value }) => {
+    // Calls a parent function (ActionListener) for when value changes in the input box
     const { id, onChange } = this.props;
     onChange(id, value);
-
-    this.setState({
-      suggestions: this.getSuggestions(value)
-    });
   };
 
   onSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: []
-    });
-  };
-
-  escapeRegexCharacters = str => {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Gets called when the input box is cleared by user
   };
 
   render() {
     const { id, placeholder } = this.props;
     const { value, suggestions } = this.state;
     const inputProps = {
-      placeholder: "Enter a code",
+      placeholder: "Enter code",
       value,
       onChange: this.onChange
     };

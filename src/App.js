@@ -1,51 +1,46 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
-import DynamicInputField from './Components/DynamicInputField/DynamicInputField'
+import DynamicInputField from "./Components/DynamicInputField/DynamicInputField";
 
 class App extends Component {
-
   state = {
-    rules: null,
-  }
+    rules: null
+  };
 
   constructor() {
-    super()
-    this.getAndSetRules()
+    super();
+    this.getAndSetRules();
   }
-
 
   changed = (id, newValue) => {
+    // Used as action listener for when input box changes
+    this.getAndSetRules(newValue);
+  };
 
-    this.getAndSetRules(newValue)
-  }
-
-  handleAddButton = () => {
-  }
+  handleAddButton = () => {};
 
   getAndSetRules(codeName) {
-
     if (codeName !== "") {
+      const url =
+        "http://localhost:8000/api/children/" + codeName + "/?format=json";
 
-      const url = 'http://localhost:8000/api/children/' + codeName + '/?format=json'
-
-      console.log(url)
+      console.log(url);
 
       fetch(url)
         .then(response => response.json())
         .then(result => {
-          this.setState({ rules: result })
-        })
+          this.setState({ rules: result });
+        });
     }
   }
 
   render() {
-
-    //react calls the render method asynchronously before the data is retrieved 
-    //from the API call. The following if statement is needed make sure that the 
+    //react calls the render method asynchronously before the data is retrieved
+    //from the API call. The following if statement is needed make sure that the
     //input field is rendered only once the data is retrieved
-    let inputField = null
+    let inputField = null;
     if (this.state.rules != null) {
       inputField = (
         <DynamicInputField
@@ -53,7 +48,7 @@ class App extends Component {
           onChange={this.changed}
           data={this.state.rules}
         />
-      )
+      );
     }
 
     return (
@@ -61,25 +56,20 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           {inputField}
-          <button onClick={() => this.handleAddButton()}>Add</button>
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-        </p>
+          {/* <button onClick={() => this.handleAddButton()}>Submit</button> */}
+          <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
             className="App-link"
-            href="https://reactjs.org"
+            href="https://cumming.ucalgary.ca/centres/centre-health-informatics"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn React
-        </a>
+            Centre for Health Informatics
+          </a>
         </header>
       </div>
-
-    )
-
+    );
   }
-
 }
 
 export default App;
