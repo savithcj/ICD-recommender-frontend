@@ -1,8 +1,8 @@
 import React from "react";
 import Autosuggest from "react-autosuggest";
-import "./DynamicInputField.css";
+import "./CodeInputField.css";
 
-class DynamicInputField extends React.Component {
+class CodeInputField extends React.Component {
   constructor(props) {
     super(props);
 
@@ -68,4 +68,4 @@ class DynamicInputField extends React.Component {
   }
 }
 
-export default DynamicInputField;
+export default CodeInputField;

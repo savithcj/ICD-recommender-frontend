@@ -2,16 +2,17 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-import DynamicInputField from "./Components/DynamicInputField/DynamicInputField";
+import CodeInputField from "./Components/CodeInputField/CodeInputField";
 
 class App extends Component {
   state = {
-    rules: null
+    codeWithDescription: [], // autocomplete suggestions to be displayed
+    cachedCodeList: {}, // caches codes in a list (code only, no description)
+    cachedCodeWithDescription: [] // caches the code in json format with description
   };
 
   constructor() {
     super();
-    this.getCodeSuggestionsFromAPI();
   }
 
   codeSearchBoxListener = (id, newValue) => {
@@ -27,27 +28,42 @@ class App extends Component {
 
   // handleAddButton = () => {};
 
-  getCodeSuggestionsFromAPI(codeName) {
+  getCodeSuggestionsFromAPI(code) {
     /** Get code suggestions by making an API call */
-    if (codeName !== "") {
+    if (code !== "") {
       const url =
-        "http://localhost:8000/api/children/" + codeName + "/?format=json";
+        "http://localhost:8000/api/children/" + code + "/?format=json";
 
       console.log(url);
 
       fetch(url)
         .then(response => response.json())
-        .then(result => {
-          this.setState({ rules: result });
+        .then(results => {
+          this.setState({ codeWithDescription: results });
+          this.appendCodeToCache(results);
         });
     }
   }
 
-  appendCodeSuggestionsToState() {
-    /** Append/update code suggestion results from API call to state for repeated quiries */
+  appendCodeToCache(results) {
+    /** Cache code suggestion results from API call to state for repeated quiries */
+
+    let codes = Array.from(this.state.cachedCodeList);
+    let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
+
+    for (let i = 0, l = results.length; i < l; i++) {
+      if (codes.indexOf(results[i].code) < 0) {
+        codes.push(results[i].code);
+        codesWithDescript.push(results[i]);
+      }
+    }
+    this.setState({
+      cachedCodeList: codes,
+      cachedCodeWithDescription: codesWithDescript
+    });
   }
 
-  getCodeSuggestionsFromState(codeName) {
+  getCodeSuggestionsFromState(code) {
     /** Get code suggestions by searching codes stored in the state */
   }
 
@@ -56,12 +72,12 @@ class App extends Component {
      * from the API call. The following if statement is needed make sure that the
      * input field is rendered only once the data is retrieved */
     let codeSearchBox = null;
-    if (this.state.rules != null) {
+    if (this.state.codeWithDescription != null) {
       codeSearchBox = (
-        <DynamicInputField
+        <CodeInputField
           id="input1"
           onChange={this.codeSearchBoxListener}
-          data={this.state.rules}
+          data={this.state.codeWithDescription}
         />
       );
     }
