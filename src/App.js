@@ -20,7 +20,9 @@ class App extends Component {
     newValue = newValue
       .trim()
       .toUpperCase()
-      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      .replace(/[^A-Z0-9]/gi, "");
+
+    console.log("cleaned input: " + newValue);
 
     this.getCodeSuggestionsFromAPI(newValue);
   };
