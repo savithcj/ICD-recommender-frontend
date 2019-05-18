@@ -15,14 +15,12 @@ class App extends Component {
   }
 
   codeSearchBoxListener = (id, newValue) => {
-    // Action listener for when input box changes
+    /** Action listener called upon by child component when input box changes */
 
     newValue = newValue
       .trim()
       .toUpperCase()
       .replace(/[^A-Z0-9]/gi, "");
-
-    console.log("cleaned input: " + newValue);
 
     this.getCodeSuggestionsFromAPI(newValue);
   };
@@ -30,7 +28,7 @@ class App extends Component {
   // handleAddButton = () => {};
 
   getCodeSuggestionsFromAPI(codeName) {
-    // Get code suggestions by making an API call
+    /** Get code suggestions by making an API call */
     if (codeName !== "") {
       const url =
         "http://localhost:8000/api/children/" + codeName + "/?format=json";
@@ -45,14 +43,18 @@ class App extends Component {
     }
   }
 
+  appendCodeSuggestionsToState() {
+    /** Append/update code suggestion results from API call to state for repeated quiries */
+  }
+
   getCodeSuggestionsFromState(codeName) {
-    // Get code suggestions by searching codes stored in the state
+    /** Get code suggestions by searching codes stored in the state */
   }
 
   render() {
-    //react calls the render method asynchronously before the data is retrieved
-    //from the API call. The following if statement is needed make sure that the
-    //input field is rendered only once the data is retrieved
+    /** React calls the render method asynchronously before the data is retrieved
+     * from the API call. The following if statement is needed make sure that the
+     * input field is rendered only once the data is retrieved */
     let codeSearchBox = null;
     if (this.state.rules != null) {
       codeSearchBox = (
