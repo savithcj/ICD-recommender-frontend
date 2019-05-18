@@ -3,17 +3,16 @@ import logo from "./logo.svg";
 import "./App.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
+import ListViewer from "./Components/ListViewer/ListViewer";
 
 class App extends Component {
   state = {
     codeWithDescription: [], // autocomplete suggestions to be displayed
     cachedCodeList: {}, // caches codes in a list (code only, no description)
-    cachedCodeWithDescription: [] // caches the code in json format with description
+    cachedCodeWithDescription: [], // caches the code in json format with description
+    selectedCodes: [{id: 1, code: "A1", description: "sample"}, //list to keep track of selected codes
+                    {id: 2, code: "B1", description: "sample 2"}], 
   };
-
-  constructor() {
-    super();
-  }
 
   codeSearchBoxListener = (id, newValue) => {
     /** Action listener called upon by child component when input box changes */
@@ -67,6 +66,27 @@ class App extends Component {
     /** Get code suggestions by searching codes stored in the state */
   }
 
+  addSelectedCode = () => {
+    //TODO: complete this method and call it from the CodeInputField to add the 
+    //specified code to the selectedCodes list
+  }
+
+  /**
+   * Called when an event is fired from a element containing an
+   * item from the selectedCode list. Removes the code with a 
+   * matching ID from the list
+   */
+  removeSelectedCode = (event) => {
+    const removeCodeIndex = this.state.selectedCodes.findIndex(code => {
+      return code.id === event.target.key;
+    });
+
+    const codes = [...this.state.selectedCodes]
+    codes.splice(removeCodeIndex, 1)
+    this.setState({selectedCodes: codes})
+
+  }
+
   render() {
     /** React calls the render method asynchronously before the data is retrieved
      * from the API call. The following if statement is needed make sure that the
@@ -88,6 +108,12 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           {codeSearchBox}
           {/* <button onClick={() => this.handleAddButton()}>Submit</button> */}
+          <ListViewer
+            className = "selectedCodes"
+            title = "Selected Codes"
+            items = {this.state.selectedCodes}
+            onItemClick = {this.removeSelectedCode}>
+          </ListViewer>
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
             className="App-link"
@@ -97,6 +123,7 @@ class App extends Component {
           >
             Centre for Health Informatics
           </a>
+
         </header>
       </div>
     );

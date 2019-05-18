@@ -1,0 +1,15 @@
+.itemContainer {
+    background-color: #fff;
+    color: #000;
+    height: 300px;
+    width: 500px;
+    position: relative;
+    overflow: auto;
+}
+
+.listItem {
+    /* position: absolute; */
+    width: 100%;
+    outline: 1px solid;
+    
+ }
