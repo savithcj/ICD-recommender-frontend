@@ -18,18 +18,8 @@ class DynamicInputField extends React.Component {
     });
   };
 
-  // escapeRegexCharacters = str => {
-  //   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  // };
-
   getSuggestions = value => {
     return this.props.data;
-    // const escapedValue = this.escapeRegexCharacters(value.trim());
-    // if (escapedValue === "") {
-    //   return [];
-    // }
-    // const regex = new RegExp("^" + escapedValue, "i");
-    // return this.props.data.filter(datum => regex.test(datum.code));
   };
 
   getSuggestionValue = suggestion => {

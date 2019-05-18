@@ -11,17 +11,24 @@ class App extends Component {
 
   constructor() {
     super();
-    this.getAndSetRules();
+    this.getCodeSuggestionsFromAPI();
   }
 
-  changed = (id, newValue) => {
-    // Used as action listener for when input box changes
-    this.getAndSetRules(newValue);
+  codeSearchBoxListener = (id, newValue) => {
+    // Action listener for when input box changes
+
+    newValue = newValue
+      .trim()
+      .toUpperCase()
+      .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    this.getCodeSuggestionsFromAPI(newValue);
   };
 
-  handleAddButton = () => {};
+  // handleAddButton = () => {};
 
-  getAndSetRules(codeName) {
+  getCodeSuggestionsFromAPI(codeName) {
+    // Get code suggestions by making an API call
     if (codeName !== "") {
       const url =
         "http://localhost:8000/api/children/" + codeName + "/?format=json";
@@ -36,16 +43,20 @@ class App extends Component {
     }
   }
 
+  getCodeSuggestionsFromState(codeName) {
+    // Get code suggestions by searching codes stored in the state
+  }
+
   render() {
     //react calls the render method asynchronously before the data is retrieved
     //from the API call. The following if statement is needed make sure that the
     //input field is rendered only once the data is retrieved
-    let inputField = null;
+    let codeSearchBox = null;
     if (this.state.rules != null) {
-      inputField = (
+      codeSearchBox = (
         <DynamicInputField
           id="input1"
-          onChange={this.changed}
+          onChange={this.codeSearchBoxListener}
           data={this.state.rules}
         />
       );
@@ -55,7 +66,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          {inputField}
+          {codeSearchBox}
           {/* <button onClick={() => this.handleAddButton()}>Submit</button> */}
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
