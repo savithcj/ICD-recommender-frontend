@@ -145,7 +145,7 @@ class App extends Component {
           if (rule.lhs === code) {
             recommendations.push({recommendation: rule.rhs,
                                   confidence: rule.confidence,
-                                  ruleUsed: "Recommended since " + rule.lhs + " selected." +
+                                  reason: "Recommended since " + rule.lhs + " selected." +
                                   " Confidence: " + Math.round(rule.confidence * 100) / 100});
           }
         });
@@ -170,7 +170,7 @@ class App extends Component {
 
     let i, j, temp;
     let result = [];
-    //only find the combinations of the first 15 codes (32767 max possible combinations).
+    //only find the combinations of the first 15 items (32767 max possible combinations).
     let arrLen = arrayOfItems.length < 15 ? arrayOfItems.length : 15;
     let power = Math.pow;
     let combinations = power(2, arrLen);
@@ -186,9 +186,9 @@ class App extends Component {
           temp += arrayOfItems[j] + ",";
         }
       }
-      result.push(temp.slice(0, -1));
+      result.push(temp.slice(0, -1)); //remove the last comma
     }
-    result.shift();
+    result.shift(); //remove the first element which is always: ""
     return result;
   }
 
@@ -234,7 +234,7 @@ class App extends Component {
             title="Recommended Codes"
             items={this.state.recommendedCodes}
             valueName="recommendation"
-            tooltipValueName="ruleUsed"
+            tooltipValueName="reason"
           />
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
