@@ -44,8 +44,12 @@ class CodeInputField extends React.Component {
    * Defines the content of auto suggestion list
    */
   renderSuggestion = (suggestion, { query }) => {
-    const matches = AutosuggestHighlightMatch(suggestion.code, query);
-    const parts = AutosuggestHighlightParse(suggestion.code, matches);
+    let displayedText = suggestion.code;
+    if (suggestion.description !== "") {
+      displayedText = displayedText + ": " + suggestion.description;
+    }
+    const matches = AutosuggestHighlightMatch(displayedText, query);
+    const parts = AutosuggestHighlightParse(displayedText, matches);
 
     return (
       <span>
@@ -62,14 +66,6 @@ class CodeInputField extends React.Component {
         })}
       </span>
     );
-
-    // return (
-    //   <span>
-    //     {suggestion.description === ""
-    //       ? suggestion.code
-    //       : suggestion.code + ": " + suggestion.description}
-    //   </span>
-    // );
   };
 
   /**
