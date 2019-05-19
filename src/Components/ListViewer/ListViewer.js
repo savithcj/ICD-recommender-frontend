@@ -3,7 +3,7 @@ import "./ListViewer.css"
 
 /**
  * This component takes a list of items and returns
- * an element containing the list of items. When an 
+ * a JSX element containing the list of items. When an 
  * item is clicked, it is removed from the original list
  */
 const listViewer = props => {
@@ -20,19 +20,32 @@ const listViewer = props => {
                 let descriptionValue = props.descriptionName === undefined
                     ? ""
                     : ": " + item[props.descriptionName]
+                let tooltip = props.tooltipValueName === undefined
+                    ? null
+                    : <span className="tooltiptext">{item[props.tooltipValueName]}</span>
                 return (
+
                     <div
                         className="listItem"
                         key={item[props.keyName]}>
-                        {displayValue + descriptionValue}
-                        <span>
-                            <button
-                                id = {item[props.keyName]}
-                                onClick={props.onItemClick}>
-                                remove
+                        <div className="tooltip">
+                            {displayValue + descriptionValue}
+                            <span>
+                                <button
+                                    id={item[props.keyName]}
+                                    onClick={props.onItemClick}>
+                                    remove
                             </button>
-                        </span>
+                            </span>
+                            {tooltip}
+                        </div>
+
+                        <hr/>
                     </div>
+
+                    
+
+
                 )
             })}
         </div>

@@ -115,9 +115,8 @@ class App extends Component {
    * matching ID from the list
    */
   removeSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(code => {
-      return code.id == event.target.id;
-    });
+    const removeCodeIndex = this.state.selectedCodes.findIndex(code =>
+      code.id == event.target.id);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
@@ -132,9 +131,7 @@ class App extends Component {
    * combinations within the selectedCodes list.
    */
   getRecommendedCodes = () => {
-    const arrayOfSelectedCodes = this.state.selectedCodes.map(code => {
-      return code.code;
-    });
+    const arrayOfSelectedCodes = this.state.selectedCodes.map(code => code.code);
 
     const allCombinationsOfSelectedCodes = this.getCombinations(
       arrayOfSelectedCodes
@@ -146,16 +143,17 @@ class App extends Component {
       allCombinationsOfSelectedCodes.forEach(code => {
         this.rules.forEach(rule => {
           if (rule.lhs === code) {
-            recommendations.push(rule.rhs);
+            recommendations.push({recommendation: rule.rhs,
+                                  ruleUsed: "Recommended since " + rule.lhs + " selected."});
           }
         });
       });
-    }
+    };
 
     this.setState({
       recommendedCodes: [...new Set(recommendations)]
-        .sort()
-        .filter(x => !arrayOfSelectedCodes.includes(x))
+        .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
+        .sort((a,b) => a.recommendation.localeCompare(b.recommendation))
     });
   };
 
@@ -233,6 +231,8 @@ class App extends Component {
             className="recommendedCodes"
             title="Recommended Codes"
             items={this.state.recommendedCodes}
+            valueName="recommendation"
+            tooltipValueName="ruleUsed"
           />
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a

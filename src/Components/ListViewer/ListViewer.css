@@ -10,6 +10,58 @@
 .listItem {
     /* position: absolute; */
     width: 100%;
-    outline: 1px solid;
-    
+    margin: 0 auto;
+    /* outline: 1px solid; */
+    /* background-color: aquamarine; */
+    font-size: 12pt;
  }
+
+ /* Tooltip container */
+.tooltip {
+    position: relative;
+    /* border-bottom: 1px dotted black; If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    
+    /* width: 120px; */
+    bottom: 100%;
+    left: 50%; 
+    margin-left: -125px; /*set to half the width*/
+    font-size: 10pt;
+
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+
+    opacity: 0;
+    transition: opacity 1s;
+}
+  
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    transition-delay: 0.75s; /*how long to hover before tooltip shows*/
+    opacity: 1;
+}
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
