@@ -10,8 +10,18 @@ class App extends Component {
     codeWithDescription: [], // autocomplete suggestions to be displayed
     cachedCodeList: {}, // caches codes in a list (code only, no description)
     cachedCodeWithDescription: [], // caches the code in json format with description
-    selectedCodes: [{id: 1, code: "A1", description: "sample"}, //list to keep track of selected codes
-                    {id: 2, code: "B1", description: "sample 2"}], 
+    selectedCodes: [{ id: 1, code: "P07", description: "sample" }, //list to keep track of selected codes
+    { id: 2, code: "P59", description: "sample 2" },
+    { id: 3, code: "P28", description: "sample 3" }],
+    recommendedCodes: [], //list of recommended codes based on the selected codes
+  };
+
+  constructor(props) {
+    super(props);
+    //set of all rules. Retrived from the API for now...
+    fetch("http://localhost:8000/api/rules/")
+      .then(response => response.json())
+      .then(result => this.rules = result);
   };
 
   codeSearchBoxListener = (id, newValue) => {
@@ -78,16 +88,80 @@ class App extends Component {
    */
   removeSelectedCode = (event) => {
     const removeCodeIndex = this.state.selectedCodes.findIndex(code => {
-      return code.id === event.target.key;
+      return code.id == event.target.id;
     });
 
     const codes = [...this.state.selectedCodes]
     codes.splice(removeCodeIndex, 1)
-    this.setState({selectedCodes: codes})
+    this.setState({ selectedCodes: codes })
+
+    this.setState({recommendedCodes:[]})
 
   }
 
+  /**
+   * Updates the recommendedCodes list in the state with the  
+   * recommendations from the API. Considers all possible 
+   * combinations within the selectedCodes list.
+   */
+  getRecommendedCodes = () => {
+    const arrayOfSelectedCodes = this.state.selectedCodes.map(code => {
+      return code.code;
+    })
+
+    const allCombinationsOfSelectedCodes = this.getAllCombinations(arrayOfSelectedCodes)
+
+    let recommendations = []
+
+    if (this.rules !== undefined) {
+      allCombinationsOfSelectedCodes.forEach(code => {
+        this.rules.forEach(rule => {
+          if (rule.lhs === code) {
+            recommendations.push(rule.rhs)
+          };
+        });
+      });
+    };
+
+    this.setState({ recommendedCodes: [...new Set(recommendations)].sort().filter(x => !arrayOfSelectedCodes.includes(x)) })
+
+  };
+
+  /**
+   * Helper method to get all possible combinations of the items within the passed array.
+   * @param {*} arrayOfItems The array of items to get the combinations of
+   * @returns An array of size 2^n - 1 where n is the length of the passed array.
+   * Contains all possible combinations of the items in the passed array
+   */
+  getAllCombinations(arrayOfItems) {
+    //taken from:https://js-algorithms.tutorialhorizon.com/2015/10/23/combinations-of-an-array/
+
+    let i, j, temp
+    let result = []
+    let arrLen = arrayOfItems.length
+    let power = Math.pow
+    let combinations = power(2, arrLen)
+
+    // Time & Space Complexity O (n * 2^n)
+
+    for (i = 0; i < combinations; i++) {
+      temp = ''
+
+      for (j = 0; j < arrLen; j++) {
+        // & is bitwise AND
+        if ((i & power(2, j))) {
+          temp += arrayOfItems[j] + ","
+        }
+      }
+      result.push(temp.slice(0, -1))
+    }
+    result.shift()
+    return result
+
+  };
+
   render() {
+    console.log(this.state.recommendedCodes)
     /** React calls the render method asynchronously before the data is retrieved
      * from the API call. The following if statement is needed make sure that the
      * input field is rendered only once the data is retrieved */
@@ -109,10 +183,24 @@ class App extends Component {
           {codeSearchBox}
           {/* <button onClick={() => this.handleAddButton()}>Submit</button> */}
           <ListViewer
-            className = "selectedCodes"
-            title = "Selected Codes"
-            items = {this.state.selectedCodes}
-            onItemClick = {this.removeSelectedCode}>
+            className="selectedCodes"
+            title="Selected Codes"
+            items={this.state.selectedCodes}
+            keyName="id"
+            valueName="code"
+            descriptionName="description"
+            onItemClick={this.removeSelectedCode}>
+          </ListViewer>
+          <hr />
+          <button
+            onClick={this.getRecommendedCodes}>
+            Get Reccomendations
+          </button>
+          <hr />
+          <ListViewer
+            className="recommendedCodes"
+            title="Recommended Codes"
+            items={this.state.recommendedCodes}>
           </ListViewer>
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
