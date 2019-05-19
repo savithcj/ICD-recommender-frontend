@@ -37,16 +37,12 @@ class App extends Component {
       .replace(/[^A-Z0-9]/gi, "");
 
     let autoCompleteResults = [];
-    let searchedCodes = this.state.searchedCodeList;
+    let searchedCodes = Array.from(this.state.searchedCodeList);
 
-    // if code has been searched previously, load results from cache
-    if (searchedCodes.length > 0 && searchedCodes.indexOf(newValue) >= 0) {
-      autoCompleteResults = this.getCodeAutoCompleteListFromCache(newValue);
-      console.log("results from cache, length=" + autoCompleteResults.length);
-      this.setState({ codeAutoCompleteDisplayed: autoCompleteResults });
+    if (searchedCodes.indexOf(newValue) < 0) {
+      this.searchCodeViaAPI(newValue);
     } else {
-      // code has not been searched before, search via API
-      this.getCodeAutoCompleteListFromAPI(newValue);
+      this.searchCodeInCache(newValue);
     }
   };
 
@@ -55,22 +51,20 @@ class App extends Component {
   /**
    * Get code suggestions by searching codes stored in the state and return results
    */
-  getCodeAutoCompleteListFromCache(code) {
+  searchCodeInCache(code) {
     if (code !== "") {
       const codeAndDescription = this.state.cachedCodeWithDescription;
       console.log("look up code in cache");
       const regex = new RegExp("^" + code, "i");
       const results = codeAndDescription.filter(item => regex.test(item.code));
-      return results;
-    } else {
-      return [];
+      this.setState({ codeAutoCompleteDisplayed: results });
     }
   }
 
   /**
    * Get code suggestions by making an API call and set results to state.codeAutoCompleteDisplayed
    */
-  getCodeAutoCompleteListFromAPI(code) {
+  searchCodeViaAPI(code) {
     if (code !== "") {
       const url =
         "http://localhost:8000/api/children/" + code + "/?format=json";
@@ -82,10 +76,10 @@ class App extends Component {
         .then(response => response.json())
         .then(results => {
           this.setState({
-            codeAutoCompleteDisplayed: results,
             searchedCodeList: searchedCodes
           });
           this.appendCodeToCache(results);
+          this.searchCodeInCache(code);
         });
     }
   }

@@ -1,5 +1,7 @@
 import React from "react";
 import Autosuggest from "react-autosuggest";
+import AutosuggestHighlightMatch from "autosuggest-highlight/match";
+import AutosuggestHighlightParse from "autosuggest-highlight/parse";
 import "./CodeInputField.css";
 
 class CodeInputField extends React.Component {
@@ -21,7 +23,7 @@ class CodeInputField extends React.Component {
   };
 
   /**
-   * Defines what gets entered into the input box
+   * Defines what value is selected
    * when an item is selected from the auto suggestion list
    */
   getSuggestionValue = suggestion => {
@@ -29,16 +31,45 @@ class CodeInputField extends React.Component {
   };
 
   /**
+   * Defines what happens to the inputbox
+   * when an item is selected from the auto suggestion list
+   */
+  onSuggestionSelected = () => {
+    this.setState({
+      value: ""
+    });
+  };
+
+  /**
    * Defines the content of auto suggestion list
    */
-  renderSuggestion = suggestion => {
+  renderSuggestion = (suggestion, { query }) => {
+    const matches = AutosuggestHighlightMatch(suggestion.code, query);
+    const parts = AutosuggestHighlightParse(suggestion.code, matches);
+
     return (
       <span>
-        {suggestion.description === ""
-          ? suggestion.code
-          : suggestion.code + ": " + suggestion.description}
+        {parts.map((part, index) => {
+          const className = part.highlight
+            ? "react-autosuggest__suggestion-match"
+            : null;
+
+          return (
+            <span className={className} key={index}>
+              {part.text}
+            </span>
+          );
+        })}
       </span>
     );
+
+    // return (
+    //   <span>
+    //     {suggestion.description === ""
+    //       ? suggestion.code
+    //       : suggestion.code + ": " + suggestion.description}
+    //   </span>
+    // );
   };
 
   /**
@@ -71,6 +102,7 @@ class CodeInputField extends React.Component {
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={this.getSuggestionValue}
         renderSuggestion={this.renderSuggestion}
+        onSuggestionSelected={this.onSuggestionSelected}
         inputProps={inputProps}
       />
     );
