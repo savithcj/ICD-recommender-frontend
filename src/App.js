@@ -8,6 +8,7 @@ import ListViewer from "./Components/ListViewer/ListViewer";
 class App extends Component {
   state = {
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
+    searchedCodeList: {}, // list of code searched via API
     cachedCodeList: {}, // caches autocomplete codes in a list (code only, no description) used to keep unique codes
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
     selectedCodes: [
@@ -35,12 +36,16 @@ class App extends Component {
       .toUpperCase()
       .replace(/[^A-Z0-9]/gi, "");
 
-    let results = this.getCodeAutoCompleteListFromCache(newValue);
-    console.log("results from cache, length=" + results.length);
+    let autoCompleteResults = [];
+    let searchedCodes = this.state.searchedCodeList;
 
-    if (results.length > 0) {
-      this.setState({ codeAutoCompleteDisplayed: results });
+    // if code has been searched previously, load results from cache
+    if (searchedCodes.length > 0 && searchedCodes.indexOf(newValue) >= 0) {
+      autoCompleteResults = this.getCodeAutoCompleteListFromCache(newValue);
+      console.log("results from cache, length=" + autoCompleteResults.length);
+      this.setState({ codeAutoCompleteDisplayed: autoCompleteResults });
     } else {
+      // code has not been searched before, search via API
       this.getCodeAutoCompleteListFromAPI(newValue);
     }
   };
@@ -71,11 +76,15 @@ class App extends Component {
         "http://localhost:8000/api/children/" + code + "/?format=json";
 
       console.log("look up code from API call: " + url);
-
+      let searchedCodes = Array.from(this.state.searchedCodeList);
+      searchedCodes.push(code);
       fetch(url)
         .then(response => response.json())
         .then(results => {
-          this.setState({ codeAutoCompleteDisplayed: results });
+          this.setState({
+            codeAutoCompleteDisplayed: results,
+            searchedCodeList: searchedCodes
+          });
           this.appendCodeToCache(results);
         });
     }
