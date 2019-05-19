@@ -144,7 +144,9 @@ class App extends Component {
         this.rules.forEach(rule => {
           if (rule.lhs === code) {
             recommendations.push({recommendation: rule.rhs,
-                                  ruleUsed: "Recommended since " + rule.lhs + " selected."});
+                                  confidence: rule.confidence,
+                                  ruleUsed: "Recommended since " + rule.lhs + " selected." +
+                                  " Confidence: " + Math.round(rule.confidence * 100) / 100});
           }
         });
       });
@@ -153,7 +155,7 @@ class App extends Component {
     this.setState({
       recommendedCodes: [...new Set(recommendations)]
         .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
-        .sort((a,b) => a.recommendation.localeCompare(b.recommendation))
+        .sort((a,b) => b.confidence-a.confidence)
     });
   };
 
