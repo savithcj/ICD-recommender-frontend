@@ -12,7 +12,8 @@ class App extends Component {
     cachedCodeWithDescription: [], // caches the code in json format with description
     selectedCodes: [{ id: 1, code: "P07", description: "sample" }, //list to keep track of selected codes
     { id: 2, code: "P59", description: "sample 2" },
-    { id: 3, code: "P28", description: "sample 3" }],
+    { id: 3, code: "P28", description: "sample 3" },
+    ],
     recommendedCodes: [], //list of recommended codes based on the selected codes
   };
 
@@ -95,7 +96,7 @@ class App extends Component {
     codes.splice(removeCodeIndex, 1)
     this.setState({ selectedCodes: codes })
 
-    this.setState({recommendedCodes:[]})
+    this.setState({ recommendedCodes: [] })
 
   }
 
@@ -109,7 +110,7 @@ class App extends Component {
       return code.code;
     })
 
-    const allCombinationsOfSelectedCodes = this.getAllCombinations(arrayOfSelectedCodes)
+    const allCombinationsOfSelectedCodes = this.getCombinations(arrayOfSelectedCodes)
 
     let recommendations = []
 
@@ -130,15 +131,16 @@ class App extends Component {
   /**
    * Helper method to get all possible combinations of the items within the passed array.
    * @param {*} arrayOfItems The array of items to get the combinations of
-   * @returns An array of size 2^n - 1 where n is the length of the passed array.
+   * @returns An array of size 2^n - 1 where n is the length of the passed array (max n limited to 15).
    * Contains all possible combinations of the items in the passed array
    */
-  getAllCombinations(arrayOfItems) {
+  getCombinations(arrayOfItems) {
     //taken from:https://js-algorithms.tutorialhorizon.com/2015/10/23/combinations-of-an-array/
 
     let i, j, temp
     let result = []
-    let arrLen = arrayOfItems.length
+    //only find the combinations of the first 15 codes (32767 max possible combinations). 
+    let arrLen = arrayOfItems.length < 15 ? arrayOfItems.length : 15
     let power = Math.pow
     let combinations = power(2, arrLen)
 
@@ -161,7 +163,6 @@ class App extends Component {
   };
 
   render() {
-    console.log(this.state.recommendedCodes)
     /** React calls the render method asynchronously before the data is retrieved
      * from the API call. The following if statement is needed make sure that the
      * input field is rendered only once the data is retrieved */
