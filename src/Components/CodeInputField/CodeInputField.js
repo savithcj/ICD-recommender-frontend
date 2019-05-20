@@ -23,7 +23,7 @@ class CodeInputField extends React.Component {
   };
 
   /**
-   * Defines what value is selected
+   * Defines what value is returned
    * when an item is selected from the auto suggestion list
    */
   getSuggestionValue = suggestion => {
@@ -31,10 +31,10 @@ class CodeInputField extends React.Component {
   };
 
   /**
-   * Defines what happens to the inputbox
-   * when an item is selected from the auto suggestion list
+   * Called when an item is selected from the auto suggestion list
    */
-  onSuggestionSelected = () => {
+  onSuggestionSelected = (_, { suggestion }) => {
+    this.props.selectCode(suggestion.code);
     this.setState({
       value: ""
     });
@@ -100,6 +100,7 @@ class CodeInputField extends React.Component {
         renderSuggestion={this.renderSuggestion}
         onSuggestionSelected={this.onSuggestionSelected}
         inputProps={inputProps}
+        highlightFirstSuggestion={true}
       />
     );
   }

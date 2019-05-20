@@ -7,10 +7,13 @@ import ListViewer from "./Components/ListViewer/ListViewer";
 
 class App extends Component {
   state = {
+    ////// Search Box Auto-Complete Feature
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
     searchedCodeList: {}, // list of code searched via API
     cachedCodeList: {}, // caches autocomplete codes in a list (code only, no description) used to keep unique codes
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
+
+    ////// Code Selection Feature
     selectedCodes: [
       { id: 1, code: "P07", description: "sample" }, //list to keep track of selected codes
       { id: 2, code: "P59", description: "sample 2" },
@@ -28,9 +31,10 @@ class App extends Component {
   }
 
   /**
+   * Required for code searchbox Auto-Complete
    * Action listener called upon by child component when input box changes
    */
-  codeSearchBoxListener = (id, newValue) => {
+  codeSearchBoxChangeListener = (id, newValue) => {
     newValue = newValue
       .trim()
       .toUpperCase()
@@ -46,9 +50,8 @@ class App extends Component {
     }
   };
 
-  // handleAddButton = () => {};
-
   /**
+   * Required for code searchbox Auto-Complete
    * Get code suggestions by searching codes stored in the state and return results
    */
   searchCodeInCache(code) {
@@ -62,7 +65,8 @@ class App extends Component {
   }
 
   /**
-   * Get code suggestions by making an API call and set results to state.codeAutoCompleteDisplayed
+   * Required for code searchbox Auto-Complete
+   * Get code suggestions by making an API call and set results to state
    */
   searchCodeViaAPI(code) {
     if (code !== "") {
@@ -85,6 +89,7 @@ class App extends Component {
   }
 
   /**
+   * Required for code searchbox Auto-Complete
    * Cache code suggestion results from API call to state for repeated quiries
    * Updates the cachedCodeList and cachedCodeWithDescription in App.state
    */
@@ -104,9 +109,42 @@ class App extends Component {
     });
   }
 
-  addSelectedCode = () => {
-    //TODO: complete this method and call it from the CodeInputField to add the
-    //specified code to the selectedCodes list
+  /**
+   * Called upon by CodeInputField when an item is selected.
+   * Append code to the App state.
+   */
+  addSelectedCode = newValue => {
+    console.log("Code entered: " + newValue);
+
+    let selectedCodes = this.state.selectedCodes;
+
+    // check if the code already exist in the selection
+    const getDuplicate = selectedCodes.find(
+      codeObj => codeObj.code === newValue
+    );
+
+    if (getDuplicate === undefined) {
+      // use max id as new id
+      const newId = Math.max.apply(
+        Math,
+        selectedCodes.map(codeObj => codeObj.id)
+      );
+      // get code description from auto-suggest cache
+      const codeDescriptions = this.state.cachedCodeWithDescription;
+      const cachedCode = codeDescriptions.find(
+        codeObj => codeObj.code === newValue
+      );
+      // construct new code object
+      const newCode = {
+        id: newId,
+        code: cachedCode.code,
+        description: cachedCode.description
+      };
+      selectedCodes.push(newCode);
+      this.setState({ selectedCodes: selectedCodes });
+    } else {
+      console.log("Duplicate code entered");
+    }
   };
 
   /**
@@ -115,8 +153,9 @@ class App extends Component {
    * matching ID from the list
    */
   removeSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(code =>
-      code.id == event.target.id);
+    const removeCodeIndex = this.state.selectedCodes.findIndex(
+      code => code.id == event.target.id
+    );
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
@@ -131,7 +170,9 @@ class App extends Component {
    * combinations within the selectedCodes list.
    */
   getRecommendedCodes = () => {
-    const arrayOfSelectedCodes = this.state.selectedCodes.map(code => code.code);
+    const arrayOfSelectedCodes = this.state.selectedCodes.map(
+      code => code.code
+    );
 
     const allCombinationsOfSelectedCodes = this.getCombinations(
       arrayOfSelectedCodes
@@ -143,19 +184,25 @@ class App extends Component {
       allCombinationsOfSelectedCodes.forEach(code => {
         this.rules.forEach(rule => {
           if (rule.lhs === code) {
-            recommendations.push({recommendation: rule.rhs,
-                                  confidence: rule.confidence,
-                                  reason: "Recommended since " + rule.lhs + " selected." +
-                                  " Confidence: " + Math.round(rule.confidence * 100) / 100});
+            recommendations.push({
+              recommendation: rule.rhs,
+              confidence: rule.confidence,
+              reason:
+                "Recommended since " +
+                rule.lhs +
+                " selected." +
+                " Confidence: " +
+                Math.round(rule.confidence * 100) / 100
+            });
           }
         });
       });
-    };
+    }
 
     this.setState({
       recommendedCodes: [...new Set(recommendations)]
         .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
-        .sort((a,b) => b.confidence-a.confidence)
+        .sort((a, b) => b.confidence - a.confidence)
     });
   };
 
@@ -203,8 +250,9 @@ class App extends Component {
       codeSearchBox = (
         <CodeInputField
           id="input1"
-          onChange={this.codeSearchBoxListener}
+          onChange={this.codeSearchBoxChangeListener}
           data={this.state.codeAutoCompleteDisplayed}
+          selectCode={this.addSelectedCode}
         />
       );
     }
@@ -213,8 +261,9 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
+
           {codeSearchBox}
-          {/* <button onClick={() => this.handleAddButton()}>Submit</button> */}
+
           <ListViewer
             className="selectedCodes"
             title="Selected Codes"

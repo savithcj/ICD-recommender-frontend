@@ -60,10 +60,10 @@ body {
 }
 
 .react-autosuggest__suggestion--highlighted {
-  background-color: #ddd;
+  background-color: #919191;
 }
 
 .react-autosuggest__suggestion-match {
-  color: #4b91d2;
+  color: #87c5ff;
   font-weight: bold;
 }
