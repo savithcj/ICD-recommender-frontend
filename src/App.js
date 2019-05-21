@@ -130,7 +130,7 @@ class App extends Component {
   addSelectedCode = newValue => {
     console.log("Code entered: " + newValue);
 
-    let selectedCodes = Array.from(this.state.selectedCodes);
+    let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
     const getDuplicate = selectedCodes.find(
@@ -197,9 +197,9 @@ class App extends Component {
    * recommendations from the API. Considers all possible
    * combinations within the selectedCodes list.
    */
-  getRecommendedCodes = (codes) => {
+  getRecommendedCodes = (listOfCodeObjects) => {
 
-    const arrayOfSelectedCodes = codes.map(
+    const arrayOfSelectedCodes = listOfCodeObjects.map(
       codeObj => codeObj.code
     );
 
@@ -232,16 +232,14 @@ class App extends Component {
       .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
       .sort((a, b) => b.confidence - a.confidence)
 
-    if (sortedAndFilteredRecommendations.length === 0) {
-      return [];
-    } else {
-      sortedAndFilteredRecommendations.forEach(async code => {
-        let codeInfoFromAPI = await this.getCodeInfoFromAPI(code.recommendation)
-        code.description = codeInfoFromAPI.description
-        return sortedAndFilteredRecommendations;
-      });
-    };
+    sortedAndFilteredRecommendations.forEach(code => {
+      let codeInfoFromAPI = this.getCodeInfoFromAPI(code.recommendation)
+      code.description = codeInfoFromAPI.description
+    });
+
+    return sortedAndFilteredRecommendations;
   };
+
 
   /**
    * Helper method to get all possible combinations of the items within the passed array.
@@ -321,7 +319,7 @@ class App extends Component {
               noItemsMessage="No recommendations for the selected codes"
               nullItemsMessage="Select codes to get recommendations"
               valueName="recommendation"
-              descriptionName="description"
+              // descriptionName="description"
               tooltipValueName="reason"
             />
           </span>
