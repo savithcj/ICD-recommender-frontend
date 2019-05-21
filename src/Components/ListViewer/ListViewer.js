@@ -25,16 +25,18 @@ const listViewer = props => {
                 let tooltip = props.tooltipValueName === undefined
                     ? ""
                     : <span className="tooltiptext">{item[props.tooltipValueName]}</span>
-                let removeButton = props.removeButton === undefined
+                let removeItemButton = props.removeItemButton === undefined
                     ? ""
-                    : 
+                    :
                     <span>
                         <button
                             id={item[props.keyName]}
-                            onClick={props.removeButton}>
+                            onClick={props.removeItemButton}>
                             remove
                         </button>
                     </span>
+
+
 
                 return (
 
@@ -43,7 +45,7 @@ const listViewer = props => {
                         key={item[props.keyName]}>
                         <div className="tooltip">
                             {displayValue + descriptionValue}
-                            {removeButton}
+                            {removeItemButton}
                             {tooltip}
                         </div>
 
@@ -53,11 +55,23 @@ const listViewer = props => {
             }));
     };
 
+    let removeAllItemsButton = (props.removeAllItemsButton === undefined ||
+        props.removeAllItemsButton === null )
+        ? ""
+        :
+        <span>
+            <button
+                onClick={props.removeAllItemsButton}>
+                remove all
+            </button>
+        </span>
+
     return (
 
         <div className="itemContainer">
             <h3 className="containerTitle">
                 {props.title}
+                {removeAllItemsButton}
             </h3>
             {displayItems}
         </div>

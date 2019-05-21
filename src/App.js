@@ -158,8 +158,10 @@ class App extends Component {
         description: cachedCode.description
       };
       selectedCodes.push(newCode);
-      this.setState({ selectedCodes: selectedCodes });
-      this.setState({ recommendedCodes: null })
+      this.setState({
+        selectedCodes: selectedCodes,
+        recommendedCodes: null
+      });
     } else {
       console.log("Duplicate code entered");
     }
@@ -177,9 +179,20 @@ class App extends Component {
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
-    this.setState({ selectedCodes: codes });
+    this.setState({
+      selectedCodes: codes,
+      recommendedCodes: null
+    });
+  };
 
-    this.setState({ recommendedCodes: null });
+  /**
+   * Used to reset the selected code list to an empty list.
+   */
+  resetSelectedCodes = () => {
+    this.setState({
+      selectedCodes: [],
+      recommendedCodes: null
+    });
   };
 
   /**
@@ -211,7 +224,7 @@ class App extends Component {
                 rule.lhs +
                 " selected." +
                 " Confidence: " +
-                Math.round(rule.confidence * 100) / 100
+                Math.round(rule.confidence * 1000) / 1000
             });
           };
         });
@@ -303,7 +316,10 @@ class App extends Component {
               keyName="id"
               valueName="code"
               descriptionName="description"
-              removeButton={this.removeSelectedCode}
+              removeItemButton={this.removeSelectedCode}
+              removeAllItemsButton={this.state.selectedCodes.length === 0
+                ? null
+                : this.resetSelectedCodes}
             />
 
             <ListViewer
@@ -313,7 +329,9 @@ class App extends Component {
               noItemsMessage={this.state.selectedCodes.length === 0
                 ? "Please select some codes before requesting recommendations"
                 : "No recommendations for the selected codes"}
-              nullItemsMessage="Press the Get Recommendations button"
+              nullItemsMessage={this.state.selectedCodes.length === 0
+                ? "Select some codes and Press the Get Recommendations button"
+                : "Selection modified. Press the Get Recommendations button"}
               valueName="recommendation"
               descriptionName="description"
               tooltipValueName="reason"
