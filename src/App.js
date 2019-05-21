@@ -14,21 +14,18 @@ class App extends Component {
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
-    selectedCodes: [
-      { id: 1, code: "P07", description: "sample" }, //list to keep track of selected codes
-      { id: 2, code: "P59", description: "sample 2" },
-      { id: 3, code: "P28", description: "sample 3" }
-    ],
-    recommendedCodes: [] //list of recommended codes based on the selected codes
+    selectedCodes: [],
+    recommendedCodes: null //list of recommended codes based on the selected codes
   };
 
   constructor(props) {
     super(props);
     //set of all rules. Retrived from the API for now...
+    //TODO: Change the fetch perform a synchronous API call
     fetch("http://localhost:8000/api/rules/")
       .then(response => response.json())
       .then(result => (this.rules = result));
-  }
+  };
 
   /**
    * Required for code searchbox Auto-Complete
@@ -85,8 +82,25 @@ class App extends Component {
           this.appendCodeToCache(results);
           this.searchCodeInCache(code);
         });
-    }
-  }
+    };
+  };
+
+  /**
+   * Makes a synchronous API call to get information about the specified code
+   * @param {*} code The code to get information about
+   * @returns JS object with details about the code
+   */
+  async getCodeInfoFromAPI(code) {
+    if (code != "") {
+
+      const url =
+        "http://localhost:8000/api/codes/" + code + "/?format=json";
+
+      const response = await fetch(url);
+      return await response.json();
+
+    };
+  };
 
   /**
    * Required for code searchbox Auto-Complete
@@ -124,11 +138,14 @@ class App extends Component {
     );
 
     if (getDuplicate === undefined) {
-      // use max id as new id
-      const newId = Math.max.apply(
-        Math,
-        selectedCodes.map(codeObj => codeObj.id)
-      );
+      // if the selectedCodes list is empty, set id as 1
+      // otherwise set id as max id + 1
+      const newId = selectedCodes.length === 0
+        ? 1
+        : Math.max.apply(
+          Math,
+          selectedCodes.map(codeObj => codeObj.id)
+        ) + 1;
       // get code description from auto-suggest cache
       const codeDescriptions = this.state.cachedCodeWithDescription;
       const cachedCode = codeDescriptions.find(
@@ -142,6 +159,7 @@ class App extends Component {
       };
       selectedCodes.push(newCode);
       this.setState({ selectedCodes: selectedCodes });
+      this.setState({ recommendedCodes: null })
     } else {
       console.log("Duplicate code entered");
     }
@@ -161,7 +179,7 @@ class App extends Component {
     codes.splice(removeCodeIndex, 1);
     this.setState({ selectedCodes: codes });
 
-    this.setState({ recommendedCodes: [] });
+    this.setState({ recommendedCodes: null });
   };
 
   /**
@@ -170,6 +188,7 @@ class App extends Component {
    * combinations within the selectedCodes list.
    */
   getRecommendedCodes = () => {
+
     const arrayOfSelectedCodes = this.state.selectedCodes.map(
       code => code.code
     );
@@ -194,16 +213,25 @@ class App extends Component {
                 " Confidence: " +
                 Math.round(rule.confidence * 100) / 100
             });
-          }
+          };
         });
       });
-    }
+    };
+    let sortedAndFilteredRecommendations = [...new Set(recommendations)]
+      .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
+      .sort((a, b) => b.confidence - a.confidence)
 
-    this.setState({
-      recommendedCodes: [...new Set(recommendations)]
-        .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
-        .sort((a, b) => b.confidence - a.confidence)
-    });
+    if (sortedAndFilteredRecommendations.length === 0) {
+      this.setState({ recommendedCodes: [] })
+    } else {
+      sortedAndFilteredRecommendations.forEach(async code => {
+        let codeInfoFromAPI = await this.getCodeInfoFromAPI(code.recommendation)
+        code.description = codeInfoFromAPI.description
+        this.setState({
+          recommendedCodes: sortedAndFilteredRecommendations
+        });
+      });
+    };
   };
 
   /**
@@ -255,36 +283,43 @@ class App extends Component {
           selectCode={this.addSelectedCode}
         />
       );
-    }
+    };
 
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-
           {codeSearchBox}
 
-          <ListViewer
-            className="selectedCodes"
-            title="Selected Codes"
-            items={this.state.selectedCodes}
-            keyName="id"
-            valueName="code"
-            descriptionName="description"
-            onItemClick={this.removeSelectedCode}
-          />
-          <hr />
           <button onClick={this.getRecommendedCodes}>
             Get Reccomendations
           </button>
-          <hr />
-          <ListViewer
-            className="recommendedCodes"
-            title="Recommended Codes"
-            items={this.state.recommendedCodes}
-            valueName="recommendation"
-            tooltipValueName="reason"
-          />
+
+          <span className="Recommendations">
+            <ListViewer
+              className="selectedCodes"
+              title="Selected Codes"
+              items={this.state.selectedCodes}
+              noItemsMessage="No codes selected"
+              keyName="id"
+              valueName="code"
+              descriptionName="description"
+              removeButton={this.removeSelectedCode}
+            />
+
+            <ListViewer
+              className="recommendedCodes"
+              title="Recommended Codes"
+              items={this.state.recommendedCodes}
+              noItemsMessage={this.state.selectedCodes.length === 0
+                ? "Please select some codes before requesting recommendations"
+                : "No recommendations for the selected codes"}
+              nullItemsMessage="Press the Get Recommendations button"
+              valueName="recommendation"
+              descriptionName="description"
+              tooltipValueName="reason"
+            />
+          </span>
+
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
             className="App-link"

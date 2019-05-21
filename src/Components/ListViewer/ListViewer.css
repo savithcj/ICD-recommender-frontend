@@ -1,10 +1,12 @@
 .itemContainer {
+    display: inline-block;
     background-color: #fff;
     color: #000;
     height: 300px;
     width: 500px;
     position: relative;
     overflow: auto;
+    margin: 1%
 }
 
 .listItem {
@@ -26,18 +28,16 @@
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 250px;
-    background-color: black;
+    background-color: #000;
     color: #fff;
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
 
-    
-    /* width: 120px; */
+    font-size: 10pt;
     bottom: 100%;
     left: 50%; 
-    margin-left: -125px; /*set to half the width*/
-    font-size: 10pt;
+    margin-left: -125px; /* Use half of the width (120/2 = 60), to center the tooltip */ 
 
    
     /* Position the tooltip text - see examples below! */

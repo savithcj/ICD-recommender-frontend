@@ -7,22 +7,35 @@ import "./ListViewer.css"
  * item is clicked, it is removed from the original list
  */
 const listViewer = props => {
+    let displayItems = null;
 
-    return (
-        <div className="itemContainer">
-            <h3 className="containerTitle">
-                {props.title}
-            </h3>
-            {props.items.map(item => {
+    if (props.items === null) {
+        displayItems = <p>{props.nullItemsMessage}</p>
+    } else if (props.items.length === 0) {
+        displayItems = <p>{props.noItemsMessage}</p>
+    } else {
+        displayItems =
+            (props.items.map(item => {
                 let displayValue = props.valueName === undefined
-                    ? item
+                    ? ""
                     : item[props.valueName];
                 let descriptionValue = props.descriptionName === undefined
                     ? ""
                     : ": " + item[props.descriptionName]
                 let tooltip = props.tooltipValueName === undefined
-                    ? null
+                    ? ""
                     : <span className="tooltiptext">{item[props.tooltipValueName]}</span>
+                let removeButton = props.removeButton === undefined
+                    ? ""
+                    : 
+                    <span>
+                        <button
+                            id={item[props.keyName]}
+                            onClick={props.removeButton}>
+                            remove
+                        </button>
+                    </span>
+
                 return (
 
                     <div
@@ -30,24 +43,23 @@ const listViewer = props => {
                         key={item[props.keyName]}>
                         <div className="tooltip">
                             {displayValue + descriptionValue}
-                            <span>
-                                <button
-                                    id={item[props.keyName]}
-                                    onClick={props.onItemClick}>
-                                    remove
-                            </button>
-                            </span>
+                            {removeButton}
                             {tooltip}
                         </div>
 
-                        <hr/>
+                        <hr />
                     </div>
+                );
+            }));
+    };
 
-                    
+    return (
 
-
-                )
-            })}
+        <div className="itemContainer">
+            <h3 className="containerTitle">
+                {props.title}
+            </h3>
+            {displayItems}
         </div>
     );
 
