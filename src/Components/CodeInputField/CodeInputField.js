@@ -83,9 +83,9 @@ class CodeInputField extends React.Component {
 
   render() {
     const { id, placeholder } = this.props;
-    const { value, suggestions } = this.state;
+    const { value } = this.state;
     const inputProps = {
-      placeholder: "Enter code",
+      placeholder: placeholder,
       value,
       onChange: this.onChange
     };

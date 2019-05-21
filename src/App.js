@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
@@ -37,7 +37,7 @@ class App extends Component {
       .toUpperCase()
       .replace(/[^A-Z0-9]/gi, "");
 
-    let autoCompleteResults = [];
+    // let autoCompleteResults = [];
     let searchedCodes = Array.from(this.state.searchedCodeList);
 
     if (searchedCodes.indexOf(newValue) < 0) {
@@ -277,6 +277,7 @@ class App extends Component {
       codeSearchBox = (
         <CodeInputField
           id="input1"
+          placeholder="Enter code"
           onChange={this.codeSearchBoxChangeListener}
           data={this.state.codeAutoCompleteDisplayed}
           selectCode={this.addSelectedCode}
