@@ -9,7 +9,7 @@ import "./ListViewer.css"
 const listViewer = props => {
     let displayItems = null;
 
-    if (props.items === null) {
+    if (props.items === null || props.items === undefined) {
         displayItems = <p>{props.nullItemsMessage}</p>
     } else if (props.items.length === 0) {
         displayItems = <p>{props.noItemsMessage}</p>
@@ -37,9 +37,7 @@ const listViewer = props => {
                     </span>
 
 
-
                 return (
-
                     <div
                         className="listItem"
                         key={item[props.keyName]}>

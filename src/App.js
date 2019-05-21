@@ -91,7 +91,7 @@ class App extends Component {
    * @returns JS object with details about the code
    */
   async getCodeInfoFromAPI(code) {
-    if (code != "") {
+    if (code !== "") {
 
       const url =
         "http://localhost:8000/api/codes/" + code + "/?format=json";
@@ -130,7 +130,7 @@ class App extends Component {
   addSelectedCode = newValue => {
     console.log("Code entered: " + newValue);
 
-    let selectedCodes = this.state.selectedCodes;
+    let selectedCodes = Array.from(this.state.selectedCodes);
 
     // check if the code already exist in the selection
     const getDuplicate = selectedCodes.find(
@@ -138,14 +138,6 @@ class App extends Component {
     );
 
     if (getDuplicate === undefined) {
-      // if the selectedCodes list is empty, set id as 1
-      // otherwise set id as max id + 1
-      const newId = selectedCodes.length === 0
-        ? 1
-        : Math.max.apply(
-          Math,
-          selectedCodes.map(codeObj => codeObj.id)
-        ) + 1;
       // get code description from auto-suggest cache
       const codeDescriptions = this.state.cachedCodeWithDescription;
       const cachedCode = codeDescriptions.find(
@@ -153,15 +145,17 @@ class App extends Component {
       );
       // construct new code object
       const newCode = {
-        id: newId,
         code: cachedCode.code,
         description: cachedCode.description
       };
       selectedCodes.push(newCode);
+
+      const recommendations = this.getRecommendedCodes(selectedCodes);
       this.setState({
         selectedCodes: selectedCodes,
-        recommendedCodes: null
+        recommendedCodes: recommendations,
       });
+
     } else {
       console.log("Duplicate code entered");
     }
@@ -174,14 +168,17 @@ class App extends Component {
    */
   removeSelectedCode = event => {
     const removeCodeIndex = this.state.selectedCodes.findIndex(
-      code => code.id == event.target.id
+      code => code.code === event.target.id
     );
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
+
+    const recommendations = this.getRecommendedCodes(codes);
+
     this.setState({
       selectedCodes: codes,
-      recommendedCodes: null
+      recommendedCodes: recommendations,
     });
   };
 
@@ -200,10 +197,10 @@ class App extends Component {
    * recommendations from the API. Considers all possible
    * combinations within the selectedCodes list.
    */
-  getRecommendedCodes = () => {
+  getRecommendedCodes = (codes) => {
 
-    const arrayOfSelectedCodes = this.state.selectedCodes.map(
-      code => code.code
+    const arrayOfSelectedCodes = codes.map(
+      codeObj => codeObj.code
     );
 
     const allCombinationsOfSelectedCodes = this.getCombinations(
@@ -230,26 +227,25 @@ class App extends Component {
         });
       });
     };
+
     let sortedAndFilteredRecommendations = [...new Set(recommendations)]
       .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
       .sort((a, b) => b.confidence - a.confidence)
 
     if (sortedAndFilteredRecommendations.length === 0) {
-      this.setState({ recommendedCodes: [] })
+      return [];
     } else {
       sortedAndFilteredRecommendations.forEach(async code => {
         let codeInfoFromAPI = await this.getCodeInfoFromAPI(code.recommendation)
         code.description = codeInfoFromAPI.description
-        this.setState({
-          recommendedCodes: sortedAndFilteredRecommendations
-        });
+        return sortedAndFilteredRecommendations;
       });
     };
   };
 
   /**
    * Helper method to get all possible combinations of the items within the passed array.
-   * @param {*} arrayOfItems The array of items to get the combinations of
+   * @param {*} arrayOfItems The array of items to get the combinations from
    * @returns An array of size 2^n - 1 where n is the length of the passed array (max n limited to 15).
    * Contains all possible combinations of the items in the passed array
    */
@@ -278,7 +274,7 @@ class App extends Component {
     }
     result.shift(); //remove the first element which is always: ""
     return result;
-  }
+  };
 
   /**
    * React calls the render method asynchronously before the data is retrieved
@@ -303,17 +299,13 @@ class App extends Component {
         <header className="App-header">
           {codeSearchBox}
 
-          <button onClick={this.getRecommendedCodes}>
-            Get Reccomendations
-          </button>
-
           <span className="Recommendations">
             <ListViewer
               className="selectedCodes"
               title="Selected Codes"
               items={this.state.selectedCodes}
               noItemsMessage="No codes selected"
-              keyName="id"
+              keyName="code"
               valueName="code"
               descriptionName="description"
               removeItemButton={this.removeSelectedCode}
@@ -326,12 +318,8 @@ class App extends Component {
               className="recommendedCodes"
               title="Recommended Codes"
               items={this.state.recommendedCodes}
-              noItemsMessage={this.state.selectedCodes.length === 0
-                ? "Please select some codes before requesting recommendations"
-                : "No recommendations for the selected codes"}
-              nullItemsMessage={this.state.selectedCodes.length === 0
-                ? "Select some codes and Press the Get Recommendations button"
-                : "Selection modified. Press the Get Recommendations button"}
+              noItemsMessage="No recommendations for the selected codes"
+              nullItemsMessage="Select codes to get recommendations"
               valueName="recommendation"
               descriptionName="description"
               tooltipValueName="reason"
@@ -350,7 +338,7 @@ class App extends Component {
         </header>
       </div>
     );
-  }
-}
+  };
+};
 
 export default App;
