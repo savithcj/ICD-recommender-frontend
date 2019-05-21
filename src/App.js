@@ -98,7 +98,6 @@ class App extends Component {
 
       const response = await fetch(url);
       return await response.json();
-
     };
   };
 
@@ -127,7 +126,7 @@ class App extends Component {
    * Called upon by CodeInputField when an item is selected.
    * Append code to the App state.
    */
-  addSelectedCode = newValue => {
+  addSelectedCode = async newValue => {
     console.log("Code entered: " + newValue);
 
     let selectedCodes = [...this.state.selectedCodes];
@@ -150,7 +149,7 @@ class App extends Component {
       };
       selectedCodes.push(newCode);
 
-      const recommendations = this.getRecommendedCodes(selectedCodes);
+      const recommendations = await this.getRecommendedCodes(selectedCodes);
       this.setState({
         selectedCodes: selectedCodes,
         recommendedCodes: recommendations,
@@ -166,7 +165,7 @@ class App extends Component {
    * item from the selectedCode list. Removes the code with a
    * matching ID from the list
    */
-  removeSelectedCode = event => {
+  removeSelectedCode = async event => {
     const removeCodeIndex = this.state.selectedCodes.findIndex(
       code => code.code === event.target.id
     );
@@ -174,7 +173,7 @@ class App extends Component {
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
 
-    const recommendations = this.getRecommendedCodes(codes);
+    const recommendations = await this.getRecommendedCodes(codes);
 
     this.setState({
       selectedCodes: codes,
@@ -193,85 +192,45 @@ class App extends Component {
   };
 
   /**
-   * Updates the recommendedCodes list in the state with the
-   * recommendations from the API. Considers all possible
-   * combinations within the selectedCodes list.
+   * Returns a list of recommendations based on the codes within the passed 
+   * array of codes.
    */
-  getRecommendedCodes = (listOfCodeObjects) => {
+  getRecommendedCodes = async (listOfCodeObjects) => {
 
-    const arrayOfSelectedCodes = listOfCodeObjects.map(
-      codeObj => codeObj.code
-    );
+    const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
-    const allCombinationsOfSelectedCodes = this.getCombinations(
-      arrayOfSelectedCodes
-    );
+    if (stringOfCodes !== "") {
+      const url =
+        "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
 
-    let recommendations = [];
+      const response = await fetch(url);
+      const json = await response.json();
 
-    if (this.rules !== undefined) {
-      allCombinationsOfSelectedCodes.forEach(code => {
-        this.rules.forEach(rule => {
-          if (rule.lhs === code) {
-            recommendations.push({
-              recommendation: rule.rhs,
-              confidence: rule.confidence,
-              reason:
-                "Recommended since " +
-                rule.lhs +
-                " selected." +
-                " Confidence: " +
-                Math.round(rule.confidence * 1000) / 1000
-            });
-          };
-        });
+      json.forEach(codeObj => {
+        codeObj.reason = "Recommended since " +
+          codeObj.lhs +
+          " selected." +
+          " Confidence: " +
+          Math.round(codeObj.confidence * 1000) / 1000
       });
+      return json;
     };
-
-    let sortedAndFilteredRecommendations = [...new Set(recommendations)]
-      .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
-      .sort((a, b) => b.confidence - a.confidence)
-
-    sortedAndFilteredRecommendations.forEach(code => {
-      let codeInfoFromAPI = this.getCodeInfoFromAPI(code.recommendation)
-      code.description = codeInfoFromAPI.description
-    });
-
-    return sortedAndFilteredRecommendations;
   };
 
-
   /**
-   * Helper method to get all possible combinations of the items within the passed array.
-   * @param {*} arrayOfItems The array of items to get the combinations from
-   * @returns An array of size 2^n - 1 where n is the length of the passed array (max n limited to 15).
-   * Contains all possible combinations of the items in the passed array
+   * Helper method to convert the code objects within the passed array
+   * to one string with comma separated codes. 
+   * @param {*} listOfCodeObjects Array of code objects
+   * @returns A comma separated string version of the array of codes
    */
-  getCombinations(arrayOfItems) {
-    //taken from:https://js-algorithms.tutorialhorizon.com/2015/10/23/combinations-of-an-array/
+  getStringFromListOfCodes(listOfCodeObjects) {
+    let stringOfCodes = ""
+    listOfCodeObjects.forEach(codeObj => {
+      stringOfCodes += codeObj.code + ",";
+    });
 
-    let i, j, temp;
-    let result = [];
-    //only find the combinations of the first 15 items (32767 max possible combinations).
-    let arrLen = arrayOfItems.length < 15 ? arrayOfItems.length : 15;
-    let power = Math.pow;
-    let combinations = power(2, arrLen);
-
-    // Time & Space Complexity O (n * 2^n)
-
-    for (i = 0; i < combinations; i++) {
-      temp = "";
-
-      for (j = 0; j < arrLen; j++) {
-        // & is bitwise AND
-        if (i & power(2, j)) {
-          temp += arrayOfItems[j] + ",";
-        }
-      }
-      result.push(temp.slice(0, -1)); //remove the last comma
-    }
-    result.shift(); //remove the first element which is always: ""
-    return result;
+    //slice method used to remove the last comma
+    return stringOfCodes.slice(0, -1);
   };
 
   /**
@@ -318,8 +277,8 @@ class App extends Component {
               items={this.state.recommendedCodes}
               noItemsMessage="No recommendations for the selected codes"
               nullItemsMessage="Select codes to get recommendations"
-              valueName="recommendation"
-              // descriptionName="description"
+              valueName="rhs"
+              descriptionName="description"
               tooltipValueName="reason"
             />
           </span>
