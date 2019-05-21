@@ -210,7 +210,11 @@ class App extends Component {
           codeObj.lhs +
           " selected." +
           " Confidence: " +
-          Math.round(codeObj.confidence * 1000) / 1000;
+          Math.round(codeObj.confidence * 1000) / 1000 +
+          " for ages: " +
+          codeObj.min_age +
+          "-" +
+          codeObj.max_age;
       });
       return json;
     }
