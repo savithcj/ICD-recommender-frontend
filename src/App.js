@@ -25,7 +25,7 @@ class App extends Component {
     fetch("http://localhost:8000/api/rules/")
       .then(response => response.json())
       .then(result => (this.rules = result));
-  };
+  }
 
   /**
    * Required for code searchbox Auto-Complete
@@ -82,8 +82,8 @@ class App extends Component {
           this.appendCodeToCache(results);
           this.searchCodeInCache(code);
         });
-    };
-  };
+    }
+  }
 
   /**
    * Makes a synchronous API call to get information about the specified code
@@ -92,15 +92,12 @@ class App extends Component {
    */
   async getCodeInfoFromAPI(code) {
     if (code !== "") {
-
-      const url =
-        "http://localhost:8000/api/codes/" + code + "/?format=json";
+      const url = "http://localhost:8000/api/codes/" + code + "/?format=json";
 
       const response = await fetch(url);
       return await response.json();
-
-    };
-  };
+    }
+  }
 
   /**
    * Required for code searchbox Auto-Complete
@@ -153,9 +150,8 @@ class App extends Component {
       const recommendations = this.getRecommendedCodes(selectedCodes);
       this.setState({
         selectedCodes: selectedCodes,
-        recommendedCodes: recommendations,
+        recommendedCodes: recommendations
       });
-
     } else {
       console.log("Duplicate code entered");
     }
@@ -178,7 +174,7 @@ class App extends Component {
 
     this.setState({
       selectedCodes: codes,
-      recommendedCodes: recommendations,
+      recommendedCodes: recommendations
     });
   };
 
@@ -197,11 +193,8 @@ class App extends Component {
    * recommendations from the API. Considers all possible
    * combinations within the selectedCodes list.
    */
-  getRecommendedCodes = (listOfCodeObjects) => {
-
-    const arrayOfSelectedCodes = listOfCodeObjects.map(
-      codeObj => codeObj.code
-    );
+  getRecommendedCodes = listOfCodeObjects => {
+    const arrayOfSelectedCodes = listOfCodeObjects.map(codeObj => codeObj.code);
 
     const allCombinationsOfSelectedCodes = this.getCombinations(
       arrayOfSelectedCodes
@@ -223,23 +216,22 @@ class App extends Component {
                 " Confidence: " +
                 Math.round(rule.confidence * 1000) / 1000
             });
-          };
+          }
         });
       });
-    };
+    }
 
     let sortedAndFilteredRecommendations = [...new Set(recommendations)]
       .filter(x => !arrayOfSelectedCodes.includes(x.recommendation))
-      .sort((a, b) => b.confidence - a.confidence)
+      .sort((a, b) => b.confidence - a.confidence);
 
     sortedAndFilteredRecommendations.forEach(code => {
-      let codeInfoFromAPI = this.getCodeInfoFromAPI(code.recommendation)
-      code.description = codeInfoFromAPI.description
+      let codeInfoFromAPI = this.getCodeInfoFromAPI(code.recommendation);
+      code.description = codeInfoFromAPI.description;
     });
 
     return sortedAndFilteredRecommendations;
   };
-
 
   /**
    * Helper method to get all possible combinations of the items within the passed array.
@@ -272,7 +264,7 @@ class App extends Component {
     }
     result.shift(); //remove the first element which is always: ""
     return result;
-  };
+  }
 
   /**
    * React calls the render method asynchronously before the data is retrieved
@@ -290,7 +282,7 @@ class App extends Component {
           selectCode={this.addSelectedCode}
         />
       );
-    };
+    }
 
     return (
       <div className="App">
@@ -307,9 +299,11 @@ class App extends Component {
               valueName="code"
               descriptionName="description"
               removeItemButton={this.removeSelectedCode}
-              removeAllItemsButton={this.state.selectedCodes.length === 0
-                ? null
-                : this.resetSelectedCodes}
+              removeAllItemsButton={
+                this.state.selectedCodes.length === 0
+                  ? null
+                  : this.resetSelectedCodes
+              }
             />
 
             <ListViewer
@@ -336,7 +330,7 @@ class App extends Component {
         </header>
       </div>
     );
-  };
-};
+  }
+}
 
 export default App;
