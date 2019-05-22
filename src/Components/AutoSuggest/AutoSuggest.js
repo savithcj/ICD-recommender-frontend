@@ -1,10 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import Autosuggest from "react-autosuggest";
 import Autowhatever from "react-autowhatever";
-import { defaultTheme, mapToAutowhateverTheme } from "./theme";
+import { mapToAutowhateverTheme } from "./theme";
 
 const alwaysTrue = () => true;
 
+/**
+ * Extending react-autosuggest, override the render() to allow navigating
+ * the dropdown suggestion list using keyboard
+ */
 class AutoSuggest extends Autosuggest {
   render() {
     const {
@@ -137,7 +141,14 @@ class AutoSuggest extends Autosuggest {
                 );
               }
 
-              console.log(newValue);
+              console.log(
+                "newValue=" +
+                  newValue +
+                  " value=" +
+                  value +
+                  " valueBeforeUpDown=" +
+                  valueBeforeUpDown
+              );
 
               this.updateHighlightedSuggestion(
                 newHighlightedSectionIndex,
@@ -164,23 +175,34 @@ class AutoSuggest extends Autosuggest {
           case 37: {
             //left-arrow
             const highlightedSuggestion = this.getHighlightedSuggestion();
-            const targetSelection = highlightedSuggestion.code.slice(0, -1);
-            console.log(targetSelection);
+
+            if (highlightedSuggestion !== null) {
+              const targetSelection = highlightedSuggestion.code.slice(0, -1);
+              console.log(targetSelection);
+              inputProps.onChange("", { newValue: targetSelection });
+              onSuggestionsFetchRequested({
+                value: targetSelection,
+                reason: "input-focused"
+              });
+            }
             break;
           }
 
+          case 9: //tab
+            event.preventDefault();
           case 39: {
             //right-arrow
             const highlightedSuggestion = this.getHighlightedSuggestion();
-            const targetSelection = highlightedSuggestion.code;
-            console.log(targetSelection);
-            break;
-          }
-          case 9: {
-            //tab
-            const highlightedSuggestion = this.getHighlightedSuggestion();
-            const targetSelection = highlightedSuggestion.code;
-            console.log(targetSelection);
+
+            if (highlightedSuggestion !== null) {
+              const targetSelection = highlightedSuggestion.code;
+              console.log(targetSelection);
+              inputProps.onChange("", { newValue: targetSelection });
+              onSuggestionsFetchRequested({
+                value: targetSelection,
+                reason: "input-focused"
+              });
+            }
             break;
           }
 
