@@ -1,5 +1,8 @@
 import React from "react";
-import Autosuggest from "react-autosuggest";
+// import Autosuggest from "react-autosuggest";
+
+import AutoSuggest from "../AutoSuggest/AutoSuggest.js";
+
 import AutosuggestHighlightMatch from "autosuggest-highlight/match";
 import AutosuggestHighlightParse from "autosuggest-highlight/parse";
 import "./CodeInputField.css";
@@ -91,7 +94,7 @@ class CodeInputField extends React.Component {
     };
 
     return (
-      <Autosuggest
+      <AutoSuggest
         id={id}
         suggestions={this.props.data}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
