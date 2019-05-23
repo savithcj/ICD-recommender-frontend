@@ -124,7 +124,7 @@ class App extends Component {
    * Called upon by CodeInputField when an item is selected.
    * Append code to the App state.
    */
-  addSelectedCode = async newValue => {
+  addSelectedCode = newValue => {
     console.log("Code entered: " + newValue);
 
     let selectedCodes = [...this.state.selectedCodes];
@@ -147,11 +147,11 @@ class App extends Component {
       };
       selectedCodes.push(newCode);
 
-      const recommendations = await this.getRecommendedCodes(selectedCodes);
-      this.setState({
-        selectedCodes: selectedCodes,
-        recommendedCodes: recommendations
-      });
+      this.getRecommendedCodes(selectedCodes);
+      // this.setState({
+      //   selectedCodes: selectedCodes,
+      //   recommendedCodes: recommendations
+      // });
     } else {
       console.log("Duplicate code entered");
     }
@@ -162,7 +162,7 @@ class App extends Component {
    * item from the selectedCode list. Removes the code with a
    * matching ID from the list
    */
-  removeSelectedCode = async event => {
+  removeSelectedCode = event => {
     const removeCodeIndex = this.state.selectedCodes.findIndex(
       code => code.code === event.target.id
     );
@@ -170,12 +170,11 @@ class App extends Component {
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
 
-    const recommendations = await this.getRecommendedCodes(codes);
-
     this.setState({
-      selectedCodes: codes,
-      recommendedCodes: recommendations
+      selectedCodes: codes
     });
+
+    this.getRecommendedCodes(codes);
   };
 
   /**
@@ -192,7 +191,7 @@ class App extends Component {
    * Returns a list of recommendations based on the codes within the passed
    * array of codes.
    */
-  getRecommendedCodes = async listOfCodeObjects => {
+  getRecommendedCodes = listOfCodeObjects => {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
     if (stringOfCodes !== "") {
@@ -201,22 +200,34 @@ class App extends Component {
         stringOfCodes +
         "/?format=json";
 
-      const response = await fetch(url);
-      const json = await response.json();
-
-      json.forEach(codeObj => {
-        codeObj.reason =
-          "Recommended since " +
-          codeObj.lhs +
-          " selected." +
-          " Confidence: " +
-          Math.round(codeObj.confidence * 1000) / 1000 +
-          " for ages: " +
-          codeObj.min_age +
-          "-" +
-          codeObj.max_age;
+      this.setState({
+        selectedCodes: listOfCodeObjects,
+        recommendedCodes: 1
       });
-      return json;
+
+      const response = fetch(url)
+        .then(response => response.json())
+        .then(results => {
+          results.forEach(codeObj => {
+            codeObj.reason =
+              "Recommended since " +
+              codeObj.lhs +
+              " selected." +
+              " Confidence: " +
+              Math.round(codeObj.confidence * 1000) / 1000 +
+              " for ages: " +
+              codeObj.min_age +
+              "-" +
+              codeObj.max_age;
+          });
+
+          this.setState({
+            selectedCodes: listOfCodeObjects,
+            recommendedCodes: results
+          });
+        });
+    } else {
+      this.setState({ recommendedCodes: null });
     }
   };
 
@@ -283,6 +294,7 @@ class App extends Component {
               items={this.state.recommendedCodes}
               noItemsMessage="No recommendations for the selected codes"
               nullItemsMessage="Select codes to get recommendations"
+              customMessage="loading..."
               valueName="rhs"
               descriptionName="description"
               tooltipValueName="reason"
