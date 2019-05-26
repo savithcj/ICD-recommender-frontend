@@ -1,12 +1,21 @@
 import React, { Component } from "react";
+import { WidthProvider, Responsive } from "react-grid-layout";
 // import logo from "./logo.svg";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 import "./App.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLS("layouts") || {};
+
 class App extends Component {
   state = {
+    ////// React Grid Layout
+    layouts: JSON.parse(JSON.stringify(originalLayouts)),
+
     ////// Search Box Auto-Complete Feature
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
     searchedCodeList: {}, // list of code searched via API
@@ -17,15 +26,6 @@ class App extends Component {
     selectedCodes: [],
     recommendedCodes: null //list of recommended codes based on the selected codes
   };
-
-  constructor(props) {
-    super(props);
-    //set of all rules. Retrived from the API for now...
-    //TODO: Change the fetch perform a synchronous API call
-    fetch("http://localhost:8000/api/rules/")
-      .then(response => response.json())
-      .then(result => (this.rules = result));
-  }
 
   /**
    * Required for code searchbox Auto-Complete
@@ -247,6 +247,23 @@ class App extends Component {
     return stringOfCodes.slice(0, -1);
   }
 
+  static get defaultProps() {
+    return {
+      className: "layout",
+      cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+      rowHeight: 30
+    };
+  }
+
+  resetLayout() {
+    this.setState({ layouts: {} });
+  }
+
+  onLayoutChange(layout, layouts) {
+    saveToLS("layouts", layouts);
+    this.setState({ layouts });
+  }
+
   /**
    * React calls the render method asynchronously before the data is retrieved
    * from the API call. The following if statement is needed make sure that the
@@ -269,37 +286,50 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          {codeSearchBox}
-
-          <span className="Recommendations">
-            <ListViewer
-              className="selectedCodes"
-              title="Selected Codes"
-              items={this.state.selectedCodes}
-              noItemsMessage="No codes selected"
-              keyName="code"
-              valueName="code"
-              descriptionName="description"
-              removeItemButton={this.removeSelectedCode}
-              removeAllItemsButton={
-                this.state.selectedCodes.length === 0
-                  ? null
-                  : this.resetSelectedCodes
-              }
-            />
-
-            <ListViewer
-              className="recommendedCodes"
-              title="Recommended Codes"
-              items={this.state.recommendedCodes}
-              noItemsMessage="No recommendations for the selected codes"
-              nullItemsMessage="Select codes to get recommendations"
-              customMessage="loading..."
-              valueName="rhs"
-              descriptionName="description"
-              tooltipValueName="reason"
-            />
-          </span>
+          <ResponsiveReactGridLayout
+            className="layout"
+            onLayoutChange={this.onLayoutChange}
+            rowHeight={30}
+            layouts={this.state.layouts}
+            draggableCancel="input,textarea"
+            onLayoutChange={(layout, layouts) =>
+              this.onLayoutChange(layout, layouts)
+            }
+          >
+            <div key="1" data-grid={{ x: 0, y: 0, w: 3, h: 5 }}>
+              {codeSearchBox}
+            </div>
+            <div key="2" data-grid={{ x: 0, y: 5, w: 6, h: 5 }}>
+              <ListViewer
+                className="selectedCodes"
+                title="Selected Codes"
+                items={this.state.selectedCodes}
+                noItemsMessage="No codes selected"
+                keyName="code"
+                valueName="code"
+                descriptionName="description"
+                removeItemButton={this.removeSelectedCode}
+                removeAllItemsButton={
+                  this.state.selectedCodes.length === 0
+                    ? null
+                    : this.resetSelectedCodes
+                }
+              />
+            </div>
+            <div key="3" data-grid={{ x: 0, y: 10, w: 6, h: 5 }}>
+              <ListViewer
+                className="recommendedCodes"
+                title="Recommended Codes"
+                items={this.state.recommendedCodes}
+                noItemsMessage="No recommendations for the selected codes"
+                nullItemsMessage="Select codes to get recommendations"
+                customMessage="loading..."
+                valueName="rhs"
+                descriptionName="description"
+                tooltipValueName="reason"
+              />
+            </div>
+          </ResponsiveReactGridLayout>
 
           <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
@@ -312,6 +342,75 @@ class App extends Component {
           </a>
         </header>
       </div>
+
+      // <div className="App">
+      //   <header className="App-header">
+      //     {codeSearchBox}
+
+      //     <span className="Recommendations">
+      // <ListViewer
+      //   className="selectedCodes"
+      //   title="Selected Codes"
+      //   items={this.state.selectedCodes}
+      //   noItemsMessage="No codes selected"
+      //   keyName="code"
+      //   valueName="code"
+      //   descriptionName="description"
+      //   removeItemButton={this.removeSelectedCode}
+      //   removeAllItemsButton={
+      //     this.state.selectedCodes.length === 0
+      //       ? null
+      //       : this.resetSelectedCodes
+      //   }
+      // />
+
+      // <ListViewer
+      //   className="recommendedCodes"
+      //   title="Recommended Codes"
+      //   items={this.state.recommendedCodes}
+      //   noItemsMessage="No recommendations for the selected codes"
+      //   nullItemsMessage="Select codes to get recommendations"
+      //   customMessage="loading..."
+      //   valueName="rhs"
+      //   descriptionName="description"
+      //   tooltipValueName="reason"
+      // />
+      //     </span>
+
+      // <p>ICD-10 Code Usage Insight and Suggestion</p>
+      // <a
+      //   className="App-link"
+      //   href="https://cumming.ucalgary.ca/centres/centre-health-informatics"
+      //   target="_blank"
+      //   rel="noopener noreferrer"
+      // >
+      //   Centre for Health Informatics
+      // </a>
+      //   </header>
+      // </div>
+    );
+  }
+}
+
+function getFromLS(key) {
+  let ls = {};
+  if (global.localStorage) {
+    try {
+      ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
+    } catch (e) {
+      /*Ignore*/
+    }
+  }
+  return ls[key];
+}
+
+function saveToLS(key, value) {
+  if (global.localStorage) {
+    global.localStorage.setItem(
+      "rgl-8",
+      JSON.stringify({
+        [key]: value
+      })
     );
   }
 }
