@@ -86,20 +86,6 @@ class App extends Component {
   }
 
   /**
-   * Makes a synchronous API call to get information about the specified code
-   * @param {*} code The code to get information about
-   * @returns JS object with details about the code
-   */
-  async getCodeInfoFromAPI(code) {
-    if (code !== "") {
-      const url = "http://localhost:8000/api/codes/" + code + "/?format=json";
-
-      const response = await fetch(url);
-      return await response.json();
-    }
-  }
-
-  /**
    * Required for code searchbox Auto-Complete
    * Cache code suggestion results from API call to state for repeated quiries
    * Updates the cachedCodeList and cachedCodeWithDescription in App.state
@@ -164,7 +150,7 @@ class App extends Component {
    */
   removeSelectedCode = event => {
     const removeCodeIndex = this.state.selectedCodes.findIndex(
-      code => code.code === event.target.id
+      codeObj => codeObj.code === event.target.id
     );
 
     const codes = [...this.state.selectedCodes];
