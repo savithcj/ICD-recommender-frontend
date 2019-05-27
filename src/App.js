@@ -26,7 +26,9 @@ class App extends Component {
 
     ////// Code Selection Feature
     selectedCodes: [],
-    recommendedCodes: null //list of recommended codes based on the selected codes
+    recommendedCodes: null, //list of recommended codes based on the selected codes
+
+    isLayoutModifiable: false
   };
 
   /**
@@ -193,7 +195,7 @@ class App extends Component {
         recommendedCodes: 1
       });
 
-      const response = fetch(url)
+      fetch(url)
         .then(response => response.json())
         .then(results => {
           results.forEach(codeObj => {
@@ -252,6 +254,11 @@ class App extends Component {
     this.setState({ layouts });
   }
 
+  handleLayoutModifierButton = () => {
+    const layoutModifiable = this.state.isLayoutModifiable;
+    this.setState({ isLayoutModifiable: !layoutModifiable });
+  };
+
   /**
    * React calls the render method asynchronously before the data is retrieved
    * from the API call. The following if statement is needed make sure that the
@@ -274,9 +281,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <div>
+          {/* <div>
             <TreeViewer id="1337" />
-          </div>
+          </div> */}
           <div>
             <ResponsiveReactGridLayout
               className="layout"
@@ -284,12 +291,23 @@ class App extends Component {
               rowHeight={30}
               layouts={this.state.layouts}
               draggableCancel="input,textarea"
-              isDraggable={true}
-              isResizable={true}
+              isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
+              isResizable={this.state.isLayoutModifiable} //if a button is pressed
               onLayoutChange={(layout, layouts) =>
                 this.onLayoutChange(layout, layouts)
               }
             >
+              <div
+                key="0"
+                data-grid={{
+                  x: 0,
+                  y: 8,
+                  w: 2,
+                  h: 8
+                }}
+              >
+                <TreeViewer id="1337" />
+              </div>
               <div
                 key="1"
                 data-grid={{
@@ -304,7 +322,15 @@ class App extends Component {
               >
                 {codeSearchBox}
               </div>
-              <div key="2" data-grid={{ x: 0, y: 8, w: 2, h: 8 }}>
+              <div
+                key="2"
+                data-grid={{
+                  x: 0,
+                  y: 8,
+                  w: 2,
+                  h: 8
+                }}
+              >
                 <ListViewer
                   className="selectedCodes"
                   title="Selected Codes"
@@ -337,7 +363,7 @@ class App extends Component {
             </ResponsiveReactGridLayout>
           </div>
 
-          {/* <p>ICD-10 Code Usage Insight and Suggestion</p>
+          <p>ICD-10 Code Usage Insight and Suggestion</p>
           <a
             className="App-link"
             href="https://cumming.ucalgary.ca/centres/centre-health-informatics"
@@ -345,7 +371,10 @@ class App extends Component {
             rel="noopener noreferrer"
           >
             Centre for Health Informatics
-          </a> */}
+          </a>
+          <button onClick={this.handleLayoutModifierButton}>
+            Modify Layout
+          </button>
         </header>
       </div>
     );
