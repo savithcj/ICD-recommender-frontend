@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import "./TreeViewer.css";
 
 class TreeViewer extends Component {
   constructor() {
     super();
     this.duration = 500;
-    this.height = 700;
-    this.width = 700;
+    this.height = 400;
+    this.width = 400;
     this.cRadius = 20;
     this.padding = 0.1;
     this.vPadding = this.height * this.padding;

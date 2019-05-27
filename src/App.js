@@ -28,7 +28,7 @@ class App extends Component {
     selectedCodes: [],
     recommendedCodes: null, //list of recommended codes based on the selected codes
 
-    isLayoutModifiable: true
+    isLayoutModifiable: false
   };
 
   /**
@@ -252,6 +252,7 @@ class App extends Component {
   onLayoutChange(layout, layouts) {
     saveToLS("layouts", layouts);
     this.setState({ layouts });
+    console.log(layouts);
   }
 
   handleLayoutModifierButton = () => {
