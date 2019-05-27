@@ -37,13 +37,14 @@ class TreeViewer extends Component {
       }
     };
   }
+
   componentDidMount() {
     this.drawInitialTree();
   }
 
   drawInitialTree() {
     this.svg = d3
-      .select("div.treeVis")
+      .select("div.treeVis" + this.props.id)
       .append("svg")
       .attr("width", this.height)
       .attr("height", this.width);
@@ -78,7 +79,7 @@ class TreeViewer extends Component {
       .data(this.siblingHeights)
       .enter()
       .append("circle")
-      .attr("cx", d => this.width * 0.5)
+      .attr("cx", () => this.width * 0.5)
       .attr("cy", d => d)
       .attr("r", this.cRadius)
       .attr("fill", "green")
@@ -101,37 +102,43 @@ class TreeViewer extends Component {
 
   calcSiblingHeights(selfIndex) {
     const numSiblings = this.data.siblings.codes.length;
-    console.log("numSiblings", numSiblings);
-    this.siblingHeights = [];
-    console.log(this.siblingHeights.length);
+
+    //determine the smallest gap
     const numAbove = selfIndex;
+    const numBelow = numSiblings - selfIndex - 1;
+    let belowGap = this.height; //default to high number
+    let aboveGap = this.height;
     if (numAbove > 0) {
-      const aboveGap = (this.height / 2.0 - this.vPadding) / numAbove;
+      aboveGap = (this.height / 2.0 - this.vPadding) / numAbove;
+    }
+    if (numBelow > 0) {
+      belowGap = (this.height / 2.0 - this.vPadding) / numBelow;
+    }
+
+    const gap = belowGap < aboveGap ? belowGap : aboveGap;
+    console.log("AboveGap", aboveGap, "BelowGap", belowGap, "Gap", gap);
+
+    //start setting heights
+    this.siblingHeights = [];
+    if (numAbove > 0) {
       let i;
       for (i = 0; i < numAbove; i++) {
-        this.siblingHeights.push(aboveGap * i + this.vPadding);
+        this.siblingHeights.push(this.height / 2.0 - gap * (numAbove - i));
       }
     }
-    console.log(this.siblingHeights.length);
-    this.siblingHeights.push(this.height * 0.5);
-    console.log(this.siblingHeights.length);
-    const numBelow = numSiblings - selfIndex - 1;
+    this.siblingHeights.push(this.height / 2.0);
+
     if (numBelow > 0) {
-      const belowGap = (this.height / 2.0 - this.vPadding) / numBelow;
       let i;
       for (i = 0; i < numBelow; i++) {
-        this.siblingHeights.push(
-          this.height - belowGap * (numBelow - 1 - i) - this.vPadding
-        );
+        this.siblingHeights.push(this.height / 2.0 + gap * (i + 1));
       }
     }
-    console.log(this.siblingHeights.length, "numBelow:", numBelow);
-    console.log(this.siblingHeights);
   }
 
   render() {
     return (
-      <div id={"tree" + this.props.id} className="treeVis">
+      <div id={"tree" + this.props.id} className={"treeVis" + this.props.id}>
         <h1>TREE</h1>
       </div>
     );
