@@ -18,12 +18,7 @@ class TreeViewer2 extends Component {
     const url = "http://localhost:8000/api/family/" + "8070" + "/?format=json";
     const response = fetch(url).then(response => {
       return response.json().then(parsedJson => {
-        this.data = {
-          parent: parsedJson.parent,
-          siblings: parsedJson.siblings,
-          self: parsedJson.self,
-          children: parsedJson.children
-        };
+        this.data = parsedJson;
         this.drawInitialTree();
       });
     });
@@ -93,22 +88,17 @@ class TreeViewer2 extends Component {
   }
 
   handleSiblingClick(d, i) {
-    console.log("d.code: ", d.code);
     const url =
       "http://localhost:8000/api/family/" +
       this.data.siblings[i].code +
       "/?format=json";
     const response = fetch(url).then(response => {
       return response.json().then(parsedJson => {
-        this.data = {
-          parent: parsedJson.parent,
-          siblings: parsedJson.siblings,
-          self: parsedJson.self,
-          children: parsedJson.children
-        };
-        console.log("Children: ", this.data.children);
+        this.data = parsedJson;
       });
     });
+
+    this.removeChildren();
 
     console.log("Selected", i);
     this.calcSiblingHeights(i);
@@ -116,38 +106,75 @@ class TreeViewer2 extends Component {
       .selectAll("circle.siblingCircle")
       .data(this.siblingHeights)
       .transition()
+      .delay(this.duration)
       .duration(this.duration)
       .attr("cy", d => d);
+
+    this.addChildren();
   }
 
   calcSiblingHeights(selfIndex) {
     const numSiblings = this.data.siblings.length;
-    console.log("numSiblings", numSiblings);
-    this.siblingHeights = [];
-    console.log(this.siblingHeights.length);
+
+    //determine the smallest gap
     const numAbove = selfIndex;
+    const numBelow = numSiblings - selfIndex - 1;
+    let belowGap = this.height; //default to high number
+    let aboveGap = this.height;
     if (numAbove > 0) {
-      const aboveGap = (this.height / 2.0 - this.vPadding) / numAbove;
+      aboveGap = (this.height / 2.0 - this.vPadding) / numAbove;
+    }
+    if (numBelow > 0) {
+      belowGap = (this.height / 2.0 - this.vPadding) / numBelow;
+    }
+
+    const gap = belowGap < aboveGap ? belowGap : aboveGap;
+    console.log("AboveGap", aboveGap, "BelowGap", belowGap, "Gap", gap);
+
+    //start setting heights
+    this.siblingHeights = [];
+    if (numAbove > 0) {
       let i;
       for (i = 0; i < numAbove; i++) {
-        this.siblingHeights.push(aboveGap * i + this.vPadding);
+        this.siblingHeights.push(this.height / 2.0 - gap * (numAbove - i));
       }
     }
-    console.log(this.siblingHeights.length);
-    this.siblingHeights.push(this.height * 0.5);
-    console.log(this.siblingHeights.length);
-    const numBelow = numSiblings - selfIndex - 1;
+    this.siblingHeights.push(this.height / 2.0);
+
     if (numBelow > 0) {
-      const belowGap = (this.height / 2.0 - this.vPadding) / numBelow;
       let i;
       for (i = 0; i < numBelow; i++) {
-        this.siblingHeights.push(
-          this.height - belowGap * (numBelow - 1 - i) - this.vPadding
-        );
+        this.siblingHeights.push(this.height / 2.0 + gap * (i + 1));
       }
     }
-    console.log(this.siblingHeights.length, "numBelow:", numBelow);
-    console.log(this.siblingHeights);
+  }
+
+  removeChildren() {
+    this.svg
+      .selectAll("circle.childrenCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("cx", this.width / 2)
+      .attr("cy", this.height / 2)
+      .remove();
+  }
+
+  addChildren() {
+    this.calcChildrenHeights();
+    this.svg
+      .selectAll("circle.childrenCircle")
+      .data(this.childrenHeights)
+      .enter()
+      .append("circle")
+      .attr("cx", this.width / 2)
+      .attr("cy", this.height / 2)
+      .attr("r", this.cRadius)
+      .attr("fill", "red")
+      .attr("class", "childrenCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("cx", this.width - this.hPadding)
+      .attr("cy");
   }
 
   calcChildrenHeights() {
