@@ -12,7 +12,6 @@ class TreeViewer2 extends Component {
     this.vPadding = this.height * this.padding;
     this.hPadding = this.width * this.padding;
     this.data = {};
-    this.getDataFromAPI = this.getDataFromAPI.bind(this);
   }
 
   componentDidMount() {
@@ -23,7 +22,9 @@ class TreeViewer2 extends Component {
         this.drawInitialTree();
       });
     });*/
-    this.getDataFromAPI("8070", this.drawInitialTree);
+    this.getDataFromAPI("8070").then(() => {
+      this.drawInitialTree();
+    });
   }
 
   drawInitialTree() {
@@ -226,15 +227,14 @@ class TreeViewer2 extends Component {
     console.log("children heights", this.childrenHeights);
   }
 
-  getDataFromAPI = (code, func) => {
+  getDataFromAPI = code => {
     const url = "http://localhost:8000/api/family/" + code + "/?format=json";
-    const response = fetch(url).then(response => {
-      return response.json().then(parsedJson => {
+    return fetch(url)
+      .then(response => response.json())
+      .then(parsedJson => {
         this.data = parsedJson;
         console.log("DATA: ", this.data);
-        func();
       });
-    });
   };
 
   render() {
