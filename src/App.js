@@ -7,6 +7,7 @@ import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
+import TreeViewer from "./Components/TreeViewer/TreeViewer";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 // const originalLayouts = getFromLS("layouts") || {};
@@ -287,6 +288,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
+          <div>
+            <TreeViewer id="1337" />
+          </div>
           <div>
             <ResponsiveReactGridLayout
               className="layout"
