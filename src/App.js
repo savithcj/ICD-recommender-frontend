@@ -371,7 +371,7 @@ class App extends Component {
             Centre for Health Informatics
           </a>
           <button onClick={this.handleLayoutModifierButton}>
-            Modify Layout
+            {this.state.isLayoutModifiable === true ? "Lock" : "Modify"}
           </button>
         </header>
       </div>

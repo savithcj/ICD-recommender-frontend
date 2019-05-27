@@ -5,8 +5,8 @@ class TreeViewer extends Component {
   constructor() {
     super();
     this.duration = 500;
-    this.height = 400;
-    this.width = 400;
+    this.height = 700;
+    this.width = 700;
     this.cRadius = 20;
     this.padding = 0.1;
     this.vPadding = this.height * this.padding;
