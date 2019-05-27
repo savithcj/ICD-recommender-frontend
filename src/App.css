@@ -28,6 +28,13 @@
   /* background-color: aquamarine */
 }
 
+.grid-border {
+  border: 5px solid #61dafb;
+  border-radius: 5px;
+  height: 100%;
+  width: 100%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

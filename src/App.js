@@ -28,7 +28,7 @@ class App extends Component {
     selectedCodes: [],
     recommendedCodes: null, //list of recommended codes based on the selected codes
 
-    isLayoutModifiable: false
+    isLayoutModifiable: true
   };
 
   /**
@@ -298,6 +298,7 @@ class App extends Component {
               }
             >
               <div
+                className="grid-border"
                 key="0"
                 data-grid={{
                   x: 0,
@@ -320,45 +321,41 @@ class App extends Component {
                   minH: 7
                 }}
               >
-                {codeSearchBox}
+                <div className="grid-border">{codeSearchBox}</div>
               </div>
-              <div
-                key="2"
-                data-grid={{
-                  x: 0,
-                  y: 8,
-                  w: 2,
-                  h: 8
-                }}
-              >
-                <ListViewer
-                  className="selectedCodes"
-                  title="Selected Codes"
-                  items={this.state.selectedCodes}
-                  noItemsMessage="No codes selected"
-                  keyName="code"
-                  valueName="code"
-                  descriptionName="description"
-                  removeItemButton={this.removeSelectedCode}
-                  removeAllItemsButton={
-                    this.state.selectedCodes.length === 0
-                      ? null
-                      : this.resetSelectedCodes
-                  }
-                />
+              <div key="2" data-grid={{ x: 0, y: 8, w: 2, h: 8 }}>
+                <div className="grid-border">
+                  <ListViewer
+                    className="selectedCodes"
+                    title="Selected Codes"
+                    items={this.state.selectedCodes}
+                    noItemsMessage="No codes selected"
+                    keyName="code"
+                    valueName="code"
+                    descriptionName="description"
+                    removeItemButton={this.removeSelectedCode}
+                    removeAllItemsButton={
+                      this.state.selectedCodes.length === 0
+                        ? null
+                        : this.resetSelectedCodes
+                    }
+                  />
+                </div>
               </div>
               <div key="3" data-grid={{ x: 0, y: 10, w: 6, h: 5 }}>
-                <ListViewer
-                  className="recommendedCodes"
-                  title="Recommended Codes"
-                  items={this.state.recommendedCodes}
-                  noItemsMessage="No recommendations for the selected codes"
-                  nullItemsMessage="Select codes to get recommendations"
-                  customMessage="loading..."
-                  valueName="rhs"
-                  descriptionName="description"
-                  tooltipValueName="reason"
-                />
+                <div class="grid-border">
+                  <ListViewer
+                    className="recommendedCodes"
+                    title="Recommended Codes"
+                    items={this.state.recommendedCodes}
+                    noItemsMessage="No recommendations for the selected codes"
+                    nullItemsMessage="Select codes to get recommendations"
+                    customMessage="loading..."
+                    valueName="rhs"
+                    descriptionName="description"
+                    tooltipValueName="reason"
+                  />
+                </div>
               </div>
             </ResponsiveReactGridLayout>
           </div>
