@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import ReactDOM from "react-dom";
 
 class TreeViewer extends Component {
   constructor() {
@@ -134,6 +135,14 @@ class TreeViewer extends Component {
         this.siblingHeights.push(this.height / 2.0 + gap * (i + 1));
       }
     }
+  }
+
+  /** Called upon by parent, when the parent container is resized or moved */
+  handleResize(e) {
+    let elem = ReactDOM.findDOMNode(this).parentNode;
+    this.width = elem.offsetWidth;
+    this.height = elem.offsetHeight;
+    // Re-draw tree with new dimensions
   }
 
   render() {

@@ -289,12 +289,12 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <div>
+          {/* <div>
             <TreeViewer2 />
           </div>
           <div>
             <TreeViewer id="1337" />
-          </div>
+          </div> */}
           <div>
             <ResponsiveReactGridLayout
               className="layout"
@@ -411,11 +411,3 @@ function saveToLS(key, value) {
 }
 
 export default App;
-
-//**implement this function in TreeViewer to allow resizing of the tile */
-// handleResize(e) {
-//   let elem = ReactDOM.findDOMNode(this).parentNode;
-//   this.width = elem.offsetWidth;
-//   this.height = elem.offsetHeight;
-//   // Re-draw tree with new dimensions
-// }
