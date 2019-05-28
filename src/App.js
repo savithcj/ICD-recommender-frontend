@@ -324,10 +324,9 @@ class App extends Component {
                   x: 0,
                   y: 0,
                   w: 4,
-                  h: 11,
+                  h: 2,
                   minW: 3,
-                  maxW: 6,
-                  minH: 7
+                  minH: 2
                 }}
               >
                 <div className="grid-border">{codeSearchBox}</div>
