@@ -290,9 +290,6 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <div>
-            <TreeViewer2 id="123" />
-          </div>
-          <div>
             <ResponsiveReactGridLayout
               className="layout"
               onLayoutChange={this.onLayoutChange}
