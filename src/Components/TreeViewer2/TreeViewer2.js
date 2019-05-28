@@ -29,16 +29,18 @@ class TreeViewer2 extends Component {
       .attr("height", this.width);
 
     //draw parent node
-    this.svg
-      .append("circle")
-      .attr("cx", () => this.hPadding)
-      .attr("cy", () => this.height / 2)
-      .attr("r", this.cRadius)
-      .attr("fill", "red")
-      .attr("class", "parentCircle")
-      .on("click", (d, i) => {
-        this.handleParentClick(d, i);
-      });
+    if (this.data.parent) {
+      this.svg
+        .append("circle")
+        .attr("cx", () => this.hPadding)
+        .attr("cy", () => this.height / 2)
+        .attr("r", this.cRadius)
+        .attr("fill", "red")
+        .attr("class", "parentCircle")
+        .on("click", (d, i) => {
+          this.handleParentClick(d, i);
+        });
+    }
 
     //get position of self node within the siblings
     this.selfIndex = 0;
@@ -85,6 +87,8 @@ class TreeViewer2 extends Component {
   handleSiblingClick(d, i) {
     if (i !== this.selfIndex) {
       this.selfIndex = i;
+      console.log("self index = ", this.selfIndex);
+      console.log("DATA ", this.data);
       this.getDataFromAPI(this.data.siblings[i].code).then(() => {
         this.removeChildren();
 
@@ -104,12 +108,14 @@ class TreeViewer2 extends Component {
   }
 
   handleParentClick(d, i) {
-    this.getDataFromAPI(this.data.parent.code).then(async () => {
-      if (this.data.parent.code) {
+    if (this.data.parent) {
+      this.getDataFromAPI(this.data.parent.code).then(async () => {
+        // remove children to the current self
         this.removeChildren();
 
         this.calcChildrenHeights();
 
+        // add children circles on top of where siblings currently are
         this.svg
           .selectAll("childrenCircle")
           .data(this.siblingHeights)
@@ -121,12 +127,14 @@ class TreeViewer2 extends Component {
           .attr("fill", "red")
           .attr("class", "childrenCircle")
           .on("click", (d, i) => {
-            this.handleChildrenClick(d, i); // my react method
+            this.handleChildrenClick(d, i);
           });
 
+        // remove sibling circles
         this.svg.selectAll("circle.siblingCircle").remove();
 
         await this.sleep(1.1 * this.duration);
+        // transition children circles from sibling spots to children spots
         this.svg
           .selectAll("circle.childrenCircle")
           .data(this.childrenHeights)
@@ -135,6 +143,7 @@ class TreeViewer2 extends Component {
           .attr("cx", () => this.width - this.hPadding)
           .attr("cy", d => d);
 
+        // transition old parent to self position
         this.svg
           .selectAll("circle.parentCircle")
           .transition()
@@ -142,6 +151,7 @@ class TreeViewer2 extends Component {
 
         await this.sleep(1.1 * this.duration);
 
+        // adding temp circle at self position
         this.svg
           .append("circle")
           .attr("cx", () => this.width / 2)
@@ -151,8 +161,10 @@ class TreeViewer2 extends Component {
           .attr("class", "tempCircle");
 
         this.selfIndex = this.findIndex();
+        // remove parent circle
         this.svg.selectAll("circle.parentCircle").remove();
         this.calcSiblingHeights(this.selfIndex);
+        // spawn sibling circles from self
         this.svg
           .selectAll("circle.siblingCircle")
           .data(this.siblingHeights)
@@ -170,27 +182,127 @@ class TreeViewer2 extends Component {
           .duration(this.duration)
           .attr("cy", d => d);
 
+        // remove temp circle
         this.svg.selectAll("circle.tempCircle").remove();
 
-        this.svg
-          .append("circle")
-          .attr("cx", this.width / 2)
-          .attr("cy", this.height / 2)
-          .attr("r", this.cRadius)
-          .attr("fill", "red")
-          .attr("class", "siblingCircle")
-          .on("click", (d, i) => {
-            this.handleParentClick(d, i);
-          })
-          .transition()
-          .duration(this.duration)
-          .attr("cx", this.hPadding);
-      }
-    });
+        // spawn parent circle from new self
+        if (this.data.parent) {
+          this.svg
+            .append("circle")
+            .attr("cx", this.width / 2)
+            .attr("cy", this.height / 2)
+            .attr("r", this.cRadius)
+            .attr("fill", "red")
+            .attr("class", "parentCircle")
+            .on("click", (d, i) => {
+              this.handleParentClick(d, i);
+            })
+            .transition()
+            .duration(this.duration)
+            .attr("cx", this.hPadding);
+        }
+      });
+    }
   }
 
   handleChildrenClick(d, i) {
-    console.log("child clicked on");
+    this.getDataFromAPI(this.data.children[i].code).then(async () => {
+      // add temp circle at self position
+      this.svg
+        .append("circle")
+        .attr("cx", () => this.width / 2)
+        .attr("cy", () => this.height / 2)
+        .attr("r", this.cRadius)
+        .attr("fill", "red")
+        .attr("class", "tempCircle");
+
+      // move all siblings to center, then remove
+      this.svg
+        .selectAll("circle.siblingCircle")
+        .transition()
+        .duration(this.duration)
+        .attr("cx", this.width / 2)
+        .attr("cy", this.height / 2)
+        .remove();
+
+      // move parent to center, then remove
+      this.svg
+        .selectAll("circle.parentCircle")
+        .transition()
+        .duration(this.duration)
+        .attr("cx", this.width / 2)
+        .attr("cy", this.height / 2)
+        .remove();
+
+      await this.sleep(1.1 * this.duration);
+      // add parent circle at center and transition to parent spot
+      this.svg
+        .append("circle")
+        .attr("cx", this.width / 2)
+        .attr("cy", this.height / 2)
+        .attr("r", this.cRadius)
+        .attr("fill", "red")
+        .attr("class", "parentCircle")
+        .on("click", (d, i) => {
+          this.handleParentClick(d, i);
+        })
+        .transition()
+        .duration(this.duration)
+        .attr("cx", this.hPadding);
+
+      // remove temp circle
+      this.svg.selectAll("circle.tempCircle").remove();
+
+      console.log("data", this.data);
+      this.calcSiblingHeights(i);
+      // transition children to sibling spots
+      console.log("sibling heights", this.siblingHeights);
+      this.svg
+        .selectAll("circle.childrenCircle")
+        .data(this.siblingHeights)
+        .transition()
+        .duration(this.duration)
+        .attr("cx", () => this.width / 2)
+        .attr("cy", d => d);
+
+      await this.sleep(1.1 * this.duration);
+
+      // add sibling circles
+      this.svg
+        .selectAll("circle.siblingCircle")
+        .data(this.siblingHeights)
+        .enter()
+        .append("circle")
+        .attr("cx", this.width / 2)
+        .attr("cy", d => d)
+        .attr("r", this.cRadius)
+        .attr("fill", "red")
+        .attr("class", "siblingCircle")
+        .on("click", (d, i) => {
+          this.handleSiblingClick(d, i);
+        });
+      // remove children circles in sibling circle spots
+      this.svg.selectAll("circle.childrenCircle").remove();
+
+      this.calcChildrenHeights();
+      this.svg
+        .selectAll("circle.childrenCircle")
+        .data(this.childrenHeights)
+        .enter()
+        .append("circle")
+        .attr("cx", this.width / 2)
+        .attr("cy", this.height / 2)
+        .attr("r", this.cRadius)
+        .attr("fill", "red")
+        .attr("class", "childrenCircle")
+        .on("click", (d, i) => {
+          this.handleChildrenClick(d, i);
+        })
+        .transition()
+        .duration(this.duration)
+        .attr("cx", () => this.width - this.hPadding)
+        .attr("cy", d => d);
+    });
   }
 
   calcSiblingHeights(selfIndex) {

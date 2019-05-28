@@ -289,12 +289,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          {/* <div>
-            <TreeViewer2 />
-          </div>
           <div>
-            <TreeViewer id="1337" />
-          </div> */}
+            <TreeViewer2 id="123" />
+          </div>
           <div>
             <ResponsiveReactGridLayout
               className="layout"
