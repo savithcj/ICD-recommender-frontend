@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import ReactDOM from "react-dom";
 
 class TreeViewer extends Component {
   constructor() {
     super();
     this.duration = 500;
-    this.height = 700;
-    this.width = 700;
+    this.height = 400;
+    this.width = 400;
     this.cRadius = 20;
     this.padding = 0.1;
     this.vPadding = this.height * this.padding;
@@ -134,6 +135,14 @@ class TreeViewer extends Component {
         this.siblingHeights.push(this.height / 2.0 + gap * (i + 1));
       }
     }
+  }
+
+  /** Called upon by parent, when the parent container is resized or moved */
+  handleResize(e) {
+    let elem = ReactDOM.findDOMNode(this).parentNode;
+    this.width = elem.offsetWidth;
+    this.height = elem.offsetHeight;
+    // Re-draw tree with new dimensions
   }
 
   render() {

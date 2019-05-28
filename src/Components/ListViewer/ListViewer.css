@@ -2,11 +2,11 @@
   display: inline-block;
   background-color: #fff;
   color: #000;
-  height: 180px;
-  width: 700px;
+  height: 100%;
+  width: 100%;
   position: relative;
   overflow: auto;
-  margin: 1%;
+  /* margin: 1%; */
 }
 
 .listItem {
