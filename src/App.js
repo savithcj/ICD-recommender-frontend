@@ -315,20 +315,8 @@ class App extends Component {
               >
                 <TreeViewer ref={this.treeViewDiv} id="1337" />
               </div>
-              <div
-                key="1"
-                data-grid={{
-                  x: 0,
-                  y: 0,
-                  w: 4,
-                  h: 2,
-                  minW: 3,
-                  minH: 2
-                }}
-              >
-                <div className="grid-border">{codeSearchBox}</div>
-              </div>
-              <div key="2" data-grid={{ x: 0, y: 11, w: 4, h: 10 }}>
+
+              <div key="1" data-grid={{ x: 0, y: 11, w: 4, h: 10 }}>
                 <div className="grid-border">
                   <ListViewer
                     className="selectedCodes"
@@ -347,7 +335,8 @@ class App extends Component {
                   />
                 </div>
               </div>
-              <div key="3" data-grid={{ x: 4, y: 0, w: 4, h: 7 }}>
+
+              <div key="2" data-grid={{ x: 4, y: 0, w: 4, h: 7 }}>
                 <div className="grid-border">
                   <ListViewer
                     className="recommendedCodes"
@@ -363,6 +352,20 @@ class App extends Component {
                     tooltipValueName="reason"
                   />
                 </div>
+              </div>
+
+              <div
+                key="3"
+                data-grid={{
+                  x: 0,
+                  y: 0,
+                  w: 4,
+                  h: 2,
+                  minW: 4,
+                  minH: 2
+                }}
+              >
+                <div className="grid-border">{codeSearchBox}</div>
               </div>
             </ResponsiveReactGridLayout>
           </div>
