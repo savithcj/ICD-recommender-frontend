@@ -8,7 +8,6 @@ class TreeViewer extends Component {
     this.duration = 500;
     this.cRadius = 20;
     this.padding = 0.1;
-    this.data = {};
     this.treeClass = "treeVis" + this.props.id;
   }
 
@@ -426,8 +425,14 @@ class TreeViewer extends Component {
   /** Called upon by parent, when the parent container is resized or moved */
   handleResize(e) {
     console.log("HANDLE RESIZE CALLED");
-    this.recalculateSizes();
-    this.drawInitialTree();
+    if (typeof this.data === "undefined") {
+      console.log("Resize called but no data");
+      // variable is undefined
+    } else {
+      this.recalculateSizes();
+      this.drawInitialTree();
+    }
+
     // Re-draw tree with new dimensions
   }
 

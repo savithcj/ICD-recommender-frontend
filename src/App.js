@@ -11,8 +11,8 @@ import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || {};
-// const originalLayouts = {};
+// const originalLayouts = getFromLS("layouts") || {};
+const originalLayouts = {};
 
 class App extends Component {
   constructor(props) {
