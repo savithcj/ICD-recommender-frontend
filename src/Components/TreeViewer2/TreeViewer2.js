@@ -15,12 +15,8 @@ class TreeViewer2 extends Component {
   }
 
   componentDidMount() {
-    const url = "http://localhost:8000/api/family/" + "8070" + "/?format=json";
-    const response = fetch(url).then(response => {
-      return response.json().then(parsedJson => {
-        this.data = parsedJson;
-        this.drawInitialTree();
-      });
+    this.getDataFromAPI("807").then(() => {
+      this.drawInitialTree();
     });
   }
 
@@ -39,21 +35,17 @@ class TreeViewer2 extends Component {
       .attr("cy", () => this.height / 2)
       .attr("r", this.cRadius)
       .attr("fill", "red")
-      .attr("class", "parentCircle");
+      .attr("class", "parentCircle")
+      .on("click", (d, i) => {
+        this.handleParentClick(d, i);
+      });
 
     //get position of self node within the siblings
-    let selfIndex = 0;
-    const numSiblings = this.data.siblings.length;
-    let i = 0;
-    for (i = 0; i < numSiblings; i++) {
-      if (this.data.self.code == this.data.siblings[i].code) {
-        console.log("FOUND INDEX", i);
-        selfIndex = i;
-      }
-    }
+    this.selfIndex = 0;
+    this.selfIndex = this.findIndex();
 
     //determine heights of sibling nodes
-    this.calcSiblingHeights(selfIndex);
+    this.calcSiblingHeights(this.selfIndex);
 
     console.log(this.siblingHeights);
     //add sibling circles (self is centered)
@@ -84,33 +76,121 @@ class TreeViewer2 extends Component {
       .attr("cy", d => d)
       .attr("r", this.cRadius)
       .attr("fill", "red")
-      .attr("class", "childrenCircle");
+      .attr("class", "childrenCircle")
+      .on("click", (d, i) => {
+        this.handleChildrenClick(d, i); // my react method
+      });
   }
 
   handleSiblingClick(d, i) {
-    const url =
-      "http://localhost:8000/api/family/" +
-      this.data.siblings[i].code +
-      "/?format=json";
-    const response = fetch(url).then(response => {
-      return response.json().then(parsedJson => {
-        this.data = parsedJson;
+    if (i !== this.selfIndex) {
+      this.selfIndex = i;
+      this.getDataFromAPI(this.data.siblings[i].code).then(() => {
+        this.removeChildren();
+
+        console.log("Selected", i);
+        this.calcSiblingHeights(i);
+        this.svg
+          .selectAll("circle.siblingCircle")
+          .data(this.siblingHeights)
+          .transition()
+          .delay(this.duration)
+          .duration(this.duration)
+          .attr("cy", d => d);
+
+        this.addChildren();
       });
+    }
+  }
+
+  handleParentClick(d, i) {
+    this.getDataFromAPI(this.data.parent.code).then(async () => {
+      if (this.data.parent.code) {
+        this.removeChildren();
+
+        this.calcChildrenHeights();
+
+        this.svg
+          .selectAll("childrenCircle")
+          .data(this.siblingHeights)
+          .enter()
+          .append("circle")
+          .attr("cx", () => this.width / 2)
+          .attr("cy", d => d)
+          .attr("r", this.cRadius)
+          .attr("fill", "red")
+          .attr("class", "childrenCircle")
+          .on("click", (d, i) => {
+            this.handleChildrenClick(d, i); // my react method
+          });
+
+        this.svg.selectAll("circle.siblingCircle").remove();
+
+        await this.sleep(1.1 * this.duration);
+        this.svg
+          .selectAll("circle.childrenCircle")
+          .data(this.childrenHeights)
+          .transition()
+          .duration(this.duration)
+          .attr("cx", () => this.width - this.hPadding)
+          .attr("cy", d => d);
+
+        this.svg
+          .selectAll("circle.parentCircle")
+          .transition()
+          .attr("cx", this.width / 2);
+
+        await this.sleep(1.1 * this.duration);
+
+        this.svg
+          .append("circle")
+          .attr("cx", () => this.width / 2)
+          .attr("cy", () => this.height / 2)
+          .attr("r", this.cRadius)
+          .attr("fill", "red")
+          .attr("class", "tempCircle");
+
+        this.selfIndex = this.findIndex();
+        this.svg.selectAll("circle.parentCircle").remove();
+        this.calcSiblingHeights(this.selfIndex);
+        this.svg
+          .selectAll("circle.siblingCircle")
+          .data(this.siblingHeights)
+          .enter()
+          .append("circle")
+          .attr("cx", this.width / 2)
+          .attr("cy", this.height / 2)
+          .attr("r", this.cRadius)
+          .attr("fill", "red")
+          .attr("class", "siblingCircle")
+          .on("click", (d, i) => {
+            this.handleSiblingClick(d, i);
+          })
+          .transition()
+          .duration(this.duration)
+          .attr("cy", d => d);
+
+        this.svg.selectAll("circle.tempCircle").remove();
+
+        this.svg
+          .append("circle")
+          .attr("cx", this.width / 2)
+          .attr("cy", this.height / 2)
+          .attr("r", this.cRadius)
+          .attr("fill", "red")
+          .attr("class", "siblingCircle")
+          .on("click", (d, i) => {
+            this.handleParentClick(d, i);
+          })
+          .transition()
+          .duration(this.duration)
+          .attr("cx", this.hPadding);
+      }
     });
+  }
 
-    this.removeChildren();
-
-    console.log("Selected", i);
-    this.calcSiblingHeights(i);
-    this.svg
-      .selectAll("circle.siblingCircle")
-      .data(this.siblingHeights)
-      .transition()
-      .delay(this.duration)
-      .duration(this.duration)
-      .attr("cy", d => d);
-
-    this.addChildren();
+  handleChildrenClick(d, i) {
+    console.log("child clicked on");
   }
 
   calcSiblingHeights(selfIndex) {
@@ -159,7 +239,12 @@ class TreeViewer2 extends Component {
       .remove();
   }
 
-  addChildren() {
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async addChildren() {
+    await this.sleep(2 * this.duration);
     this.calcChildrenHeights();
     this.svg
       .selectAll("circle.childrenCircle")
@@ -171,19 +256,21 @@ class TreeViewer2 extends Component {
       .attr("r", this.cRadius)
       .attr("fill", "red")
       .attr("class", "childrenCircle")
+      .on("click", (d, i) => {
+        this.handleChildrenClick(d, i); // my react method
+      })
       .transition()
       .duration(this.duration)
       .attr("cx", this.width - this.hPadding)
-      .attr("cy");
+      .attr("cy", d => d);
   }
 
   calcChildrenHeights() {
-    const heightUsed = this.height - 4 * this.vPadding;
-    console.log("CHILDREN", this.data.children);
-    const gap = heightUsed / (this.data.children.length - 1);
-    console.log("gap:", gap);
     this.childrenHeights = [];
     if (this.data.children.length > 1) {
+      const heightUsed = this.height - 4 * this.vPadding;
+      const gap = heightUsed / (this.data.children.length - 1);
+      console.log("gap:", gap);
       let currentHeight = 2 * this.vPadding;
       for (let i = 0; i < this.data.children.length; i++) {
         this.childrenHeights.push(currentHeight);
@@ -194,6 +281,26 @@ class TreeViewer2 extends Component {
     }
     console.log("children heights", this.childrenHeights);
   }
+
+  findIndex() {
+    const numSiblings = this.data.siblings.length;
+    let i = 0;
+    for (i = 0; i < numSiblings; i++) {
+      if (this.data.self.code === this.data.siblings[i].code) {
+        console.log("FOUND INDEX", i);
+        return i;
+      }
+    }
+  }
+
+  getDataFromAPI = code => {
+    const url = "http://localhost:8000/api/family/" + code + "/?format=json";
+    return fetch(url)
+      .then(response => response.json())
+      .then(parsedJson => {
+        this.data = parsedJson;
+      });
+  };
 
   render() {
     return (
