@@ -362,6 +362,8 @@ class App extends Component {
                     customMessage="loading..."
                     valueName="rhs"
                     descriptionName="description"
+                    acceptItemButton={() => {}}
+                    removeItemButton={() => {}}
                     tooltipValueName="reason"
                   />
                 </div>
