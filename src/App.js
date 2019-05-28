@@ -11,8 +11,8 @@ import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-// const originalLayouts = getFromLS("layouts") || {};
-const originalLayouts = {};
+const originalLayouts = getFromLS("layouts") || {};
+// const originalLayouts = {};
 
 class App extends Component {
   constructor(props) {
@@ -304,8 +304,8 @@ class App extends Component {
                 className="grid-border"
                 key="0"
                 data-grid={{
-                  x: 4,
-                  y: 7,
+                  x: 0,
+                  y: 19,
                   w: 4,
                   h: 14
                 }}
@@ -313,7 +313,7 @@ class App extends Component {
                 <TreeViewer ref={this.treeViewDiv} id="1337" />
               </div>
 
-              <div key="1" data-grid={{ x: 0, y: 11, w: 4, h: 10 }}>
+              <div key="1" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
                 <div className="grid-border">
                   <ListViewer
                     className="selectedCodes"
@@ -333,7 +333,7 @@ class App extends Component {
                 </div>
               </div>
 
-              <div key="2" data-grid={{ x: 4, y: 0, w: 4, h: 7 }}>
+              <div key="2" data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
                 <div className="grid-border">
                   <ListViewer
                     className="recommendedCodes"

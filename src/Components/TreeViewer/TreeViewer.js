@@ -425,7 +425,7 @@ class TreeViewer extends Component {
   /** Called upon by parent, when the parent container is resized or moved */
   handleResize(e) {
     console.log("HANDLE RESIZE CALLED");
-    if (typeof this.data === "undefined") {
+    if (this.data == undefined) {
       console.log("Resize called but no data");
       // variable is undefined
     } else {
