@@ -8,12 +8,18 @@ import "react-resizable/css/styles.css";
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
+import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-// const originalLayouts = getFromLS("layouts") || {};
-const originalLayouts = {};
+const originalLayouts = getFromLS("layouts") || {};
+// const originalLayouts = {};
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.treeViewDiv = React.createRef();
+  }
+
   state = {
     ////// React Grid Layout
     layouts: JSON.parse(JSON.stringify(originalLayouts)),
@@ -249,9 +255,10 @@ class App extends Component {
     this.setState({ layouts: {} });
   }
 
-  onLayoutChange(layout, layouts) {
+  onLayoutChange(layouts) {
     saveToLS("layouts", layouts);
     this.setState({ layouts });
+    this.treeViewDiv.current.handleResize();
     console.log(layouts);
   }
 
@@ -283,6 +290,9 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           {/* <div>
+            <TreeViewer2 />
+          </div>
+          <div>
             <TreeViewer id="1337" />
           </div> */}
           <div>
@@ -294,21 +304,19 @@ class App extends Component {
               draggableCancel="input,textarea"
               isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
               isResizable={this.state.isLayoutModifiable} //if a button is pressed
-              onLayoutChange={(layout, layouts) =>
-                this.onLayoutChange(layout, layouts)
-              }
+              onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
             >
               <div
                 className="grid-border"
                 key="0"
                 data-grid={{
-                  x: 0,
-                  y: 8,
-                  w: 2,
-                  h: 8
+                  x: 4,
+                  y: 7,
+                  w: 4,
+                  h: 14
                 }}
               >
-                <TreeViewer id="1337" />
+                <TreeViewer ref={this.treeViewDiv} id="1337" />
               </div>
               <div
                 key="1"
@@ -316,7 +324,7 @@ class App extends Component {
                   x: 0,
                   y: 0,
                   w: 4,
-                  h: 7,
+                  h: 11,
                   minW: 3,
                   maxW: 6,
                   minH: 7
@@ -324,7 +332,7 @@ class App extends Component {
               >
                 <div className="grid-border">{codeSearchBox}</div>
               </div>
-              <div key="2" data-grid={{ x: 0, y: 8, w: 2, h: 8 }}>
+              <div key="2" data-grid={{ x: 0, y: 11, w: 4, h: 10 }}>
                 <div className="grid-border">
                   <ListViewer
                     className="selectedCodes"
@@ -343,8 +351,8 @@ class App extends Component {
                   />
                 </div>
               </div>
-              <div key="3" data-grid={{ x: 0, y: 10, w: 6, h: 5 }}>
-                <div class="grid-border">
+              <div key="3" data-grid={{ x: 4, y: 0, w: 4, h: 7 }}>
+                <div className="grid-border">
                   <ListViewer
                     className="recommendedCodes"
                     title="Recommended Codes"
