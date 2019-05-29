@@ -155,10 +155,10 @@ class App extends Component {
 
   /**
    * Called when an event is fired from a element containing an
-   * item from the selectedCode list. Removes the code with a
+   * item from the listViewers. Removes the code with a
    * matching ID from the list
    */
-  removeSelectedCode = event => {
+  handleRemoveSelectedCode = event => {
     const removeCodeIndex = this.state.selectedCodes.findIndex(
       codeObj => codeObj.code === event.target.id
     );
@@ -225,6 +225,42 @@ class App extends Component {
     } else {
       this.setState({ recommendedCodes: null });
     }
+  };
+
+  /**
+   *
+   */
+  handleAcceptRecommendedCode = event => {
+    //TODO: Call API function to increase code accepted number
+    console.log(this.state.recommendedCodes);
+    console.log(event.currentTarget.id);
+    const acceptedCodeIndex = this.state.recommendedCodes.findIndex(
+      codeObj => codeObj.rhs === event.currentTarget.id
+    );
+    console.log(acceptedCodeIndex);
+
+    const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
+
+    this.addSelectedCode(acceptedCodeObject.rhs);
+
+    this.removeRecommendedCode(acceptedCodeIndex);
+  };
+
+  handleRemoveRecommendedCode = event => {
+    //TODO: Call API function to increase code rejected number
+    const rejectedCodeIndex = this.state.recommendedCodes.findIndex(
+      codeObj => codeObj.rhs === event.currentTarget.id
+    );
+    this.removeRecommendedCode(rejectedCodeIndex);
+  };
+
+  removeRecommendedCode = codeIndex => {
+    const codes = [...this.state.recommendedCodes];
+    codes.splice(codeIndex, 1);
+
+    this.setState({
+      recommendedCodes: codes
+    });
   };
 
   /**
@@ -323,7 +359,7 @@ class App extends Component {
                     keyName="code"
                     valueName="code"
                     descriptionName="description"
-                    removeItemButton={this.removeSelectedCode}
+                    removeItemButton={this.handleRemoveSelectedCode}
                     removeAllItemsButton={
                       this.state.selectedCodes.length === 0
                         ? null
@@ -342,10 +378,11 @@ class App extends Component {
                     noItemsMessage="No recommendations for the selected codes"
                     nullItemsMessage="Select codes to get recommendations"
                     customMessage="loading..."
+                    keyName="rhs"
                     valueName="rhs"
                     descriptionName="description"
-                    acceptItemButton={() => {}}
-                    removeItemButton={() => {}}
+                    acceptItemButton={this.handleAcceptRecommendedCode}
+                    removeItemButton={this.handleRemoveRecommendedCode}
                     tooltipValueName="reason"
                   />
                 </div>
