@@ -235,7 +235,7 @@ class App extends Component {
     console.log(this.state.recommendedCodes);
     console.log(event.currentTarget.id);
     const acceptedCodeIndex = this.state.recommendedCodes.findIndex(
-      codeObj => codeObj.rhs === event.currentTarget.id
+      codeObj => codeObj.id == event.currentTarget.id
     );
     console.log(acceptedCodeIndex);
 
@@ -249,7 +249,7 @@ class App extends Component {
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
     const rejectedCodeIndex = this.state.recommendedCodes.findIndex(
-      codeObj => codeObj.rhs === event.currentTarget.id
+      codeObj => codeObj.id == event.currentTarget.id
     );
     this.removeRecommendedCode(rejectedCodeIndex);
   };
@@ -328,7 +328,7 @@ class App extends Component {
           <div>
             <ResponsiveReactGridLayout
               className="layout"
-              onLayoutChange={this.onLayoutChange}
+              // onLayoutChange={this.onLayoutChange}
               rowHeight={30}
               layouts={this.state.layouts}
               draggableCancel="input,textarea"
@@ -378,7 +378,7 @@ class App extends Component {
                     noItemsMessage="No recommendations for the selected codes"
                     nullItemsMessage="Select codes to get recommendations"
                     customMessage="loading..."
-                    keyName="rhs"
+                    keyName="id"
                     valueName="rhs"
                     descriptionName="description"
                     acceptItemButton={this.handleAcceptRecommendedCode}
