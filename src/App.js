@@ -86,11 +86,13 @@ class App extends Component {
       fetch(url)
         .then(response => response.json())
         .then(results => {
-          this.setState({
-            searchedCodeList: searchedCodes
-          });
-          this.appendCodeToCache(results);
-          this.searchCodeInCache(code);
+          this.setState(
+            {
+              searchedCodeList: searchedCodes
+            },
+            this.appendCodeToCache(results),
+            this.searchCodeInCache(code)
+          );
         });
     }
   }
@@ -121,8 +123,6 @@ class App extends Component {
    * Append code to the App state.
    */
   addSelectedCode = newValue => {
-    console.log("Code entered: " + newValue);
-
     let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
@@ -136,6 +136,7 @@ class App extends Component {
       const cachedCode = codeDescriptions.find(
         codeObj => codeObj.code === newValue
       );
+
       // construct new code object
       const newCode = {
         code: cachedCode.code,
@@ -232,18 +233,46 @@ class App extends Component {
    */
   handleAcceptRecommendedCode = event => {
     //TODO: Call API function to increase code accepted number
-    console.log(this.state.recommendedCodes);
-    console.log(event.currentTarget.id);
+
     const acceptedCodeIndex = this.state.recommendedCodes.findIndex(
       codeObj => codeObj.id == event.currentTarget.id
     );
-    console.log(acceptedCodeIndex);
 
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
+    const newCode = acceptedCodeObject.rhs;
 
-    this.addSelectedCode(acceptedCodeObject.rhs);
+    //
+    let searchedCodes = Array.from(this.state.searchedCodeList);
 
-    this.removeRecommendedCode(acceptedCodeIndex);
+    if (searchedCodes.indexOf(newCode) < 0) {
+      // not in cache, make API call
+      console.log("Searched code not found: " + newCode);
+
+      if (newCode !== "") {
+        const url =
+          "http://localhost:8000/api/children/" + newCode + "/?format=json";
+
+        console.log("look up code from API call: " + url);
+        let searchedCodes = Array.from(this.state.searchedCodeList);
+        searchedCodes.push(newCode);
+
+        fetch(url)
+          .then(response => response.json())
+          .then(results => {
+            this.setState(
+              {
+                searchedCodeList: searchedCodes
+              },
+              this.appendCodeToCache(results),
+              this.addSelectedCode(newCode)
+            );
+          });
+      }
+    } else {
+      this.addSelectedCode(newCode);
+
+      this.removeRecommendedCode(acceptedCodeIndex);
+    }
   };
 
   handleRemoveRecommendedCode = event => {
@@ -295,7 +324,6 @@ class App extends Component {
     saveToLS("layouts", layouts);
     this.setState({ layouts });
     this.treeViewDiv.current.handleResize();
-    console.log(layouts);
   }
 
   handleLayoutModifierButton = () => {
