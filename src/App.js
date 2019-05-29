@@ -98,11 +98,16 @@ class App extends Component {
   }
 
   /**
-   * Required for code searchbox Auto-Complete
+   *  Required for code searchbox Auto-Complete
    * Cache code suggestion results from API call to state for repeated quiries
    * Updates the cachedCodeList and cachedCodeWithDescription in App.state
+   * @param {*} results
+   * @param {*} oFunc optional function to be called at end of the method
+   * @param {*} oArg optinal argument for the optional function
    */
-  appendCodeToCache(results) {
+  appendCodeToCache(results, oFunc, oArg) {
+    console.log("1. appending code to cache:");
+    console.log(results);
     let codes = Array.from(this.state.cachedCodeList);
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
@@ -112,10 +117,13 @@ class App extends Component {
         codesWithDescript.push(results[i]);
       }
     }
-    this.setState({
-      cachedCodeList: codes,
-      cachedCodeWithDescription: codesWithDescript
-    });
+    this.setState(
+      {
+        cachedCodeList: codes,
+        cachedCodeWithDescription: codesWithDescript
+      },
+      oFunc == undefined ? () => {} : oFunc(oArg)
+    );
   }
 
   /**
@@ -123,6 +131,7 @@ class App extends Component {
    * Append code to the App state.
    */
   addSelectedCode = newValue => {
+    console.log("2. Adding code to selected: " + newValue);
     let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
@@ -133,6 +142,7 @@ class App extends Component {
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
       const codeDescriptions = this.state.cachedCodeWithDescription;
+      console.log(codeDescriptions);
       const cachedCode = codeDescriptions.find(
         codeObj => codeObj.code === newValue
       );
@@ -252,8 +262,9 @@ class App extends Component {
         const url =
           "http://localhost:8000/api/children/" + newCode + "/?format=json";
 
-        console.log("look up code from API call: " + url);
+        console.log("get code from API call: " + url);
         let searchedCodes = Array.from(this.state.searchedCodeList);
+
         searchedCodes.push(newCode);
 
         fetch(url)
@@ -263,8 +274,7 @@ class App extends Component {
               {
                 searchedCodeList: searchedCodes
               },
-              this.appendCodeToCache(results),
-              this.addSelectedCode(newCode)
+              this.appendCodeToCache(results, this.addSelectedCode, newCode)
             );
           });
       }
