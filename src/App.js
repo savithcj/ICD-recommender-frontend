@@ -106,8 +106,6 @@ class App extends Component {
    * @param {*} oArg optinal argument for the optional function
    */
   appendCodeToCache(results, oFunc, oArg) {
-    console.log("1. appending code to cache:");
-    console.log(results);
     let codes = Array.from(this.state.cachedCodeList);
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
@@ -142,7 +140,6 @@ class App extends Component {
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
       const codeDescriptions = this.state.cachedCodeWithDescription;
-      console.log(codeDescriptions);
       const cachedCode = codeDescriptions.find(
         codeObj => codeObj.code === newValue
       );
@@ -228,6 +225,8 @@ class App extends Component {
               codeObj.max_age;
           });
 
+          this.addRecommendedCodesToCachedCodes(results);
+
           this.setState({
             selectedCodes: listOfCodeObjects,
             recommendedCodes: results
@@ -237,6 +236,53 @@ class App extends Component {
       this.setState({ recommendedCodes: null });
     }
   };
+
+  addRecommendedCodesToCachedCodes(arrayOfRecommendedCodes) {
+    let searchedCodes = Array.from(this.state.searchedCodeList);
+
+    arrayOfRecommendedCodes.forEach(codeObj => {
+      const newCodes = this.findAllPrefixesOfString(codeObj.rhs);
+
+      newCodes.forEach(newCode => {
+        if (searchedCodes.indexOf(newCode) < 0) {
+          // not in cache, make API call
+          console.log("Searched code not found: " + newCode);
+
+          if (newCode !== "") {
+            const url =
+              "http://localhost:8000/api/children/" + newCode + "/?format=json";
+
+            console.log("get code from API call: " + url);
+
+            searchedCodes.push(newCode);
+
+            fetch(url)
+              .then(response => response.json())
+              .then(results => {
+                this.setState(
+                  {
+                    searchedCodeList: searchedCodes
+                  },
+                  () => {
+                    if (results.length !== 0) {
+                      this.appendCodeToCache(results);
+                    }
+                  }
+                );
+              });
+          }
+        }
+      });
+    });
+  }
+
+  findAllPrefixesOfString(str) {
+    let prefixes = [];
+    for (let i = 1; i <= str.length; i++) {
+      prefixes.push(str.substring(0, i));
+    }
+    return prefixes;
+  }
 
   /**
    *
@@ -251,38 +297,9 @@ class App extends Component {
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
     const newCode = acceptedCodeObject.rhs;
 
-    //
-    let searchedCodes = Array.from(this.state.searchedCodeList);
+    this.addSelectedCode(newCode);
 
-    if (searchedCodes.indexOf(newCode) < 0) {
-      // not in cache, make API call
-      console.log("Searched code not found: " + newCode);
-
-      if (newCode !== "") {
-        const url =
-          "http://localhost:8000/api/children/" + newCode + "/?format=json";
-
-        console.log("get code from API call: " + url);
-        let searchedCodes = Array.from(this.state.searchedCodeList);
-
-        searchedCodes.push(newCode);
-
-        fetch(url)
-          .then(response => response.json())
-          .then(results => {
-            this.setState(
-              {
-                searchedCodeList: searchedCodes
-              },
-              this.appendCodeToCache(results, this.addSelectedCode, newCode)
-            );
-          });
-      }
-    } else {
-      this.addSelectedCode(newCode);
-
-      this.removeRecommendedCode(acceptedCodeIndex);
-    }
+    this.removeRecommendedCode(acceptedCodeIndex);
   };
 
   handleRemoveRecommendedCode = event => {
