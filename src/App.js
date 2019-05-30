@@ -194,8 +194,9 @@ class App extends Component {
   /**
    * Returns a list of recommendations based on the codes within the passed
    * array of codes.
+   * @param {*} listOfCodeObjects List of the code objects to get recommendations from
    */
-  getRecommendedCodes = listOfCodeObjects => {
+  getRecommendedCodes(listOfCodeObjects) {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
     if (stringOfCodes !== "") {
@@ -235,57 +236,33 @@ class App extends Component {
     } else {
       this.setState({ recommendedCodes: null });
     }
-  };
-
-  addRecommendedCodesToCachedCodes(arrayOfRecommendedCodes) {
-    let searchedCodes = Array.from(this.state.searchedCodeList);
-
-    arrayOfRecommendedCodes.forEach(codeObj => {
-      const newCodes = this.findAllPrefixesOfString(codeObj.rhs);
-
-      newCodes.forEach(newCode => {
-        if (searchedCodes.indexOf(newCode) < 0) {
-          // not in cache, make API call
-          console.log("Searched code not found: " + newCode);
-
-          if (newCode !== "") {
-            const url =
-              "http://localhost:8000/api/children/" + newCode + "/?format=json";
-
-            console.log("get code from API call: " + url);
-
-            searchedCodes.push(newCode);
-
-            fetch(url)
-              .then(response => response.json())
-              .then(results => {
-                this.setState(
-                  {
-                    searchedCodeList: searchedCodes
-                  },
-                  () => {
-                    if (results.length !== 0) {
-                      this.appendCodeToCache(results);
-                    }
-                  }
-                );
-              });
-          }
-        }
-      });
-    });
-  }
-
-  findAllPrefixesOfString(str) {
-    let prefixes = [];
-    for (let i = 1; i <= str.length; i++) {
-      prefixes.push(str.substring(0, i));
-    }
-    return prefixes;
   }
 
   /**
-   *
+   * Function used to get the descriptions of the codes within an array
+   * and add each code to the cachedCodes list maintained in the state
+   * @param {*} arrayOfRecommendedCodes an array codes to get the descriptions
+   */
+  addRecommendedCodesToCachedCodes(arrayOfRecommendedCodes) {
+    arrayOfRecommendedCodes.forEach(codeObj => {
+      const url =
+        "http://localhost:8000/api/codeDescription/" +
+        codeObj.rhs +
+        "/?format=json";
+
+      fetch(url)
+        .then(response => response.json())
+        .then(results => {
+          this.appendCodeToCache([results]);
+        });
+    });
+  }
+
+  /**
+   * Handler method that gets called when a user accepts a recommended code.
+   * Removes the specified code from the recommended codes list and adds it
+   * to the selectedCodes list. Additionally, calls an API function to increment
+   * the accepted number of the code.
    */
   handleAcceptRecommendedCode = event => {
     //TODO: Call API function to increase code accepted number
@@ -302,6 +279,11 @@ class App extends Component {
     this.removeRecommendedCode(acceptedCodeIndex);
   };
 
+  /**
+   * Handler method that gets called when a user rejects a recommended code.
+   * Removes the specified code from the recommended codes list. Additionally,
+   * calls an API function to decrement the accepted number of the code.
+   */
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
     const rejectedCodeIndex = this.state.recommendedCodes.findIndex(
@@ -310,14 +292,19 @@ class App extends Component {
     this.removeRecommendedCode(rejectedCodeIndex);
   };
 
-  removeRecommendedCode = codeIndex => {
+  /**
+   * Helper method used to remove the specified code from the list of
+   * recommendedCodes
+   * @param {*} codeIndex Index of the code to be removed
+   */
+  removeRecommendedCode(codeIndex) {
     const codes = [...this.state.recommendedCodes];
     codes.splice(codeIndex, 1);
 
     this.setState({
       recommendedCodes: codes
     });
-  };
+  }
 
   /**
    * Helper method to convert the code objects within the passed array
