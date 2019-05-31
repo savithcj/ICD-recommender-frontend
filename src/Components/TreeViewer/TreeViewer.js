@@ -34,7 +34,6 @@ class TreeViewer extends Component {
 
   /** Called upon by parent, when the parent container is resized or moved */
   handleResize(e) {
-    console.log("HANDLE RESIZE CALLED");
     if (this.data === undefined) {
       // variable is undefined
     } else {
@@ -55,7 +54,6 @@ class TreeViewer extends Component {
 
   addInfoText() {
     let infoG = this.svg.append("g").attr("class", "infoG");
-
     this.infoText = infoG
       .append("text")
       .attr("y", this.height - this.vPadding * 0.25)
@@ -67,8 +65,16 @@ class TreeViewer extends Component {
       .style("text-anchor", "left");
   }
 
-  setInfoText(d) {
-    const codeDesc = d.code + ": " + d.description;
+  setInfoText(tier, index) {
+    let codeDesc = "";
+    if (tier === 0) {
+      codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+    } else if (tier === 1) {
+      codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+    } else if (tier === 2) {
+      codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+    }
+
     this.infoText.text(codeDesc);
   }
 
@@ -104,8 +110,7 @@ class TreeViewer extends Component {
       .attr("class", "parentG");
     parentg
       .on("mouseover", (d, i) => {
-        console.log("MOUSEOVER");
-        this.setInfoText(this.data.parent);
+        this.setInfoText(0, 0);
       })
       .on("mouseout", (d, i) => {
         this.clearInfoText();
@@ -141,6 +146,12 @@ class TreeViewer extends Component {
       .data(this.siblingHeights)
       .enter()
       .append("g")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(1, i);
+      })
+      .on("mouseout", (d, i) => {
+        this.clearInfoText();
+      })
       .attr("transform", d => {
         return "translate(" + this.width / 2 + "," + d + ")";
       })
@@ -178,6 +189,12 @@ class TreeViewer extends Component {
       .data(this.childrenHeights)
       .enter()
       .append("g")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(2, i);
+      })
+      .on("mouseout", (d, i) => {
+        this.clearInfoText();
+      })
       .attr("transform", d => {
         return "translate(" + (this.width - this.hPadding) + "," + d + ")";
       })
