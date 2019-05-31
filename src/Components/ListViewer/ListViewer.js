@@ -1,12 +1,26 @@
 import React from "react";
 import "./ListViewer.css";
+import { makeStyles } from "@material-ui/core/styles";
+
+import Button from "@material-ui/core/Button";
+
+const useStyles = makeStyles(theme => ({
+  margin: {
+    margin: theme.spacing(1)
+  },
+  input: {
+    display: "none"
+  }
+}));
 
 /**
  * This component takes a list of items and returns
  * a JSX element containing the list of items. When an
  * item is clicked, it is removed from the original list
  */
-const listViewer = props => {
+function ListViewer(props) {
+  const classes = useStyles();
+
   let displayItems = null;
 
   if (props.items === null || props.items === undefined) {
@@ -35,9 +49,15 @@ const listViewer = props => {
           ""
         ) : (
           <span>
-            <button id={item[props.keyName]} onClick={props.removeItemButton}>
+            <Button
+              size="small"
+              variant="outlined"
+              className={classes.margin}
+              id={item[props.keyName]}
+              onClick={props.removeItemButton}
+            >
               {"\u2717"} {/*unicode x mark */}
-            </button>
+            </Button>
           </span>
         );
 
@@ -46,9 +66,15 @@ const listViewer = props => {
           ""
         ) : (
           <span>
-            <button id={item[props.keyName]} onClick={props.acceptItemButton}>
+            <Button
+              size="small"
+              variant="outlined"
+              className={classes.margin}
+              id={item[props.keyName]}
+              onClick={props.acceptItemButton}
+            >
               {"\u2713"} {/*unicode check mark */}
-            </button>
+            </Button>
           </span>
         );
 
@@ -60,7 +86,6 @@ const listViewer = props => {
             {removeItemButton}
             {tooltip}
           </div>
-          <hr />
         </div>
       );
     });
@@ -85,6 +110,6 @@ const listViewer = props => {
       {displayItems}
     </div>
   );
-};
+}
 
-export default listViewer;
+export default ListViewer;
