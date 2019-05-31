@@ -62,9 +62,7 @@ class App extends Component {
    */
   searchCodeInCache(code) {
     if (code !== "") {
-      const codeAndDescription = Array.from(
-        this.state.cachedCodeWithDescription
-      );
+      const codeAndDescription = Array.from(this.state.cachedCodeWithDescription);
       console.log("look up code in cache");
       const regex = new RegExp("^" + code, "i");
       const results = codeAndDescription.filter(item => regex.test(item.code));
@@ -78,8 +76,7 @@ class App extends Component {
    */
   searchCodeViaAPI(code) {
     if (code !== "") {
-      const url =
-        "http://localhost:8000/api/children/" + code + "/?format=json";
+      const url = "http://localhost:8000/api/children/" + code + "/?format=json";
 
       console.log("look up code from API call: " + url);
       let searchedCodes = Array.from(this.state.searchedCodeList);
@@ -111,9 +108,7 @@ class App extends Component {
 
     for (let i = 0, l = results.length; i < l; i++) {
       let thisCode = results[i];
-      let codeFound = codesWithDescript.find(
-        codeObj => codeObj.code === thisCode
-      );
+      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode);
       if (codeFound === undefined) {
         codesWithDescript.push(thisCode);
       }
@@ -135,21 +130,12 @@ class App extends Component {
     let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(
-      codeObj => codeObj.code === newValue
-    );
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
-<<<<<<< HEAD
       const codeDescriptions = Array.from(this.state.cachedCodeWithDescription);
       const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newValue);
-=======
-      const codeDescriptions = this.state.cachedCodeWithDescription;
-      const cachedCode = codeDescriptions.find(
-        codeObj => codeObj.code === newValue
-      );
->>>>>>> savith
 
       // construct new code object
       const newCode = {
@@ -170,9 +156,7 @@ class App extends Component {
    * matching ID from the list
    */
   handleRemoveSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(
-      codeObj => codeObj.code === event.target.id
-    );
+    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.target.id);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
@@ -203,10 +187,7 @@ class App extends Component {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
     if (stringOfCodes !== "") {
-      const url =
-        "http://localhost:8000/api/requestRules/" +
-        stringOfCodes +
-        "/?format=json";
+      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
 
       this.setState({
         selectedCodes: listOfCodeObjects,
@@ -248,10 +229,7 @@ class App extends Component {
    */
   addRecommendedCodesToCachedCodes(arrayOfRecommendedCodes) {
     arrayOfRecommendedCodes.forEach(codeObj => {
-      const url =
-        "http://localhost:8000/api/codeDescription/" +
-        codeObj.rhs +
-        "/?format=json";
+      const url = "http://localhost:8000/api/codeDescription/" + codeObj.rhs + "/?format=json";
 
       fetch(url)
         .then(response => response.json())
@@ -270,9 +248,7 @@ class App extends Component {
   handleAcceptRecommendedCode = event => {
     //TODO: Call API function to increase code accepted number
 
-    const acceptedCodeIndex = this.state.recommendedCodes.findIndex(
-      codeObj => codeObj.id == event.currentTarget.id
-    );
+    const acceptedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
 
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
     const newCode = acceptedCodeObject.rhs;
@@ -289,9 +265,7 @@ class App extends Component {
    */
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
-    const rejectedCodeIndex = this.state.recommendedCodes.findIndex(
-      codeObj => codeObj.id == event.currentTarget.id
-    );
+    const rejectedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
     this.removeRecommendedCode(rejectedCodeIndex);
   };
 
@@ -408,11 +382,7 @@ class App extends Component {
                   valueName="code"
                   descriptionName="description"
                   removeItemButton={this.handleRemoveSelectedCode}
-                  removeAllItemsButton={
-                    this.state.selectedCodes.length === 0
-                      ? null
-                      : this.resetSelectedCodes
-                  }
+                  removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 />
               </div>
             </div>
