@@ -5,8 +5,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
-  margin: {
-    margin: theme.spacing(1)
+  button: {
+    margin: theme.spacing(1),
+    maxWidth: "30px",
+    maxHeight: "30px",
+    minWidth: "30px",
+    minHeight: "30px"
   },
   input: {
     display: "none"
@@ -52,7 +56,7 @@ function ListViewer(props) {
             <Button
               size="small"
               variant="outlined"
-              className={classes.margin}
+              className={classes.button}
               id={item[props.keyName]}
               onClick={props.removeItemButton}
             >
@@ -69,7 +73,7 @@ function ListViewer(props) {
             <Button
               size="small"
               variant="outlined"
-              className={classes.margin}
+              className={classes.button}
               id={item[props.keyName]}
               onClick={props.acceptItemButton}
             >
@@ -82,8 +86,10 @@ function ListViewer(props) {
         <div className="listItem" key={item[props.keyName]}>
           <div className="tooltip">
             {displayValue + descriptionValue}
-            {acceptItemButton}
-            {removeItemButton}
+            <span className="buttonSet">
+              {acceptItemButton}
+              {removeItemButton}
+            </span>
             {tooltip}
           </div>
         </div>
@@ -97,17 +103,17 @@ function ListViewer(props) {
       ""
     ) : (
       <span>
-        <button onClick={props.removeAllItemsButton}>remove all</button>
+        <Button color="primary" onClick={props.removeAllItemsButton}>
+          remove all
+        </Button>
       </span>
     );
 
   return (
     <div className="itemContainer">
-      <h3 className="containerTitle">
-        {props.title}
-        {removeAllItemsButton}
-      </h3>
+      <h3 className="containerTitle">{props.title}</h3>
       {displayItems}
+      <div className="footer">{removeAllItemsButton}</div>
     </div>
   );
 }

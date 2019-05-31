@@ -18,6 +18,12 @@ body {
   /* margin: 1%; */
 }
 
+.footer {
+  position: fixed;
+  top: 1%;
+  right: 3%;
+}
+
 .listItem {
   /* position: absolute; */
   width: 100%;
