@@ -9,8 +9,6 @@ import "./ListViewer.css";
 const listViewer = props => {
   let displayItems = null;
 
-  console.log(props.removeItemButton);
-
   if (props.items === null || props.items === undefined) {
     displayItems = <p>{props.nullItemsMessage}</p>;
   } else if (props.items === 1) {
