@@ -1,46 +1,81 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import ReactDOM from "react-dom";
 
 class TreeViewer2 extends Component {
-  constructor() {
-    super();
-    this.duration = 500;
-    this.height = 700;
-    this.width = 700;
+  constructor(props) {
+    super(props);
+    this.duration = 2000;
     this.cRadius = 20;
     this.padding = 0.1;
-    this.vPadding = this.height * this.padding;
-    this.hPadding = this.width * this.padding;
-    this.data = {};
+    this.treeClass = "treeVis" + this.props.id;
+
+    this.link = d3
+      .linkHorizontal()
+      .x(function(d) {
+        return d.x;
+      })
+      .y(function(d) {
+        return d.y;
+      });
   }
 
   componentDidMount() {
-    this.getDataFromAPI("807").then(() => {
+    this.height = 600;
+    this.width = 600;
+    this.vPadding = this.height * this.padding;
+    this.hPadding = this.width * this.padding;
+    this.getDataFromAPI("8070").then(() => {
       this.drawInitialTree();
     });
   }
 
-  drawInitialTree() {
-    console.log("SIBLINGS: ", this.data.siblings);
-    this.svg = d3
-      .select("div.treeVis2")
-      .append("svg")
-      .attr("width", this.height)
-      .attr("height", this.width);
+  recalculateSizes() {
+    // let elem = ReactDOM.findDOMNode(this).parentNode;
+    // this.width = elem.offsetWidth;
+    // this.height = elem.offsetHeight;
+    // this.vPadding = this.height * this.padding;
+    // this.hPadding = this.width * this.padding;
+  }
 
-    //draw parent node
-    if (this.data.parent) {
-      this.svg
-        .append("circle")
-        .attr("cx", () => this.hPadding)
-        .attr("cy", () => this.height / 2)
-        .attr("r", this.cRadius)
-        .attr("fill", "red")
-        .attr("class", "parentCircle")
-        .on("click", (d, i) => {
-          this.handleParentClick(d, i);
-        });
-    }
+  drawInitialTree() {
+    this.recalculateSizes();
+    console.log("HEIGHT:", this.height);
+    console.log("WIDTH:", this.width);
+
+    d3.select("svg").remove();
+
+    this.svg = d3
+      .select("div." + this.treeClass)
+      .append("svg")
+      .attr("width", this.width)
+      .attr("height", this.height);
+
+    // parent node ///////////////////
+    var parentg = this.svg
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+      })
+      .attr("class", "parentG");
+
+    parentg
+      .append("text")
+      .text("parent")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "15px")
+      .attr("fill", "blue")
+      .attr("y", 35)
+      .style("text-anchor", "middle");
+
+    parentg
+      .append("circle")
+      .attr("r", this.cRadius)
+      .attr("fill", "red")
+      .attr("class", "parentCircle")
+      .on("click", (d, i) => {
+        this.handleParentClick(d, i);
+      });
 
     //get position of self node within the siblings
     this.selfIndex = 0;
@@ -51,37 +86,104 @@ class TreeViewer2 extends Component {
 
     console.log(this.siblingHeights);
     //add sibling circles (self is centered)
-    this.svg
-      .selectAll("circle.siblingCircle")
+    var siblingGs = this.svg
+      .selectAll("g.siblingG")
       .data(this.siblingHeights)
       .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + d + ")";
+      })
+      .attr("class", "siblingG");
+
+    siblingGs
+      .append("text")
+      .text("sibling")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "15px")
+      .attr("fill", "blue")
+      .attr("y", 35)
+      .style("text-anchor", "middle");
+
+    siblingGs
       .append("circle")
-      .attr("cx", d => this.width * 0.5)
-      .attr("cy", d => d)
       .attr("r", this.cRadius)
       .attr("fill", "red")
       .attr("class", "siblingCircle")
       .on("click", (d, i) => {
-        this.handleSiblingClick(d, i); // my react method
+        this.handleSiblingClick(d, i);
       });
 
     // determine children heights
     this.calcChildrenHeights();
 
     // add children circles
-    this.svg
-      .selectAll("circle.childrenCircle")
+    var childrenGs = this.svg
+      .selectAll("g.childrenG")
       .data(this.childrenHeights)
       .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+      })
+      .attr("class", "childrenG");
+
+    childrenGs
+      .append("text")
+      .text("children")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "15px")
+      .attr("fill", "blue")
+      .attr("y", 35)
+      .style("text-anchor", "middle");
+
+    childrenGs
       .append("circle")
-      .attr("cx", d => this.width - this.hPadding)
-      .attr("cy", d => d)
       .attr("r", this.cRadius)
       .attr("fill", "red")
       .attr("class", "childrenCircle")
       .on("click", (d, i) => {
-        this.handleChildrenClick(d, i); // my react method
+        this.handleChildrenClick(d, i);
       });
+
+    let links = [];
+    let i;
+    for (i = 0; i < this.siblingHeights.length; i++) {
+      links[i] = {
+        source: {
+          x: this.hPadding,
+          y: this.height / 2
+        },
+        target: {
+          x: this.width * 0.5,
+          y: this.siblingHeights[i]
+        }
+      };
+    }
+
+    console.log("LINKS:", links);
+
+    this.svg
+      .selectAll("paths")
+      .data(links)
+      .enter()
+      .append("path")
+      .attr("d", d => this.link(d))
+      .style("fill", "none")
+      .style("stroke", "darkslateblue")
+      .style("stroke-width", "4px");
+
+    /*this.svg
+      .selectAll("line")
+      .data(this.siblingHeights)
+      .enter()
+      .append("line")
+      .attr("x1", this.hPadding)
+      .attr("y1", this.height / 2)
+      .attr("x2", this.width / 2)
+      .attr("y2", d => d)
+      .attr("stroke-width", 2)
+      .attr("stroke", "black");*/
   }
 
   handleSiblingClick(d, i) {
@@ -94,13 +196,29 @@ class TreeViewer2 extends Component {
 
         console.log("Selected", i);
         this.calcSiblingHeights(i);
+        console.log(this.siblingHeights);
+
         this.svg
-          .selectAll("circle.siblingCircle")
+          .selectAll("g.siblingG")
           .data(this.siblingHeights)
           .transition()
           .delay(this.duration)
-          .duration(this.duration)
-          .attr("cy", d => d);
+          .attr("transform", d => {
+            return "translate(" + this.width / 2 + "," + d + ")";
+          })
+          .duration(this.duration);
+
+        this.svg
+          .selectAll("g.siblingG")
+          .selectAll("circle.siblingCircle")
+          .transition()
+          .duration(this.duration);
+
+        this.svg
+          .selectAll("g.siblingG")
+          .selectAll("text")
+          .transition()
+          .duration(this.duration);
 
         this.addChildren();
       });
@@ -116,13 +234,31 @@ class TreeViewer2 extends Component {
         this.calcChildrenHeights();
 
         // add children circles on top of where siblings currently are
-        this.svg
-          .selectAll("childrenCircle")
+        console.log("sibling heights", this.siblingHeights);
+        var childrenGs = this.svg
+          .selectAll("g.childrenG")
           .data(this.siblingHeights)
           .enter()
+          .append("g")
+          .attr("transform", d => {
+            return "translate(" + 200 + "," + d + ")";
+          })
+          .attr("class", "childrenG");
+
+        // appending text to g
+        childrenGs
+          .append("text")
+          .text("children")
+          .attr("font-family", "sans-serif")
+          .attr("font-size", "15px")
+          .attr("fill", "blue")
+          .attr("y", 35)
+          .style("text-anchor", "middle")
+          .style("fill-opacity", 1);
+
+        // appending circles to g
+        childrenGs
           .append("circle")
-          .attr("cx", () => this.width / 2)
-          .attr("cy", d => d)
           .attr("r", this.cRadius)
           .attr("fill", "red")
           .attr("class", "childrenCircle")
@@ -131,28 +267,32 @@ class TreeViewer2 extends Component {
           });
 
         // remove sibling circles
-        this.svg.selectAll("circle.siblingCircle").remove();
+        //this.svg.selectAll("g.siblingG").remove();
 
-        await this.sleep(1.1 * this.duration);
+        await this.sleep(this.duration);
         // transition children circles from sibling spots to children spots
         this.svg
-          .selectAll("circle.childrenCircle")
+          .selectAll("g.childrenG")
           .data(this.childrenHeights)
           .transition()
-          .duration(this.duration)
-          .attr("cx", () => this.width - this.hPadding)
-          .attr("cy", d => d);
+          .attr("transform", d => {
+            return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+          })
+          .duration(this.duration);
 
-        // transition old parent to self position
-        this.svg
-          .selectAll("circle.parentCircle")
+        // transition old parent to self position **HERE**
+        /* this.svg
+          .selectAll("g.parentG")
           .transition()
-          .attr("cx", this.width / 2);
+          .attr("transform", d => {
+            return "translate(" + this.width / 2 + "," + this.height / 2 + ")";
+          })
+          .duration(this.duration);
 
-        await this.sleep(1.1 * this.duration);
+        await this.sleep(1.1 * this.duration);*/
 
         // adding temp circle at self position
-        this.svg
+        /*this.svg
           .append("circle")
           .attr("cx", () => this.width / 2)
           .attr("cy", () => this.height / 2)
@@ -196,11 +336,11 @@ class TreeViewer2 extends Component {
             .attr("class", "parentCircle")
             .on("click", (d, i) => {
               this.handleParentClick(d, i);
-            })
+            })r
             .transition()
             .duration(this.duration)
             .attr("cx", this.hPadding);
-        }
+        }*/
       });
     }
   }
@@ -341,14 +481,29 @@ class TreeViewer2 extends Component {
     }
   }
 
-  removeChildren() {
+  ////////////////////// remove children //////////////
+  async removeChildren() {
     this.svg
+      .selectAll("g.childrenG")
+      .transition()
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + this.height / 2 + ")";
+      })
+      .duration(this.duration);
+    this.svg
+      .selectAll("g.childrenG")
       .selectAll("circle.childrenCircle")
       .transition()
       .duration(this.duration)
-      .attr("cx", this.width / 2)
-      .attr("cy", this.height / 2)
-      .remove();
+      .attr("r", 1e-6);
+    this.svg
+      .selectAll("g.childrenG")
+      .selectAll("text")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1e-6);
+    await this.sleep(this.duration);
+    this.svg.selectAll("g.childrenG").remove();
   }
 
   sleep(ms) {
@@ -358,23 +513,59 @@ class TreeViewer2 extends Component {
   async addChildren() {
     await this.sleep(2 * this.duration);
     this.calcChildrenHeights();
-    this.svg
-      .selectAll("circle.childrenCircle")
+
+    // creating children g
+    var childrenGs = this.svg
+      .selectAll("g.childrenG")
       .data(this.childrenHeights)
       .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + this.height / 2 + ")";
+      })
+      .attr("class", "childrenG");
+
+    // appending text to g
+    childrenGs
+      .append("text")
+      .text("children")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "15px")
+      .attr("fill", "blue")
+      .attr("y", 35)
+      .style("text-anchor", "middle")
+      .style("fill-opacity", 1e-6);
+
+    // appending circles to g
+    childrenGs
       .append("circle")
-      .attr("cx", this.width / 2)
-      .attr("cy", this.height / 2)
-      .attr("r", this.cRadius)
+      .attr("r", 1e-6)
       .attr("fill", "red")
       .attr("class", "childrenCircle")
       .on("click", (d, i) => {
-        this.handleChildrenClick(d, i); // my react method
+        this.handleChildrenClick(d, i);
+      });
+
+    // transitioning g/text/circles
+    this.svg
+      .selectAll("g.childrenG")
+      .transition()
+      .attr("transform", d => {
+        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
       })
+      .duration(this.duration);
+    this.svg
+      .selectAll("g.childrenG")
+      .selectAll("circle.childrenCircle")
       .transition()
       .duration(this.duration)
-      .attr("cx", this.width - this.hPadding)
-      .attr("cy", d => d);
+      .attr("r", this.cRadius);
+    this.svg
+      .selectAll("g.childrenG")
+      .selectAll("text")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1);
   }
 
   calcChildrenHeights() {
@@ -399,8 +590,7 @@ class TreeViewer2 extends Component {
     let i = 0;
     for (i = 0; i < numSiblings; i++) {
       if (this.data.self.code === this.data.siblings[i].code) {
-        console.log("FOUND INDEX", i);
-        return i;
+        this.selfIndex = i;
       }
     }
   }
@@ -414,12 +604,22 @@ class TreeViewer2 extends Component {
       });
   };
 
+  /** Called upon by parent, when the parent container is resized or moved */
+  handleResize(e) {
+    console.log("HANDLE RESIZE CALLED");
+    if (this.data == undefined) {
+      console.log("Resize called but no data");
+      // variable is undefined
+    } else {
+      this.recalculateSizes();
+      this.drawInitialTree();
+    }
+
+    // Re-draw tree with new dimensions
+  }
+
   render() {
-    return (
-      <div id={"tree" + this.props.id} className="treeVis2">
-        <h1>TREE</h1>
-      </div>
-    );
+    return <div id={"tree" + this.props.id} className={this.treeClass} />;
   }
 }
 
