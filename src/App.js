@@ -9,6 +9,7 @@ import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
+import MenuBar from "./Components/MenuBar/MenuBar";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -23,6 +24,7 @@ class App extends Component {
   state = {
     ////// React Grid Layout
     layouts: JSON.parse(JSON.stringify(originalLayouts)),
+    isLayoutModifiable: false,
 
     ////// Search Box Auto-Complete Feature
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
@@ -31,9 +33,7 @@ class App extends Component {
 
     ////// Code Selection Feature
     selectedCodes: [],
-    recommendedCodes: null, //list of recommended codes based on the selected codes
-
-    isLayoutModifiable: false
+    recommendedCodes: null //list of recommended codes based on the selected codes
   };
 
   /**
@@ -62,9 +62,7 @@ class App extends Component {
    */
   searchCodeInCache(code) {
     if (code !== "") {
-      const codeAndDescription = Array.from(
-        this.state.cachedCodeWithDescription
-      );
+      const codeAndDescription = Array.from(this.state.cachedCodeWithDescription);
       console.log("look up code in cache");
       const regex = new RegExp("^" + code, "i");
       const results = codeAndDescription.filter(item => regex.test(item.code));
@@ -78,8 +76,7 @@ class App extends Component {
    */
   searchCodeViaAPI(code) {
     if (code !== "") {
-      const url =
-        "http://localhost:8000/api/children/" + code + "/?format=json";
+      const url = "http://localhost:8000/api/children/" + code + "/?format=json";
 
       console.log("look up code from API call: " + url);
       let searchedCodes = Array.from(this.state.searchedCodeList);
@@ -112,13 +109,12 @@ class App extends Component {
 
     for (let i = 0, l = results.length; i < l; i++) {
       let thisCode = results[i];
-      let codeFound = codesWithDescript.find(
-        codeObj => codeObj.code === thisCode
-      );
+      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode);
       if (codeFound === undefined) {
         codesWithDescript.push(thisCode);
       }
     }
+
     this.setState(
       {
         cachedCodeWithDescription: codesWithDescript
@@ -132,33 +128,24 @@ class App extends Component {
    * Append code to the App state.
    */
   addSelectedCode = newValue => {
-    console.log("2. Adding code to selected: " + newValue);
     let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(
-      codeObj => codeObj.code === newValue
-    );
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
-      const codeDescriptions = this.state.cachedCodeWithDescription;
-      const cachedCode = codeDescriptions.find(
-        codeObj => codeObj.code === newValue
-      );
+      const codeDescriptions = Array.from(this.state.cachedCodeWithDescription);
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newValue);
 
       // construct new code object
       const newCode = {
         code: cachedCode.code,
         description: cachedCode.description
       };
-      selectedCodes.push(newCode);
 
+      selectedCodes.push(newCode);
       this.getRecommendedCodes(selectedCodes);
-      // this.setState({
-      //   selectedCodes: selectedCodes,
-      //   recommendedCodes: recommendations
-      // });
     } else {
       console.log("Duplicate code entered");
     }
@@ -170,9 +157,7 @@ class App extends Component {
    * matching ID from the list
    */
   handleRemoveSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(
-      codeObj => codeObj.code === event.target.id
-    );
+    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.target.id);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
@@ -203,10 +188,7 @@ class App extends Component {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
     if (stringOfCodes !== "") {
-      const url =
-        "http://localhost:8000/api/requestRules/" +
-        stringOfCodes +
-        "/?format=json";
+      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
 
       this.setState({
         selectedCodes: listOfCodeObjects,
@@ -248,10 +230,7 @@ class App extends Component {
    */
   addRecommendedCodesToCachedCodes(arrayOfRecommendedCodes) {
     arrayOfRecommendedCodes.forEach(codeObj => {
-      const url =
-        "http://localhost:8000/api/codeDescription/" +
-        codeObj.rhs +
-        "/?format=json";
+      const url = "http://localhost:8000/api/codeDescription/" + codeObj.rhs + "/?format=json";
 
       fetch(url)
         .then(response => response.json())
@@ -270,9 +249,7 @@ class App extends Component {
   handleAcceptRecommendedCode = event => {
     //TODO: Call API function to increase code accepted number
 
-    const acceptedCodeIndex = this.state.recommendedCodes.findIndex(
-      codeObj => codeObj.id == event.currentTarget.id
-    );
+    const acceptedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
 
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
     const newCode = acceptedCodeObject.rhs;
@@ -289,9 +266,7 @@ class App extends Component {
    */
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
-    const rejectedCodeIndex = this.state.recommendedCodes.findIndex(
-      codeObj => codeObj.id == event.currentTarget.id
-    );
+    const rejectedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
     this.removeRecommendedCode(rejectedCodeIndex);
   };
 
@@ -369,99 +344,81 @@ class App extends Component {
 
     return (
       <div className="App">
-        <header className="App-header">
-          <div>
-            <ResponsiveReactGridLayout
-              className="layout"
-              // onLayoutChange={this.onLayoutChange}
-              rowHeight={30}
-              layouts={this.state.layouts}
-              draggableCancel="input,textarea"
-              isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
-              isResizable={this.state.isLayoutModifiable} //if a button is pressed
-              onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
-            >
-              <div
-                className="grid-border"
-                key="0"
-                data-grid={{
-                  x: 0,
-                  y: 19,
-                  w: 4,
-                  h: 14
-                }}
-              >
-                <TreeViewer ref={this.treeViewDiv} id="1337" />
-              </div>
-
-              <div key="1" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-                <div className="grid-border">
-                  <ListViewer
-                    className="selectedCodes"
-                    title="Selected Codes"
-                    items={this.state.selectedCodes}
-                    noItemsMessage="No codes selected"
-                    keyName="code"
-                    valueName="code"
-                    descriptionName="description"
-                    removeItemButton={this.handleRemoveSelectedCode}
-                    removeAllItemsButton={
-                      this.state.selectedCodes.length === 0
-                        ? null
-                        : this.resetSelectedCodes
-                    }
-                  />
-                </div>
-              </div>
-
-              <div key="2" data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-                <div className="grid-border">
-                  <ListViewer
-                    className="recommendedCodes"
-                    title="Recommended Codes"
-                    items={this.state.recommendedCodes}
-                    noItemsMessage="No recommendations for the selected codes"
-                    nullItemsMessage="Select codes to get recommendations"
-                    customMessage="loading..."
-                    keyName="id"
-                    valueName="rhs"
-                    descriptionName="description"
-                    acceptItemButton={this.handleAcceptRecommendedCode}
-                    removeItemButton={this.handleRemoveRecommendedCode}
-                    tooltipValueName="reason"
-                  />
-                </div>
-              </div>
-
-              <div
-                key="3"
-                data-grid={{
-                  x: 0,
-                  y: 0,
-                  w: 4,
-                  h: 2,
-                  minW: 4,
-                  minH: 2
-                }}
-              >
-                <div className="grid-border">{codeSearchBox}</div>
-              </div>
-            </ResponsiveReactGridLayout>
-          </div>
-
-          <p>ICD-10 Code Usage Insight and Suggestion</p>
-          <a
-            className="App-link"
-            href="https://cumming.ucalgary.ca/centres/centre-health-informatics"
-            target="_blank"
-            rel="noopener noreferrer"
+        <MenuBar
+          handleButton={this.handleLayoutModifierButton}
+          buttonText={this.state.isLayoutModifiable ? "Lock" : "Modify"}
+        />
+        <div>
+          <ResponsiveReactGridLayout
+            className="layout"
+            // onLayoutChange={this.onLayoutChange}
+            rowHeight={30}
+            layouts={this.state.layouts}
+            draggableCancel="input,textarea"
+            isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
+            isResizable={this.state.isLayoutModifiable} //if a button is pressed
+            onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
-            Centre for Health Informatics
-          </a>
-          <button onClick={this.handleLayoutModifierButton}>
-            {this.state.isLayoutModifiable === true ? "Lock" : "Modify"}
-          </button>
-        </header>
+            <div
+              className="grid-border"
+              key="0"
+              data-grid={{
+                x: 0,
+                y: 19,
+                w: 4,
+                h: 14
+              }}
+            >
+              <TreeViewer ref={this.treeViewDiv} id="1337" />
+            </div>
+
+            <div key="1" className="grid-border" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
+              <ListViewer
+                className="selectedCodes"
+                title="Selected Codes"
+                items={this.state.selectedCodes}
+                noItemsMessage="No codes selected"
+                keyName="code"
+                valueName="code"
+                descriptionName="description"
+                removeItemButton={this.handleRemoveSelectedCode}
+                removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
+              />
+            </div>
+
+            <div key="2" div className="grid-border" data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
+              <ListViewer
+                className="recommendedCodes"
+                title="Recommended Codes"
+                items={this.state.recommendedCodes}
+                noItemsMessage="No recommendations for the selected codes"
+                nullItemsMessage="Select codes to get recommendations"
+                customMessage="loading..."
+                keyName="id"
+                valueName="rhs"
+                descriptionName="description"
+                acceptItemButton={this.handleAcceptRecommendedCode}
+                removeItemButton={this.handleRemoveRecommendedCode}
+                tooltipValueName="reason"
+              />
+            </div>
+
+            <div
+              key="3"
+              className="grid-border"
+              data-grid={{
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 2,
+                minW: 4,
+                minH: 2
+              }}
+            >
+              {codeSearchBox}
+            </div>
+          </ResponsiveReactGridLayout>
+        </div>
       </div>
     );
   }
