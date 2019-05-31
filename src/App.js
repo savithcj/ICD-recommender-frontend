@@ -371,43 +371,40 @@ class App extends Component {
               <TreeViewer ref={this.treeViewDiv} id="1337" />
             </div>
 
-            <div key="1" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <div className="grid-border">
-                <ListViewer
-                  className="selectedCodes"
-                  title="Selected Codes"
-                  items={this.state.selectedCodes}
-                  noItemsMessage="No codes selected"
-                  keyName="code"
-                  valueName="code"
-                  descriptionName="description"
-                  removeItemButton={this.handleRemoveSelectedCode}
-                  removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
-                />
-              </div>
+            <div key="1" className="grid-border" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
+              <ListViewer
+                className="selectedCodes"
+                title="Selected Codes"
+                items={this.state.selectedCodes}
+                noItemsMessage="No codes selected"
+                keyName="code"
+                valueName="code"
+                descriptionName="description"
+                removeItemButton={this.handleRemoveSelectedCode}
+                removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
+              />
             </div>
 
-            <div key="2" data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              <div className="grid-border">
-                <ListViewer
-                  className="recommendedCodes"
-                  title="Recommended Codes"
-                  items={this.state.recommendedCodes}
-                  noItemsMessage="No recommendations for the selected codes"
-                  nullItemsMessage="Select codes to get recommendations"
-                  customMessage="loading..."
-                  keyName="id"
-                  valueName="rhs"
-                  descriptionName="description"
-                  acceptItemButton={this.handleAcceptRecommendedCode}
-                  removeItemButton={this.handleRemoveRecommendedCode}
-                  tooltipValueName="reason"
-                />
-              </div>
+            <div key="2" div className="grid-border" data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
+              <ListViewer
+                className="recommendedCodes"
+                title="Recommended Codes"
+                items={this.state.recommendedCodes}
+                noItemsMessage="No recommendations for the selected codes"
+                nullItemsMessage="Select codes to get recommendations"
+                customMessage="loading..."
+                keyName="id"
+                valueName="rhs"
+                descriptionName="description"
+                acceptItemButton={this.handleAcceptRecommendedCode}
+                removeItemButton={this.handleRemoveRecommendedCode}
+                tooltipValueName="reason"
+              />
             </div>
 
             <div
               key="3"
+              className="grid-border"
               data-grid={{
                 x: 0,
                 y: 0,
@@ -417,7 +414,7 @@ class App extends Component {
                 minH: 2
               }}
             >
-              <div className="grid-border">{codeSearchBox}</div>
+              {codeSearchBox}
             </div>
           </ResponsiveReactGridLayout>
         </div>
