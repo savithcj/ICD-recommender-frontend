@@ -23,6 +23,7 @@ class App extends Component {
   state = {
     ////// React Grid Layout
     layouts: JSON.parse(JSON.stringify(originalLayouts)),
+    isLayoutModifiable: false,
 
     ////// Search Box Auto-Complete Feature
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
@@ -31,9 +32,7 @@ class App extends Component {
 
     ////// Code Selection Feature
     selectedCodes: [],
-    recommendedCodes: null, //list of recommended codes based on the selected codes
-
-    isLayoutModifiable: false
+    recommendedCodes: null //list of recommended codes based on the selected codes
   };
 
   /**
@@ -113,6 +112,7 @@ class App extends Component {
         codesWithDescript.push(thisCode);
       }
     }
+
     this.setState(
       {
         cachedCodeWithDescription: codesWithDescript
@@ -126,7 +126,6 @@ class App extends Component {
    * Append code to the App state.
    */
   addSelectedCode = newValue => {
-    console.log("2. Adding code to selected: " + newValue);
     let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
@@ -134,7 +133,7 @@ class App extends Component {
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
-      const codeDescriptions = this.state.cachedCodeWithDescription;
+      const codeDescriptions = Array.from(this.state.cachedCodeWithDescription);
       const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newValue);
 
       // construct new code object
@@ -142,13 +141,9 @@ class App extends Component {
         code: cachedCode.code,
         description: cachedCode.description
       };
-      selectedCodes.push(newCode);
 
+      selectedCodes.push(newCode);
       this.getRecommendedCodes(selectedCodes);
-      // this.setState({
-      //   selectedCodes: selectedCodes,
-      //   recommendedCodes: recommendations
-      // });
     } else {
       console.log("Duplicate code entered");
     }
