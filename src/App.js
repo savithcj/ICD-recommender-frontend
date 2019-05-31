@@ -11,9 +11,48 @@ import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
+const defaultLayoutLg = [
+  { w: 7, h: 19, x: 0, y: 2, i: "0" },
+  { w: 5, h: 11, x: 7, y: 0, i: "1" },
+  { w: 5, h: 10, x: 7, y: 11, i: "2" },
+  { w: 7, h: 2, x: 0, y: 0, i: "3" }
+];
+const defaultLayoutMd = [
+  { w: 6, h: 17, x: 0, y: 2, i: "0" },
+  { w: 4, h: 10, x: 6, y: 0, i: "1" },
+  { w: 4, h: 9, x: 6, y: 10, i: "2" },
+  { w: 6, h: 2, x: 0, y: 0, i: "3" }
+];
+const defaultLayoutSm = [
+  { w: 6, h: 14, x: 0, y: 20, i: "0" },
+  { w: 6, h: 9, x: 0, y: 2, i: "1" },
+  { w: 6, h: 9, x: 0, y: 11, i: "2" },
+  { w: 6, h: 2, x: 0, y: 0, i: "3" }
+];
+const defaultLayoutXs = [
+  { w: 4, h: 14, x: 0, y: 19, i: "0" },
+  { w: 4, h: 9, x: 0, y: 2, i: "1" },
+  { w: 4, h: 8, x: 0, y: 11, i: "2" },
+  { w: 4, h: 2, x: 0, y: 0, i: "3" }
+];
+const defaultLayoutXxs = [
+  { w: 2, h: 12, x: 0, y: 19, i: "0" },
+  { w: 2, h: 9, x: 0, y: 2, i: "1" },
+  { w: 2, h: 8, x: 0, y: 11, i: "2" },
+  { w: 2, h: 2, x: 0, y: 0, i: "3" }
+];
+
+const defaultLayouts = {
+  lg: defaultLayoutLg,
+  md: defaultLayoutMd,
+  sm: defaultLayoutSm,
+  xs: defaultLayoutXs,
+  xxs: defaultLayoutXxs
+};
+
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || {};
-// const originalLayouts = {};
+const originalLayouts = getFromLS("layouts") || defaultLayouts;
+// const originalLayouts = defaultLayouts;
 
 class App extends Component {
   constructor(props) {
@@ -318,6 +357,7 @@ class App extends Component {
     saveToLS("layouts", layouts);
     this.setState({ layouts });
     this.treeViewDiv.current.handleResize();
+    console.log(layouts);
   }
 
   handleLayoutModifierButton = () => {
