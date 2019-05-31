@@ -124,10 +124,10 @@ class App extends Component {
 
   /**
    * Called upon by CodeInputField when an item is selected.
-   * Append code to the App state.
+   * Pass selected codes to this.getRecommendedCodes.
    */
   addSelectedCode = newValue => {
-    let selectedCodes = [...this.state.selectedCodes];
+    let selectedCodes = Array.from(this.state.selectedCodes);
 
     // check if the code already exist in the selection
     const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue);
@@ -144,6 +144,11 @@ class App extends Component {
       };
 
       selectedCodes.push(newCode);
+
+      this.setState(prev => {
+        prev.selectedCodes.push(newCode);
+      });
+
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
@@ -190,7 +195,6 @@ class App extends Component {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
 
       this.setState({
-        selectedCodes: listOfCodeObjects,
         recommendedCodes: 1
       });
 
@@ -213,7 +217,6 @@ class App extends Component {
           this.addRecommendedCodesToCachedCodes(results);
 
           this.setState({
-            selectedCodes: listOfCodeObjects,
             recommendedCodes: results
           });
         });
