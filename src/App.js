@@ -143,6 +143,7 @@ class App extends Component {
    * @param {*} oArg optinal argument for the optional function
    */
   appendCodeToCache(results, oFunc, oArg) {
+    //FIXME: repeated code added
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
     for (let i = 0, l = results.length; i < l; i++) {

@@ -1,12 +1,30 @@
 import React from "react";
 import "./ListViewer.css";
+import { makeStyles } from "@material-ui/core/styles";
+
+import Button from "@material-ui/core/Button";
+
+const useStyles = makeStyles(theme => ({
+  button: {
+    margin: theme.spacing(1),
+    maxWidth: "30px",
+    maxHeight: "30px",
+    minWidth: "30px",
+    minHeight: "30px"
+  },
+  input: {
+    display: "none"
+  }
+}));
 
 /**
  * This component takes a list of items and returns
  * a JSX element containing the list of items. When an
  * item is clicked, it is removed from the original list
  */
-const listViewer = props => {
+function ListViewer(props) {
+  const classes = useStyles();
+
   let displayItems = null;
 
   if (props.items === null || props.items === undefined) {
@@ -35,9 +53,15 @@ const listViewer = props => {
           ""
         ) : (
           <span>
-            <button id={item[props.keyName]} onClick={props.removeItemButton}>
+            <Button
+              size="small"
+              variant="outlined"
+              className={classes.button}
+              id={item[props.keyName]}
+              onClick={props.removeItemButton}
+            >
               {"\u2717"} {/*unicode x mark */}
-            </button>
+            </Button>
           </span>
         );
 
@@ -46,9 +70,15 @@ const listViewer = props => {
           ""
         ) : (
           <span>
-            <button id={item[props.keyName]} onClick={props.acceptItemButton}>
+            <Button
+              size="small"
+              variant="outlined"
+              className={classes.button}
+              id={item[props.keyName]}
+              onClick={props.acceptItemButton}
+            >
               {"\u2713"} {/*unicode check mark */}
-            </button>
+            </Button>
           </span>
         );
 
@@ -56,11 +86,12 @@ const listViewer = props => {
         <div className="listItem" key={item[props.keyName]}>
           <div className="tooltip">
             {displayValue + descriptionValue}
-            {acceptItemButton}
-            {removeItemButton}
+            <span className="buttonSet">
+              {acceptItemButton}
+              {removeItemButton}
+            </span>
             {tooltip}
           </div>
-          <hr />
         </div>
       );
     });
@@ -72,19 +103,19 @@ const listViewer = props => {
       ""
     ) : (
       <span>
-        <button onClick={props.removeAllItemsButton}>remove all</button>
+        <Button color="primary" onClick={props.removeAllItemsButton}>
+          remove all
+        </Button>
       </span>
     );
 
   return (
     <div className="itemContainer">
-      <h3 className="containerTitle">
-        {props.title}
-        {removeAllItemsButton}
-      </h3>
+      <h3 className="containerTitle">{props.title}</h3>
       {displayItems}
+      <div className="footer">{removeAllItemsButton}</div>
     </div>
   );
-};
+}
 
-export default listViewer;
+export default ListViewer;
