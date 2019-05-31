@@ -5,16 +5,42 @@ import ReactDOM from "react-dom";
 class TreeViewer extends Component {
   constructor(props) {
     super(props);
-    this.duration = 500;
-    this.cRadius = 20;
+    this.duration = 1000;
     this.padding = 0.1;
+
+    this.fontType = "sans-serif";
     this.treeClass = "treeVis" + this.props.id;
+    this.selectedColor = "blue";
+    this.otherColor = "red";
+    this.textColor = "blue";
+    this.linkColor = "lightgrey";
+    this.linkWidth = 3;
+
+    this.link = d3
+      .linkHorizontal()
+      .x(function(d) {
+        return d.x;
+      })
+      .y(function(d) {
+        return d.y;
+      });
   }
 
   componentDidMount() {
-    this.getDataFromAPI("G308").then(() => {
+    this.getDataFromAPI("A05").then(() => {
       this.drawInitialTree();
     });
+  }
+
+  /** Called upon by parent, when the parent container is resized or moved */
+  handleResize(e) {
+    console.log("HANDLE RESIZE CALLED");
+    if (this.data === undefined) {
+      // variable is undefined
+    } else {
+      this.recalculateSizes();
+      this.drawInitialTree();
+    }
   }
 
   recalculateSizes() {
@@ -23,13 +49,37 @@ class TreeViewer extends Component {
     this.height = elem.offsetHeight;
     this.vPadding = this.height * this.padding;
     this.hPadding = this.width * this.padding;
+    this.cRadius = this.width / 50;
+    this.textSize = this.width / 50;
+  }
+
+  addInfoText() {
+    let infoG = this.svg.append("g").attr("class", "infoG");
+
+    this.infoText = infoG
+      .append("text")
+      .attr("y", this.height - this.vPadding * 0.25)
+      .attr("x", this.hPadding * 0.25)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .text("")
+      .style("text-anchor", "left");
+  }
+
+  setInfoText(d) {
+    const codeDesc = d.code + ": " + d.description;
+    this.infoText.text(codeDesc);
+  }
+
+  clearInfoText() {
+    this.infoText.text("");
   }
 
   drawInitialTree() {
     this.recalculateSizes();
-    console.log("HEIGHT:", this.height);
-    console.log("WIDTH:", this.width);
-
+    console.log("HEIGHT", this.height);
+    console.log("WIDTH", this.width);
     d3.select("svg").remove();
 
     this.svg = d3
@@ -38,368 +88,376 @@ class TreeViewer extends Component {
       .attr("width", this.width)
       .attr("height", this.height);
 
-    //draw parent node
-    this.svg
+    this.addInfoText();
+    this.linkG = this.svg.append("g");
+    this.rightG = this.svg.append("g");
+    this.middleG = this.svg.append("g");
+    this.leftG = this.svg.append("g");
+
+    //////////// PARENT NODE ////////////
+    /////////////////////////////////////
+    let parentg = this.leftG
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+      })
+      .attr("class", "parentG");
+    parentg
+      .on("mouseover", (d, i) => {
+        console.log("MOUSEOVER");
+        this.setInfoText(this.data.parent);
+      })
+      .on("mouseout", (d, i) => {
+        this.clearInfoText();
+      })
+      .append("text")
+      .text(this.codeTrunc(this.data.parent))
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", 2 * this.cRadius)
+      .attr("class", "parentText")
+      .style("text-anchor", "middle");
+
+    parentg
       .append("circle")
-      .attr("cx", () => this.hPadding)
-      .attr("cy", () => this.height / 2)
       .attr("r", this.cRadius)
-      .attr("fill", "red")
+      .attr("fill", this.otherColor)
       .attr("class", "parentCircle")
       .on("click", (d, i) => {
         this.handleParentClick(d, i);
       });
 
-    //get position of self node within the siblings
+    //////////// SIBLING NODES ////////////
+    ///////////////////////////////////////
     this.selfIndex = 0;
-    this.selfIndex = this.findIndex();
+    this.findIndex();
+    this.calcSiblingHeights();
+    this.calcSiblingColours();
 
-    //determine heights of sibling nodes
-    this.calcSiblingHeights(this.selfIndex);
-
-    console.log(this.siblingHeights);
-    //add sibling circles (self is centered)
-    this.svg
-      .selectAll("circle.siblingCircle")
+    let siblingGs = this.middleG
+      .selectAll("g.siblingG")
       .data(this.siblingHeights)
       .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + d + ")";
+      })
+      .attr("class", "siblingG");
+
+    siblingGs
+      .data(this.data.siblings)
+      .append("text")
+      .text(d => this.codeTrunc(d))
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", 2 * this.cRadius)
+      .attr("class", "siblingText")
+      .style("text-anchor", "middle");
+
+    siblingGs
+      .data(this.siblingColours)
       .append("circle")
-      .attr("cx", d => this.width * 0.5)
-      .attr("cy", d => d)
       .attr("r", this.cRadius)
-      .attr("fill", "red")
+      .attr("fill", d => {
+        return d;
+      })
       .attr("class", "siblingCircle")
       .on("click", (d, i) => {
-        this.handleSiblingClick(d, i); // my react method
+        this.handleSiblingClick(d, i);
       });
 
-    // determine children heights
+    //////////// CHILDREN NODES ////////////
+    ////////////////////////////////////////
     this.calcChildrenHeights();
-
-    // add children circles
-    this.svg
-      .selectAll("circle.childrenCircle")
+    let childrenGs = this.rightG
+      .selectAll("g.childrenG")
       .data(this.childrenHeights)
       .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+      })
+      .attr("class", "childrenG");
+
+    childrenGs
+      .data(this.data.children)
+      .append("text")
+      .text(d => this.codeTrunc(d))
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", -1.5 * this.cRadius)
+      .attr("class", "childrenText")
+      .style("text-anchor", "middle");
+
+    childrenGs
       .append("circle")
-      .attr("cx", d => this.width - this.hPadding)
-      .attr("cy", d => d)
       .attr("r", this.cRadius)
-      .attr("fill", "red")
+      .attr("fill", this.otherColor)
       .attr("class", "childrenCircle")
       .on("click", (d, i) => {
-        this.handleChildrenClick(d, i); // my react method
+        this.handleChildrenClick(d, i);
       });
+
+    // LINKS //////////////////////////////
+    ///////////////////////////////////////
+    this.createParentLinks();
+    this.linkG
+      .selectAll("siblingG")
+      .data(this.parentLinks)
+      .enter()
+      .append("path")
+      .attr("d", d => this.link(d))
+      .attr("class", "parentLink")
+      .style("fill", "none")
+      .style("stroke", this.linkColor)
+      .style("stroke-width", this.linkWidth);
+
+    this.createChildrenLinks();
+    this.linkG
+      .selectAll("childrenG") // might need to change this
+      .data(this.childrenLinks)
+      .enter()
+      .append("path")
+      .attr("d", d => this.link(d))
+      .attr("class", "childrenLink")
+      .style("fill", "none")
+      .style("stroke", this.linkColor)
+      .style("stroke-width", this.linkWidth);
   }
+  // END OF DRAW INITIAL TREE /////////////////
+  /////////////////////////////////////////////
 
-  handleSiblingClick(d, i) {
-    if (i !== this.selfIndex) {
-      this.selfIndex = i;
-      console.log("self index = ", this.selfIndex);
-      console.log("DATA ", this.data);
-      this.getDataFromAPI(this.data.siblings[i].code).then(() => {
-        this.removeChildren();
-
-        console.log("Selected", i);
-        this.calcSiblingHeights(i);
-        this.svg
-          .selectAll("circle.siblingCircle")
-          .data(this.siblingHeights)
-          .transition()
-          .delay(this.duration)
-          .duration(this.duration)
-          .attr("cy", d => d);
-
-        this.addChildren();
-      });
-    }
-  }
-
-  handleParentClick(d, i) {
-    if (this.data.parent) {
-      this.getDataFromAPI(this.data.parent.code).then(async () => {
-        // remove children to the current self
-        this.removeChildren();
-
-        this.calcChildrenHeights();
-
-        // add children circles on top of where siblings currently are
-        this.svg
-          .selectAll("childrenCircle")
-          .data(this.siblingHeights)
-          .enter()
-          .append("circle")
-          .attr("cx", () => this.width / 2)
-          .attr("cy", d => d)
-          .attr("r", this.cRadius)
-          .attr("fill", "red")
-          .attr("class", "childrenCircle")
-          .on("click", (d, i) => {
-            this.handleChildrenClick(d, i);
-          });
-
-        // remove sibling circles
-        this.svg.selectAll("circle.siblingCircle").remove();
-
-        await this.sleep(1.1 * this.duration);
-        // transition children circles from sibling spots to children spots
-        this.svg
-          .selectAll("circle.childrenCircle")
-          .data(this.childrenHeights)
-          .transition()
-          .duration(this.duration)
-          .attr("cx", () => this.width - this.hPadding)
-          .attr("cy", d => d);
-
-        // transition old parent to self position
-        this.svg
-          .selectAll("circle.parentCircle")
-          .transition()
-          .attr("cx", this.width / 2);
-
-        await this.sleep(1.1 * this.duration);
-
-        // adding temp circle at self position
-        this.svg
-          .append("circle")
-          .attr("cx", () => this.width / 2)
-          .attr("cy", () => this.height / 2)
-          .attr("r", this.cRadius)
-          .attr("fill", "red")
-          .attr("class", "tempCircle");
-
-        this.selfIndex = this.findIndex();
-        // remove parent circle
-        this.svg.selectAll("circle.parentCircle").remove();
-        this.calcSiblingHeights(this.selfIndex);
-        // spawn sibling circles from self
-        this.svg
-          .selectAll("circle.siblingCircle")
-          .data(this.siblingHeights)
-          .enter()
-          .append("circle")
-          .attr("cx", this.width / 2)
-          .attr("cy", this.height / 2)
-          .attr("r", this.cRadius)
-          .attr("fill", "red")
-          .attr("class", "siblingCircle")
-          .on("click", (d, i) => {
-            this.handleSiblingClick(d, i);
-          })
-          .transition()
-          .duration(this.duration)
-          .attr("cy", d => d);
-
-        // remove temp circle
-        this.svg.selectAll("circle.tempCircle").remove();
-
-        // spawn parent circle from new self
-        if (this.data.parent) {
-          this.svg
-            .append("circle")
-            .attr("cx", this.width / 2)
-            .attr("cy", this.height / 2)
-            .attr("r", this.cRadius)
-            .attr("fill", "red")
-            .attr("class", "parentCircle")
-            .on("click", (d, i) => {
-              this.handleParentClick(d, i);
-            })
-            .transition()
-            .duration(this.duration)
-            .attr("cx", this.hPadding);
-        }
-      });
-    }
-  }
-
-  handleChildrenClick(d, i) {
-    this.getDataFromAPI(this.data.children[i].code).then(async () => {
-      // add temp circle at self position
-      this.svg
-        .append("circle")
-        .attr("cx", () => this.width / 2)
-        .attr("cy", () => this.height / 2)
-        .attr("r", this.cRadius)
-        .attr("fill", "red")
-        .attr("class", "tempCircle");
-
-      // move all siblings to center, then remove
-      this.svg
-        .selectAll("circle.siblingCircle")
-        .transition()
-        .duration(this.duration)
-        .attr("cx", this.width / 2)
-        .attr("cy", this.height / 2)
-        .remove();
-
-      // move parent to center, then remove
-      this.svg
-        .selectAll("circle.parentCircle")
-        .transition()
-        .duration(this.duration)
-        .attr("cx", this.width / 2)
-        .attr("cy", this.height / 2)
-        .remove();
-
-      await this.sleep(1.1 * this.duration);
-      // add parent circle at center and transition to parent spot
-      this.svg
-        .append("circle")
-        .attr("cx", this.width / 2)
-        .attr("cy", this.height / 2)
-        .attr("r", this.cRadius)
-        .attr("fill", "red")
-        .attr("class", "parentCircle")
-        .on("click", (d, i) => {
-          this.handleParentClick(d, i);
-        })
-        .transition()
-        .duration(this.duration)
-        .attr("cx", this.hPadding);
-
-      // remove temp circle
-      this.svg.selectAll("circle.tempCircle").remove();
-
-      console.log("data", this.data);
-      this.calcSiblingHeights(i);
-      // transition children to sibling spots
-      console.log("sibling heights", this.siblingHeights);
-      this.svg
-        .selectAll("circle.childrenCircle")
-        .data(this.siblingHeights)
-        .transition()
-        .duration(this.duration)
-        .attr("cx", () => this.width / 2)
-        .attr("cy", d => d);
-
-      await this.sleep(1.1 * this.duration);
-
-      // add sibling circles
-      this.svg
-        .selectAll("circle.siblingCircle")
-        .data(this.siblingHeights)
-        .enter()
-        .append("circle")
-        .attr("cx", this.width / 2)
-        .attr("cy", d => d)
-        .attr("r", this.cRadius)
-        .attr("fill", "red")
-        .attr("class", "siblingCircle")
-        .on("click", (d, i) => {
-          this.handleSiblingClick(d, i);
-        });
-      // remove children circles in sibling circle spots
-      this.svg.selectAll("circle.childrenCircle").remove();
-
-      this.calcChildrenHeights();
-      this.svg
-        .selectAll("circle.childrenCircle")
-        .data(this.childrenHeights)
-        .enter()
-        .append("circle")
-        .attr("cx", this.width / 2)
-        .attr("cy", this.height / 2)
-        .attr("r", this.cRadius)
-        .attr("fill", "red")
-        .attr("class", "childrenCircle")
-        .on("click", (d, i) => {
-          this.handleChildrenClick(d, i);
-        })
-        .transition()
-        .duration(this.duration)
-        .attr("cx", () => this.width - this.hPadding)
-        .attr("cy", d => d);
+  // HANDLE CLICKS ////////////////////////////
+  /////////////////////////////////////////////
+  handleParentClick() {
+    this.getDataFromAPI(this.data.parent.code).then(async () => {
+      this.removeChildren();
+      this.moveSiblingsToChildren();
+      this.moveParentToSibling();
+      this.transitionParentLinks();
+      await this.sleep(2 * this.duration);
+      this.spawnParentAndSiblings();
     });
   }
 
-  calcSiblingHeights(selfIndex) {
-    const numSiblings = this.data.siblings.length;
-
-    //determine the smallest gap
-    const numAbove = selfIndex;
-    const numBelow = numSiblings - selfIndex - 1;
-    let belowGap = this.height; //default to high number
-    let aboveGap = this.height;
-    if (numAbove > 0) {
-      aboveGap = (this.height / 2.0 - this.vPadding) / numAbove;
-    }
-    if (numBelow > 0) {
-      belowGap = (this.height / 2.0 - this.vPadding) / numBelow;
-    }
-
-    const gap = belowGap < aboveGap ? belowGap : aboveGap;
-    console.log("AboveGap", aboveGap, "BelowGap", belowGap, "Gap", gap);
-
-    //start setting heights
-    this.siblingHeights = [];
-    if (numAbove > 0) {
-      let i;
-      for (i = 0; i < numAbove; i++) {
-        this.siblingHeights.push(this.height / 2.0 - gap * (numAbove - i));
-      }
-    }
-    this.siblingHeights.push(this.height / 2.0);
-
-    if (numBelow > 0) {
-      let i;
-      for (i = 0; i < numBelow; i++) {
-        this.siblingHeights.push(this.height / 2.0 + gap * (i + 1));
-      }
-    }
+  handleSiblingClick() {
+    console.log("sibling clicked");
   }
 
-  removeChildren() {
+  handleChildrenClick() {
+    console.log("CHILD CLICKED");
+  }
+  // END OF HANDLE CLICKS //////////////////////
+  //////////////////////////////////////////////
+
+  moveSiblingsToChildren() {
     this.svg
+      .selectAll("g.siblingG")
+      .data(this.siblingHeights)
+      .transition()
+      .delay(this.duration)
+      .duration(this.duration)
+      .attr("transform", d => {
+        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+      })
+      .attr("class", "childrenG");
+
+    this.svg
+      .selectAll("circle.siblingCircle")
+      .attr("class", "childrenCircle")
+      .on("click", (d, i) => {
+        this.handleChildrenClick(d, i);
+      })
+      .transition()
+      .duration(this.duration)
+      .attr("fill", this.otherColor);
+
+    this.svg
+      .selectAll("text.siblingText")
+      .transition()
+      .duration(this.duration)
+      .delay(this.duration)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", -1.5 * this.cRadius)
+      .attr("class", "childrenText")
+      .style("text-anchor", "middle");
+  }
+  //.attr("x", -3 * this.cRadius)
+
+  moveParentToSibling() {
+    this.calcSiblingHeights();
+    this.findIndex();
+    this.calcSiblingColours();
+    this.svg
+      .selectAll("g.parentG")
+      .transition()
+      .duration(this.duration)
+      .delay(this.duration)
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .attr("class", "oldParentG");
+
+    this.svg
+      .selectAll("circle.parentCircle")
+      .transition()
+      .duration(this.duration)
+      //.attr("class", "siblingCircle")
+      .attr("fill", this.selectedColor);
+  }
+
+  spawnParentAndSiblings() {
+    // creating invisible parent at self
+    let parentG = this.svg
+      .append("g")
+      .attr("class", "parentG")
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .attr("class", "parentG");
+    parentG
+      .append("text")
+      .text(this.codeTrunc(this.data.parent))
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", 2 * this.cRadius)
+      .attr("class", "parentText")
+      .style("text-anchor", "middle")
+      .style("fill-opacity", 1e-6);
+
+    parentG
+      .append("circle")
+      .attr("r", 1e-6)
+      .attr("fill", this.otherColor)
+      .attr("class", "parentCircle")
+      .on("click", (d, i) => {
+        this.handleParentClick(d, i);
+      });
+  }
+
+  async removeChildren() {
+    this.svg
+      .selectAll("g.childrenG")
+      .attr("class", "oldChildren")
+      .transition()
+      .attr("transform", () => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .duration(this.duration);
+    this.svg
+      .selectAll("g.oldChildren")
       .selectAll("circle.childrenCircle")
       .transition()
       .duration(this.duration)
-      .attr("cx", this.width / 2)
-      .attr("cy", this.height / 2)
-      .remove();
+      .attr("r", 1e-6);
+    this.svg
+      .selectAll("g.oldChildren")
+      .selectAll("text")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1e-6);
+    this.undoChildrenLinks();
+    this.svg
+      .selectAll("path.childrenLink")
+      .data(this.childrenLinks)
+      .transition()
+      .duration(this.duration)
+      .attr("d", d => this.link(d));
+    await this.sleep(this.duration);
+    this.svg.selectAll("g.oldChildren").remove();
   }
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async addChildren() {
-    await this.sleep(2 * this.duration);
-    this.calcChildrenHeights();
-    this.svg
-      .selectAll("circle.childrenCircle")
-      .data(this.childrenHeights)
-      .enter()
-      .append("circle")
-      .attr("cx", this.width / 2)
-      .attr("cy", this.height / 2)
-      .attr("r", this.cRadius)
-      .attr("fill", "red")
-      .attr("class", "childrenCircle")
-      .on("click", (d, i) => {
-        this.handleChildrenClick(d, i); // my react method
-      })
-      .transition()
-      .duration(this.duration)
-      .attr("cx", this.width - this.hPadding)
-      .attr("cy", d => d);
+  createParentLinks() {
+    this.parentLinks = [];
+    for (let i = 0; i < this.data.siblings.length; i++) {
+      this.parentLinks[i] = {
+        source: {
+          x: this.hPadding + this.cRadius,
+          y: this.height / 2
+        },
+        target: {
+          x: this.width / 2 - this.cRadius,
+          y: this.siblingHeights[i]
+        }
+      };
+    }
   }
 
-  calcChildrenHeights() {
-    this.childrenHeights = [];
-    if (this.data.children.length > 1) {
-      const heightUsed = this.height - 4 * this.vPadding;
-      const gap = heightUsed / (this.data.children.length - 1);
-      console.log("gap:", gap);
-      let currentHeight = 2 * this.vPadding;
-      for (let i = 0; i < this.data.children.length; i++) {
-        this.childrenHeights.push(currentHeight);
-        currentHeight += gap;
-      }
-    } else if (this.data.children.length == 1) {
-      this.childrenHeights.push(this.height / 2);
+  codeTrunc = d => {
+    const codeDesc = d.code + ": " + d.description;
+    if (codeDesc.length < 26) {
+      return codeDesc;
+    } else {
+      return codeDesc.substring(0, 25) + "...";
     }
-    console.log("children heights", this.childrenHeights);
+  };
+
+  createChildrenLinks() {
+    this.childrenLinks = [];
+    for (let i = 0; i < this.data.children.length; i++) {
+      this.childrenLinks[i] = {
+        source: {
+          x: this.width / 2 + this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        },
+        target: {
+          x: this.width - this.hPadding - this.cRadius,
+          y: this.childrenHeights[i]
+        }
+      };
+    }
+  }
+
+  undoChildrenLinks() {
+    this.childrenLinks = [];
+    for (let i = 0; i < this.data.children.length; i++) {
+      this.childrenLinks[i] = {
+        source: {
+          x: this.width / 2 + this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        },
+        target: {
+          x: this.width / 2 + this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        }
+      };
+    }
+  }
+
+  transitionParentLinks() {
+    this.parentLinks = [];
+    for (let i = 0; i < this.data.children.length; i++) {
+      this.parentLinks[i] = {
+        source: {
+          x: this.width / 2 + this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        },
+        target: {
+          x: this.width - this.hPadding - this.cRadius,
+          y: this.siblingHeights[i]
+        }
+      };
+    }
+    this.svg
+      .selectAll("path.parentLink")
+      .data(this.parentLinks)
+      .transition()
+      .duration(this.duration)
+      .delay(this.duration)
+      .attr("d", d => this.link(d))
+      .attr("class", "childrenLink");
   }
 
   findIndex() {
@@ -407,8 +465,44 @@ class TreeViewer extends Component {
     let i = 0;
     for (i = 0; i < numSiblings; i++) {
       if (this.data.self.code === this.data.siblings[i].code) {
-        console.log("FOUND INDEX", i);
-        return i;
+        this.selfIndex = i;
+      }
+    }
+  }
+
+  calcSiblingHeights() {
+    this.siblingHeights = [];
+    if (this.data.siblings.length === 1) {
+      this.siblingHeights.push(this.height / 2);
+    } else {
+      const totalSpace = this.height - 2 * this.vPadding;
+      let gap = totalSpace / (this.data.siblings.length - 1);
+      for (let i = 0; i < this.data.siblings.length; i++) {
+        this.siblingHeights.push(i * gap + this.vPadding);
+      }
+    }
+  }
+
+  calcChildrenHeights() {
+    this.childrenHeights = [];
+    if (this.data.children.length === 1) {
+      this.childrenHeights.push(this.height / 2);
+    } else if (this.data.children.length > 1) {
+      const totalSpace = this.height - 2 * this.vPadding;
+      let gap = totalSpace / (this.data.children.length - 1);
+      for (let i = 0; i < this.data.children.length; i++) {
+        this.childrenHeights.push(i * gap + this.vPadding);
+      }
+    }
+  }
+
+  calcSiblingColours() {
+    this.siblingColours = [];
+    for (let i = 0; i < this.data.siblings.length; i++) {
+      if (this.selfIndex === i) {
+        this.siblingColours.push(this.selectedColor);
+      } else {
+        this.siblingColours.push(this.otherColor);
       }
     }
   }
@@ -421,20 +515,6 @@ class TreeViewer extends Component {
         this.data = parsedJson;
       });
   };
-
-  /** Called upon by parent, when the parent container is resized or moved */
-  handleResize(e) {
-    console.log("HANDLE RESIZE CALLED");
-    if (this.data == undefined) {
-      console.log("Resize called but no data");
-      // variable is undefined
-    } else {
-      this.recalculateSizes();
-      this.drawInitialTree();
-    }
-
-    // Re-draw tree with new dimensions
-  }
 
   render() {
     return <div id={"tree" + this.props.id} className={this.treeClass} />;
