@@ -66,9 +66,13 @@ class TreeViewer3 extends Component {
         codeDesc = this.data.parent.code + ": " + this.data.parent.description;
       }
     } else if (tier === 1) {
-      codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+      if (this.data.siblings[index]) {
+        codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+      }
     } else if (tier === 2) {
-      codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+      if (this.data.children[index]) {
+        codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+      }
     }
 
     this.infoText.text(codeDesc);
