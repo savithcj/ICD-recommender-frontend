@@ -416,9 +416,9 @@ class App extends Component {
     return (
       <div className="App">
         <MenuBar
-          handleButton={this.handleLayoutModifierButton}
-          buttonText={this.state.isLayoutModifiable ? "Confirm" : "Modify"}
+          handleLayoutConfirm={this.handleLayoutModifierButton}
           codeSearchBox={userInputBoxes}
+          inModifyMode={this.state.isLayoutModifiable}
         />
         <div>
           <ResponsiveReactGridLayout
