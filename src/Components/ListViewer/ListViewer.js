@@ -85,11 +85,11 @@ function ListViewer(props) {
         );
 
       return (
-        <div className="listItem" key={item[props.keyName]}>
-          <div className="tooltip">
+        <div className="tooltip">
+          {tooltip}
+          <div className="listItem" key={item[props.keyName]}>
             {displayValue}
             {descriptionValue}
-            {tooltip}
             <div className="column buttonSet">
               {acceptItemButton}
               {removeItemButton}
