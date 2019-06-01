@@ -201,9 +201,13 @@ class App extends Component {
    * matching ID from the list
    */
   handleRemoveSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.target.id);
+    // event.persist();
+    console.log(event.currentTarget.id);
+    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.currentTarget.id);
+    console.log("REMOVE INDEX: " + removeCodeIndex);
 
     const codes = [...this.state.selectedCodes];
+    console.log(codes[removeCodeIndex]);
     codes.splice(removeCodeIndex, 1);
 
     this.setState({
@@ -309,6 +313,7 @@ class App extends Component {
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
     const rejectedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
+
     this.removeRecommendedCode(rejectedCodeIndex);
   };
 
@@ -319,6 +324,7 @@ class App extends Component {
    */
   removeRecommendedCode(codeIndex) {
     const codes = [...this.state.recommendedCodes];
+
     codes.splice(codeIndex, 1);
 
     this.setState({
@@ -389,7 +395,7 @@ class App extends Component {
       <div className="App">
         <MenuBar
           handleButton={this.handleLayoutModifierButton}
-          buttonText={this.state.isLayoutModifiable ? "Lock" : "Modify"}
+          buttonText={this.state.isLayoutModifiable ? "Confirm" : "Modify"}
         />
         <div>
           <ResponsiveReactGridLayout

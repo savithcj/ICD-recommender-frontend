@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   button: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(0.5),
     maxWidth: "30px",
     maxHeight: "30px",
     minWidth: "30px",
@@ -35,18 +35,10 @@ function ListViewer(props) {
     displayItems = <p>{props.noItemsMessage}</p>;
   } else {
     displayItems = props.items.map(item => {
-      let displayValue =
-        props.valueName === undefined ? "" : item[props.valueName];
-      let descriptionValue =
-        props.descriptionName === undefined
-          ? ""
-          : ": " + item[props.descriptionName];
+      let displayValue = props.valueName === undefined ? "" : item[props.valueName];
+      let descriptionValue = props.descriptionName === undefined ? "" : ": " + item[props.descriptionName];
       let tooltip =
-        props.tooltipValueName === undefined ? (
-          ""
-        ) : (
-          <span className="tooltiptext">{item[props.tooltipValueName]}</span>
-        );
+        props.tooltipValueName === undefined ? "" : <span className="tooltiptext">{item[props.tooltipValueName]}</span>;
 
       let removeItemButton =
         props.removeItemButton === undefined ? (
@@ -54,7 +46,6 @@ function ListViewer(props) {
         ) : (
           <span>
             <Button
-              size="small"
               variant="outlined"
               className={classes.button}
               id={item[props.keyName]}
@@ -71,7 +62,6 @@ function ListViewer(props) {
         ) : (
           <span>
             <Button
-              size="small"
               variant="outlined"
               className={classes.button}
               id={item[props.keyName]}
@@ -98,8 +88,7 @@ function ListViewer(props) {
   }
 
   let removeAllItemsButton =
-    props.removeAllItemsButton === undefined ||
-    props.removeAllItemsButton === null ? (
+    props.removeAllItemsButton === undefined || props.removeAllItemsButton === null ? (
       ""
     ) : (
       <span>
