@@ -46,10 +46,10 @@ function ListViewer(props) {
     displayItems = <p>{props.noItemsMessage}</p>;
   } else {
     displayItems = props.items.map(item => {
-      let displayValue = props.valueName === undefined ? "" : item[props.valueName];
-      let descriptionValue = props.descriptionName === undefined ? "" : ": " + item[props.descriptionName];
+      let displayValue = <div className="column value">{item[props.valueName]}</div>;
+      let descriptionValue = <div className="column description">{item[props.descriptionName]}</div>;
       let tooltip =
-        props.tooltipValueName === undefined ? "" : <span className="tooltiptext">{item[props.tooltipValueName]}</span>;
+        props.tooltipValueName === undefined ? "" : <div className="tooltiptext">{item[props.tooltipValueName]}</div>;
 
       let acceptItemButton =
         props.acceptItemButton === undefined ? (
@@ -87,12 +87,13 @@ function ListViewer(props) {
       return (
         <div className="listItem" key={item[props.keyName]}>
           <div className="tooltip">
-            {displayValue + descriptionValue}
-            <span className="buttonSet">
+            {displayValue}
+            {descriptionValue}
+            {tooltip}
+            <div className="column buttonSet">
               {acceptItemButton}
               {removeItemButton}
-            </span>
-            {tooltip}
+            </div>
           </div>
         </div>
       );

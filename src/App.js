@@ -460,7 +460,7 @@ class App extends Component {
                 nullItemsMessage="Select codes to get recommendations"
                 customMessage="loading..."
                 keyName="id"
-                valueName="rule"
+                valueName="rhs"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
