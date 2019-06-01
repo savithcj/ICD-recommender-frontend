@@ -6,8 +6,6 @@ import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
-import TreeViewer from "./Components/TreeViewer/TreeViewer";
-import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
 import TreeViewer3 from "./Components/TreeViewer3/TreeViewer3";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
@@ -374,16 +372,25 @@ class App extends Component {
     };
   }
 
-  resetLayout() {
-    this.setState({ layouts: {} });
-  }
+  /**
+   * Called upon to reset layout to default
+   */
+  resetLayout = () => {
+    this.setState({ layouts: defaultLayouts });
+  };
 
-  onLayoutChange(layouts) {
+  /**
+   * Called upon when layout is being modified
+   */
+  async onLayoutChange(layouts) {
     saveToLS("layouts", layouts);
-    this.setState({ layouts });
+    await this.setState({ layouts });
     this.treeViewDiv.current.handleResize();
   }
 
+  /**
+   * Called upon to customize layout
+   */
   handleLayoutModifierButton = () => {
     const layoutModifiable = this.state.isLayoutModifiable;
     this.setState({ isLayoutModifiable: !layoutModifiable });
@@ -418,10 +425,10 @@ class App extends Component {
       <div className="App">
         <MenuBar
           handleLayoutConfirm={this.handleLayoutModifierButton}
-          codeSearchBox={userInputBoxes}
+          handleResetLayout={this.resetLayout}
           inModifyMode={this.state.isLayoutModifiable}
         />
-        <div>
+        <div animation-name="App-logo-spin" animation-duration="4s" animation-iteration-count="infinite">
           <ResponsiveReactGridLayout
             className="layout"
             rowHeight={30}

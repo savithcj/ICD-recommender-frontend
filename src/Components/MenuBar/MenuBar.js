@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Menu } from "@material-ui/core";
+import { ReactComponent as CheckIcon } from "./icons/round-done-24px.svg";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +40,11 @@ function ButtonAppBar(props) {
     setAnchorEl(null);
   }
 
+  function handleResetLayout(event) {
+    props.handleResetLayout();
+    setAnchorEl(null);
+  }
+
   function handleAdminButton(event) {
     //TODO: Implementation
     console.log("Admin button pressed in menu");
@@ -63,9 +69,10 @@ function ButtonAppBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleToggleLayout}>Modify Layout</MenuItem>
+      <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleAdminButton}>Admin</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
+      <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
     </Menu>
   );
 
@@ -79,8 +86,7 @@ function ButtonAppBar(props) {
       onClick={props.handleLayoutConfirm}
       color="inherit"
     >
-      {/* TODO:Replace with svg icon after fixing the bug in D3 Tree */}
-      {"\u2713"}
+      <CheckIcon />
     </IconButton>
   ) : (
     <IconButton
@@ -92,9 +98,7 @@ function ButtonAppBar(props) {
       onClick={handleMenuOpen}
       color="inherit"
     >
-      {/* TODO:Uncomment the following line after fixing the bug in D3 Tree */}
-      {/* <MenuIcon /> */}
-      {"\u2699"}
+      <MenuIcon />
     </IconButton>
   );
 
