@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
-// import logo from "./logo.svg";
 import "./App.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -12,9 +11,9 @@ import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
 const defaultLayoutLg = [
-  { w: 7, h: 19, x: 0, y: 2, i: "0" },
-  { w: 5, h: 11, x: 7, y: 0, i: "1" },
-  { w: 5, h: 10, x: 7, y: 11, i: "2" },
+  { w: 7, h: 16, x: 0, y: 2, i: "0" },
+  { w: 5, h: 9, x: 7, y: 0, i: "1" },
+  { w: 5, h: 9, x: 7, y: 11, i: "2" },
   { w: 7, h: 2, x: 0, y: 0, i: "3" }
 ];
 const defaultLayoutMd = [
@@ -54,6 +53,10 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
 // const originalLayouts = defaultLayouts;
 
+const ageOptions = [...Array(120).keys()].map(x => "" + x);
+
+const genderOptions = ["MALE", "FEMALE", "OTHER"];
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -67,12 +70,33 @@ class App extends Component {
 
     ////// Search Box Auto-Complete Feature
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
+    ageAutoCompleteDisplayed: [],
+    genderAutoCompleteDisplayed: [],
     searchedCodeList: {}, // list of code searched via API
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
     selectedCodes: [],
     recommendedCodes: null //list of recommended codes based on the selected codes
+  };
+
+  ageInputBoxChangeListener = (id, newValue) => {
+    if (newValue !== "") {
+      const regex = new RegExp("^" + newValue, "i");
+      const results = ageOptions.filter(item => regex.test(item));
+      console.log(results);
+      this.setState({ ageAutoCompleteDisplayed: results });
+    }
+  };
+
+  genderInputBoxChangeListener = (id, newValue) => {
+    if (newValue !== "") {
+      newValue = newValue.trim().toUpperCase();
+      console.log(newValue);
+      const regex = new RegExp("^" + newValue, "i");
+      const results = genderOptions.filter(item => regex.test(item));
+      this.setState({ genderAutoCompleteDisplayed: results });
+    }
   };
 
   /**
@@ -143,12 +167,11 @@ class App extends Component {
    * @param {*} oArg optinal argument for the optional function
    */
   appendCodeToCache(results, oFunc, oArg) {
-    //FIXME: repeated code added
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
     for (let i = 0, l = results.length; i < l; i++) {
       let thisCode = results[i];
-      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode);
+      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode.code);
       if (codeFound === undefined) {
         codesWithDescript.push(thisCode);
       }
@@ -158,7 +181,7 @@ class App extends Component {
       {
         cachedCodeWithDescription: codesWithDescript
       },
-      oFunc == undefined ? () => {} : oFunc(oArg)
+      oFunc === undefined ? () => {} : oFunc(oArg)
     );
   }
 
@@ -358,7 +381,6 @@ class App extends Component {
     saveToLS("layouts", layouts);
     this.setState({ layouts });
     this.treeViewDiv.current.handleResize();
-    console.log(layouts);
   }
 
   handleLayoutModifierButton = () => {
@@ -372,14 +394,20 @@ class App extends Component {
    * input field is rendered only once the data is retrieved
    */
   render() {
-    let codeSearchBox = null;
+    let userInputBoxes = null;
     if (this.state.codeAutoCompleteDisplayed != null) {
-      codeSearchBox = (
+      userInputBoxes = (
         <CodeInputField
-          id="input1"
+          id_code="input1"
+          id_age="input2"
+          id_gender="input3"
           placeholder="Enter code"
           onChange={this.codeSearchBoxChangeListener}
-          data={this.state.codeAutoCompleteDisplayed}
+          onAgeChange={this.ageInputBoxChangeListener}
+          onGenderChange={this.genderInputBoxChangeListener}
+          codes={this.state.codeAutoCompleteDisplayed}
+          ages={this.state.ageAutoCompleteDisplayed}
+          genders={this.state.genderAutoCompleteDisplayed}
           selectCode={this.addSelectedCode}
         />
       );
@@ -390,11 +418,11 @@ class App extends Component {
         <MenuBar
           handleButton={this.handleLayoutModifierButton}
           buttonText={this.state.isLayoutModifiable ? "Confirm" : "Modify"}
+          codeSearchBox={userInputBoxes}
         />
         <div>
           <ResponsiveReactGridLayout
             className="layout"
-            // onLayoutChange={this.onLayoutChange}
             rowHeight={30}
             layouts={this.state.layouts}
             draggableCancel="input,textarea"
@@ -402,16 +430,7 @@ class App extends Component {
             isResizable={this.state.isLayoutModifiable} //if a button is pressed
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
-            <div
-              className="grid-border"
-              key="0"
-              data-grid={{
-                x: 0,
-                y: 19,
-                w: 4,
-                h: 14
-              }}
-            >
+            <div className="grid-border" key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
               <TreeViewer ref={this.treeViewDiv} id="1337" />
             </div>
 
@@ -446,19 +465,8 @@ class App extends Component {
               />
             </div>
 
-            <div
-              key="3"
-              className="grid-border"
-              data-grid={{
-                x: 0,
-                y: 0,
-                w: 4,
-                h: 2,
-                minW: 4,
-                minH: 2
-              }}
-            >
-              {codeSearchBox}
+            <div key="3" className="grid-border" data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
+              {userInputBoxes}
             </div>
           </ResponsiveReactGridLayout>
         </div>
