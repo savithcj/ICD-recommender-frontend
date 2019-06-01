@@ -53,6 +53,10 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
 // const originalLayouts = defaultLayouts;
 
+const ageOptions = [...Array(120).keys()].map(x => "" + x);
+
+const genderOptions = ["MALE", "FEMALE", "OTHER"];
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -66,12 +70,33 @@ class App extends Component {
 
     ////// Search Box Auto-Complete Feature
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
+    ageAutoCompleteDisplayed: [],
+    genderAutoCompleteDisplayed: [],
     searchedCodeList: {}, // list of code searched via API
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
     selectedCodes: [],
     recommendedCodes: null //list of recommended codes based on the selected codes
+  };
+
+  ageInputBoxChangeListener = (id, newValue) => {
+    if (newValue !== "") {
+      const regex = new RegExp("^" + newValue, "i");
+      const results = ageOptions.filter(item => regex.test(item));
+      console.log(results);
+      this.setState({ ageAutoCompleteDisplayed: results });
+    }
+  };
+
+  genderInputBoxChangeListener = (id, newValue) => {
+    if (newValue !== "") {
+      newValue = newValue.trim().toUpperCase();
+      console.log(newValue);
+      const regex = new RegExp("^" + newValue, "i");
+      const results = genderOptions.filter(item => regex.test(item));
+      this.setState({ genderAutoCompleteDisplayed: results });
+    }
   };
 
   /**
@@ -156,7 +181,7 @@ class App extends Component {
       {
         cachedCodeWithDescription: codesWithDescript
       },
-      oFunc == undefined ? () => {} : oFunc(oArg)
+      oFunc === undefined ? () => {} : oFunc(oArg)
     );
   }
 
@@ -362,7 +387,6 @@ class App extends Component {
     saveToLS("layouts", layouts);
     this.setState({ layouts });
     this.treeViewDiv.current.handleResize();
-    console.log(layouts);
   }
 
   handleLayoutModifierButton = () => {
@@ -376,14 +400,20 @@ class App extends Component {
    * input field is rendered only once the data is retrieved
    */
   render() {
-    let codeSearchBox = null;
+    let userInputBoxes = null;
     if (this.state.codeAutoCompleteDisplayed != null) {
-      codeSearchBox = (
+      userInputBoxes = (
         <CodeInputField
-          id="input1"
+          id_code="input1"
+          id_age="input2"
+          id_gender="input3"
           placeholder="Enter code"
           onChange={this.codeSearchBoxChangeListener}
+          onAgeChange={this.ageInputBoxChangeListener}
+          onGenderChange={this.genderInputBoxChangeListener}
           codes={this.state.codeAutoCompleteDisplayed}
+          ages={this.state.ageAutoCompleteDisplayed}
+          genders={this.state.genderAutoCompleteDisplayed}
           selectCode={this.addSelectedCode}
         />
       );
@@ -394,7 +424,7 @@ class App extends Component {
         <MenuBar
           handleButton={this.handleLayoutModifierButton}
           buttonText={this.state.isLayoutModifiable ? "Confirm" : "Modify"}
-          codeSearchBox={codeSearchBox}
+          codeSearchBox={userInputBoxes}
         />
         <div>
           <ResponsiveReactGridLayout
@@ -442,7 +472,7 @@ class App extends Component {
             </div>
 
             <div key="3" className="grid-border" data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
-              {codeSearchBox}
+              {userInputBoxes}
             </div>
           </ResponsiveReactGridLayout>
         </div>
