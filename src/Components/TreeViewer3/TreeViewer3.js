@@ -62,7 +62,9 @@ class TreeViewer3 extends Component {
   setInfoText(tier, index) {
     let codeDesc = "";
     if (tier === 0) {
-      codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+      if (this.data.parent) {
+        codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+      }
     } else if (tier === 1) {
       codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
     } else if (tier === 2) {
