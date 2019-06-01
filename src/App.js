@@ -143,12 +143,11 @@ class App extends Component {
    * @param {*} oArg optinal argument for the optional function
    */
   appendCodeToCache(results, oFunc, oArg) {
-    //FIXME: repeated code added
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
     for (let i = 0, l = results.length; i < l; i++) {
       let thisCode = results[i];
-      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode);
+      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode.code);
       if (codeFound === undefined) {
         codesWithDescript.push(thisCode);
       }
@@ -400,7 +399,6 @@ class App extends Component {
         <div>
           <ResponsiveReactGridLayout
             className="layout"
-            // onLayoutChange={this.onLayoutChange}
             rowHeight={30}
             layouts={this.state.layouts}
             draggableCancel="input,textarea"
