@@ -47,7 +47,11 @@ function ListViewer(props) {
   } else {
     displayItems = props.items.map(item => {
       let displayValue = <div className="column value">{item[props.valueName]}</div>;
-      let descriptionValue = <div className="column description">{item[props.descriptionName]}</div>;
+      let descriptionValue = (
+        <div className="column description">
+          {item[props.descriptionName] === "" ? "Description N/A" : item[props.descriptionName]}
+        </div>
+      );
       let tooltip =
         props.tooltipValueName === undefined ? "" : <div className="tooltiptext">{item[props.tooltipValueName]}</div>;
 
