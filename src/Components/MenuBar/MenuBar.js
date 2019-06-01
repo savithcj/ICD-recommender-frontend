@@ -35,7 +35,7 @@ function ButtonAppBar(props) {
   }
 
   function handleToggleLayout(event) {
-    props.handleButton();
+    props.handleLayoutConfirm();
     setAnchorEl(null);
   }
 
@@ -53,7 +53,7 @@ function ButtonAppBar(props) {
 
   const menuId = "settings-menu";
 
-  let renderMenu = (
+  let renderMenu = props.inModifyMode ? null : (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
@@ -63,10 +63,39 @@ function ButtonAppBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleToggleLayout}>{props.buttonText}</MenuItem>
+      <MenuItem onClick={handleToggleLayout}>Modify Layout</MenuItem>
       <MenuItem onClick={handleAdminButton}>Admin</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
     </Menu>
+  );
+
+  let iconButton = props.inModifyMode ? (
+    <IconButton
+      edge="end"
+      // className={classes.menuButton}
+      // aria-label="Settings"
+      aria-controls={menuId}
+      aria-haspopup="true"
+      onClick={props.handleLayoutConfirm}
+      color="inherit"
+    >
+      {/* TODO:Replace with svg icon after fixing the bug in D3 Tree */}
+      {"\u2713"}
+    </IconButton>
+  ) : (
+    <IconButton
+      edge="end"
+      // className={classes.menuButton}
+      // aria-label="Settings"
+      aria-controls={menuId}
+      aria-haspopup="true"
+      onClick={handleMenuOpen}
+      color="inherit"
+    >
+      {/* TODO:Uncomment the following line after fixing the bug in D3 Tree */}
+      {/* <MenuIcon /> */}
+      {"\u2699"}
+    </IconButton>
   );
 
   return (
@@ -78,24 +107,7 @@ function ButtonAppBar(props) {
           <Typography variant="h6" className={classes.title}>
             ICD-10 Code Suggestion and Usage Insight
           </Typography>
-
-          {/* <Button color="inherit" onClick={props.handleButton}>
-            {props.buttonText}
-          </Button> */}
-
-          <IconButton
-            edge="end"
-            // className={classes.menuButton}
-            // aria-label="Settings"
-            aria-controls={menuId}
-            aria-haspopup="true"
-            onClick={handleMenuOpen}
-            color="inherit"
-          >
-            {/* TODO:Uncomment the following line after fixing the bug in D3 Tree */}
-            {/* <MenuIcon /> */}
-            {"\u2699"}
-          </IconButton>
+          {iconButton}
         </Toolbar>
       </AppBar>
       {renderMenu}

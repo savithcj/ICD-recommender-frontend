@@ -225,13 +225,9 @@ class App extends Component {
    * matching ID from the list
    */
   handleRemoveSelectedCode = event => {
-    // event.persist();
-    console.log(event.currentTarget.id);
     const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.currentTarget.id);
-    console.log("REMOVE INDEX: " + removeCodeIndex);
 
     const codes = [...this.state.selectedCodes];
-    console.log(codes[removeCodeIndex]);
     codes.splice(removeCodeIndex, 1);
 
     this.setState({
@@ -271,15 +267,13 @@ class App extends Component {
         .then(results => {
           results.forEach(codeObj => {
             codeObj.reason =
-              "Recommended since " +
-              codeObj.lhs +
-              " selected." +
               " Confidence: " +
               Math.round(codeObj.confidence * 1000) / 1000 +
               " for ages: " +
               codeObj.min_age +
               "-" +
               codeObj.max_age;
+            codeObj.rule = codeObj.lhs + " -> " + codeObj.rhs;
           });
 
           this.addRecommendedCodesToCachedCodes(results);
@@ -423,9 +417,9 @@ class App extends Component {
     return (
       <div className="App">
         <MenuBar
-          handleButton={this.handleLayoutModifierButton}
-          buttonText={this.state.isLayoutModifiable ? "Confirm" : "Modify"}
+          handleLayoutConfirm={this.handleLayoutModifierButton}
           codeSearchBox={userInputBoxes}
+          inModifyMode={this.state.isLayoutModifiable}
         />
         <div>
           <ResponsiveReactGridLayout
@@ -464,7 +458,7 @@ class App extends Component {
                 nullItemsMessage="Select codes to get recommendations"
                 customMessage="loading..."
                 keyName="id"
-                valueName="rhs"
+                valueName="rule"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
