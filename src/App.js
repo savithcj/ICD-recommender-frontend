@@ -8,6 +8,7 @@ import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
+import TreeViewer3 from "./Components/TreeViewer3/TreeViewer3";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
 const defaultLayoutLg = [
@@ -437,7 +438,7 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className="grid-border" key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
-              <TreeViewer ref={this.treeViewDiv} id="1337" />
+              <TreeViewer3 ref={this.treeViewDiv} id="1337" />
             </div>
 
             <div key="1" className="grid-border" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>

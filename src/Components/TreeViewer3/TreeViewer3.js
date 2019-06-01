@@ -5,15 +5,10 @@ import ReactDOM from "react-dom";
 class TreeViewer3 extends Component {
   constructor(props) {
     super(props);
-    this.duration = 500;
-    this.height = 800;
-    this.width = 600;
+    this.duration = 750;
     this.padding = 0.1;
-    this.cRadius = Math.min(this.width, this.height) / 50;
-    this.textSize = Math.min(this.width, this.height) / 50;
+
     this.fontType = "sans-serif";
-    this.vPadding = this.height * this.padding;
-    this.hPadding = this.width * this.padding;
     this.treeClass = "treeVis" + this.props.id;
     this.selectedColor = "blue";
     this.otherColor = "red";
@@ -31,6 +26,56 @@ class TreeViewer3 extends Component {
       });
   }
 
+  handleResize(e) {
+    if (this.data === undefined) {
+      // variable is undefined
+    } else {
+      this.recalculateSizes();
+      this.drawInitialTree();
+    }
+  }
+
+  recalculateSizes() {
+    let elem = ReactDOM.findDOMNode(this).parentNode;
+    this.width = elem.offsetWidth;
+    this.height = elem.offsetHeight;
+    const minSize = Math.min(this.width, this.height);
+    this.vPadding = this.height * this.padding;
+    this.hPadding = this.width * this.padding;
+    this.cRadius = minSize / 50;
+    this.textSize = minSize / 50;
+  }
+
+  addInfoText() {
+    let infoG = this.svg.append("g").attr("class", "infoG");
+    this.infoText = infoG
+      .append("text")
+      .attr("y", this.height - this.vPadding * 0.25)
+      .attr("x", this.hPadding * 0.25)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .text("")
+      .style("text-anchor", "left");
+  }
+
+  setInfoText(tier, index) {
+    let codeDesc = "";
+    if (tier === 0) {
+      codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+    } else if (tier === 1) {
+      codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+    } else if (tier === 2) {
+      codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+    }
+
+    this.infoText.text(codeDesc);
+  }
+
+  clearInfoText() {
+    this.infoText.text("");
+  }
+
   componentDidMount() {
     this.getDataFromAPI("A00-A09").then(() => {
       this.drawInitialTree();
@@ -38,7 +83,11 @@ class TreeViewer3 extends Component {
   }
 
   drawInitialTree() {
-    d3.select("svg").remove();
+    this.recalculateSizes();
+
+    d3.select("div." + this.treeClass)
+      .select("svg")
+      .remove();
 
     this.svg = d3
       .select("div." + this.treeClass)
@@ -46,6 +95,7 @@ class TreeViewer3 extends Component {
       .attr("width", this.width)
       .attr("height", this.height);
 
+    this.addInfoText();
     this.linkG = this.svg.append("g").attr("class", "pathG");
     this.rightG = this.svg.append("g").attr("class", "rightG");
     this.middleG = this.svg.append("g").attr("class", "middleG");
@@ -60,6 +110,12 @@ class TreeViewer3 extends Component {
       })
       .attr("class", "parentG");
     parentg
+      .on("mouseover", (d, i) => {
+        this.setInfoText(0, 0);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .append("text")
       .text(this.codeTrunc(this.data.parent))
       .attr("font-family", this.fontType)
@@ -91,6 +147,12 @@ class TreeViewer3 extends Component {
       .data(this.siblingHeights)
       .enter()
       .append("g")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(1, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("transform", d => {
         return "translate(" + this.width / 2 + "," + d + ")";
       })
@@ -128,6 +190,12 @@ class TreeViewer3 extends Component {
       .data(this.childrenHeights)
       .enter()
       .append("g")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(2, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("transform", d => {
         return "translate(" + (this.width - this.hPadding) + "," + d + ")";
       })
@@ -251,6 +319,12 @@ class TreeViewer3 extends Component {
       .attr("transform", () => {
         return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
       })
+      .on("mouseover", (d, i) => {
+        this.setInfoText(0, 0);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("class", "parentG");
     parentg
       .append("text")
@@ -350,6 +424,12 @@ class TreeViewer3 extends Component {
   moveChildrenToSiblings() {
     this.svg
       .selectAll("g.childrenG")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(1, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .data(this.childrenHeights)
       .transition()
       .duration(this.duration)
@@ -414,6 +494,12 @@ class TreeViewer3 extends Component {
       .data(this.childrenHeights)
       .enter()
       .append("g")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(2, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("class", "childrenG")
       .attr("transform", d => {
         return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
@@ -498,6 +584,12 @@ class TreeViewer3 extends Component {
   moveSiblingsToChildren() {
     this.svg
       .selectAll("g.siblingG")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(2, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .data(this.siblingHeights)
       .transition()
       .delay(this.duration)
@@ -546,7 +638,7 @@ class TreeViewer3 extends Component {
       .selectAll("circle.parentCircle")
       .transition()
       .duration(this.duration)
-      .attr("class", "siblingCircle")
+      .attr("class", "siblingCircle") //**HERE**
       .attr("fill", this.selectedColor);
 
     this.svg.selectAll("circle.siblingCircle").on("click", (d, i) => {
@@ -560,6 +652,12 @@ class TreeViewer3 extends Component {
     if (this.data.parent) {
       let parentG = this.svg
         .append("g")
+        .on("mouseover", (d, i) => {
+          this.setInfoText(0, 0);
+        })
+        .on("mouseout", () => {
+          this.clearInfoText();
+        })
         .attr("class", "parentG")
         .attr("transform", d => {
           return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
@@ -644,6 +742,12 @@ class TreeViewer3 extends Component {
       .data(this.siblingHeights)
       .enter()
       .append("g")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(1, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("class", "siblingG")
       .attr("transform", d => {
         return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
