@@ -275,6 +275,8 @@ class App extends Component {
             codeObj.rule = codeObj.lhs + " -> " + codeObj.rhs;
           });
 
+          console.log(results);
+
           this.addRecommendedCodesToCachedCodes(results);
 
           this.setState({

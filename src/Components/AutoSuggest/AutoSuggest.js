@@ -33,23 +33,16 @@ class AutoSuggest extends Autosuggest {
       highlightedSuggestionIndex,
       valueBeforeUpDown
     } = this.state;
-    const shouldRenderSuggestions = alwaysRenderSuggestions
-      ? alwaysTrue
-      : this.props.shouldRenderSuggestions;
+    const shouldRenderSuggestions = alwaysRenderSuggestions ? alwaysTrue : this.props.shouldRenderSuggestions;
     const { value, onFocus, onKeyDown } = inputProps;
     const willRenderSuggestions = this.willRenderSuggestions(this.props);
-    const isOpen =
-      alwaysRenderSuggestions ||
-      (isFocused && !isCollapsed && willRenderSuggestions);
+    const isOpen = alwaysRenderSuggestions || (isFocused && !isCollapsed && willRenderSuggestions);
     const items = isOpen ? suggestions : [];
 
     const autowhateverInputProps = {
       ...inputProps,
       onFocus: event => {
-        if (
-          !this.justSelectedSuggestion &&
-          !this.justClickedOnSuggestionsContainer
-        ) {
+        if (!this.justSelectedSuggestion && !this.justClickedOnSuggestionsContainer) {
           const shouldRender = shouldRenderSuggestions(value);
 
           this.setState({
@@ -78,7 +71,6 @@ class AutoSuggest extends Autosuggest {
         }
       },
       onChange: event => {
-        console.log(event);
         const { value } = event.target;
         const shouldRender = shouldRenderSuggestions(value);
 
@@ -121,10 +113,7 @@ class AutoSuggest extends Autosuggest {
                 this.revealSuggestions();
               }
             } else if (suggestions.length > 0) {
-              const {
-                newHighlightedSectionIndex,
-                newHighlightedItemIndex
-              } = data;
+              const { newHighlightedSectionIndex, newHighlightedItemIndex } = data;
 
               let newValue;
 
@@ -132,34 +121,15 @@ class AutoSuggest extends Autosuggest {
                 // valueBeforeUpDown can be null if, for example, user
                 // hovers on the first suggestion and then pressed Up.
                 // If that happens, use the original input value.
-                newValue =
-                  valueBeforeUpDown === null ? value : valueBeforeUpDown;
+                newValue = valueBeforeUpDown === null ? value : valueBeforeUpDown;
               } else {
-                newValue = this.getSuggestionValueByIndex(
-                  newHighlightedSectionIndex,
-                  newHighlightedItemIndex
-                );
+                newValue = this.getSuggestionValueByIndex(newHighlightedSectionIndex, newHighlightedItemIndex);
               }
 
-              console.log(
-                "newValue=" +
-                  newValue +
-                  " value=" +
-                  value +
-                  " valueBeforeUpDown=" +
-                  valueBeforeUpDown
-              );
+              console.log("newValue=" + newValue + " value=" + value + " valueBeforeUpDown=" + valueBeforeUpDown);
 
-              this.updateHighlightedSuggestion(
-                newHighlightedSectionIndex,
-                newHighlightedItemIndex,
-                value
-              );
-              this.maybeCallOnChange(
-                event,
-                newValue,
-                keyCode === 40 ? "down" : "up"
-              );
+              this.updateHighlightedSuggestion(newHighlightedSectionIndex, newHighlightedItemIndex, value);
+              this.maybeCallOnChange(event, newValue, keyCode === 40 ? "down" : "up");
             }
 
             event.preventDefault(); // Prevents the cursor from moving

@@ -4,16 +4,27 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
 
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import red from "@material-ui/core/colors/red";
+import green from "@material-ui/core/colors/green";
+
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: red
+  }
+});
+
 const useStyles = makeStyles(theme => ({
   button: {
-    margin: theme.spacing(0.5),
-    maxWidth: "30px",
-    maxHeight: "30px",
-    minWidth: "30px",
-    minHeight: "30px"
-  },
-  input: {
-    display: "none"
+    margin: theme.spacing(0.3),
+    maxWidth: "25px",
+    maxHeight: "25px",
+    minWidth: "25px",
+    minHeight: "25px",
+    padding: "0px",
+    borderRadius: 25
   }
 }));
 
@@ -40,36 +51,37 @@ function ListViewer(props) {
       let tooltip =
         props.tooltipValueName === undefined ? "" : <span className="tooltiptext">{item[props.tooltipValueName]}</span>;
 
-      let removeItemButton =
-        props.removeItemButton === undefined ? (
-          ""
-        ) : (
-          <span>
-            <Button
-              variant="outlined"
-              className={classes.button}
-              id={item[props.keyName]}
-              onClick={props.removeItemButton}
-            >
-              {"\u2717"} {/*unicode x mark */}
-            </Button>
-          </span>
-        );
-
       let acceptItemButton =
         props.acceptItemButton === undefined ? (
           ""
         ) : (
-          <span>
+          // Material UI only allows one ThemeProvider
+          <ThemeProvider theme={theme}>
             <Button
               variant="outlined"
               className={classes.button}
               id={item[props.keyName]}
               onClick={props.acceptItemButton}
+              color="primary"
             >
               {"\u2713"} {/*unicode check mark */}
             </Button>
-          </span>
+          </ThemeProvider>
+        );
+
+      let removeItemButton =
+        props.removeItemButton === undefined ? (
+          ""
+        ) : (
+          <Button
+            variant="outlined"
+            className={classes.button}
+            id={item[props.keyName]}
+            onClick={props.removeItemButton}
+            color="secondary"
+          >
+            {"\u2717"} {/*unicode x mark */}
+          </Button>
         );
 
       return (
@@ -91,17 +103,15 @@ function ListViewer(props) {
     props.removeAllItemsButton === undefined || props.removeAllItemsButton === null ? (
       ""
     ) : (
-      <span>
-        <Button color="primary" onClick={props.removeAllItemsButton}>
-          remove all
-        </Button>
-      </span>
+      <Button color="default" onClick={props.removeAllItemsButton}>
+        remove all
+      </Button>
     );
 
   return (
-    <div className="itemContainer">
-      <h3 className="containerTitle">{props.title}</h3>
-      {displayItems}
+    <div className="listViewer">
+      <div className="containerTitle">{props.title}</div>
+      <div className="itemContainer">{displayItems}</div>
       <div className="footer">{removeAllItemsButton}</div>
     </div>
   );
