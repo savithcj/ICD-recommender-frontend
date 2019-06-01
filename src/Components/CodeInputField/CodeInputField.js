@@ -57,9 +57,7 @@ class CodeInputField extends React.Component {
     return (
       <span>
         {parts.map((part, index) => {
-          const className = part.highlight
-            ? "react-autosuggest__suggestion-match"
-            : null;
+          const className = part.highlight ? "react-autosuggest__suggestion-match" : null;
 
           return (
             <span className={className} key={index}>
@@ -96,7 +94,7 @@ class CodeInputField extends React.Component {
     return (
       <AutoSuggest
         id={id}
-        suggestions={this.props.data}
+        suggestions={this.props.codes}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={this.getSuggestionValue}
