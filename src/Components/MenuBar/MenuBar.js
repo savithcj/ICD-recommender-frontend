@@ -92,8 +92,9 @@ function ButtonAppBar(props) {
             onClick={handleMenuOpen}
             color="inherit"
           >
+            {/* TODO:Uncomment the following line after fixing the bug in D3 Tree */}
             {/* <MenuIcon /> */}
-            Menu
+            {"\u2699"}
           </IconButton>
         </Toolbar>
       </AppBar>
