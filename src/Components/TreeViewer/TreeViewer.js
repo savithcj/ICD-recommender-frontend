@@ -87,7 +87,10 @@ class TreeViewer extends Component {
     this.recalculateSizes();
     console.log("HEIGHT", this.height);
     console.log("WIDTH", this.width);
-    d3.select("svg").remove();
+
+    d3.select("div." + this.treeClass)
+      .select("svg")
+      .remove();
 
     this.svg = d3
       .select("div." + this.treeClass)

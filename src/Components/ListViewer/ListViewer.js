@@ -1,15 +1,31 @@
 import React from "react";
 import "./ListViewer.css";
+import { makeStyles } from "@material-ui/core/styles";
+
+import Button from "@material-ui/core/Button";
+
+const useStyles = makeStyles(theme => ({
+  button: {
+    margin: theme.spacing(0.5),
+    maxWidth: "30px",
+    maxHeight: "30px",
+    minWidth: "30px",
+    minHeight: "30px"
+  },
+  input: {
+    display: "none"
+  }
+}));
 
 /**
  * This component takes a list of items and returns
  * a JSX element containing the list of items. When an
  * item is clicked, it is removed from the original list
  */
-const listViewer = props => {
-  let displayItems = null;
+function ListViewer(props) {
+  const classes = useStyles();
 
-  console.log(props.removeItemButton);
+  let displayItems = null;
 
   if (props.items === null || props.items === undefined) {
     displayItems = <p>{props.nullItemsMessage}</p>;
@@ -19,27 +35,24 @@ const listViewer = props => {
     displayItems = <p>{props.noItemsMessage}</p>;
   } else {
     displayItems = props.items.map(item => {
-      let displayValue =
-        props.valueName === undefined ? "" : item[props.valueName];
-      let descriptionValue =
-        props.descriptionName === undefined
-          ? ""
-          : ": " + item[props.descriptionName];
+      let displayValue = props.valueName === undefined ? "" : item[props.valueName];
+      let descriptionValue = props.descriptionName === undefined ? "" : ": " + item[props.descriptionName];
       let tooltip =
-        props.tooltipValueName === undefined ? (
-          ""
-        ) : (
-          <span className="tooltiptext">{item[props.tooltipValueName]}</span>
-        );
+        props.tooltipValueName === undefined ? "" : <span className="tooltiptext">{item[props.tooltipValueName]}</span>;
 
       let removeItemButton =
         props.removeItemButton === undefined ? (
           ""
         ) : (
           <span>
-            <button id={item[props.keyName]} onClick={props.removeItemButton}>
+            <Button
+              variant="outlined"
+              className={classes.button}
+              id={item[props.keyName]}
+              onClick={props.removeItemButton}
+            >
               {"\u2717"} {/*unicode x mark */}
-            </button>
+            </Button>
           </span>
         );
 
@@ -48,9 +61,14 @@ const listViewer = props => {
           ""
         ) : (
           <span>
-            <button id={item[props.keyName]} onClick={props.acceptItemButton}>
+            <Button
+              variant="outlined"
+              className={classes.button}
+              id={item[props.keyName]}
+              onClick={props.acceptItemButton}
+            >
               {"\u2713"} {/*unicode check mark */}
-            </button>
+            </Button>
           </span>
         );
 
@@ -58,35 +76,35 @@ const listViewer = props => {
         <div className="listItem" key={item[props.keyName]}>
           <div className="tooltip">
             {displayValue + descriptionValue}
-            {acceptItemButton}
-            {removeItemButton}
+            <span className="buttonSet">
+              {acceptItemButton}
+              {removeItemButton}
+            </span>
             {tooltip}
           </div>
-          <hr />
         </div>
       );
     });
   }
 
   let removeAllItemsButton =
-    props.removeAllItemsButton === undefined ||
-    props.removeAllItemsButton === null ? (
+    props.removeAllItemsButton === undefined || props.removeAllItemsButton === null ? (
       ""
     ) : (
       <span>
-        <button onClick={props.removeAllItemsButton}>remove all</button>
+        <Button color="primary" onClick={props.removeAllItemsButton}>
+          remove all
+        </Button>
       </span>
     );
 
   return (
     <div className="itemContainer">
-      <h3 className="containerTitle">
-        {props.title}
-        {removeAllItemsButton}
-      </h3>
+      <h3 className="containerTitle">{props.title}</h3>
       {displayItems}
+      <div className="footer">{removeAllItemsButton}</div>
     </div>
   );
-};
+}
 
-export default listViewer;
+export default ListViewer;
