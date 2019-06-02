@@ -267,7 +267,10 @@ class App extends Component {
         .then(results => {
           results.forEach(codeObj => {
             codeObj.reason =
-              " Confidence: " +
+              codeObj.lhs +
+              " -> " +
+              codeObj.rhs +
+              " || confidence: " +
               Math.round(codeObj.confidence * 1000) / 1000 +
               " for ages: " +
               codeObj.min_age +
@@ -275,8 +278,6 @@ class App extends Component {
               codeObj.max_age;
             codeObj.rule = codeObj.lhs + " -> " + codeObj.rhs;
           });
-
-          console.log(results);
 
           this.addRecommendedCodesToCachedCodes(results);
 
