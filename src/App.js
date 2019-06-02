@@ -83,7 +83,6 @@ class App extends Component {
     if (newValue !== "") {
       const regex = new RegExp("^" + newValue, "i");
       const results = ageOptions.filter(item => regex.test(item));
-      console.log(results);
       this.setState({ ageAutoCompleteDisplayed: results });
     }
   };
@@ -218,6 +217,13 @@ class App extends Component {
   };
 
   /**
+   * Called upon by AgeInputField when a new age is selected
+   */
+  handleAgeSelection = newAgeValue => {
+    this.getRecommendedCodes(this.state.selectedCodes, newAgeValue);
+  };
+
+  /**
    * Called when an event is fired from a element containing an
    * item from the listViewers. Removes the code with a
    * matching ID from the list
@@ -250,11 +256,13 @@ class App extends Component {
    * array of codes.
    * @param {*} listOfCodeObjects List of the code objects to get recommendations from
    */
-  getRecommendedCodes(listOfCodeObjects) {
+  getRecommendedCodes(listOfCodeObjects, age) {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
+    const ageParam = age === undefined || age === "" ? "" : "&age=" + age;
+
     if (stringOfCodes !== "") {
-      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
+      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
 
       this.setState({
         recommendedCodes: 1
@@ -353,7 +361,7 @@ class App extends Component {
 
   /**
    * Helper method to convert the code objects within the passed array
-   * to one string with comma separated codes.
+   * to a single string with comma separated codes.
    * @param {*} listOfCodeObjects Array of code objects
    * @returns A comma separated string version of the array of codes
    */
@@ -420,6 +428,7 @@ class App extends Component {
           ages={this.state.ageAutoCompleteDisplayed}
           genders={this.state.genderAutoCompleteDisplayed}
           selectCode={this.addSelectedCode}
+          selectAge={this.handleAgeSelection}
         />
       );
     }
@@ -464,7 +473,7 @@ class App extends Component {
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}
-                noItemsMessage="No recommendations for the selected codes"
+                noItemsMessage="No recommendations for the selected codes and age"
                 nullItemsMessage="Select codes to get recommendations"
                 customMessage="loading..."
                 keyName="id"

@@ -75,6 +75,7 @@ class CodeInputField extends React.Component {
   };
 
   onAgeSuggestionSelected = (_, { suggestion }) => {
+    this.props.selectAge(suggestion);
     this.setState({
       age: suggestion
     });
