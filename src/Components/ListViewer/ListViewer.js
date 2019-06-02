@@ -9,6 +9,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import red from "@material-ui/core/colors/red";
 import green from "@material-ui/core/colors/green";
 
+//theme used by the accept and reject buttons
 const theme = createMuiTheme({
   palette: {
     primary: green,
@@ -16,6 +17,7 @@ const theme = createMuiTheme({
   }
 });
 
+//accept and reject button styles
 const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(0.3),
