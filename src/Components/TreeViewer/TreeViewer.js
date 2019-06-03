@@ -89,10 +89,19 @@ class TreeViewer extends Component {
     });
   }
 
-  changeTree(code) {
-    //to do: animation for changing tree
+  async changeTree(code) {
+    d3.select("div." + this.treeClass)
+      .transition()
+      .duration(0.5 * this.duration)
+      .style("opacity", 1e-6);
+
+    await this.sleep(0.5 * this.duration);
     this.getDataFromAPI(code).then(() => {
       this.drawInitialTree();
+      d3.select("div." + this.treeClass)
+        .transition()
+        .duration(0.5 * this.duration)
+        .style("opacity", 1);
     });
   }
 
