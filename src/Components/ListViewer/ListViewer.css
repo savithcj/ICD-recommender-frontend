@@ -75,7 +75,7 @@ body {
 .exploreButton {
   transform: translateY(-10%);
   float: left;
-  width: 60%;
+  width: 50%;
   /* background-color: aqua; */
 }
 
@@ -88,6 +88,8 @@ body {
 
 .description {
   width: 60%;
+  /* text-align: justify; */
+  /* word-break: break-all; */
   /* background-color: blueviolet; */
 }
 
