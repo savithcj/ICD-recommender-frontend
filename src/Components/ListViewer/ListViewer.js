@@ -35,8 +35,7 @@ const useStyles = makeStyles(theme => ({
 
 /**
  * This component takes a list of items and returns
- * a JSX element containing the list of items. When an
- * item is clicked, it is removed from the original list
+ * a JSX element containing the list of items.
  */
 function ListViewer(props) {
   const classes = useStyles();
@@ -51,7 +50,7 @@ function ListViewer(props) {
     displayItems = <p>{props.noItemsMessage}</p>;
   } else {
     displayItems = props.items.map(item => {
-      let exploreIcon =
+      const exploreIcon =
         props.exploreButton === undefined ? (
           ""
         ) : (
@@ -67,25 +66,24 @@ function ListViewer(props) {
             </IconButton>
           </span>
         );
-      let value = props.valueName === undefined ? "" : <span className="itemValue">{item[props.valueName]}</span>;
+      const value = props.valueName === undefined ? "" : <span className="itemValue">{item[props.valueName]}</span>;
 
-      let displayValue = (
+      const displayValue = (
         <div className="column value">
           {exploreIcon}
-          <span />
           {value}
         </div>
       );
 
-      let descriptionValue = (
+      const descriptionValue = (
         <div className="column description">
           {item[props.descriptionName] === "" ? "Description N/A" : item[props.descriptionName]}
         </div>
       );
-      let tooltip =
+      const tooltip =
         props.tooltipValueName === undefined ? "" : <div className="tooltiptext">{item[props.tooltipValueName]}</div>;
 
-      let acceptItemButton =
+      const acceptItemButton =
         props.acceptItemButton === undefined ? (
           ""
         ) : (
@@ -103,7 +101,7 @@ function ListViewer(props) {
           </ThemeProvider>
         );
 
-      let removeItemButton =
+      const removeItemButton =
         props.removeItemButton === undefined ? (
           ""
         ) : (
@@ -134,12 +132,12 @@ function ListViewer(props) {
     });
   }
 
-  let removeAllItemsButton =
+  const removeAllItemsButton =
     props.removeAllItemsButton === undefined || props.removeAllItemsButton === null ? (
       ""
     ) : (
       <Button color="default" onClick={props.removeAllItemsButton}>
-        remove all
+        Remove All
       </Button>
     );
 

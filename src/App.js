@@ -259,7 +259,7 @@ class App extends Component {
   getRecommendedCodes(listOfCodeObjects, age) {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
-    const ageParam = age === undefined || age === "" ? "" : "&age=" + age;
+    const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
 
     if (stringOfCodes !== "") {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
@@ -407,9 +407,16 @@ class App extends Component {
     this.setState({ isLayoutModifiable: !layoutModifiable });
   };
 
-  handleExploreCodeButton = event => {
+  handleExploreSelectedCodeButton = event => {
     //TODO: call the tree function to explore the selected code
-    console.log(event.currentTarget.id);
+    const selectedCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code == event.currentTarget.id);
+    console.log(this.state.selectedCodes[selectedCodeIndex]);
+  };
+
+  handleExploreRecommendedCodeButton = event => {
+    //TODO: call the tree function to explore the selected code
+    const recommendedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
+    console.log(this.state.recommendedCodes[recommendedCodeIndex]);
   };
 
   /**
@@ -470,7 +477,7 @@ class App extends Component {
                 descriptionName="description"
                 removeItemButton={this.handleRemoveSelectedCode}
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
-                exploreButton={this.handleExploreCodeButton}
+                exploreButton={this.handleExploreSelectedCodeButton}
               />
             </div>
 
@@ -487,7 +494,7 @@ class App extends Component {
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
-                exploreButton={this.handleExploreCodeButton}
+                exploreButton={this.handleExploreRecommendedCodeButton}
                 tooltipValueName="reason"
               />
             </div>
