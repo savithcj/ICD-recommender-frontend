@@ -443,6 +443,8 @@ class App extends Component {
       );
     }
 
+    const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
+    const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
     return (
       <div className="App">
         <MenuBar
@@ -450,7 +452,7 @@ class App extends Component {
           handleResetLayout={this.resetLayout}
           inModifyMode={this.state.isLayoutModifiable}
         />
-        <div animation-name="App-logo-spin" animation-duration="4s" animation-iteration-count="infinite">
+        <div className={shakeDiv}>
           <ResponsiveReactGridLayout
             className="layout"
             rowHeight={30}
@@ -460,11 +462,10 @@ class App extends Component {
             isResizable={this.state.isLayoutModifiable} //if a button is pressed
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
-            <div className="grid-border" key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
+            <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
               <TreeViewer ref={this.treeViewDiv} id="1337" />
             </div>
-
-            <div key="1" className="grid-border" data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
+            <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
               <ListViewer
                 className="selectedCodes"
                 title="Selected Codes"
@@ -479,7 +480,7 @@ class App extends Component {
               />
             </div>
 
-            <div key="2" div className="grid-border" data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
+            <div key="2" div className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
               <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
@@ -497,7 +498,7 @@ class App extends Component {
               />
             </div>
 
-            <div key="3" className="grid-border" data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
+            <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
               {userInputBoxes}
             </div>
           </ResponsiveReactGridLayout>
