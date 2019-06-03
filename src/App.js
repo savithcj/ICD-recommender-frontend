@@ -407,11 +407,17 @@ class App extends Component {
     this.setState({ isLayoutModifiable: !layoutModifiable });
   };
 
+  /**
+   * Called upon to center the tree on the clicked selected code
+   */
   handleExploreSelectedCodeButton = event => {
     const selectedCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code == event.currentTarget.id);
     this.treeViewDiv.current.changeTree(this.state.selectedCodes[selectedCodeIndex].code);
   };
 
+  /**
+   * Called upon to center the tree on the clicked recommended code
+   */
   handleExploreRecommendedCodeButton = event => {
     const recommendedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
     this.treeViewDiv.current.changeTree(this.state.recommendedCodes[recommendedCodeIndex].rhs);
