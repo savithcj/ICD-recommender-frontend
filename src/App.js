@@ -407,6 +407,11 @@ class App extends Component {
     this.setState({ isLayoutModifiable: !layoutModifiable });
   };
 
+  handleExploreCodeButton = event => {
+    //TODO: call the tree function to explore the selected code
+    console.log(event.currentTarget.id);
+  };
+
   /**
    * React calls the render method asynchronously before the data is retrieved
    * from the API call. The following if statement is needed make sure that the
@@ -465,6 +470,7 @@ class App extends Component {
                 descriptionName="description"
                 removeItemButton={this.handleRemoveSelectedCode}
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
+                exploreButton={this.handleExploreCodeButton}
               />
             </div>
 
@@ -481,6 +487,7 @@ class App extends Component {
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
+                exploreButton={this.handleExploreCodeButton}
                 tooltipValueName="reason"
               />
             </div>

@@ -3,11 +3,14 @@ import "./ListViewer.css";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import red from "@material-ui/core/colors/red";
 import green from "@material-ui/core/colors/green";
+
+import Explore from "@material-ui/icons/ExploreOutlined";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -21,10 +24,10 @@ const theme = createMuiTheme({
 const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(0.3),
-    maxWidth: "25px",
-    maxHeight: "25px",
-    minWidth: "25px",
-    minHeight: "25px",
+    maxWidth: "24px",
+    maxHeight: "24px",
+    minWidth: "24px",
+    minHeight: "24px",
     padding: "0px",
     borderRadius: 25
   }
@@ -48,7 +51,32 @@ function ListViewer(props) {
     displayItems = <p>{props.noItemsMessage}</p>;
   } else {
     displayItems = props.items.map(item => {
-      let displayValue = <div className="column value">{item[props.valueName]}</div>;
+      let exploreIcon =
+        props.exploreButton === undefined ? (
+          ""
+        ) : (
+          <span className="exploreButton">
+            <IconButton
+              variant="outlined"
+              className={classes.button}
+              id={item[props.keyName]}
+              onClick={props.exploreButton}
+              color="primary"
+            >
+              <Explore />
+            </IconButton>
+          </span>
+        );
+      let value = props.valueName === undefined ? "" : <span className="itemValue">{item[props.valueName]}</span>;
+
+      let displayValue = (
+        <div className="column value">
+          {exploreIcon}
+          <span />
+          {value}
+        </div>
+      );
+
       let descriptionValue = (
         <div className="column description">
           {item[props.descriptionName] === "" ? "Description N/A" : item[props.descriptionName]}
@@ -91,9 +119,9 @@ function ListViewer(props) {
         );
 
       return (
-        <div className="tooltip">
+        <div className="tooltip" key={"tooltip" + item[props.keyName]}>
           {tooltip}
-          <div className="listItem" key={item[props.keyName]}>
+          <div className="listItem" key={"listItem" + item[props.keyName]}>
             {displayValue}
             {descriptionValue}
             <div className="column buttonSet">

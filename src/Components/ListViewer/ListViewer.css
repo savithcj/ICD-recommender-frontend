@@ -39,7 +39,6 @@ body {
 
 .footer {
   /* background-color: rgb(255, 208, 0); */
-  font-size: 100%;
   position: absolute;
   top: 0;
   height: 14%;
@@ -64,13 +63,26 @@ body {
   float: left;
   /* background-color: aqua; */
   width: 100%;
-  height: 1%;
 }
 
 .value,
 .buttonSet {
   font-weight: bold;
   width: 20%;
+  /* background-color: purple; */
+}
+
+.exploreButton {
+  transform: translateY(-10%);
+  float: left;
+  width: 60%;
+  /* background-color: aqua; */
+}
+
+.itemValue {
+  float: left;
+  width: 20%;
+  /* background-color: coral; */
 }
 
 .description {
