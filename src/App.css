@@ -2,12 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-}
-
 .App-header {
   background-color: #f7f7f7;
   min-height: 100vh;
@@ -24,13 +18,24 @@
 }
 
 .grid-border {
-  /* border: 2px solid #61dafb; */
   background: #fff;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   padding: 3px 3px 3px 3px;
   /* border-radius: 5px; */
   height: 100%;
   width: 100%;
+}
+
+.edit-border {
+  box-sizing: border-box;
+  border: 3px solid #61dafb;
+}
+
+.shake {
+  /* Start the shake animation and make the animation last for 0.5 seconds */
+  animation: shake 0.5s;
+  /* When the animation is finished, start again */
+  animation-iteration-count: infinite;
 }
 
 @keyframes App-logo-spin {
@@ -44,36 +49,12 @@
 
 @keyframes shake {
   0% {
-    transform: translate(1px, 1px) rotate(0deg);
-  }
-  10% {
-    transform: translate(-1px, -2px) rotate(-1deg);
-  }
-  20% {
-    transform: translate(-3px, 0px) rotate(1deg);
-  }
-  30% {
-    transform: translate(3px, 2px) rotate(0deg);
-  }
-  40% {
-    transform: translate(1px, -1px) rotate(1deg);
+    transform: rotate(-0.2deg);
   }
   50% {
-    transform: translate(-1px, 2px) rotate(-1deg);
-  }
-  60% {
-    transform: translate(-3px, 1px) rotate(0deg);
-  }
-  70% {
-    transform: translate(3px, 1px) rotate(-1deg);
-  }
-  80% {
-    transform: translate(-1px, -1px) rotate(1deg);
-  }
-  90% {
-    transform: translate(1px, 2px) rotate(0deg);
+    transform: rotate(0.25deg);
   }
   100% {
-    transform: translate(1px, -2px) rotate(-1deg);
+    transform: rotate(-0.2deg);
   }
 }
