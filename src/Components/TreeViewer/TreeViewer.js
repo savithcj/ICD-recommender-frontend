@@ -6,7 +6,6 @@ class TreeViewer extends Component {
   constructor(props) {
     super(props);
     this.duration = 750;
-    this.padding = 0.1;
 
     this.fontType = "sans-serif";
     this.treeClass = "treeVis" + this.props.id;
@@ -41,10 +40,12 @@ class TreeViewer extends Component {
     this.width = elem.offsetWidth;
     this.height = elem.offsetHeight;
     const minSize = Math.min(this.width, this.height);
-    this.vPadding = this.height * this.padding;
-    this.hPadding = this.width * this.padding;
-    this.cRadius = minSize / 50;
+    this.vPadding = this.height * 0.1;
+    this.leftPadding = this.width * 0.05;
+    this.rightPadding = this.width * 0.3;
+    this.cRadius = minSize / 60;
     this.textSize = minSize / 50;
+    this.middle = (this.width - this.leftPadding - this.rightPadding) / 2 + this.leftPadding;
   }
 
   addInfoText() {
@@ -52,7 +53,7 @@ class TreeViewer extends Component {
     this.infoText = infoG
       .append("text")
       .attr("y", this.textSize + 5)
-      .attr("x", this.hPadding * 0.25)
+      .attr("x", this.leftPadding * 0.25)
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -130,7 +131,7 @@ class TreeViewer extends Component {
       let parentg = this.leftG
         .append("g")
         .attr("transform", () => {
-          return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+          return "translate(" + this.leftPadding + "," + this.height / 2 + ")";
         })
         .attr("class", "parentG");
       parentg
@@ -145,10 +146,10 @@ class TreeViewer extends Component {
         .attr("font-family", this.fontType)
         .attr("font-size", this.textSize)
         .attr("fill", this.textColor)
-        .attr("y", this.cRadius - 2.1 * this.textSize)
-        .attr("x", 2 * this.cRadius)
+        .attr("y", 0.3 * this.textSize)
+        .attr("x", 1.5 * this.cRadius)
         .attr("class", "parentText")
-        .style("text-anchor", "middle");
+        .style("text-anchor", "right");
 
       parentg
         .append("circle")
@@ -179,7 +180,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + d + ")";
+        return "translate(" + this.middle + "," + d + ")";
       })
       .attr("class", "siblingG");
 
@@ -190,10 +191,10 @@ class TreeViewer extends Component {
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", 2 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "siblingText")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "right");
 
     siblingGs
       .data(this.siblingColours)
@@ -222,7 +223,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .attr("transform", d => {
-        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+        return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
       })
       .attr("class", "childrenG");
 
@@ -233,10 +234,10 @@ class TreeViewer extends Component {
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", -1.5 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "childrenText")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "right");
 
     childrenGs
       .append("circle")
@@ -361,7 +362,7 @@ class TreeViewer extends Component {
     let parentg = this.leftG
       .append("g")
       .attr("transform", () => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .on("mouseover", (d, i) => {
         this.setInfoText(0, 0);
@@ -376,10 +377,10 @@ class TreeViewer extends Component {
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", 2 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "parentText")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "right");
     parentg
       .append("circle")
       .attr("r", this.cRadius)
@@ -395,7 +396,7 @@ class TreeViewer extends Component {
       .selectAll("g.oldParentG")
       .transition()
       .attr("transform", () => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .duration(this.duration);
     this.svg
@@ -413,7 +414,7 @@ class TreeViewer extends Component {
       .selectAll("g.siblingG")
       .transition()
       .attr("transform", () => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .duration(this.duration);
     this.svg
@@ -431,11 +432,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.siblingHeights.length; i++) {
       this.parentLinks[i] = {
         source: {
-          x: this.width / 2 - this.cRadius,
+          x: this.middle - this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         },
         target: {
-          x: this.width / 2 - this.cRadius,
+          x: this.middle - this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         }
       };
@@ -454,7 +455,7 @@ class TreeViewer extends Component {
       .selectAll("g.parentG")
       .transition()
       .attr("transform", d => {
-        return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+        return "translate(" + this.leftPadding + "," + this.height / 2 + ")";
       })
       .duration(this.duration);
 
@@ -478,7 +479,7 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + d + ")";
+        return "translate(" + this.middle + "," + d + ")";
       })
       .attr("class", "siblingG");
 
@@ -500,10 +501,10 @@ class TreeViewer extends Component {
       .selectAll("text.childrenText")
       .transition()
       .duration(this.duration)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", 2 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "siblingText")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "right");
   }
 
   transitionChildrenLinks() {
@@ -512,11 +513,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.data.siblings.length; i++) {
       this.childrenLinks[i] = {
         source: {
-          x: this.hPadding + this.cRadius,
+          x: this.leftPadding + this.cRadius,
           y: this.height / 2
         },
         target: {
-          x: this.width / 2 - this.cRadius,
+          x: this.middle - this.cRadius,
           y: this.siblingHeights[i]
         }
       };
@@ -546,7 +547,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "childrenG")
       .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       });
 
     childrenGs
@@ -556,10 +557,10 @@ class TreeViewer extends Component {
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", -1.5 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "childrenText")
-      .style("text-anchor", "middle")
+      .style("text-anchor", "right")
       .style("fill-opacity", 1e-6);
 
     childrenGs
@@ -578,7 +579,7 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("transform", d => {
-        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+        return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
       });
     childrenGs
       .selectAll("text.childrenText")
@@ -595,11 +596,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.data.children.length; i++) {
       this.childrenLinks[i] = {
         source: {
-          x: this.width / 2 + this.cRadius,
+          x: this.middle + this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         },
         target: {
-          x: this.width / 2 + this.cRadius,
+          x: this.middle + this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         }
       };
@@ -639,7 +640,7 @@ class TreeViewer extends Component {
       .delay(this.duration)
       .duration(this.duration)
       .attr("transform", d => {
-        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+        return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
       })
       .attr("class", "childrenG");
 
@@ -658,10 +659,10 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .delay(this.duration)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", -1.5 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "childrenText")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "right");
   }
 
   moveParentToSibling() {
@@ -674,7 +675,7 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .delay(this.duration)
       .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .attr("class", "oldParentG");
 
@@ -704,7 +705,7 @@ class TreeViewer extends Component {
         })
         .attr("class", "parentG")
         .attr("transform", d => {
-          return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+          return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
         });
       parentG
         .append("text")
@@ -712,10 +713,10 @@ class TreeViewer extends Component {
         .attr("font-family", this.fontType)
         .attr("font-size", this.textSize)
         .attr("fill", this.textColor)
-        .attr("y", this.cRadius - 2.1 * this.textSize)
-        .attr("x", 2 * this.cRadius)
+        .attr("y", 0.3 * this.textSize)
+        .attr("x", 1.5 * this.cRadius)
         .attr("class", "parentText")
-        .style("text-anchor", "middle")
+        .style("text-anchor", "right")
         .style("fill-opacity", 1e-6);
       parentG
         .append("circle")
@@ -731,7 +732,7 @@ class TreeViewer extends Component {
         .transition()
         .duration(this.duration)
         .attr("transform", () => {
-          return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+          return "translate(" + this.leftPadding + "," + this.height / 2 + ")";
         });
       parentG
         .selectAll("text.parentText")
@@ -749,11 +750,11 @@ class TreeViewer extends Component {
       for (let i = 0; i < this.data.siblings.length; i++) {
         this.parentLinks[i] = {
           source: {
-            x: this.width / 2 - this.cRadius,
+            x: this.middle - this.cRadius,
             y: this.siblingHeights[this.selfIndex]
           },
           target: {
-            x: this.width / 2 - this.cRadius,
+            x: this.middle - this.cRadius,
             y: this.siblingHeights[this.selfIndex]
           }
         };
@@ -794,7 +795,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "siblingG")
       .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       });
     siblingG
       .data(this.data.siblings)
@@ -803,10 +804,10 @@ class TreeViewer extends Component {
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", 2 * this.cRadius)
+      .attr("y", 0.3 * this.textSize)
+      .attr("x", 1.5 * this.cRadius)
       .attr("class", "siblingText")
-      .style("text-anchor", "middle")
+      .style("text-anchor", "right")
       .style("fill-opacity", 1e-6);
 
     this.calcSiblingColours();
@@ -829,7 +830,7 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + d + ")";
+        return "translate(" + this.middle + "," + d + ")";
       });
     siblingG
       .selectAll("text.siblingText")
@@ -848,7 +849,7 @@ class TreeViewer extends Component {
       .selectAll("g.childrenG")
       .transition()
       .attr("transform", () => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .attr("class", "oldChildrenG")
       .duration(this.duration);
@@ -884,11 +885,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.data.siblings.length; i++) {
       this.parentLinks[i] = {
         source: {
-          x: this.hPadding + this.cRadius,
+          x: this.leftPadding + this.cRadius,
           y: this.height / 2
         },
         target: {
-          x: this.width / 2 - this.cRadius,
+          x: this.middle - this.cRadius,
           y: this.siblingHeights[i]
         }
       };
@@ -909,11 +910,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.data.children.length; i++) {
       this.childrenLinks[i] = {
         source: {
-          x: this.width / 2 + this.cRadius,
+          x: this.middle + this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         },
         target: {
-          x: this.width - this.hPadding - this.cRadius,
+          x: this.width - this.rightPadding - this.cRadius,
           y: this.childrenHeights[i]
         }
       };
@@ -925,11 +926,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.childrenHeights.length; i++) {
       this.childrenLinks[i] = {
         source: {
-          x: this.width / 2 + this.cRadius,
+          x: this.middle + this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         },
         target: {
-          x: this.width / 2 + this.cRadius,
+          x: this.middle + this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         }
       };
@@ -942,11 +943,11 @@ class TreeViewer extends Component {
     for (let i = 0; i < this.data.children.length; i++) {
       this.parentLinks[i] = {
         source: {
-          x: this.width / 2 + this.cRadius,
+          x: this.middle + this.cRadius,
           y: this.siblingHeights[this.selfIndex]
         },
         target: {
-          x: this.width - this.hPadding - this.cRadius,
+          x: this.width - this.rightPadding - this.cRadius,
           y: this.childrenHeights[i]
         }
       };
