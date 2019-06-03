@@ -408,15 +408,13 @@ class App extends Component {
   };
 
   handleExploreSelectedCodeButton = event => {
-    //TODO: call the tree function to explore the selected code
     const selectedCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code == event.currentTarget.id);
-    console.log(this.state.selectedCodes[selectedCodeIndex]);
+    this.treeViewDiv.current.changeTree(this.state.selectedCodes[selectedCodeIndex].code);
   };
 
   handleExploreRecommendedCodeButton = event => {
-    //TODO: call the tree function to explore the selected code
     const recommendedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
-    console.log(this.state.recommendedCodes[recommendedCodeIndex]);
+    this.treeViewDiv.current.changeTree(this.state.recommendedCodes[recommendedCodeIndex].rhs);
   };
 
   /**
