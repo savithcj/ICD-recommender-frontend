@@ -15,6 +15,7 @@ class TreeViewer3 extends Component {
     this.textColor = "blue";
     this.linkColor = "lightgrey";
     this.linkWidth = 3;
+    this.handlingClick = false;
 
     this.link = d3
       .linkHorizontal()
@@ -260,57 +261,74 @@ class TreeViewer3 extends Component {
   // HANDLE CLICKS ////////////////////////////
   /////////////////////////////////////////////
   handleParentClick() {
-    console.log("parent clicked");
-    this.getDataFromAPI(this.data.parent.code).then(async () => {
-      this.removeChildren();
-      this.moveSiblingsToChildren();
-      this.moveParentToSibling();
-      this.transitionParentLinks();
-      await this.sleep(2 * this.duration);
-      this.spawnParentAndSiblings();
-      this.svg.selectAll("g.oldChildren").remove();
-      await this.sleep(this.duration);
-      this.svg.selectAll("g.oldParentG").remove();
-    });
+    if (!this.handlingClick) {
+      this.handlingClick = true;
+      this.getDataFromAPI(this.data.parent.code)
+        .then(async () => {
+          this.removeChildren();
+          this.moveSiblingsToChildren();
+          this.moveParentToSibling();
+          this.transitionParentLinks();
+          await this.sleep(2 * this.duration);
+          this.spawnParentAndSiblings();
+          this.svg.selectAll("g.oldChildren").remove();
+          await this.sleep(this.duration);
+          this.svg.selectAll("g.oldParentG").remove();
+        })
+        .then(() => {
+          this.handlingClick = false;
+        });
+    }
   }
 
   handleSiblingClick(d, i) {
-    console.log("sibling clicked");
-    this.getDataFromAPI(this.data.siblings[i].code).then(async () => {
-      if (i !== this.selfIndex) {
-        this.removeChildren();
-        this.findIndex();
-        this.calcSiblingColours();
-        this.svg
-          .selectAll("circle.siblingCircle")
-          .data(this.siblingColours)
-          .transition()
-          .duration(this.duration)
-          .attr("fill", d => {
-            return d;
-          });
-        await this.sleep(this.duration);
-        this.spawnChildren();
-      }
-    });
+    if (!this.handlingClick) {
+      this.handlingClick = true;
+      this.getDataFromAPI(this.data.siblings[i].code)
+        .then(async () => {
+          if (i !== this.selfIndex) {
+            this.removeChildren();
+            this.findIndex();
+            this.calcSiblingColours();
+            this.svg
+              .selectAll("circle.siblingCircle")
+              .data(this.siblingColours)
+              .transition()
+              .duration(this.duration)
+              .attr("fill", d => {
+                return d;
+              });
+            await this.sleep(this.duration);
+            this.spawnChildren();
+          }
+        })
+        .then(() => {
+          this.handlingClick = false;
+        });
+    }
   }
 
   handleChildrenClick(d, i) {
-    console.log("child clicked");
-    this.getDataFromAPI(this.data.children[i].code).then(async () => {
-      this.createNewParent();
-      this.removeParentAndSiblings();
-      await this.sleep(this.duration);
-      this.linkG.selectAll("path.parentLink").remove();
-      this.svg.selectAll("g.siblingG").remove();
-      this.svg.selectAll("g.oldParentG").remove();
-      //await this.sleep(this.duration);
-      this.moveSelfToParent();
-      this.moveChildrenToSiblings();
-      this.transitionChildrenLinks();
-      await this.sleep(this.duration);
-      this.spawnChildren();
-    });
+    if (!this.handlingClick) {
+      this.handlingClick = true;
+      this.getDataFromAPI(this.data.children[i].code)
+        .then(async () => {
+          this.createNewParent();
+          this.removeParentAndSiblings();
+          await this.sleep(this.duration);
+          this.linkG.selectAll("path.parentLink").remove();
+          this.svg.selectAll("g.siblingG").remove();
+          this.svg.selectAll("g.oldParentG").remove();
+          this.moveSelfToParent();
+          this.moveChildrenToSiblings();
+          this.transitionChildrenLinks();
+          await this.sleep(this.duration);
+          this.spawnChildren();
+        })
+        .then(() => {
+          this.handlingClick = false;
+        });
+    }
   }
   // END OF HANDLE CLICKS //////////////////////
   //////////////////////////////////////////////
