@@ -15,6 +15,7 @@ class TreeViewer extends Component {
     this.textColor = "blue";
     this.linkColor = "lightgrey";
     this.linkWidth = 3;
+    this.handlingClick = false;
 
     this.link = d3
       .linkHorizontal()
@@ -26,13 +27,6 @@ class TreeViewer extends Component {
       });
   }
 
-  componentDidMount() {
-    this.getDataFromAPI("A053").then(() => {
-      this.drawInitialTree();
-    });
-  }
-
-  /** Called upon by parent, when the parent container is resized or moved */
   handleResize(e) {
     if (this.data === undefined) {
       // variable is undefined
@@ -57,7 +51,7 @@ class TreeViewer extends Component {
     let infoG = this.svg.append("g").attr("class", "infoG");
     this.infoText = infoG
       .append("text")
-      .attr("y", this.height - this.vPadding * 0.25)
+      .attr("y", this.textSize + 5)
       .attr("x", this.hPadding * 0.25)
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
@@ -69,11 +63,17 @@ class TreeViewer extends Component {
   setInfoText(tier, index) {
     let codeDesc = "";
     if (tier === 0) {
-      codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+      if (this.data.parent) {
+        codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+      }
     } else if (tier === 1) {
-      codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+      if (this.data.siblings[index]) {
+        codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+      }
     } else if (tier === 2) {
-      codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+      if (this.data.children[index]) {
+        codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+      }
     }
 
     this.infoText.text(codeDesc);
@@ -83,10 +83,21 @@ class TreeViewer extends Component {
     this.infoText.text("");
   }
 
+  componentDidMount() {
+    this.getDataFromAPI("A00-A09").then(() => {
+      this.drawInitialTree();
+    });
+  }
+
+  changeTree(code) {
+    //to do: animation for changing tree
+    this.getDataFromAPI(code).then(() => {
+      this.drawInitialTree();
+    });
+  }
+
   drawInitialTree() {
     this.recalculateSizes();
-    console.log("HEIGHT", this.height);
-    console.log("WIDTH", this.width);
 
     d3.select("div." + this.treeClass)
       .select("svg")
@@ -99,16 +110,16 @@ class TreeViewer extends Component {
       .attr("height", this.height);
 
     this.addInfoText();
-    this.linkG = this.svg.append("g");
-    this.rightG = this.svg.append("g");
-    this.middleG = this.svg.append("g");
-    this.leftG = this.svg.append("g");
+    this.linkG = this.svg.append("g").attr("class", "pathG");
+    this.rightG = this.svg.append("g").attr("class", "rightG");
+    this.middleG = this.svg.append("g").attr("class", "middleG");
+    this.leftG = this.svg.append("g").attr("class", "leftG");
 
     //////////// PARENT NODE ////////////
     /////////////////////////////////////
     let parentg = this.leftG
       .append("g")
-      .attr("transform", d => {
+      .attr("transform", () => {
         return "translate(" + this.hPadding + "," + this.height / 2 + ")";
       })
       .attr("class", "parentG");
@@ -241,7 +252,7 @@ class TreeViewer extends Component {
 
     this.createChildrenLinks();
     this.linkG
-      .selectAll("childrenG") // might need to change this
+      .selectAll("childrenG")
       .data(this.childrenLinks)
       .enter()
       .append("path")
@@ -257,36 +268,360 @@ class TreeViewer extends Component {
   // HANDLE CLICKS ////////////////////////////
   /////////////////////////////////////////////
   handleParentClick() {
-    this.getDataFromAPI(this.data.parent.code).then(async () => {
-      this.removeChildren();
-      this.moveSiblingsToChildren();
-      this.moveParentToSibling();
-      this.transitionParentLinks();
-      await this.sleep(2 * this.duration);
-      this.spawnParentAndSiblings();
-    });
+    if (!this.handlingClick) {
+      this.handlingClick = true;
+      this.getDataFromAPI(this.data.parent.code)
+        .then(async () => {
+          this.removeChildren();
+          this.moveSiblingsToChildren();
+          this.moveParentToSibling();
+          this.transitionParentLinks();
+          await this.sleep(2 * this.duration);
+          this.spawnParentAndSiblings();
+          this.svg.selectAll("g.oldChildren").remove();
+          await this.sleep(this.duration);
+          this.svg.selectAll("g.oldParentG").remove();
+        })
+        .then(() => {
+          this.handlingClick = false;
+        });
+    }
   }
 
-  handleSiblingClick() {
-    console.log("sibling clicked");
+  handleSiblingClick(d, i) {
+    if (!this.handlingClick) {
+      this.handlingClick = true;
+      this.getDataFromAPI(this.data.siblings[i].code)
+        .then(async () => {
+          if (i !== this.selfIndex) {
+            this.removeChildren();
+            this.findIndex();
+            this.calcSiblingColours();
+            this.svg
+              .selectAll("circle.siblingCircle")
+              .data(this.siblingColours)
+              .transition()
+              .duration(this.duration)
+              .attr("fill", d => {
+                return d;
+              });
+            await this.sleep(this.duration);
+            this.spawnChildren();
+          }
+        })
+        .then(() => {
+          this.handlingClick = false;
+        });
+    }
   }
 
-  handleChildrenClick() {
-    console.log("CHILD CLICKED");
+  handleChildrenClick(d, i) {
+    if (!this.handlingClick) {
+      this.handlingClick = true;
+      this.getDataFromAPI(this.data.children[i].code)
+        .then(async () => {
+          this.createNewParent();
+          this.removeParentAndSiblings();
+          await this.sleep(this.duration);
+          this.linkG.selectAll("path.parentLink").remove();
+          this.svg.selectAll("g.siblingG").remove();
+          this.svg.selectAll("g.oldParentG").remove();
+          this.moveSelfToParent();
+          this.moveChildrenToSiblings();
+          this.transitionChildrenLinks();
+          await this.sleep(this.duration);
+          this.spawnChildren();
+        })
+        .then(() => {
+          this.handlingClick = false;
+        });
+    }
   }
   // END OF HANDLE CLICKS //////////////////////
   //////////////////////////////////////////////
 
-  moveSiblingsToChildren() {
+  createNewParent() {
+    this.svg.selectAll("g.parentG").attr("class", "oldParentG");
+    this.svg.selectAll("circle.parentCircle").attr("class", "oldParentCircle");
+    this.svg.selectAll("text.parentText").attr("class", "oldParentText");
+    // make new parent circle on top of current self
+    let parentg = this.leftG
+      .append("g")
+      .attr("transform", () => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .on("mouseover", (d, i) => {
+        this.setInfoText(0, 0);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
+      .attr("class", "parentG");
+    parentg
+      .append("text")
+      .text(this.codeTrunc(this.data.parent))
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", 2 * this.cRadius)
+      .attr("class", "parentText")
+      .style("text-anchor", "middle");
+    parentg
+      .append("circle")
+      .attr("r", this.cRadius)
+      .attr("fill", this.selectedColor)
+      .attr("class", "parentCircle")
+      .on("click", (d, i) => {
+        this.handleParentClick(d, i);
+      });
+  }
+
+  removeParentAndSiblings() {
+    this.svg
+      .selectAll("g.oldParentG")
+      .transition()
+      .attr("transform", () => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .duration(this.duration);
+    this.svg
+      .selectAll("circle.oldParentCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("r", 1e-6);
+    this.svg
+      .selectAll("text.oldParentText")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1e-6);
+
     this.svg
       .selectAll("g.siblingG")
-      .data(this.siblingHeights)
+      .transition()
+      .attr("transform", () => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .duration(this.duration);
+    this.svg
+      .selectAll("circle.siblingCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("r", 1e-6);
+    this.svg
+      .selectAll("text.siblingText")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1e-6);
+
+    this.parentLinks = [];
+    for (let i = 0; i < this.siblingHeights.length; i++) {
+      this.parentLinks[i] = {
+        source: {
+          x: this.width / 2 - this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        },
+        target: {
+          x: this.width / 2 - this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        }
+      };
+    }
+    this.svg
+      .selectAll("path.parentLink")
+      .data(this.parentLinks)
+      .transition()
+      .duration(this.duration)
+      .attr("d", d => this.link(d));
+  }
+
+  moveSelfToParent() {
+    this.findIndex();
+    this.svg
+      .selectAll("g.parentG")
+      .transition()
+      .attr("transform", d => {
+        return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+      })
+      .duration(this.duration);
+
+    this.svg
+      .selectAll("circle.parentCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("fill", this.otherColor);
+  }
+
+  moveChildrenToSiblings() {
+    this.svg
+      .selectAll("g.childrenG")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(1, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
+      .data(this.childrenHeights)
+      .transition()
+      .duration(this.duration)
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + d + ")";
+      })
+      .attr("class", "siblingG");
+
+    this.calcSiblingColours();
+    this.svg
+      .selectAll("circle.childrenCircle")
+      .data(this.siblingColours)
+      .attr("class", "siblingCircle")
+      .on("click", (d, i) => {
+        this.handleSiblingClick(d, i);
+      })
+      .transition()
+      .duration(this.duration)
+      .attr("fill", d => {
+        return d;
+      });
+
+    this.svg
+      .selectAll("text.childrenText")
+      .transition()
+      .duration(this.duration)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", 2 * this.cRadius)
+      .attr("class", "siblingText")
+      .style("text-anchor", "middle");
+  }
+
+  transitionChildrenLinks() {
+    this.childrenLinks = [];
+    this.calcSiblingHeights();
+    for (let i = 0; i < this.data.siblings.length; i++) {
+      this.childrenLinks[i] = {
+        source: {
+          x: this.hPadding + this.cRadius,
+          y: this.height / 2
+        },
+        target: {
+          x: this.width / 2 - this.cRadius,
+          y: this.siblingHeights[i]
+        }
+      };
+    }
+    this.svg
+      .selectAll("path.childrenLink")
+      .data(this.childrenLinks)
+      .transition()
+      .duration(this.duration)
+      //.delay(this.duration)
+      .attr("d", d => this.link(d))
+      .attr("class", "parentLink");
+  }
+
+  spawnChildren() {
+    this.calcChildrenHeights();
+    let childrenGs = this.svg
+      .selectAll("g.childrenG")
+      .data(this.childrenHeights)
+      .enter()
+      .append("g")
       .on("mouseover", (d, i) => {
         this.setInfoText(2, i);
       })
       .on("mouseout", () => {
         this.clearInfoText();
       })
+      .attr("class", "childrenG")
+      .attr("transform", d => {
+        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+      });
+
+    childrenGs
+      .data(this.data.children)
+      .append("text")
+      .text(d => this.codeTrunc(d))
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", this.cRadius - 2.1 * this.textSize)
+      .attr("x", -1.5 * this.cRadius)
+      .attr("class", "childrenText")
+      .style("text-anchor", "middle")
+      .style("fill-opacity", 1e-6);
+
+    childrenGs
+      .data(this.childrenHeights)
+      .append("circle")
+      .attr("r", 1e-6)
+      .attr("fill", this.otherColor)
+      .attr("class", "childrenCircle")
+      .on("click", (d, i) => {
+        this.handleChildrenClick(d, i);
+      });
+
+    this.svg
+      .selectAll("g.childrenG")
+      .data(this.childrenHeights)
+      .transition()
+      .duration(this.duration)
+      .attr("transform", d => {
+        return "translate(" + (this.width - this.hPadding) + "," + d + ")";
+      });
+    childrenGs
+      .selectAll("text.childrenText")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1);
+    this.svg
+      .selectAll("circle.childrenCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("r", this.cRadius);
+
+    this.childrenLinks = [];
+    for (let i = 0; i < this.data.children.length; i++) {
+      this.childrenLinks[i] = {
+        source: {
+          x: this.width / 2 + this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        },
+        target: {
+          x: this.width / 2 + this.cRadius,
+          y: this.siblingHeights[this.selfIndex]
+        }
+      };
+    }
+
+    this.linkG
+      .selectAll("childrenG")
+      .data(this.childrenLinks)
+      .enter()
+      .append("path")
+      .attr("d", d => this.link(d))
+      .attr("class", "childrenLink")
+      .style("fill", "none")
+      .style("stroke", this.linkColor)
+      .style("stroke-width", this.linkWidth);
+
+    this.createChildrenLinks();
+    this.svg
+      .selectAll("path.childrenLink")
+      .data(this.childrenLinks)
+      .transition()
+      .duration(this.duration)
+      .attr("d", d => this.link(d));
+  }
+
+  moveSiblingsToChildren() {
+    this.svg
+      .selectAll("g.siblingG")
+      .on("mouseover", (d, i) => {
+        this.setInfoText(2, i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
+      .data(this.siblingHeights)
       .transition()
       .delay(this.duration)
       .duration(this.duration)
@@ -334,7 +669,7 @@ class TreeViewer extends Component {
       .selectAll("circle.parentCircle")
       .transition()
       .duration(this.duration)
-      .attr("class", "siblingCircle")
+      .attr("class", "siblingCircle") //**HERE**
       .attr("fill", this.selectedColor);
 
     this.svg.selectAll("circle.siblingCircle").on("click", (d, i) => {
@@ -345,37 +680,92 @@ class TreeViewer extends Component {
 
   spawnParentAndSiblings() {
     // creating invisible parent at self
-    let parentG = this.svg
-      .append("g")
-      .attr("class", "parentG")
-      .on("mouseover", (d, i) => {
-        this.setInfoText(0, 0);
-      })
-      .on("mouseout", () => {
-        this.clearInfoText();
-      })
-      .attr("transform", d => {
-        return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
-      });
-    parentG
-      .append("text")
-      .text(this.codeTrunc(this.data.parent))
-      .attr("font-family", this.fontType)
-      .attr("font-size", this.textSize)
-      .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", 2 * this.cRadius)
-      .attr("class", "parentText")
-      .style("text-anchor", "middle")
-      .style("fill-opacity", 1e-6);
-    parentG
-      .append("circle")
-      .attr("r", 1e-6)
-      .attr("fill", this.otherColor)
-      .attr("class", "parentCircle")
-      .on("click", (d, i) => {
-        this.handleParentClick(d, i);
-      });
+    if (this.data.parent) {
+      let parentG = this.svg
+        .append("g")
+        .on("mouseover", (d, i) => {
+          this.setInfoText(0, 0);
+        })
+        .on("mouseout", () => {
+          this.clearInfoText();
+        })
+        .attr("class", "parentG")
+        .attr("transform", d => {
+          return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
+        });
+      parentG
+        .append("text")
+        .text(this.codeTrunc(this.data.parent))
+        .attr("font-family", this.fontType)
+        .attr("font-size", this.textSize)
+        .attr("fill", this.textColor)
+        .attr("y", this.cRadius - 2.1 * this.textSize)
+        .attr("x", 2 * this.cRadius)
+        .attr("class", "parentText")
+        .style("text-anchor", "middle")
+        .style("fill-opacity", 1e-6);
+      parentG
+        .append("circle")
+        .attr("r", 1e-6)
+        .attr("fill", this.otherColor)
+        .attr("class", "parentCircle")
+        .on("click", (d, i) => {
+          this.handleParentClick(d, i);
+        });
+
+      // transition new parent
+      parentG
+        .transition()
+        .duration(this.duration)
+        .attr("transform", () => {
+          return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+        });
+      parentG
+        .selectAll("text.parentText")
+        .transition()
+        .duration(this.duration)
+        .style("fill-opacity", 1);
+      parentG
+        .selectAll("circle.parentCircle")
+        .transition()
+        .duration(this.duration)
+        .attr("r", this.cRadius);
+
+      // create links
+      this.parentLinks = [];
+      for (let i = 0; i < this.data.siblings.length; i++) {
+        this.parentLinks[i] = {
+          source: {
+            x: this.width / 2 - this.cRadius,
+            y: this.siblingHeights[this.selfIndex]
+          },
+          target: {
+            x: this.width / 2 - this.cRadius,
+            y: this.siblingHeights[this.selfIndex]
+          }
+        };
+      }
+
+      this.linkG
+        .selectAll("siblingG")
+        .data(this.parentLinks)
+        .enter()
+        .append("path")
+        .attr("d", d => this.link(d))
+        .attr("class", "parentLink")
+        .style("fill", "none")
+        .style("stroke", this.linkColor)
+        .style("stroke-width", this.linkWidth);
+
+      this.createParentLinks();
+
+      this.svg
+        .selectAll("path.parentLink")
+        .data(this.parentLinks)
+        .transition()
+        .duration(this.duration)
+        .attr("d", d => this.link(d));
+    }
 
     // create invisible siblings at self
     let siblingG = this.middleG
@@ -383,13 +773,13 @@ class TreeViewer extends Component {
       .data(this.siblingHeights)
       .enter()
       .append("g")
-      .attr("class", "siblingG")
       .on("mouseover", (d, i) => {
         this.setInfoText(1, i);
       })
       .on("mouseout", () => {
         this.clearInfoText();
       })
+      .attr("class", "siblingG")
       .attr("transform", d => {
         return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
       });
@@ -404,7 +794,7 @@ class TreeViewer extends Component {
       .attr("x", 2 * this.cRadius)
       .attr("class", "siblingText")
       .style("text-anchor", "middle")
-      .style("fill-opacity", 1);
+      .style("fill-opacity", 1e-6);
 
     this.calcSiblingColours();
     siblingG
@@ -418,24 +808,6 @@ class TreeViewer extends Component {
       .on("click", (d, i) => {
         this.handleSiblingClick(d, i);
       });
-
-    // transition new parent
-    parentG
-      .transition()
-      .duration(this.duration)
-      .attr("transform", () => {
-        return "translate(" + this.hPadding + "," + this.height / 2 + ")";
-      });
-    parentG
-      .selectAll("text.parentText")
-      .transition()
-      .duration(this.duration)
-      .style("fill-opacity", 1);
-    parentG
-      .selectAll("circle.parentCircle")
-      .transition()
-      .duration(this.duration)
-      .attr("r", this.cRadius);
 
     // transition new siblings
     this.svg
@@ -456,73 +828,38 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("r", this.cRadius);
-
-    // create links
-    this.parentLinks = [];
-    for (let i = 0; i < this.data.siblings.length; i++) {
-      this.parentLinks[i] = {
-        source: {
-          x: this.width / 2 - this.cRadius,
-          y: this.siblingHeights[this.selfIndex]
-        },
-        target: {
-          x: this.width / 2 - this.cRadius,
-          y: this.siblingHeights[this.selfIndex]
-        }
-      };
-    }
-
-    this.linkG
-      .selectAll("siblingG")
-      .data(this.parentLinks)
-      .enter()
-      .append("path")
-      .attr("d", d => this.link(d))
-      .attr("class", "parentLink")
-      .style("fill", "none")
-      .style("stroke", this.linkColor)
-      .style("stroke-width", this.linkWidth);
-
-    this.createParentLinks();
-
-    this.svg
-      .selectAll("path.parentLink")
-      .data(this.parentLinks)
-      .transition()
-      .duration(this.duration)
-      .attr("d", d => this.link(d));
   }
 
   async removeChildren() {
     this.svg
       .selectAll("g.childrenG")
-      .attr("class", "oldChildren")
       .transition()
       .attr("transform", () => {
         return "translate(" + this.width / 2 + "," + this.siblingHeights[this.selfIndex] + ")";
       })
+      .attr("class", "oldChildrenG")
       .duration(this.duration);
     this.svg
-      .selectAll("g.oldChildren")
       .selectAll("circle.childrenCircle")
       .transition()
       .duration(this.duration)
       .attr("r", 1e-6);
     this.svg
-      .selectAll("g.oldChildren")
-      .selectAll("text")
+      .selectAll("text.childrenText")
       .transition()
       .duration(this.duration)
       .style("fill-opacity", 1e-6);
     this.undoChildrenLinks();
     this.svg
       .selectAll("path.childrenLink")
+      .attr("class", "oldChildrenLink")
       .data(this.childrenLinks)
       .transition()
       .duration(this.duration)
       .attr("d", d => this.link(d));
     await this.sleep(this.duration);
-    this.svg.selectAll("g.oldChildren").remove();
+    this.svg.selectAll("g.oldChildrenG").remove();
+    this.linkG.selectAll("path.oldChildrenLink").remove();
   }
 
   sleep(ms) {
@@ -572,7 +909,7 @@ class TreeViewer extends Component {
 
   undoChildrenLinks() {
     this.childrenLinks = [];
-    for (let i = 0; i < this.data.children.length; i++) {
+    for (let i = 0; i < this.childrenHeights.length; i++) {
       this.childrenLinks[i] = {
         source: {
           x: this.width / 2 + this.cRadius,
