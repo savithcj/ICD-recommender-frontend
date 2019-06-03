@@ -69,20 +69,21 @@ body {
 .buttonSet {
   font-weight: bold;
   width: 20%;
-  /* background-color: purple; */
+  background-color: purple;
 }
 
 .exploreButton {
   transform: translateY(-10%);
   float: left;
   width: 60%;
-  /* background-color: aqua; */
+  background-color: aqua;
 }
 
 .itemValue {
   float: left;
   width: 20%;
-  /* background-color: coral; */
+  text-align: justify;
+  background-color: coral;
 }
 
 .description {
