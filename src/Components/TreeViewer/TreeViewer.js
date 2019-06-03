@@ -84,7 +84,7 @@ class TreeViewer extends Component {
   }
 
   componentDidMount() {
-    this.getDataFromAPI("A00-A09").then(() => {
+    this.getDataFromAPI("ICD-10-CA").then(() => {
       this.drawInitialTree();
     });
   }
@@ -126,37 +126,39 @@ class TreeViewer extends Component {
 
     //////////// PARENT NODE ////////////
     /////////////////////////////////////
-    let parentg = this.leftG
-      .append("g")
-      .attr("transform", () => {
-        return "translate(" + this.hPadding + "," + this.height / 2 + ")";
-      })
-      .attr("class", "parentG");
-    parentg
-      .on("mouseover", (d, i) => {
-        this.setInfoText(0, 0);
-      })
-      .on("mouseout", () => {
-        this.clearInfoText();
-      })
-      .append("text")
-      .text(this.codeTrunc(this.data.parent))
-      .attr("font-family", this.fontType)
-      .attr("font-size", this.textSize)
-      .attr("fill", this.textColor)
-      .attr("y", this.cRadius - 2.1 * this.textSize)
-      .attr("x", 2 * this.cRadius)
-      .attr("class", "parentText")
-      .style("text-anchor", "middle");
+    if (this.data.parent) {
+      let parentg = this.leftG
+        .append("g")
+        .attr("transform", () => {
+          return "translate(" + this.hPadding + "," + this.height / 2 + ")";
+        })
+        .attr("class", "parentG");
+      parentg
+        .on("mouseover", (d, i) => {
+          this.setInfoText(0, 0);
+        })
+        .on("mouseout", () => {
+          this.clearInfoText();
+        })
+        .append("text")
+        .text(this.codeTrunc(this.data.parent))
+        .attr("font-family", this.fontType)
+        .attr("font-size", this.textSize)
+        .attr("fill", this.textColor)
+        .attr("y", this.cRadius - 2.1 * this.textSize)
+        .attr("x", 2 * this.cRadius)
+        .attr("class", "parentText")
+        .style("text-anchor", "middle");
 
-    parentg
-      .append("circle")
-      .attr("r", this.cRadius)
-      .attr("fill", this.otherColor)
-      .attr("class", "parentCircle")
-      .on("click", (d, i) => {
-        this.handleParentClick(d, i);
-      });
+      parentg
+        .append("circle")
+        .attr("r", this.cRadius)
+        .attr("fill", this.otherColor)
+        .attr("class", "parentCircle")
+        .on("click", (d, i) => {
+          this.handleParentClick(d, i);
+        });
+    }
 
     //////////// SIBLING NODES ////////////
     ///////////////////////////////////////
@@ -247,17 +249,19 @@ class TreeViewer extends Component {
 
     // LINKS //////////////////////////////
     ///////////////////////////////////////
-    this.createParentLinks();
-    this.linkG
-      .selectAll("siblingG")
-      .data(this.parentLinks)
-      .enter()
-      .append("path")
-      .attr("d", d => this.link(d))
-      .attr("class", "parentLink")
-      .style("fill", "none")
-      .style("stroke", this.linkColor)
-      .style("stroke-width", this.linkWidth);
+    if (this.data.parent) {
+      this.createParentLinks();
+      this.linkG
+        .selectAll("siblingG")
+        .data(this.parentLinks)
+        .enter()
+        .append("path")
+        .attr("d", d => this.link(d))
+        .attr("class", "parentLink")
+        .style("fill", "none")
+        .style("stroke", this.linkColor)
+        .style("stroke-width", this.linkWidth);
+    }
 
     this.createChildrenLinks();
     this.linkG
