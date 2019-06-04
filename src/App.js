@@ -126,9 +126,12 @@ class App extends Component {
   searchCodeInCache(code) {
     if (code !== "") {
       const codeAndDescription = Array.from(this.state.cachedCodeWithDescription);
-      console.log("look up code in cache");
-      const regex = new RegExp("^" + code, "i");
-      const results = codeAndDescription.filter(item => regex.test(item.code));
+      console.log("look up code in cache: " + code);
+      const regex = new RegExp(code, "i");
+      let results = codeAndDescription.filter(item => regex.test(item.description));
+      if (results.length === 0) {
+        results = codeAndDescription.filter(item => regex.test(item.code));
+      }
       this.setState({ codeAutoCompleteDisplayed: results });
     }
   }
@@ -139,7 +142,7 @@ class App extends Component {
    */
   searchCodeViaAPI(code) {
     if (code !== "") {
-      const url = "http://localhost:8000/api/children/" + code + "/?format=json";
+      const url = "http://localhost:8000/api/codeAutosuggestions/" + code + "/?format=json";
 
       console.log("look up code from API call: " + url);
       let searchedCodes = Array.from(this.state.searchedCodeList);
@@ -151,7 +154,10 @@ class App extends Component {
             {
               searchedCodeList: searchedCodes
             },
-            this.appendCodeToCache(results),
+            console.log(results["description matches"]),
+            this.appendCodeToCache(
+              results["description matches"].length === 0 ? results["code matches"] : results["description matches"]
+            ),
             this.searchCodeInCache(code)
           );
         });
@@ -488,7 +494,7 @@ class App extends Component {
               />
             </div>
 
-            <div key="2" div className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
+            <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
               {/* <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"

@@ -41,9 +41,9 @@ function CustomListItem() {
   return (
     <div className={classes.root}>
       <List
-        dense="true"
+        dense={true}
         subheader={
-          <ListSubheader disableSticky="true" id="nested-list-subheader">
+          <ListSubheader disableSticky={true} id="nested-list-subheader">
             Recommended Codes
           </ListSubheader>
         }
@@ -53,7 +53,7 @@ function CustomListItem() {
             <ExploreIcon />
           </IconButton>
           <ListItemText primary={code} secondary={description} />
-          <IconButton edge="false" aria-label="Accept" title="Accept">
+          <IconButton edge="end" aria-label="Accept" title="Accept">
             <CheckIcon />
           </IconButton>
           <IconButton edge="end" aria-label="Reject" title="Reject">
