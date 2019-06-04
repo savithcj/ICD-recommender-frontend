@@ -9,6 +9,8 @@ import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
+import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
+
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
   { w: 5, h: 9, x: 7, y: 0, i: "1" },
@@ -50,7 +52,6 @@ const defaultLayouts = {
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
-// const originalLayouts = defaultLayouts;
 
 const ageOptions = [...Array(120).keys()].map(x => "" + x);
 
@@ -60,6 +61,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.treeViewDiv = React.createRef();
+    this.selectedCodesDiv = React.createRef();
   }
 
   state = {
@@ -210,6 +212,8 @@ class App extends Component {
         prev.selectedCodes.push(newCode);
       });
 
+      this.selectedCodesDiv.current.onAddItem(newCode.code);
+
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
@@ -228,8 +232,9 @@ class App extends Component {
    * item from the listViewers. Removes the code with a
    * matching ID from the list
    */
-  handleRemoveSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.currentTarget.id);
+  handleRemoveSelectedCode = code => {
+    console.log(code);
+    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === code);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
@@ -472,7 +477,7 @@ class App extends Component {
               <TreeViewer ref={this.treeViewDiv} id="1337" />
             </div>
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <ListViewer
+              {/* <ListViewer
                 className="selectedCodes"
                 title="Selected Codes"
                 items={this.state.selectedCodes}
@@ -483,10 +488,10 @@ class App extends Component {
                 removeItemButton={this.handleRemoveSelectedCode}
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 exploreButton={this.handleExploreSelectedCodeButton}
-              />
+              /> */}
             </div>
 
-            <div key="2" div className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
+            <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
               <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
@@ -506,6 +511,16 @@ class App extends Component {
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
               {userInputBoxes}
+            </div>
+
+            <div key="4" className={highlightEditDiv} data-grid={{ x: 0, y: 12, w: 4, h: 8 }}>
+              <SelectedCodesGrid
+                ref={this.selectedCodesDiv}
+                items={this.state.selectedCodes}
+                removeItemButton={this.handleRemoveSelectedCode}
+                removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
+                exploreButton={this.handleExploreSelectedCodeButton}
+              />
             </div>
           </ResponsiveReactGridLayout>
         </div>
