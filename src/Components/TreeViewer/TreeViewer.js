@@ -5,15 +5,16 @@ import ReactDOM from "react-dom";
 class TreeViewer extends Component {
   constructor(props) {
     super(props);
-    this.duration = 750;
+    this.duration = 500;
 
     this.fontType = "sans-serif";
     this.treeClass = "treeVis" + this.props.id;
-    this.selectedColor = "blue";
-    this.otherColor = "red";
-    this.textColor = "blue";
-    this.linkColor = "lightgrey";
-    this.linkWidth = 3;
+    this.selectedColor = "#3748ac";
+    this.otherColor = "pink";
+    this.textColor = "#0019a8";
+    this.fontWeight = 2;
+    this.linkColor = "#f0f0f0";
+    this.linkWidth = 7;
     this.handlingClick = false;
 
     this.link = d3
@@ -65,15 +66,15 @@ class TreeViewer extends Component {
     let codeDesc = "";
     if (tier === 0) {
       if (this.data.parent) {
-        codeDesc = this.data.parent.code + ": " + this.data.parent.description;
+        codeDesc = this.codeFormat(this.data.parent, 0);
       }
     } else if (tier === 1) {
       if (this.data.siblings[index]) {
-        codeDesc = this.data.siblings[index].code + ": " + this.data.siblings[index].description;
+        codeDesc = this.codeFormat(this.data.siblings[index], 0);
       }
     } else if (tier === 2) {
       if (this.data.children[index]) {
-        codeDesc = this.data.children[index].code + ": " + this.data.children[index].description;
+        codeDesc = this.codeFormat(this.data.children[index], 0);
       }
     }
 
@@ -85,7 +86,7 @@ class TreeViewer extends Component {
   }
 
   componentDidMount() {
-    this.getDataFromAPI("ICD-10-CA").then(() => {
+    this.getDataFromAPI("P52").then(() => {
       this.drawInitialTree();
     });
   }
@@ -119,6 +120,8 @@ class TreeViewer extends Component {
       .attr("width", this.width)
       .attr("height", this.height);
 
+    this.addChain();
+
     this.addInfoText();
     this.linkG = this.svg.append("g").attr("class", "pathG");
     this.rightG = this.svg.append("g").attr("class", "rightG");
@@ -142,7 +145,7 @@ class TreeViewer extends Component {
           this.clearInfoText();
         })
         .append("text")
-        .text(this.codeTrunc(this.data.parent))
+        .text(this.codeFormat(this.data.parent, 1))
         .attr("font-family", this.fontType)
         .attr("font-size", this.textSize)
         .attr("fill", this.textColor)
@@ -187,7 +190,7 @@ class TreeViewer extends Component {
     siblingGs
       .data(this.data.siblings)
       .append("text")
-      .text(d => this.codeTrunc(d))
+      .text(d => this.codeFormat(d, 1))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -230,7 +233,7 @@ class TreeViewer extends Component {
     childrenGs
       .data(this.data.children)
       .append("text")
-      .text(d => this.codeTrunc(d))
+      .text(d => this.codeFormat(d, 1))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -285,6 +288,7 @@ class TreeViewer extends Component {
     if (!this.handlingClick) {
       this.handlingClick = true;
       this.getDataFromAPI(this.data.parent.code)
+        .then(() => this.getAncestorsFromAPI(this.data.self.code))
         .then(async () => {
           this.removeChildren();
           this.moveSiblingsToChildren();
@@ -293,6 +297,7 @@ class TreeViewer extends Component {
           await this.sleep(2 * this.duration);
           this.spawnParentAndSiblings();
           this.svg.selectAll("g.oldChildren").remove();
+          this.parentChain();
           await this.sleep(this.duration);
           this.svg.selectAll("g.oldParentG").remove();
         })
@@ -319,6 +324,7 @@ class TreeViewer extends Component {
               .attr("fill", d => {
                 return d;
               });
+            this.changeSelfAncestor();
             await this.sleep(this.duration);
             this.spawnChildren();
           }
@@ -333,6 +339,7 @@ class TreeViewer extends Component {
     if (!this.handlingClick) {
       this.handlingClick = true;
       this.getDataFromAPI(this.data.children[i].code)
+        .then(() => this.getAncestorsFromAPI(this.data.self.code))
         .then(async () => {
           this.createNewParent();
           this.removeParentAndSiblings();
@@ -343,6 +350,7 @@ class TreeViewer extends Component {
           this.moveSelfToParent();
           this.moveChildrenToSiblings();
           this.transitionChildrenLinks();
+          this.childrenChain();
           await this.sleep(this.duration);
           this.spawnChildren();
         })
@@ -351,8 +359,324 @@ class TreeViewer extends Component {
         });
     }
   }
+
+  handleChainClick(d, i) {
+    if (this.ancestors[i].code !== this.data.self.code) {
+      this.changeTree(this.ancestors[i].code);
+    }
+  }
+
   // END OF HANDLE CLICKS //////////////////////
   //////////////////////////////////////////////
+
+  parentChain() {
+    this.svg.selectAll("g.chainG").attr("class", "oldChainG");
+    this.svg.selectAll("text.chainText").attr("class", "oldChainText");
+    this.svg.selectAll("circle.chainCircle").attr("class", "oldChainCircle");
+    this.svg.selectAll("path.chainLink").attr("class", "oldChainLink");
+
+    // create all except last on same spots
+    this.chainPositions.shift();
+    let chainGs = this.svg
+      .selectAll("g.chainG")
+      .data(this.chainPositions)
+      .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
+      })
+      .attr("class", "chainG");
+    chainGs
+      .data(this.ancestors)
+      .append("text")
+      .text(d => d.code)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", 2 * this.textSize)
+      .attr("class", "chainText")
+      .style("fill-opacity", 1)
+      .style("text-anchor", "middle");
+    this.calcAncestorColours();
+    chainGs
+      .data(this.ancestorColours)
+      .append("circle")
+      .attr("r", i => {
+        if (i === 0) {
+          return 1e-6;
+        } else {
+          return this.cRadius;
+        }
+      })
+      .attr("fill", d => d)
+      .attr("class", "chainCircle")
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      });
+
+    this.calcChainSpacing();
+    this.addChainLinks();
+    this.svg.selectAll("g.oldChainG").remove();
+
+    this.svg
+      .selectAll("g.chainG")
+      .data(this.chainPositions)
+      .transition()
+      .duration(this.duration)
+      .attr("transform", d => {
+        return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
+      });
+  }
+
+  childrenChain() {
+    this.svg.selectAll("g.chainG").attr("class", "oldChainG");
+    this.svg.selectAll("text.chainText").attr("class", "oldChainText");
+    this.svg.selectAll("circle.chainCircle").attr("class", "oldChainCircle");
+    this.svg.selectAll("path.chainLink").attr("class", "oldChainLink");
+
+    // create new on same spots, last one invisible at end
+    this.chainPositions.unshift(this.chainPositions[0]);
+    let chainGs = this.svg
+      .selectAll("g.chainG")
+      .data(this.chainPositions)
+      .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
+      })
+      .attr("class", "chainG");
+    chainGs
+      .data(this.ancestors)
+      .append("text")
+      .text(d => d.code)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", 2 * this.textSize)
+      .attr("class", "chainText")
+      .style("fill-opacity", (d, i) => {
+        if (i === 0) {
+          return 1e-6;
+        } else {
+          return 1;
+        }
+      })
+      .style("text-anchor", "middle");
+    this.calcAncestorColours();
+    chainGs
+      .data(this.ancestorColours)
+      .append("circle")
+      .attr("r", i => {
+        if (i === 0) {
+          return 1e-6;
+        } else {
+          return this.cRadius;
+        }
+      })
+      .attr("fill", d => d)
+      .attr("class", "chainCircle")
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      });
+
+    // remove old (no transition necessary)
+    this.svg.selectAll("g.oldChainG").remove();
+    // transition new to new spots
+    this.calcChainSpacing();
+    this.svg
+      .selectAll("g.chainG")
+      .data(this.chainPositions)
+      .transition()
+      .attr("transform", d => {
+        return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
+      })
+      .duration(this.duration);
+
+    // transition invisible one in
+    this.svg
+      .selectAll("circle.chainCircle")
+      .transition()
+      .duration(this.duration)
+      .attr("r", this.cRadius);
+    this.svg
+      .selectAll("text.chainText")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1);
+
+    // create new links and transition
+    this.addChainLinks();
+  }
+
+  changeSelfAncestor() {
+    this.svg.selectAll("g.chainG").attr("class", "oldChainG");
+    this.svg.selectAll("text.chainText").attr("class", "oldChainText");
+
+    let chainGs = this.svg
+      .selectAll("g.chainG")
+      .data(this.chainPositions)
+      .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
+      })
+      .attr("class", "chainG");
+
+    chainGs
+      .data(this.ancestors)
+      .append("text")
+      .text((d, i) => {
+        if (i === 0) {
+          return this.data.self.code;
+        } else {
+          return d.code;
+        }
+      })
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", 2 * this.textSize)
+      .attr("class", "chainText")
+      .style("fill-opacity", (d, i) => {
+        if (i === 0) {
+          return 1e-6;
+        } else {
+          return 1;
+        }
+      })
+      .style("text-anchor", "middle");
+
+    chainGs
+      .data(this.ancestorColours)
+      .append("circle")
+      .attr("r", this.cRadius)
+      .attr("fill", d => {
+        return d;
+      })
+      .attr("class", "chainCircle")
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      });
+
+    this.svg
+      .selectAll("text.oldChainText")
+      .transition()
+      .duration(this.duration)
+      .style("fill-opacity", 1e-6);
+
+    this.svg
+      .selectAll("text.chainText")
+      .transition()
+      .duration(this.duration)
+      .delay(this.duration)
+      .style("fill-opacity", 1);
+
+    this.svg.selectAll("g.oldChainG").remove();
+  }
+
+  addChain() {
+    this.getAncestorsFromAPI(this.data.self.code).then(() => {
+      this.numCircles = this.ancestors.length;
+      this.calcChainSpacing();
+      this.addChainGs();
+      this.addChainLinks();
+    });
+  }
+
+  addChainLinks() {
+    this.ancestorLinks = [];
+    for (let i = 0; i < this.chainPositions.length - 1; i++) {
+      this.ancestorLinks[i] = {
+        source: {
+          x: this.chainPositions[i] + this.cRadius,
+          y: this.height - this.vPadding / 2
+        },
+        target: {
+          x: this.chainPositions[i + 1] - this.cRadius,
+          y: this.height - this.vPadding / 2
+        }
+      };
+    }
+
+    this.linkG
+      .selectAll("g.chainG")
+      .data(this.ancestorLinks)
+      .enter()
+      .append("path")
+      .attr("d", d => this.link(d))
+      .attr("class", "chainLink")
+      .style("fill", "none")
+      .style("stroke", this.linkColor)
+      .style("stroke-width", this.linkWidth);
+
+    this.svg.selectAll("path.oldChainLink").remove();
+  }
+
+  calcChainSpacing() {
+    const totalSpace = this.width - this.leftPadding - this.rightPadding;
+    this.chainPositions = [];
+    let gap = 0;
+    if (this.ancestors.length > 1) {
+      gap = totalSpace / (this.ancestors.length - 1);
+    }
+    for (let i = 0; i < this.ancestors.length; i++) {
+      this.chainPositions.push(i * gap + this.leftPadding);
+    }
+    this.chainPositions.reverse();
+  }
+
+  addChainGs() {
+    let chainGs = this.svg
+      .selectAll("g.chainG")
+      .data(this.chainPositions)
+      .enter()
+      .append("g")
+      .attr("transform", d => {
+        return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
+      })
+      .attr("class", "chainG");
+
+    chainGs
+      .data(this.ancestors)
+      .append("text")
+      .text(d => d.code)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", 2 * this.textSize)
+      .attr("class", "chainText")
+      .style("text-anchor", "middle");
+
+    this.calcAncestorColours();
+    chainGs
+      .data(this.ancestorColours)
+      .append("circle")
+      .attr("r", this.cRadius)
+      .attr("fill", d => {
+        return d;
+      })
+      .attr("class", "ancestorCircle")
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      });
+  }
+
+  calcAncestorColours() {
+    this.ancestorColours = [];
+    this.ancestorColours.push(this.selectedColor);
+    for (let i = 0; i < this.ancestors.length - 1; i++) {
+      this.ancestorColours.push(this.otherColor);
+    }
+  }
+
+  getAncestorsFromAPI = code => {
+    const url = "http://localhost:8000/api/ancestors/" + code + "/?format=json";
+    return fetch(url)
+      .then(response => response.json())
+      .then(parsedJson => {
+        this.ancestors = parsedJson;
+      });
+  };
 
   createNewParent() {
     this.svg.selectAll("g.parentG").attr("class", "oldParentG");
@@ -373,7 +697,7 @@ class TreeViewer extends Component {
       .attr("class", "parentG");
     parentg
       .append("text")
-      .text(this.codeTrunc(this.data.parent))
+      .text(this.codeFormat(this.data.parent, 1))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -553,7 +877,7 @@ class TreeViewer extends Component {
     childrenGs
       .data(this.data.children)
       .append("text")
-      .text(d => this.codeTrunc(d))
+      .text(d => this.codeFormat(d, 1))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -709,7 +1033,7 @@ class TreeViewer extends Component {
         });
       parentG
         .append("text")
-        .text(this.codeTrunc(this.data.parent))
+        .text(this.codeFormat(this.data.parent, 1))
         .attr("font-family", this.fontType)
         .attr("font-size", this.textSize)
         .attr("fill", this.textColor)
@@ -800,7 +1124,7 @@ class TreeViewer extends Component {
     siblingG
       .data(this.data.siblings)
       .append("text")
-      .text(d => this.codeTrunc(d))
+      .text(d => this.codeFormat(d, 1))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -896,13 +1220,21 @@ class TreeViewer extends Component {
     }
   }
 
-  codeTrunc = d => {
-    const codeDesc = d.code + ": " + d.description;
-    if (codeDesc.length < 26) {
-      return codeDesc;
+  codeFormat = (d, truncFlag) => {
+    let codeDesc;
+    if (d.description) {
+      codeDesc = d.code + ": " + d.description;
     } else {
-      return codeDesc.substring(0, 25) + "...";
+      codeDesc = d.code;
     }
+    if (truncFlag === 1) {
+      if (codeDesc.length < 26) {
+        return codeDesc;
+      } else {
+        return codeDesc.substring(0, 25) + "...";
+      }
+    }
+    return codeDesc;
   };
 
   createChildrenLinks() {
