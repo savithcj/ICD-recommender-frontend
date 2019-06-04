@@ -9,6 +9,8 @@ import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
+import CustomListItem from "./Components/CustomListItem/CustomListItem";
+
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
   { w: 5, h: 9, x: 7, y: 0, i: "1" },
@@ -487,7 +489,7 @@ class App extends Component {
             </div>
 
             <div key="2" div className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              <ListViewer
+              {/* <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}
@@ -501,7 +503,8 @@ class App extends Component {
                 removeItemButton={this.handleRemoveRecommendedCode}
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 tooltipValueName="reason"
-              />
+              /> */}
+              <CustomListItem />
             </div>
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
