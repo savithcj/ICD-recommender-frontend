@@ -113,6 +113,14 @@ class CodeInputField extends React.Component {
     );
   };
 
+  renderSectionTitle(section) {
+    return <strong>{section.title}</strong>;
+  }
+
+  getSectionSuggestions(section) {
+    return section.codes;
+  }
+
   renderAgeSuggestion = suggestion => {
     return <span>{suggestion}</span>;
   };
@@ -168,12 +176,15 @@ class CodeInputField extends React.Component {
         <div className="code_input">
           <AutoSuggest
             id={id_code}
+            multiSection={true}
             suggestions={this.props.codes}
             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
             getSuggestionValue={this.getSuggestionValue}
             renderSuggestion={this.renderSuggestion}
             onSuggestionSelected={this.onSuggestionSelected}
+            renderSectionTitle={this.renderSectionTitle}
+            getSectionSuggestions={this.getSectionSuggestions}
             inputProps={inputProps}
             highlightFirstSuggestion={true}
           />
