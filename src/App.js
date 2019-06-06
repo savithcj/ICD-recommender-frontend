@@ -244,6 +244,8 @@ class App extends Component {
         prev.selectedCodes.push(newValue);
       });
 
+      this.selectedCodesDiv.current.onAddItem(newValue.code);
+
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
