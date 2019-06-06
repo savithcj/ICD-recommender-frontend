@@ -10,6 +10,7 @@ import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
 import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
+import CustomListItem from "./Components/CustomListItem/CustomListItem";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -73,12 +74,28 @@ class App extends Component {
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
     ageAutoCompleteDisplayed: [],
     genderAutoCompleteDisplayed: [],
-    searchedCodeList: {}, // list of code searched via API
+    // searchedCodeList: {}, // list of code searched via API
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
     selectedCodes: [],
     recommendedCodes: null //list of recommended codes based on the selected codes
+  };
+
+  //-------------------------------------------------------------------------------------------------------------------
+  //START OF INPUT BOX FUNCTIONS---------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------------------------------------
+  /**
+   * Required for code searchbox Auto-Complete
+   * Action listener called upon by child component when input box changes
+   */
+  codeSearchBoxChangeListener = (id, newValue) => {
+    newValue = newValue
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9 ]/gi, "");
+
+    this.getMatchingCodesFromAPI(newValue);
   };
 
   ageInputBoxChangeListener = (id, newValue) => {
@@ -101,62 +118,56 @@ class App extends Component {
 
   /**
    * Required for code searchbox Auto-Complete
-   * Action listener called upon by child component when input box changes
-   */
-  codeSearchBoxChangeListener = (id, newValue) => {
-    newValue = newValue
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9]/gi, "");
-
-    //get list of codes thats been searched for previously
-    let searchedCodes = Array.from(this.state.searchedCodeList);
-
-    if (searchedCodes.indexOf(newValue) < 0) {
-      this.searchCodeViaAPI(newValue);
-    } else {
-      this.searchCodeInCache(newValue);
-    }
-  };
-
-  /**
-   * Required for code searchbox Auto-Complete
    * Get code suggestions by searching codes stored in the state and return results
+   *
+   * Called when a code is entered to be searched
    */
-  searchCodeInCache(code) {
-    if (code !== "") {
-      const codeAndDescription = Array.from(this.state.cachedCodeWithDescription);
-      console.log("look up code in cache");
-      const regex = new RegExp("^" + code, "i");
-      const results = codeAndDescription.filter(item => regex.test(item.code));
-      this.setState({ codeAutoCompleteDisplayed: results });
+  populateAutoCompleteList(suggestionsFromAPI, enteredCode) {
+    let autoCompleteList = [];
+
+    if (suggestionsFromAPI["keyword matches"].length > 0) {
+      autoCompleteList.push({ title: "Keyword Matches", codes: suggestionsFromAPI["keyword matches"] });
     }
+
+    if (suggestionsFromAPI["description matches"].length > 0) {
+      autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
+    }
+
+    const codeAndDescription = Array.from(this.state.cachedCodeWithDescription);
+    const regex = new RegExp("^" + enteredCode, "i");
+    const codeMatches = codeAndDescription.filter(item => regex.test(item.code));
+
+    if (codeMatches.length > 0) {
+      autoCompleteList.push({ title: "Code Matches", codes: codeMatches });
+    }
+
+    this.setState({ codeAutoCompleteDisplayed: autoCompleteList });
   }
 
   /**
    * Required for code searchbox Auto-Complete
    * Get code suggestions by making an API call and set results to state
+   * Called when a new code is entered that has not been entered before
+   * or if searching by description or keyword
    */
-  searchCodeViaAPI(code) {
-    if (code !== "") {
-      const url = "http://localhost:8000/api/children/" + code + "/?format=json";
+  getMatchingCodesFromAPI(inputValue) {
+    if (inputValue !== "") {
+      const url = "http://localhost:8000/api/codeAutosuggestions/" + inputValue + "/?format=json";
 
-      console.log("look up code from API call: " + url);
-      let searchedCodes = Array.from(this.state.searchedCodeList);
-      searchedCodes.push(code);
       fetch(url)
         .then(response => response.json())
         .then(results => {
-          this.setState(
-            {
-              searchedCodeList: searchedCodes
-            },
-            this.appendCodeToCache(results),
-            this.searchCodeInCache(code)
+          this.appendCodeToCache(
+            results["code matches"].concat(results["description matches"]).concat(results["keyword matches"])
           );
+          this.populateAutoCompleteList(results, inputValue);
         });
     }
   }
+
+  //-------------------------------------------------------------------------------------------------------------------
+  //END OF INPUT BOX FUNCTIONS-----------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------------------------------------
 
   /**
    *  Required for code searchbox Auto-Complete
@@ -213,6 +224,25 @@ class App extends Component {
       });
 
       this.selectedCodesDiv.current.onAddItem(newCode.code);
+
+      this.getRecommendedCodes(selectedCodes);
+    } else {
+      console.log("Duplicate code entered");
+    }
+  };
+
+  addCodeFromTree = newValue => {
+    let selectedCodes = Array.from(this.state.selectedCodes);
+
+    // check if the code already exist in the selection
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue.code);
+
+    if (getDuplicate === undefined) {
+      selectedCodes.push(newValue);
+
+      this.setState(prev => {
+        prev.selectedCodes.push(newValue);
+      });
 
       this.getRecommendedCodes(selectedCodes);
     } else {
@@ -441,7 +471,7 @@ class App extends Component {
           id_code="input1"
           id_age="input2"
           id_gender="input3"
-          placeholder="Enter code"
+          placeholder="Search for a code"
           onChange={this.codeSearchBoxChangeListener}
           onAgeChange={this.ageInputBoxChangeListener}
           onGenderChange={this.genderInputBoxChangeListener}
@@ -474,7 +504,7 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
-              <TreeViewer ref={this.treeViewDiv} id="1337" />
+              <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
               {/* <ListViewer
@@ -507,6 +537,7 @@ class App extends Component {
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 tooltipValueName="reason"
               />
+              {/* <CustomListItem /> */}
             </div>
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
