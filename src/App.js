@@ -216,6 +216,25 @@ class App extends Component {
     }
   };
 
+  addCodeFromTree = newValue => {
+    let selectedCodes = Array.from(this.state.selectedCodes);
+
+    // check if the code already exist in the selection
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue.code);
+
+    if (getDuplicate === undefined) {
+      selectedCodes.push(newValue);
+
+      this.setState(prev => {
+        prev.selectedCodes.push(newValue);
+      });
+
+      this.getRecommendedCodes(selectedCodes);
+    } else {
+      console.log("Duplicate code entered");
+    }
+  };
+
   /**
    * Called upon by AgeInputField when a new age is selected
    */
@@ -469,7 +488,7 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
-              <TreeViewer ref={this.treeViewDiv} id="1337" />
+              <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
               <ListViewer
