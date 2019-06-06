@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 class TreeViewer extends Component {
   constructor(props) {
     super(props);
-    this.duration = 1500;
+    this.duration = 500;
 
     this.fontType = "sans-serif";
     this.treeClass = "treeVis" + this.props.id;
