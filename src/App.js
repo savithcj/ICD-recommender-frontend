@@ -156,7 +156,9 @@ class App extends Component {
       fetch(url)
         .then(response => response.json())
         .then(results => {
-          this.appendCodeToCache(results["code matches"]);
+          this.appendCodeToCache(
+            results["code matches"].concat(results["description matches"]).concat(results["keyword matches"])
+          );
           this.populateAutoCompleteList(results, inputValue);
         });
     }
@@ -516,7 +518,7 @@ class App extends Component {
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              <ListViewer
+              {/* <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}
@@ -530,8 +532,8 @@ class App extends Component {
                 removeItemButton={this.handleRemoveRecommendedCode}
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 tooltipValueName="reason"
-              />
-              {/* <CustomListItem /> */}
+              /> */}
+              <CustomListItem />
             </div>
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
