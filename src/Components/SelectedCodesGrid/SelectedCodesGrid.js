@@ -15,12 +15,17 @@ class SelectedCodesGrid extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      items: []
-    };
+    // this.state = {
+    //   items: []
+    // };
   }
 
+  /**
+   * Handles displaying of each element
+   * @param {*} el
+   */
   createElement(el) {
+    console.log("Creating element: " + el);
     const removeStyle = {
       position: "absolute",
       right: "2px",
@@ -41,18 +46,18 @@ class SelectedCodesGrid extends React.PureComponent {
 
   onAddItem = code => {
     /*eslint no-console: 0*/
-    console.log("adding" + code);
 
-    this.setState({
-      // Add a new item. It must have an unique key!
-      items: this.state.items.concat({
-        i: code,
-        x: (this.state.items.length * 2) % (this.state.cols || 1),
-        y: Infinity, // puts it at the bottom
-        w: 3,
-        h: 1
-      })
-    });
+    this.props.addItem(code);
+    // this.setState({
+    //   // Add a new item. It must have an unique key!
+    //   items: this.state.items.concat({
+    //     i: code,
+    //     x: (this.state.items.length * 2) % (this.state.cols || 1),
+    //     y: Infinity, // puts it at the bottom
+    //     w: 3,
+    //     h: 1
+    //   })
+    // });
   };
 
   // We're using the cols coming back from this to calculate where to add new items.
@@ -71,25 +76,11 @@ class SelectedCodesGrid extends React.PureComponent {
   onRemoveItem = i => {
     console.log("removing", i);
     this.props.removeItemButton(i);
-    this.setState({ items: _.reject(this.state.items, { i: i }) });
+
+    // this.setState({ items: _.reject(this.state.items, { i: i }) });
   };
 
   render() {
-    // if (this.props.items.length > 0) {
-    //   const codeObj = this.props.items;
-    //   const codeObjList = codeObj.map(item => {
-    //     return {
-    //       i: item.code,
-    //       x: 0,
-    //       y: Infinity,
-    //       w: 3,
-    //       h: 1
-    //     };
-    //   });
-    //   console.log(codeObjList);
-    //   this.setState({ items: codeObjList });
-    // }
-
     return (
       <div>
         <ResponsiveReactGridLayout
@@ -99,7 +90,7 @@ class SelectedCodesGrid extends React.PureComponent {
           isResizable={false}
           {...this.props}
         >
-          {_.map(this.state.items, el => this.createElement(el))}
+          {_.map(this.props.itemsGrid, el => this.createElement(el))}
         </ResponsiveReactGridLayout>
       </div>
     );

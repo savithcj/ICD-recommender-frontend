@@ -11,6 +11,8 @@ import MenuBar from "./Components/MenuBar/MenuBar";
 
 import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
 import CustomListItem from "./Components/CustomListItem/CustomListItem";
+import { __esModule } from "d3-random";
+import _ from "lodash";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -74,12 +76,29 @@ class App extends Component {
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
     ageAutoCompleteDisplayed: [],
     genderAutoCompleteDisplayed: [],
-    // searchedCodeList: {}, // list of code searched via API
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
     selectedCodes: [],
+    selectedCodeGrids: [],
     recommendedCodes: null //list of recommended codes based on the selected codes
+  };
+
+  //-------------------------------------------
+  //START OF SELECTED CODE GRID FUCNTIONS------
+  //-------------------------------------------
+  addItemToSelectedCodesGrid = code => {
+    this.setState({
+      selectedCodeGrids: this.state.selectedCodeGrids.concat({
+        i: code,
+        x: this.state.selectedCodeGrids.length * 2,
+        y: Infinity,
+        w: 3,
+        h: 1
+      })
+    });
+
+    console.log("added" + code);
   };
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -272,7 +291,8 @@ class App extends Component {
     codes.splice(removeCodeIndex, 1);
 
     this.setState({
-      selectedCodes: codes
+      selectedCodes: codes,
+      selectedCodeGrids: _.reject(this.state.selectedCodeGrids, { i: code })
     });
 
     this.getRecommendedCodes(codes);
@@ -509,18 +529,15 @@ class App extends Component {
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              {/* <ListViewer
-                className="selectedCodes"
-                title="Selected Codes"
+              <SelectedCodesGrid
+                ref={this.selectedCodesDiv}
                 items={this.state.selectedCodes}
-                noItemsMessage="No codes selected"
-                keyName="code"
-                valueName="code"
-                descriptionName="description"
+                itemsGrid={this.state.selectedCodeGrids}
                 removeItemButton={this.handleRemoveSelectedCode}
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 exploreButton={this.handleExploreSelectedCodeButton}
-              /> */}
+                addItem={this.addItemToSelectedCodesGrid}
+              />
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
@@ -544,16 +561,6 @@ class App extends Component {
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
               {userInputBoxes}
-            </div>
-
-            <div key="4" className={highlightEditDiv} data-grid={{ x: 0, y: 12, w: 4, h: 8 }}>
-              <SelectedCodesGrid
-                ref={this.selectedCodesDiv}
-                items={this.state.selectedCodes}
-                removeItemButton={this.handleRemoveSelectedCode}
-                removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
-                exploreButton={this.handleExploreSelectedCodeButton}
-              />
             </div>
           </ResponsiveReactGridLayout>
         </div>
