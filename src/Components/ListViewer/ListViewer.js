@@ -63,6 +63,7 @@ function ListViewer(props) {
               id={item[props.keyName]}
               onClick={props.exploreButton}
               color="default"
+              title="Explore on tree"
             >
               <Explore />
             </IconButton>
@@ -97,6 +98,7 @@ function ListViewer(props) {
               id={item[props.keyName]}
               onClick={props.acceptItemButton}
               color="primary"
+              title="Accept"
             >
               <AcceptIcon />
             </IconButton>
@@ -113,6 +115,7 @@ function ListViewer(props) {
             id={item[props.keyName]}
             onClick={props.removeItemButton}
             color="secondary"
+            title="Remove"
           >
             <RejectIcon />
           </IconButton>
