@@ -9,6 +9,8 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import red from "@material-ui/core/colors/red";
 import green from "@material-ui/core/colors/green";
+import AcceptIcon from "@material-ui/icons/CheckCircleOutlined";
+import RejectIcon from "@material-ui/icons/HighlightOff";
 
 import Explore from "@material-ui/icons/ExploreOutlined";
 
@@ -60,7 +62,7 @@ function ListViewer(props) {
               className={classes.button}
               id={item[props.keyName]}
               onClick={props.exploreButton}
-              color="primary"
+              color="default"
             >
               <Explore />
             </IconButton>
@@ -89,15 +91,15 @@ function ListViewer(props) {
         ) : (
           // Material UI only allows one ThemeProvider
           <ThemeProvider theme={theme}>
-            <Button
+            <IconButton
               variant="outlined"
               className={classes.button}
               id={item[props.keyName]}
               onClick={props.acceptItemButton}
               color="primary"
             >
-              {"\u2713"} {/*unicode check mark */}
-            </Button>
+              <AcceptIcon />
+            </IconButton>
           </ThemeProvider>
         );
 
@@ -105,15 +107,15 @@ function ListViewer(props) {
         props.removeItemButton === undefined ? (
           ""
         ) : (
-          <Button
+          <IconButton
             variant="outlined"
             className={classes.button}
             id={item[props.keyName]}
             onClick={props.removeItemButton}
             color="secondary"
           >
-            {"\u2717"} {/*unicode x mark */}
-          </Button>
+            <RejectIcon />
+          </IconButton>
         );
 
       return (
