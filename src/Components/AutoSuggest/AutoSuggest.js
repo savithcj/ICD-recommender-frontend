@@ -142,26 +142,9 @@ class AutoSuggest extends Autosuggest {
 
             break;
 
-          case 37: {
-            //left-arrow
-            const highlightedSuggestion = this.getHighlightedSuggestion();
-
-            if (highlightedSuggestion !== null) {
-              const targetSelection = highlightedSuggestion.code.slice(0, -1);
-              console.log(targetSelection);
-              inputProps.onChange("", { newValue: targetSelection });
-              onSuggestionsFetchRequested({
-                value: targetSelection,
-                reason: "input-focused"
-              });
-            }
-            break;
-          }
-
-          case 9: //tab
+          //tab
+          case 9: {
             event.preventDefault();
-          case 39: {
-            //right-arrow
             const highlightedSuggestion = this.getHighlightedSuggestion();
 
             if (highlightedSuggestion !== null) {
