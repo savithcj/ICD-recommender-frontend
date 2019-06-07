@@ -9,7 +9,10 @@ import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
+import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
 import CustomListItem from "./Components/CustomListItem/CustomListItem";
+import { __esModule } from "d3-random";
+import _ from "lodash";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -52,7 +55,6 @@ const defaultLayouts = {
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
-// const originalLayouts = defaultLayouts;
 
 const ageOptions = [...Array(120).keys()].map(x => "" + x);
 
@@ -62,6 +64,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.treeViewDiv = React.createRef();
+    this.selectedCodesDiv = React.createRef();
   }
 
   state = {
@@ -73,12 +76,29 @@ class App extends Component {
     codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
     ageAutoCompleteDisplayed: [],
     genderAutoCompleteDisplayed: [],
-    // searchedCodeList: {}, // list of code searched via API
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
     selectedCodes: [],
+    selectedCodeGrids: [],
     recommendedCodes: null //list of recommended codes based on the selected codes
+  };
+
+  //-------------------------------------------
+  //START OF SELECTED CODE GRID FUCNTIONS------
+  //-------------------------------------------
+  addItemToSelectedCodesGrid = code => {
+    this.setState({
+      selectedCodeGrids: this.state.selectedCodeGrids.concat({
+        i: code,
+        x: this.state.selectedCodeGrids.length * 2,
+        y: Infinity,
+        w: 3,
+        h: 1
+      })
+    });
+
+    console.log("added" + code);
   };
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -222,6 +242,8 @@ class App extends Component {
         prev.selectedCodes.push(newCode);
       });
 
+      this.selectedCodesDiv.current.onAddItem(newCode.code);
+
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
@@ -241,6 +263,8 @@ class App extends Component {
         prev.selectedCodes.push(newValue);
       });
 
+      this.selectedCodesDiv.current.onAddItem(newValue.code);
+
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
@@ -259,14 +283,16 @@ class App extends Component {
    * item from the listViewers. Removes the code with a
    * matching ID from the list
    */
-  handleRemoveSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.currentTarget.id);
+  handleRemoveSelectedCode = code => {
+    console.log(code);
+    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === code);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
 
     this.setState({
-      selectedCodes: codes
+      selectedCodes: codes,
+      selectedCodeGrids: _.reject(this.state.selectedCodeGrids, { i: code })
     });
 
     this.getRecommendedCodes(codes);
@@ -503,17 +529,14 @@ class App extends Component {
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <ListViewer
-                className="selectedCodes"
-                title="Selected Codes"
+              <SelectedCodesGrid
+                ref={this.selectedCodesDiv}
                 items={this.state.selectedCodes}
-                noItemsMessage="No codes selected"
-                keyName="code"
-                valueName="code"
-                descriptionName="description"
+                itemsGrid={this.state.selectedCodeGrids}
                 removeItemButton={this.handleRemoveSelectedCode}
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 exploreButton={this.handleExploreSelectedCodeButton}
+                addItem={this.addItemToSelectedCodesGrid}
               />
             </div>
 
@@ -532,8 +555,8 @@ class App extends Component {
                 removeItemButton={this.handleRemoveRecommendedCode}
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 tooltipValueName="reason"
-              /> */}
-              <CustomListItem />
+              />
+              {/* <CustomListItem /> */}
             </div>
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
