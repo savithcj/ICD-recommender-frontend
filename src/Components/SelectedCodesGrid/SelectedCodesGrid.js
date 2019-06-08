@@ -45,23 +45,18 @@ class SelectedCodesGrid extends React.PureComponent {
    * Handles displaying of each element
    * @param {*} el
    */
+  //TODO: Fix bug, only first item is displayed
   createElement(el) {
     console.log("Creating element: " + el);
-    const removeStyle = {
-      position: "absolute",
-      right: "2px",
-      top: 0,
-      cursor: "pointer"
-    };
-    const i = el.add ? "+" : el.i;
+    const code = el.add ? "+" : el.code;
     return (
-      <div key={i} data-grid={el}>
+      <div key={code} data-grid={el}>
         <ListItem>
           <IconButton aria-label="Explore" title="Explore on Tree">
             <ExploreIcon />
           </IconButton>
-          <ListItemText primary={i} secondary={i} />
-          <IconButton edge="end" aria-label="Reject" title="Reject" onClick={this.onRemoveItem.bind(this, i)}>
+          <ListItemText primary={code} secondary={el.description} />
+          <IconButton edge="end" aria-label="Reject" title="Reject" onClick={this.onRemoveItem.bind(this, code)}>
             <RejectIcon />
           </IconButton>
         </ListItem>
@@ -88,9 +83,9 @@ class SelectedCodesGrid extends React.PureComponent {
     this.setState({ layout: layout });
   };
 
-  onRemoveItem = i => {
-    console.log("removing", i);
-    this.props.removeItemButton(i);
+  onRemoveItem = code => {
+    console.log("removing", code);
+    this.props.removeItemButton(code);
   };
 
   render() {
@@ -113,7 +108,7 @@ class SelectedCodesGrid extends React.PureComponent {
             isResizable={false}
             {...this.props}
           >
-            {this.props.itemsGrid.map(el => this.createElement(el))}
+            {this.props.items.map(el => this.createElement(el))}
           </ResponsiveReactGridLayout>
         </List>
       </div>

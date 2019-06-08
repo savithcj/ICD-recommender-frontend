@@ -78,25 +78,7 @@ class App extends Component {
 
     ////// Code Selection Feature
     selectedCodes: [], // list of selected code with descriptions
-    selectedCodeGrids: [], // list of selected code and their layout
     recommendedCodes: null //list of recommended codes based on the selected codes
-  };
-
-  //-------------------------------------------
-  //START OF SELECTED CODE GRID FUCNTIONS------
-  //-------------------------------------------
-  addItemToSelectedCodesGrid = code => {
-    this.setState({
-      selectedCodeGrids: this.state.selectedCodeGrids.concat({
-        i: code,
-        x: this.state.selectedCodeGrids.length * 2,
-        y: Infinity,
-        w: 3,
-        h: 1
-      })
-    });
-
-    console.log("added" + code);
   };
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -217,21 +199,25 @@ class App extends Component {
    * Called upon by CodeInputField when an item is selected.
    * Pass selected codes to this.getRecommendedCodes.
    */
-  addSelectedCode = newValue => {
+  addSelectedCode = newCodeObj => {
     let selectedCodes = Array.from(this.state.selectedCodes);
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue);
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(this.state.cachedCodeWithDescription);
-      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newValue);
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
 
       // construct new code object
       const newCode = {
         code: cachedCode.code,
-        description: cachedCode.description
+        description: cachedCode.description,
+        x: this.state.selectedCodes.length * 2,
+        y: Infinity,
+        w: 3,
+        h: 1
       };
 
       selectedCodes.push(newCode);
@@ -240,14 +226,13 @@ class App extends Component {
         prev.selectedCodes.push(newCode);
       });
 
-      this.addItemToSelectedCodesGrid(newCode.code);
-
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
     }
   };
 
+  //the only reason we are not using addSelectedCode here is because we already have descriptions.
   addCodeFromTree = newValue => {
     //newValue is a code object containing code, and description
 
@@ -257,13 +242,21 @@ class App extends Component {
     const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue.code);
 
     if (getDuplicate === undefined) {
-      selectedCodes.push(newValue);
+      // construct new code object
+      const newCode = {
+        code: newValue.code,
+        description: newValue.description,
+        x: this.state.selectedCodes.length * 2,
+        y: Infinity,
+        w: 3,
+        h: 1
+      };
+
+      selectedCodes.push(newCode);
 
       this.setState(prev => {
-        prev.selectedCodes.push(newValue);
+        prev.selectedCodes.push(newCode);
       });
-
-      this.addItemToSelectedCodesGrid(newValue.code);
 
       this.getRecommendedCodes(selectedCodes);
     } else {
@@ -291,10 +284,10 @@ class App extends Component {
     codes.splice(removeCodeIndex, 1);
 
     this.setState({
-      selectedCodes: codes,
-      selectedCodeGrids: this.state.selectedCodeGrids.filter(el => {
-        return el.i !== code;
-      })
+      selectedCodes: codes
+      // selectedCodeGrids: this.state.selectedCodeGrids.filter(el => {
+      //   return el.i !== code;
+      // })
     });
 
     this.getRecommendedCodes(codes);
@@ -537,7 +530,7 @@ class App extends Component {
                 removeItemButton={this.handleRemoveSelectedCode}
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 exploreButton={this.handleExploreSelectedCodeButton}
-                addItem={this.addItemToSelectedCodesGrid}
+                addItem={this.addSelectedCode}
               />
             </div>
 
