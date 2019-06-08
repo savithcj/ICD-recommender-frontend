@@ -45,7 +45,7 @@ class SelectedCodesGrid extends React.PureComponent {
    * Handles displaying of each element
    * @param {*} el
    */
-  //TODO: Fix bug, only first item is displayed
+
   createElement(el) {
     console.log("Creating element: " + el);
     const code = el.add ? "+" : el.code;

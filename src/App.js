@@ -222,9 +222,7 @@ class App extends Component {
 
       selectedCodes.push(newCode);
 
-      this.setState(prev => {
-        prev.selectedCodes.push(newCode);
-      });
+      this.setState({ selectedCodes });
 
       this.getRecommendedCodes(selectedCodes);
     } else {
@@ -254,9 +252,7 @@ class App extends Component {
 
       selectedCodes.push(newCode);
 
-      this.setState(prev => {
-        prev.selectedCodes.push(newCode);
-      });
+      this.setState({ selectedCodes });
 
       this.getRecommendedCodes(selectedCodes);
     } else {
