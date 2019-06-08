@@ -541,7 +541,7 @@ class App extends Component {
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              {/* <ListViewer
+              <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}
