@@ -38,9 +38,6 @@ class SelectedCodesGrid extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    // this.state = {
-    //   items: []
-    // };
   }
 
   /**
@@ -75,16 +72,6 @@ class SelectedCodesGrid extends React.PureComponent {
     /*eslint no-console: 0*/
 
     this.props.addItem(code);
-    // this.setState({
-    //   // Add a new item. It must have an unique key!
-    //   items: this.state.items.concat({
-    //     i: code,
-    //     x: (this.state.items.length * 2) % (this.state.cols || 1),
-    //     y: Infinity, // puts it at the bottom
-    //     w: 3,
-    //     h: 1
-    //   })
-    // });
   };
 
   // We're using the cols coming back from this to calculate where to add new items.
@@ -103,8 +90,6 @@ class SelectedCodesGrid extends React.PureComponent {
   onRemoveItem = i => {
     console.log("removing", i);
     this.props.removeItemButton(i);
-
-    // this.setState({ items: _.reject(this.state.items, { i: i }) });
   };
 
   render() {
