@@ -12,7 +12,6 @@ import MenuBar from "./Components/MenuBar/MenuBar";
 import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
 import CustomListItem from "./Components/CustomListItem/CustomListItem";
 import { __esModule } from "d3-random";
-import _ from "lodash";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -64,7 +63,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.treeViewDiv = React.createRef();
-    this.selectedCodesDiv = React.createRef();
   }
 
   state = {
@@ -79,8 +77,8 @@ class App extends Component {
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
-    selectedCodes: [],
-    selectedCodeGrids: [],
+    selectedCodes: [], // list of selected code with descriptions
+    selectedCodeGrids: [], // list of selected code and their layout
     recommendedCodes: null //list of recommended codes based on the selected codes
   };
 
@@ -242,7 +240,7 @@ class App extends Component {
         prev.selectedCodes.push(newCode);
       });
 
-      this.selectedCodesDiv.current.onAddItem(newCode.code);
+      this.addItemToSelectedCodesGrid(newCode.code);
 
       this.getRecommendedCodes(selectedCodes);
     } else {
@@ -251,6 +249,8 @@ class App extends Component {
   };
 
   addCodeFromTree = newValue => {
+    //newValue is a code object containing code, and description
+
     let selectedCodes = Array.from(this.state.selectedCodes);
 
     // check if the code already exist in the selection
@@ -263,7 +263,7 @@ class App extends Component {
         prev.selectedCodes.push(newValue);
       });
 
-      this.selectedCodesDiv.current.onAddItem(newValue.code);
+      this.addItemToSelectedCodesGrid(newValue.code);
 
       this.getRecommendedCodes(selectedCodes);
     } else {
@@ -292,7 +292,9 @@ class App extends Component {
 
     this.setState({
       selectedCodes: codes,
-      selectedCodeGrids: _.reject(this.state.selectedCodeGrids, { i: code })
+      selectedCodeGrids: this.state.selectedCodeGrids.filter(el => {
+        return el.i !== code;
+      })
     });
 
     this.getRecommendedCodes(codes);
@@ -530,7 +532,6 @@ class App extends Component {
             </div>
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
               <SelectedCodesGrid
-                ref={this.selectedCodesDiv}
                 items={this.state.selectedCodes}
                 itemsGrid={this.state.selectedCodeGrids}
                 removeItemButton={this.handleRemoveSelectedCode}
@@ -541,7 +542,7 @@ class App extends Component {
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              {/* <ListViewer
+              <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}

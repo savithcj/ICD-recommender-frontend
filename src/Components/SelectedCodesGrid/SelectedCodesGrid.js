@@ -1,6 +1,7 @@
 import React from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import _ from "lodash";
+import CustomListItem from "../CustomListItem/CustomListItem";
+
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 /**
@@ -33,7 +34,6 @@ class SelectedCodesGrid extends React.PureComponent {
     return (
       <div key={i} data-grid={el}>
         <span className="text">{i}</span>
-
         <span className="remove" style={removeStyle} onClick={this.onRemoveItem.bind(this, i)}>
           Remove me!
         </span>
@@ -75,7 +75,7 @@ class SelectedCodesGrid extends React.PureComponent {
           isResizable={false}
           {...this.props}
         >
-          {_.map(this.props.itemsGrid, el => this.createElement(el))}
+          {this.props.itemsGrid.map(el => this.createElement(el))}
         </ResponsiveReactGridLayout>
       </div>
     );

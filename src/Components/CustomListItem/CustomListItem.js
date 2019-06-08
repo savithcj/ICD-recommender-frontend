@@ -31,12 +31,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function CustomListItem() {
+function CustomListItem(props) {
   const classes = useStyles();
-
-  const code = "Y830";
-  const description =
-    "Surgical operation with transplant of whole organ or tissue as the cause of abnormal reaction or later complication, without mention of misadventure at the time of the procedure";
 
   return (
     <div className={classes.root}>
@@ -52,11 +48,11 @@ function CustomListItem() {
           <IconButton aria-label="Explore" title="Explore on Tree">
             <ExploreIcon />
           </IconButton>
-          <ListItemText primary={code} secondary={description} />
+          <ListItemText primary={props.code} secondary={props.description} />
           <IconButton edge="end" aria-label="Accept" title="Accept">
             <CheckIcon />
           </IconButton>
-          <IconButton edge="end" aria-label="Reject" title="Reject">
+          <IconButton edge="end" aria-label="Reject" title="Reject" onclick={props.handleRemoveCode(props.code)}>
             <RejectIcon />
           </IconButton>
         </ListItem>
