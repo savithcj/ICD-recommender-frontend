@@ -3,8 +3,8 @@ import React from "react";
 
 import AutoSuggest from "../AutoSuggest/AutoSuggest.js";
 
-import AutosuggestHighlightMatch from "autosuggest-highlight/match";
-import AutosuggestHighlightParse from "autosuggest-highlight/parse";
+import AutosuggestHighlightMatch from "../AutoSuggest/match";
+import AutosuggestHighlightParse from "../AutoSuggest/parse";
 import "./CodeInputField.css";
 
 const ageOptions = [
