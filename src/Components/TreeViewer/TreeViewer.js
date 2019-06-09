@@ -94,7 +94,7 @@ class TreeViewer extends Component {
   }
 
   componentDidMount() {
-    this.getDataFromAPI("Chapter 01").then(() => {
+    this.getDataFromAPI("Z99").then(() => {
       this.drawInitialTree();
     });
   }
@@ -400,12 +400,15 @@ class TreeViewer extends Component {
       .attr("width", this.buttonWidth)
       .attr("height", this.buttonHeight)
       .attr("fill", "lightgrey")
-      .attr("class", "buttonRect");
+      .attr("class", "buttonRect")
+      .attr("rx", this.cRadius)
+      .attr("ry", this.cRadius);
 
     buttonG
       .append("text")
       .text("Add Code")
       .attr("font-family", this.fontType)
+      .attr("font-weight", "bold")
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
       .attr("y", this.buttonHeight / 1.5)
@@ -430,7 +433,9 @@ class TreeViewer extends Component {
           .transition()
           .duration(200)
           .style("fill-opacity", 1e-6);
-      });
+      })
+      .attr("rx", this.cRadius)
+      .attr("ry", this.cRadius);
   }
 
   async parentChain() {
@@ -1092,8 +1097,10 @@ class TreeViewer extends Component {
 
     this.svg
       .selectAll("text.childrenText")
+      .data(this.data.siblings)
       .transition()
       .duration(this.duration)
+      .text(d => this.codeFormat(d, 1))
       .attr("y", 0.3 * this.textSize)
       .attr("x", 1.5 * this.cRadius)
       .attr("class", "siblingText")
@@ -1249,9 +1256,11 @@ class TreeViewer extends Component {
 
     this.svg
       .selectAll("text.siblingText")
+      .data(this.data.children)
       .transition()
       .duration(this.duration)
       .delay(this.duration)
+      .text(d => this.codeFormat(d, 1))
       .attr("y", 0.3 * this.textSize)
       .attr("x", 1.5 * this.cRadius)
       .attr("class", "childrenText")
@@ -1492,9 +1501,11 @@ class TreeViewer extends Component {
   codeFormat = (d, truncFlag) => {
     let room;
     if (this.data.siblings.includes(d)) {
-      if (this.data.children) {
+      if (this.data.children.length > 0) {
+        console.log("has children");
         room = this.width - this.rightPadding - this.middle - 3 * this.cRadius;
       } else {
+        console.log("no children");
         room = this.width - this.middle - 3 * this.cRadius;
       }
     } else if (this.data.children.includes(d)) {
