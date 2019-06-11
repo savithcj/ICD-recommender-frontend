@@ -12,20 +12,9 @@ import ExploreIcon from "@material-ui/icons/ExploreOutlined";
 import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
 import RejectIcon from "@material-ui/icons/HighlightOff";
 
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+import "./SelectedCodesGrid.css";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    maxWidth: "100%"
-  },
-  demo: {
-    backgroundColor: theme.palette.background.paper
-  },
-  title: {
-    margin: theme.spacing(4, 0, 2)
-  }
-}));
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 /**
  * This layout demonstrates how to use a grid with a dynamic number of elements.
@@ -50,7 +39,7 @@ class SelectedCodesGrid extends React.PureComponent {
     console.log("Creating element: " + el);
     const code = el.add ? "+" : el.code;
     return (
-      <div key={code} data-grid={el}>
+      <div className="gridListItem" key={code} data-grid={el}>
         <ListItem>
           <IconButton aria-label="Explore" title="Explore on Tree">
             <ExploreIcon />
@@ -89,10 +78,8 @@ class SelectedCodesGrid extends React.PureComponent {
   };
 
   render() {
-    // const classes = useStyles();
-
     return (
-      <div>
+      <div className="gridItemContainer">
         <List
           dense={true}
           subheader={
