@@ -94,7 +94,7 @@ class TreeViewer extends Component {
   }
 
   componentDidMount() {
-    this.getDataFromAPI("Z99").then(() => {
+    this.getDataFromAPI("P052").then(() => {
       this.drawInitialTree();
     });
   }
