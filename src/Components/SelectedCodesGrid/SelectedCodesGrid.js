@@ -41,7 +41,7 @@ class SelectedCodesGrid extends React.PureComponent {
     return (
       <div className="gridListItem" key={code} data-grid={el}>
         <ListItem>
-          <IconButton aria-label="Explore" title="Explore on Tree">
+          <IconButton id={code} aria-label="Explore" title="Explore on Tree" onClick={this.props.exploreButton}>
             <ExploreIcon />
           </IconButton>
           <ListItemText primary={code} secondary={el.description} />
