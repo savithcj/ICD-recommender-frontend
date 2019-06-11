@@ -527,6 +527,7 @@ class App extends Component {
                 removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 exploreButton={this.handleExploreSelectedCodeButton}
                 addItem={this.addSelectedCode}
+                onLayoutChange={this.handleCodeGridLayoutChange}
               />
             </div>
 

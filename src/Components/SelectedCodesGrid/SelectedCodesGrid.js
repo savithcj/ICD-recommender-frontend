@@ -23,24 +23,18 @@ class SelectedCodesGrid extends React.PureComponent {
   static defaultProps = {
     className: "layout",
     cols: { lg: 1, md: 1, sm: 1, xs: 1, xxs: 1 },
-    rowHeight: 40
+    rowHeight: 60
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   /**
    * Handles displaying of each element
    * @param {*} el
    */
-
   createElement(el) {
-    console.log("Creating element: " + el);
     const code = el.add ? "+" : el.code;
     return (
-      <div className="gridListItem" key={code} data-grid={el}>
-        <ListItem>
+      <div key={code} data-grid={el}>
+        <ListItem className="gridListItem">
           <IconButton id={code} aria-label="Explore" title="Explore on Tree" onClick={this.props.exploreButton}>
             <ExploreIcon />
           </IconButton>
@@ -69,11 +63,15 @@ class SelectedCodesGrid extends React.PureComponent {
 
   onLayoutChange = layout => {
     // this.props.onLayoutChange(layout);
-    this.setState({ layout: layout });
+    // this.setState({ layout: layout });
+  };
+
+  calculateHeight = (heightPx, rowHeight, margin) => {
+    let h = Math.ceil((heightPx - margin[1]) / (rowHeight + margin[1]));
+    return h;
   };
 
   onRemoveItem = code => {
-    console.log("removing", code);
     this.props.removeItemButton(code);
   };
 
