@@ -338,6 +338,16 @@ class TreeViewer extends Component {
               .attr("fill", d => {
                 return d;
               });
+            this.svg
+              .selectAll("text.siblingText")
+              .data(this.data.siblings)
+              .transition()
+              .duration(this.duration)
+              .text(d => this.codeFormat(d, 1))
+              .attr("y", 0.3 * this.textSize)
+              .attr("x", 1.5 * this.cRadius)
+              .attr("class", "siblingText")
+              .style("text-anchor", "right");
             this.changeSelfAncestor();
             await this.sleep(this.duration);
             this.spawnChildren();
