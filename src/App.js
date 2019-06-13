@@ -10,7 +10,6 @@ import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
 import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
-import CustomListItem from "./Components/CustomListItem/CustomListItem";
 import { __esModule } from "d3-random";
 
 const defaultLayoutLg = [
@@ -502,6 +501,9 @@ class App extends Component {
     return (
       <div className="App">
         <MenuBar
+          title="ICD-10 Code Suggestion and Usage Insight"
+          firstLinkName="Admin"
+          firstLinkRoute="/admin"
           handleLayoutConfirm={this.handleLayoutModifierButton}
           handleResetLayout={this.resetLayout}
           inModifyMode={this.state.isLayoutModifiable}

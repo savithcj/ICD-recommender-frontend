@@ -8,8 +8,6 @@ import "react-resizable/css/styles.css";
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
-import TreeViewer2 from "./Components/TreeViewer2/TreeViewer2";
-import TreeViewer3 from "./Components/TreeViewer3/TreeViewer3";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -78,8 +76,7 @@ class App extends Component {
    */
   searchCodeViaAPI(code) {
     if (code !== "") {
-      const url =
-        "http://localhost:8000/api/children/" + code + "/?format=json";
+      const url = "http://localhost:8000/api/children/" + code + "/?format=json";
 
       console.log("look up code from API call: " + url);
       let searchedCodes = Array.from(this.state.searchedCodeList);
@@ -127,16 +124,12 @@ class App extends Component {
     let selectedCodes = [...this.state.selectedCodes];
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(
-      codeObj => codeObj.code === newValue
-    );
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newValue);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
       const codeDescriptions = this.state.cachedCodeWithDescription;
-      const cachedCode = codeDescriptions.find(
-        codeObj => codeObj.code === newValue
-      );
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newValue);
       // construct new code object
       const newCode = {
         code: cachedCode.code,
@@ -160,9 +153,7 @@ class App extends Component {
    * matching ID from the list
    */
   removeSelectedCode = event => {
-    const removeCodeIndex = this.state.selectedCodes.findIndex(
-      codeObj => codeObj.code === event.target.id
-    );
+    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === event.target.id);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
@@ -192,10 +183,7 @@ class App extends Component {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
     if (stringOfCodes !== "") {
-      const url =
-        "http://localhost:8000/api/requestRules/" +
-        stringOfCodes +
-        "/?format=json";
+      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
 
       this.setState({
         selectedCodes: listOfCodeObjects,
@@ -287,16 +275,9 @@ class App extends Component {
       );
     }
 
-    return (
-      <div className="Sandbox">
-        {/*<div>
+    return <div className="Sandbox">{/*<div>
           <TreeViewer2 id="123" />
-        </div>*/}
-        <div>
-          <TreeViewer3 id="456" />
-        </div>
-      </div>
-    );
+        </div>*/}</div>;
   }
 }
 
