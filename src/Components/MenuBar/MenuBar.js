@@ -60,12 +60,6 @@ function ButtonAppBar(props) {
 
   const menuId = "settings-menu";
 
-  const link = (
-    <Link to={props.firstLinkRoute} style={{ textDecoration: "none" }}>
-      {props.firstLinkName}
-    </Link>
-  );
-
   let renderMenu = props.inModifyMode ? null : (
     <Menu
       anchorEl={anchorEl}
@@ -76,8 +70,9 @@ function ButtonAppBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem containerElement={<Link to="/admin" primaryText="Admin" />} />
-      <MenuItem onClick={handleAdminButton}>Test ADmin</MenuItem>
+      <MenuItem component={Link} to={props.firstLinkRoute}>
+        {props.firstLinkName}
+      </MenuItem>
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
