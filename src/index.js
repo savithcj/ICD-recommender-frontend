@@ -1,18 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import Sandbox from "./Sandbox";
 import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./serviceWorker";
 
+const notFound = () => <h1>Not Found</h1>;
+
 const routing = (
+  //TODO: get rid of Sandbox route used for testing
   <Router>
     <div>
-      <Route exact path="/" component={App} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/superSecret1337HaxorPage" component={Sandbox} />
+      <Switch>
+        <Route exact path="/" component={App} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/sandbox" component={Sandbox} />
+        <Route>{notFound}</Route>
+      </Switch>
     </div>
   </Router>
 );
