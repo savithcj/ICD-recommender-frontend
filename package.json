@@ -17,6 +17,7 @@
     "react-dom": "^16.8.6",
     "react-fittext": "^1.0.0",
     "react-grid-layout": "^0.16.6",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "react-textfit": "^1.1.0",
     "recursive-install": "^1.4.0",
