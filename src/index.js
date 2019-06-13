@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./App";
+import Sandbox from "./Sandbox";
 import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./serviceWorker";
 
@@ -11,6 +12,7 @@ const routing = (
     <div>
       <Route exact path="/" component={App} />
       <Route path="/admin" component={Admin} />
+      <Route path="/superSecret1337HaxorPage" component={Sandbox} />
     </div>
   </Router>
 );

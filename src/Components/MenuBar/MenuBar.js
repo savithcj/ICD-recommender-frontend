@@ -76,6 +76,9 @@ function ButtonAppBar(props) {
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
+      <MenuItem component={Link} to="/superSecret1337HaxorPage">
+        Sandbox
+      </MenuItem>
     </Menu>
   );
 
