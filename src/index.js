@@ -12,7 +12,7 @@ const routing = (
     <div>
       <Route exact path="/" component={App} />
       <Route path="/admin" component={Admin} />
-      <Route path="/superSecret1337HaxorPage" component={Sandbox} />
+      <Route path="/sandbox" component={Sandbox} />
     </div>
   </Router>
 );

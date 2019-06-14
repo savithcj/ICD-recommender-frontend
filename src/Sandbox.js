@@ -8,6 +8,7 @@ import "react-resizable/css/styles.css";
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
+import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -275,9 +276,13 @@ class App extends Component {
       );
     }
 
-    return <div className="Sandbox">{/*<div>
-          <TreeViewer2 id="123" />
-        </div>*/}</div>;
+    return (
+      <div className="Sandbox">
+        <div>
+          <ChordDiagram id="123" />
+        </div>
+      </div>
+    );
   }
 }
 
