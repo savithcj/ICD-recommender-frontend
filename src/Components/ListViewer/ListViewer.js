@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./ListViewer.css";
+// import "./ListViewer.css";
 
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,6 +13,8 @@ import AcceptIcon from "@material-ui/icons/CheckCircleOutlined";
 import RejectIcon from "@material-ui/icons/HighlightOff";
 
 import Explore from "@material-ui/icons/ExploreOutlined";
+
+import Card from "@material-ui/core/Card";
 
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -49,39 +51,48 @@ const useStyles = makeStyles(theme => ({
   },
   ul: {
     backgroundColor: "inherit",
-    padding: 0
+    padding: "2%"
+  },
+  card: {
+    margin: "1% 0"
   }
 }));
 
-const SortableItem = sortableElement(({ value }) => (
-  <ListItem>
-    <IconButton aria-label="Explore" title="Explore on Tree">
-      <ExploreIcon />
-    </IconButton>
-    <ListItemText
-      primary={value}
-      secondary="Poisoning by and exposure to antiepileptic, sedative-hypnotic, antiparkinsonism and psychotropic drugs, not elsewhere classified, undetermined intent"
-    />
-    <IconButton edge="end" aria-label="Accept" title="Accept" color="primary">
-      <CheckIcon />
-    </IconButton>
-    <IconButton edge="end" aria-label="Reject" title="Reject" color="secondary">
-      <RejectIcon />
-    </IconButton>
-  </ListItem>
-));
-
-const SortableContainer = sortableContainer(({ children }) => {
-  return <ul>{children}</ul>;
-});
-
-const onSortEnd = () => {
-  console.log("test");
-};
-
 function ListViewer(props) {
   const classes = useStyles();
-  const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
+  const [areItemsRearrangable, setItemRearrangeMode] = useState(true);
+
+  const SortableItem = sortableElement(({ value }) => (
+    <Card className={classes.card}>
+      <ListItem>
+        <IconButton aria-label="Explore" title="Explore on Tree">
+          <ExploreIcon />
+        </IconButton>
+        <ListItemText
+          primary={value}
+          secondary="elsewhere classified, undetermined intent elsewhere classified, undetermined intent elsewhere classified, undetermined intent elsewhere classified, undetermined intent elsewhere classified, undetermined intent"
+        />
+        <IconButton edge="end" aria-label="Accept" title="Accept" color="primary">
+          <CheckIcon />
+        </IconButton>
+        <IconButton edge="end" aria-label="Reject" title="Reject" color="secondary">
+          <RejectIcon />
+        </IconButton>
+      </ListItem>
+    </Card>
+  ));
+
+  const SortableContainer = sortableContainer(({ children }) => {
+    return (
+      <List dense={true} className={classes.root} subheader={<li />}>
+        <ul className={classes.ul}>{children}</ul>
+      </List>
+    );
+  });
+
+  const onSortEnd = () => {
+    console.log("test");
+  };
 
   const nonRearrangableList = (
     <List dense={true} className={classes.root} subheader={<li />}>
@@ -127,13 +138,15 @@ function ListViewer(props) {
   );
 
   const rearrangableList = (
-    <SortableContainer onSortEnd={onSortEnd}>
-      <SortableItem key={`1`} index={0} value={1} />
-      <SortableItem key={`2`} index={1} value={2} />
+    <SortableContainer onSortEnd={onSortEnd} lockAxis="y">
+      <SortableItem key={`1`} index={0} value={1} disabled={!areItemsRearrangable} />
+      <SortableItem key={`2`} index={1} value={2} disabled={!areItemsRearrangable} />
+      {/* <SortableItem key={`3`} index={2} value={2} /> */}
+      {/* <SortableItem key={`4`} index={3} value={2} /> */}
     </SortableContainer>
   );
 
-  return areItemsRearrangable ? rearrangableList : nonRearrangableList;
+  return rearrangableList;
 }
 
 /**
