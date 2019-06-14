@@ -39,7 +39,7 @@ function CustomListItem(props) {
           <IconButton aria-label="Explore" title="Explore on Tree">
             <ExploreIcon />
           </IconButton>
-          <ListItemText primary={props.code} secondary={props.description} />
+          <ListItemText primary="A00" secondary="Cholera" />
           <IconButton edge="end" aria-label="Accept" title="Accept">
             <CheckIcon />
           </IconButton>
