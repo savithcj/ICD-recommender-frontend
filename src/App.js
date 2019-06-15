@@ -54,10 +54,6 @@ const defaultLayouts = {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
 
-const ageOptions = [...Array(120).keys()].map(x => "" + x);
-
-const genderOptions = ["MALE", "FEMALE", "OTHER"];
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -70,102 +66,12 @@ class App extends Component {
     isLayoutModifiable: false,
 
     ////// Search Box Auto-Complete Feature
-    codeAutoCompleteDisplayed: [], // autocomplete suggestions to be displayed
-    ageAutoCompleteDisplayed: [],
-    genderAutoCompleteDisplayed: [],
     cachedCodeWithDescription: [], // caches the autocomplete codes in json format with descriptions
 
     ////// Code Selection Feature
     selectedCodes: [], // list of selected code with descriptions
     recommendedCodes: null //list of recommended codes based on the selected codes
   };
-
-  //-------------------------------------------------------------------------------------------------------------------
-  //START OF INPUT BOX FUNCTIONS---------------------------------------------------------------------------------------
-  //-------------------------------------------------------------------------------------------------------------------
-  /**
-   * Required for code searchbox Auto-Complete
-   * Action listener called upon by child component when input box changes
-   */
-  codeSearchBoxChangeListener = (id, newValue) => {
-    newValue = newValue
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9 ]/gi, "");
-
-    this.getMatchingCodesFromAPI(newValue);
-  };
-
-  ageInputBoxChangeListener = (id, newValue) => {
-    if (newValue !== "") {
-      const regex = new RegExp("^" + newValue, "i");
-      const results = ageOptions.filter(item => regex.test(item));
-      this.setState({ ageAutoCompleteDisplayed: results });
-    }
-  };
-
-  genderInputBoxChangeListener = (id, newValue) => {
-    if (newValue !== "") {
-      newValue = newValue.trim().toUpperCase();
-      console.log(newValue);
-      const regex = new RegExp("^" + newValue, "i");
-      const results = genderOptions.filter(item => regex.test(item));
-      this.setState({ genderAutoCompleteDisplayed: results });
-    }
-  };
-
-  /**
-   * Required for code searchbox Auto-Complete
-   * Get code suggestions by searching codes stored in the state and return results
-   *
-   * Called when a code is entered to be searched
-   */
-  populateAutoCompleteList(suggestionsFromAPI, enteredCode) {
-    let autoCompleteList = [];
-
-    if (suggestionsFromAPI["keyword matches"].length > 0) {
-      autoCompleteList.push({ title: "Keyword Matches", codes: suggestionsFromAPI["keyword matches"] });
-    }
-
-    if (suggestionsFromAPI["description matches"].length > 0) {
-      autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
-    }
-
-    const codeAndDescription = Array.from(this.state.cachedCodeWithDescription);
-    const regex = new RegExp("^" + enteredCode, "i");
-    const codeMatches = codeAndDescription.filter(item => regex.test(item.code));
-
-    if (codeMatches.length > 0) {
-      autoCompleteList.push({ title: "Code Matches", codes: codeMatches });
-    }
-
-    this.setState({ codeAutoCompleteDisplayed: autoCompleteList });
-  }
-
-  /**
-   * Required for code searchbox Auto-Complete
-   * Get code suggestions by making an API call and set results to state
-   * Called when a new code is entered that has not been entered before
-   * or if searching by description or keyword
-   */
-  getMatchingCodesFromAPI(inputValue) {
-    if (inputValue !== "") {
-      const url = "http://localhost:8000/api/codeAutosuggestions/" + inputValue + "/?format=json";
-
-      fetch(url)
-        .then(response => response.json())
-        .then(results => {
-          this.appendCodeToCache(
-            results["code matches"].concat(results["description matches"]).concat(results["keyword matches"])
-          );
-          this.populateAutoCompleteList(results, inputValue);
-        });
-    }
-  }
-
-  //-------------------------------------------------------------------------------------------------------------------
-  //END OF INPUT BOX FUNCTIONS-----------------------------------------------------------------------------------------
-  //-------------------------------------------------------------------------------------------------------------------
 
   /**
    *  Required for code searchbox Auto-Complete
@@ -175,7 +81,7 @@ class App extends Component {
    * @param {*} oFunc optional function to be called at end of the method
    * @param {*} oArg optinal argument for the optional function
    */
-  appendCodeToCache(results, oFunc, oArg) {
+  appendCodeToCache = (results, oFunc, oArg) => {
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
     for (let i = 0, l = results.length; i < l; i++) {
@@ -192,7 +98,7 @@ class App extends Component {
       },
       oFunc === undefined ? () => {} : oFunc(oArg)
     );
-  }
+  };
 
   /**
    * Called upon by CodeInputField when an item is selected.
@@ -475,24 +381,21 @@ class App extends Component {
    */
   render() {
     let userInputBoxes = null;
-    if (this.state.codeAutoCompleteDisplayed != null) {
-      userInputBoxes = (
-        <CodeInputField
-          id_code="input1"
-          id_age="input2"
-          id_gender="input3"
-          placeholder="Search for a code"
-          onChange={this.codeSearchBoxChangeListener}
-          onAgeChange={this.ageInputBoxChangeListener}
-          onGenderChange={this.genderInputBoxChangeListener}
-          codes={this.state.codeAutoCompleteDisplayed}
-          ages={this.state.ageAutoCompleteDisplayed}
-          genders={this.state.genderAutoCompleteDisplayed}
-          selectCode={this.addSelectedCode}
-          selectAge={this.handleAgeSelection}
-        />
-      );
-    }
+
+    userInputBoxes = (
+      <CodeInputField
+        id_code="input1"
+        id_age_a="input2"
+        id_gender="input3"
+        placeholder_code="Search for a code"
+        placeholder_age_a="Age"
+        placeholder_gender="Gender"
+        selectCode={this.addSelectedCode}
+        selectAge={this.handleAgeSelection}
+        codeCache={this.state.cachedCodeWithDescription}
+        appendCodeToCache={this.appendCodeToCache}
+      />
+    );
 
     const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
