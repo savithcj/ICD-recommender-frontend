@@ -130,7 +130,7 @@ class CodeInputField extends React.Component {
   };
 
   /**
-   * Calls a parent function (ActionListener) for when value changes in the input box
+   * Called upon when value changes in the input box
    */
   onSuggestionsFetchRequested = ({ value }) => {
     const { id, onChange } = this.props;
@@ -154,6 +154,9 @@ class CodeInputField extends React.Component {
 
   render() {
     const { id_code, id_age, id_gender, placeholder } = this.props;
+    // if id_age and id_gender are not defined in props, the corresponding inputfields will not be rendered
+    const enable_age = this.props.id_age === undefined ? false : true;
+    const enable_gender = this.props.id_gender === undefined ? false : true;
     const { value, age, gender } = this.state;
     const inputProps = {
       placeholder: placeholder,
@@ -171,52 +174,62 @@ class CodeInputField extends React.Component {
       onChange: this.onGenderChange
     };
 
+    const codeInputBox = (
+      <div className="code_input">
+        <AutoSuggest
+          id={id_code}
+          multiSection={true}
+          suggestions={this.props.codes}
+          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+          getSuggestionValue={this.getSuggestionValue}
+          renderSuggestion={this.renderSuggestion}
+          onSuggestionSelected={this.onSuggestionSelected}
+          renderSectionTitle={this.renderSectionTitle}
+          getSectionSuggestions={this.getSectionSuggestions}
+          inputProps={inputProps}
+          highlightFirstSuggestion={true}
+        />
+      </div>
+    );
+    const ageInputBox = (
+      <div className="age_input">
+        <AutoSuggest
+          id={id_age}
+          suggestions={this.props.ages}
+          onSuggestionsFetchRequested={this.onAgeSuggestionFetchRequested}
+          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+          getSuggestionValue={this.getAgeSuggestionValue}
+          onSuggestionSelected={this.onAgeSuggestionSelected}
+          renderSuggestion={this.renderAgeSuggestion}
+          onSuggestionSelected={this.onAgeSuggestionSelected}
+          inputProps={ageInputProps}
+          highlightFirstSuggestion={true}
+        />
+      </div>
+    );
+    const genderInputBox = (
+      <div className="gender_input">
+        <AutoSuggest
+          id={id_gender}
+          suggestions={this.props.genders}
+          onSuggestionsFetchRequested={this.onGenderSuggestionFetchRequested}
+          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+          getSuggestionValue={this.getGenderSuggestionValue}
+          onSuggestionSelected={this.onGenderSuggestionSelected}
+          renderSuggestion={this.renderGenderSuggestion}
+          onSuggestionSelected={this.onGenderSuggestionSelected}
+          inputProps={genderInputProps}
+          highlightFirstSuggestion={true}
+        />
+      </div>
+    );
+
     return (
       <div>
-        <div className="code_input">
-          <AutoSuggest
-            id={id_code}
-            multiSection={true}
-            suggestions={this.props.codes}
-            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-            getSuggestionValue={this.getSuggestionValue}
-            renderSuggestion={this.renderSuggestion}
-            onSuggestionSelected={this.onSuggestionSelected}
-            renderSectionTitle={this.renderSectionTitle}
-            getSectionSuggestions={this.getSectionSuggestions}
-            inputProps={inputProps}
-            highlightFirstSuggestion={true}
-          />
-        </div>
-        <div className="age_input">
-          <AutoSuggest
-            id={id_age}
-            suggestions={this.props.ages}
-            onSuggestionsFetchRequested={this.onAgeSuggestionFetchRequested}
-            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-            getSuggestionValue={this.getAgeSuggestionValue}
-            onSuggestionSelected={this.onAgeSuggestionSelected}
-            renderSuggestion={this.renderAgeSuggestion}
-            onSuggestionSelected={this.onAgeSuggestionSelected}
-            inputProps={ageInputProps}
-            highlightFirstSuggestion={true}
-          />
-        </div>
-        <div className="gender_input">
-          <AutoSuggest
-            id={id_gender}
-            suggestions={this.props.genders}
-            onSuggestionsFetchRequested={this.onGenderSuggestionFetchRequested}
-            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-            getSuggestionValue={this.getGenderSuggestionValue}
-            onSuggestionSelected={this.onGenderSuggestionSelected}
-            renderSuggestion={this.renderGenderSuggestion}
-            onSuggestionSelected={this.onGenderSuggestionSelected}
-            inputProps={genderInputProps}
-            highlightFirstSuggestion={true}
-          />
-        </div>
+        {codeInputBox}
+        {enable_age ? ageInputBox : null}
+        {enable_gender ? genderInputBox : null}
       </div>
     );
   }
