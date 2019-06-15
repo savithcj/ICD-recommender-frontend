@@ -21,36 +21,43 @@ export default function ComponentMenu(props) {
     setAnchorEl(null);
   }
 
-  const showMenu =
-    props.menuOptions.length > 0 ? (
-      <Menu
-        id="long-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={open}
-        onClose={() => handleClose(null)}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 10,
-            width: 200
-          }
-        }}
-      >
-        {props.menuOptions.map(option => {
-          if (option.menuItemOnClick != null || option.menuItemOnClick != undefined) {
-            return (
-              <MenuItem
-                key={option.menuItemText}
-                selected={option.menuItemText === "Pyxis"}
-                onClick={() => handleClose(option.menuItemOnClick)}
-              >
-                {option.menuItemText}
-              </MenuItem>
-            );
-          }
-        })}
-      </Menu>
-    ) : null;
+  function shouldDisplayMenu(menuItems) {
+    if (menuItems.length < 1) {
+      return false;
+    }
+    console.log(menuItems.filter(option => option.menuItemOnClick).length > 0);
+    return menuItems.filter(option => option.menuItemOnClick).length > 0;
+  }
+
+  const showMenu = shouldDisplayMenu(props.menuOptions) ? (
+    <Menu
+      id="long-menu"
+      anchorEl={anchorEl}
+      keepMounted
+      open={open}
+      onClose={() => handleClose(null)}
+      PaperProps={{
+        style: {
+          maxHeight: ITEM_HEIGHT * 10,
+          width: 200
+        }
+      }}
+    >
+      {props.menuOptions.map(option => {
+        if (option.menuItemOnClick) {
+          return (
+            <MenuItem
+              key={option.menuItemText}
+              selected={option.menuItemText === "Pyxis"}
+              onClick={() => handleClose(option.menuItemOnClick)}
+            >
+              {option.menuItemText}
+            </MenuItem>
+          );
+        }
+      })}
+    </Menu>
+  ) : null;
 
   return (
     <span>

@@ -9,7 +9,6 @@ import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
-import SelectedCodesGrid from "./Components/SelectedCodesGrid/SelectedCodesGrid";
 import { __esModule } from "d3-random";
 
 const defaultLayoutLg = [
@@ -212,11 +211,7 @@ class App extends Component {
       // construct new code object
       const newCode = {
         code: cachedCode.code,
-        description: cachedCode.description,
-        x: this.state.selectedCodes.length * 2,
-        y: Infinity,
-        w: 3,
-        h: 1
+        description: cachedCode.description
       };
 
       selectedCodes.push(newCode);
@@ -242,11 +237,7 @@ class App extends Component {
       // construct new code object
       const newCode = {
         code: newValue.code,
-        description: newValue.description,
-        x: this.state.selectedCodes.length * 2,
-        y: Infinity,
-        w: 3,
-        h: 1
+        description: newValue.description
       };
 
       selectedCodes.push(newCode);
@@ -271,18 +262,14 @@ class App extends Component {
    * item from the listViewers. Removes the code with a
    * matching ID from the list
    */
-  handleRemoveSelectedCode = code => {
-    console.log(code);
-    const removeCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code === code);
+  handleRemoveSelectedCode = event => {
+    const removeCodeIndex = parseInt(event.currentTarget.id, 10);
 
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
 
     this.setState({
       selectedCodes: codes
-      // selectedCodeGrids: this.state.selectedCodeGrids.filter(el => {
-      //   return el.i !== code;
-      // })
     });
 
     this.getRecommendedCodes(codes);
@@ -456,7 +443,7 @@ class App extends Component {
    * Called upon to center the tree on the clicked selected code
    */
   handleExploreSelectedCodeButton = event => {
-    const selectedCodeIndex = this.state.selectedCodes.findIndex(codeObj => codeObj.code == event.currentTarget.id);
+    const selectedCodeIndex = parseInt(event.currentTarget.id, 10);
     this.treeViewDiv.current.changeTree(this.state.selectedCodes[selectedCodeIndex].code);
   };
 
@@ -497,7 +484,12 @@ class App extends Component {
     const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-    const selectedCodesComponentMenuItems = [];
+    const selectedCodesComponentMenuItems = [
+      {
+        menuItemOnClick: this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes,
+        menuItemText: "Remove All Items"
+      }
+    ];
     const recommendedCodesComponentMenuItems = [];
 
     return (
@@ -523,15 +515,21 @@ class App extends Component {
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
+
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <SelectedCodesGrid
+              <ListViewer
+                title="Selected Codes"
                 items={this.state.selectedCodes}
-                itemsGrid={this.state.selectedCodeGrids}
+                noItemsMessage="No codes selected"
+                valueName="code"
+                descriptionName="description"
                 removeItemButton={this.handleRemoveSelectedCode}
-                removeAllItemsButton={this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes}
                 exploreButton={this.handleExploreSelectedCodeButton}
-                addItem={this.addSelectedCode}
-                onLayoutChange={this.handleCodeGridLayoutChange}
+                onSortEnd={updatedListOfSelectedCodes => {
+                  this.setState({ recommendedCodes: updatedListOfSelectedCodes });
+                }}
+                allowRearrage={true}
+                menuOptions={selectedCodesComponentMenuItems}
               />
             </div>
 
