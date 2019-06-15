@@ -1,18 +1,32 @@
-import React from "react";
-import "./ListViewer.css";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from "react";
 
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 
 import { createMuiTheme } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/styles";
+import { ThemeProvider, makeStyles } from "@material-ui/styles";
+
 import red from "@material-ui/core/colors/red";
 import green from "@material-ui/core/colors/green";
-import AcceptIcon from "@material-ui/icons/CheckCircleOutlined";
-import RejectIcon from "@material-ui/icons/HighlightOff";
 
-import Explore from "@material-ui/icons/ExploreOutlined";
+import Typography from "@material-ui/core/Typography";
+
+import Card from "@material-ui/core/Card";
+
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import ExploreIcon from "@material-ui/icons/ExploreOutlined";
+import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
+import RejectIcon from "@material-ui/icons/HighlightOff";
+import DragHandle from "@material-ui/icons/DragHandle";
+
+import { ReactComponent as CheckMark } from "../../Assets/Icons/baseline-done-24px.svg";
+
+import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
+import arrayMove from "array-move";
+
+import Menu from "../ComponentMenu/ComponentMenu";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -22,136 +36,176 @@ const theme = createMuiTheme({
   }
 });
 
-//accept and reject button styles
-const useStyles = makeStyles(theme => ({
-  button: {
-    margin: theme.spacing(0.3),
-    maxWidth: "24px",
-    maxHeight: "24px",
-    minWidth: "24px",
-    minHeight: "24px",
-    padding: "0px",
-    borderRadius: 25
+const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+    width: "100%",
+    height: "100%",
+    overflow: "auto",
+    backgroundColor: "inherit",
+    padding: 0
+  },
+  listSection: {
+    backgroundColor: "inherit",
+    paddding: 0
+  },
+  ul: {
+    backgroundColor: "inherit",
+    padding: "0 2% 2% 2%"
+  },
+  card: {
+    margin: "13px 0"
+  },
+  listTitle: {
+    fontWeight: "bold",
+    textAlign: "left",
+    padding: 0,
+    margin: "0"
+  },
+  drag: {
+    cursor: "row-resize",
+    padding: 12
+  },
+  listItemIndex: {
+    display: "flex",
+    justifyContent: "flex-end"
   }
 }));
 
-/**
- * This component takes a list of items and returns
- * a JSX element containing the list of items.
- */
 function ListViewer(props) {
   const classes = useStyles();
+  const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
 
-  let displayItems = null;
+  useEffect(() => {
+    if (props.allowRearrage) {
+      const rearrangeItems = () => setItemRearrangeMode(true);
+      props.menuOptions.push({
+        menuItemOnClick: rearrangeItems,
+        menuItemText: "Rearrange Items"
+      });
+    }
+  }, [props.menuOptions]);
 
-  if (props.items === null || props.items === undefined) {
-    displayItems = <p>{props.nullItemsMessage}</p>;
-  } else if (props.items === 1) {
-    displayItems = <p>{props.customMessage}</p>;
-  } else if (props.items.length === 0) {
-    displayItems = <p>{props.noItemsMessage}</p>;
-  } else {
-    displayItems = props.items.map(item => {
-      const exploreIcon =
-        props.exploreButton === undefined ? (
-          ""
-        ) : (
-          <span className="exploreButton">
-            <IconButton
-              variant="outlined"
-              className={classes.button}
-              id={item[props.keyName]}
-              onClick={props.exploreButton}
-              color="default"
-              title="Explore on tree"
-            >
-              <Explore />
-            </IconButton>
-          </span>
-        );
-      const value = props.valueName === undefined ? "" : <span className="itemValue">{item[props.valueName]}</span>;
+  const onSortEnd = ({ oldIndex, newIndex }) => {
+    if (Array.isArray(props.items)) {
+      if (props.items.length > 0) {
+        props.onSortEnd(arrayMove(props.items, oldIndex, newIndex));
+      }
+    }
+  };
 
-      const displayValue = (
-        <div className="column value">
-          {exploreIcon}
-          {value}
-        </div>
-      );
+  const SortableItem = sortableElement(({ value, description, id }) => {
+    const DragHandleButton = sortableHandle(() => (
+      <span>
+        <DragHandle className={classes.drag} />
+      </span>
+    ));
 
-      const descriptionValue = (
-        <div className="column description">
-          {item[props.descriptionName] === "" ? "Description N/A" : item[props.descriptionName]}
-        </div>
-      );
-      const tooltip =
-        props.tooltipValueName === undefined ? "" : <div className="tooltiptext">{item[props.tooltipValueName]}</div>;
-
-      const acceptItemButton =
-        props.acceptItemButton === undefined ? (
-          ""
-        ) : (
-          // Material UI only allows one ThemeProvider
-          <ThemeProvider theme={theme}>
-            <IconButton
-              variant="outlined"
-              className={classes.button}
-              id={item[props.keyName]}
-              onClick={props.acceptItemButton}
-              color="primary"
-              title="Accept"
-            >
-              <AcceptIcon />
-            </IconButton>
-          </ThemeProvider>
-        );
-
-      const removeItemButton =
-        props.removeItemButton === undefined ? (
-          ""
-        ) : (
-          <IconButton
-            variant="outlined"
-            className={classes.button}
-            id={item[props.keyName]}
-            onClick={props.removeItemButton}
-            color="secondary"
-            title="Remove"
-          >
-            <RejectIcon />
-          </IconButton>
-        );
-
-      return (
-        <div className="tooltip" key={"tooltip" + item[props.keyName]}>
-          {tooltip}
-          <div className="listItem" key={"listItem" + item[props.keyName]}>
-            {displayValue}
-            {descriptionValue}
-            <div className="column buttonSet">
-              {acceptItemButton}
-              {removeItemButton}
-            </div>
-          </div>
-        </div>
-      );
-    });
-  }
-
-  const removeAllItemsButton =
-    props.removeAllItemsButton === undefined || props.removeAllItemsButton === null ? (
-      ""
+    const showDragHandleOrExploreButton = areItemsRearrangable ? (
+      <DragHandleButton />
     ) : (
-      <Button color="default" onClick={props.removeAllItemsButton}>
-        Remove All
-      </Button>
+      <IconButton id={id} aria-label="Explore" title="Explore on Tree" onClick={props.exploreButton}>
+        <ExploreIcon />
+      </IconButton>
     );
 
+    const showIndexOrAcceptButton = areItemsRearrangable ? (
+      <ListItemText className={classes.listItemIndex}>{id + 1}</ListItemText>
+    ) : (
+      <IconButton
+        id={id}
+        edge="end"
+        aria-label="Accept"
+        title="Accept"
+        color="primary"
+        onClick={props.acceptItemButton}
+      >
+        <CheckIcon />
+      </IconButton>
+    );
+
+    const showRemoveButton = areItemsRearrangable ? null : (
+      <IconButton
+        id={id}
+        edge="end"
+        aria-label="Reject"
+        title="Reject"
+        color="secondary"
+        onClick={props.removeItemButton}
+      >
+        <RejectIcon />
+      </IconButton>
+    );
+
+    return (
+      <Card className={classes.card}>
+        <ListItem>
+          {showDragHandleOrExploreButton}
+          <ListItemText primary={value} secondary={description === "" ? "Description N/A" : description} />
+          {showIndexOrAcceptButton}
+          {showRemoveButton}
+        </ListItem>
+      </Card>
+    );
+  });
+
+  const SortableContainer = sortableContainer(({ children }) => {
+    let displayItems = null;
+
+    if (props.items === null || props.items === undefined) {
+      displayItems = <Typography variant="body2">{props.nullItemsMessage}</Typography>;
+    } else if (props.items === 1) {
+      displayItems = <Typography variant="body2">{props.customMessage}</Typography>;
+    } else if (props.items.length === 0) {
+      displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
+    } else {
+      displayItems = <ul className={classes.ul}>{children}</ul>;
+    }
+
+    const showRearrangeConfirmationOrMenu = areItemsRearrangable ? (
+      <IconButton title="Confirm Item Order" onClick={() => setItemRearrangeMode(false)}>
+        <CheckMark />
+      </IconButton>
+    ) : (
+      <Menu menuOptions={props.menuOptions} />
+    );
+
+    return (
+      <List dense={true} className={classes.root}>
+        <ThemeProvider theme={theme}>
+          <ListSubheader className={classes.listTitle} disableSticky={false}>
+            <span>{showRearrangeConfirmationOrMenu}</span>
+            <span>{props.title}</span>
+          </ListSubheader>
+          {displayItems}
+        </ThemeProvider>
+      </List>
+    );
+  });
+
+  let listItems = null;
+
+  if (Array.isArray(props.items)) {
+    if (props.items.length > 0) {
+      {
+        listItems = props.items.map((value, index) => (
+          <SortableItem
+            key={`item-${index}`}
+            id={index}
+            index={index}
+            value={value[props.valueName]}
+            description={value[props.descriptionName]}
+            disabled={!areItemsRearrangable}
+          />
+        ));
+      }
+    }
+  }
+
   return (
-    <div className="listViewer">
-      <div className="containerTitle">{props.title}</div>
-      <div className="itemContainer">{displayItems}</div>
-      <div className="footer">{removeAllItemsButton}</div>
-    </div>
+    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle>
+      {listItems}
+    </SortableContainer>
   );
 }
 
