@@ -19,6 +19,9 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import ExploreIcon from "@material-ui/icons/ExploreOutlined";
 import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
 import RejectIcon from "@material-ui/icons/HighlightOff";
+import DragHandle from "@material-ui/icons/DragHandle";
+
+import { ReactComponent as CheckMark } from "../../Assets/Icons/baseline-done-24px.svg";
 
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import arrayMove from "array-move";
@@ -58,6 +61,14 @@ const useStyles = makeStyles(() => ({
     textAlign: "left",
     padding: 0,
     margin: "0"
+  },
+  drag: {
+    cursor: "row-resize",
+    padding: 12
+  },
+  listItemIndex: {
+    display: "flex",
+    justifyContent: "flex-end"
   }
 }));
 
@@ -83,36 +94,60 @@ function ListViewer(props) {
     }
   };
 
-  const SortableItem = sortableElement(({ value, description, id }) => (
-    <Card className={classes.card}>
-      <ListItem>
-        <IconButton id={id} aria-label="Explore" title="Explore on Tree" onClick={props.exploreButton}>
-          <ExploreIcon />
-        </IconButton>
-        <ListItemText primary={value} secondary={description === "" ? "Description N/A" : description} />
-        <IconButton
-          id={id}
-          edge="end"
-          aria-label="Accept"
-          title="Accept"
-          color="primary"
-          onClick={props.acceptItemButton}
-        >
-          <CheckIcon />
-        </IconButton>
-        <IconButton
-          id={id}
-          edge="end"
-          aria-label="Reject"
-          title="Reject"
-          color="secondary"
-          onClick={props.removeItemButton}
-        >
-          <RejectIcon />
-        </IconButton>
-      </ListItem>
-    </Card>
-  ));
+  const SortableItem = sortableElement(({ value, description, id }) => {
+    const DragHandleButton = sortableHandle(() => (
+      <span>
+        <DragHandle className={classes.drag} />
+      </span>
+    ));
+
+    const showDragHandleOrExploreButton = areItemsRearrangable ? (
+      <DragHandleButton />
+    ) : (
+      <IconButton id={id} aria-label="Explore" title="Explore on Tree" onClick={props.exploreButton}>
+        <ExploreIcon />
+      </IconButton>
+    );
+
+    const showIndexOrAcceptButton = areItemsRearrangable ? (
+      <ListItemText className={classes.listItemIndex}>{id + 1}</ListItemText>
+    ) : (
+      <IconButton
+        id={id}
+        edge="end"
+        aria-label="Accept"
+        title="Accept"
+        color="primary"
+        onClick={props.acceptItemButton}
+      >
+        <CheckIcon />
+      </IconButton>
+    );
+
+    const showRemoveButton = areItemsRearrangable ? null : (
+      <IconButton
+        id={id}
+        edge="end"
+        aria-label="Reject"
+        title="Reject"
+        color="secondary"
+        onClick={props.removeItemButton}
+      >
+        <RejectIcon />
+      </IconButton>
+    );
+
+    return (
+      <Card className={classes.card}>
+        <ListItem>
+          {showDragHandleOrExploreButton}
+          <ListItemText primary={value} secondary={description === "" ? "Description N/A" : description} />
+          {showIndexOrAcceptButton}
+          {showRemoveButton}
+        </ListItem>
+      </Card>
+    );
+  });
 
   const SortableContainer = sortableContainer(({ children }) => {
     let displayItems = null;
@@ -127,19 +162,20 @@ function ListViewer(props) {
       displayItems = <ul className={classes.ul}>{children}</ul>;
     }
 
-    const confirmRearrange = areItemsRearrangable ? (
-      <button onClick={() => setItemRearrangeMode(false)}>confirm</button>
-    ) : null;
+    const showRearrangeConfirmationOrMenu = areItemsRearrangable ? (
+      <IconButton title="Confirm Item Order" onClick={() => setItemRearrangeMode(false)}>
+        <CheckMark />
+      </IconButton>
+    ) : (
+      <Menu menuOptions={props.menuOptions} />
+    );
 
     return (
       <List dense={true} className={classes.root}>
         <ThemeProvider theme={theme}>
           <ListSubheader className={classes.listTitle} disableSticky={false}>
-            <span>
-              <Menu menuOptions={props.menuOptions} />
-            </span>
+            <span>{showRearrangeConfirmationOrMenu}</span>
             <span>{props.title}</span>
-            {confirmRearrange}
           </ListSubheader>
           {displayItems}
         </ThemeProvider>
@@ -167,7 +203,7 @@ function ListViewer(props) {
   }
 
   return (
-    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle={false}>
+    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle>
       {listItems}
     </SortableContainer>
   );
