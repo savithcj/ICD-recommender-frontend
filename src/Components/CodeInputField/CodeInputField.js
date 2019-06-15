@@ -14,9 +14,8 @@ class CodeInputField extends React.Component {
     this.state = {
       value: "",
       codeAutoCompleteDisplayed: [],
-      age_a: "",
-      age_b: "",
-      ageAutoCompleteDisplayed_a: [],
+      age: "",
+      ageAutoCompleteDisplayed: [],
       gender: "",
       genderAutoCompleteDisplayed: []
     };
@@ -31,15 +30,9 @@ class CodeInputField extends React.Component {
     });
   };
 
-  onAgeChange_a = (_, { newValue }) => {
+  onAgeChange = (_, { newValue }) => {
     this.setState({
-      age_a: newValue
-    });
-  };
-
-  onAgeChange_b = (_, { newValue }) => {
-    this.setState({
-      age_b: newValue
+      age: newValue
     });
   };
 
@@ -69,30 +62,33 @@ class CodeInputField extends React.Component {
    * Called when an item is selected from the auto suggestion list
    */
   onSuggestionSelected = (_, { suggestion }) => {
-    this.props.selectCode(suggestion.code);
-    this.setState({
-      value: "",
-      age_a: "",
-      age_b: "",
-      gender: ""
-    });
+    if (this.props.selectCode !== undefined) {
+      this.props.selectCode(suggestion.code);
+    }
+    if (this.props.autoClearCode !== undefined) {
+      if (this.props.autoClearCode == true) {
+        this.setState({
+          value: "",
+          age: "",
+          gender: ""
+        });
+      }
+    }
   };
 
-  onAgeSuggestionSelected_a = (_, { suggestion }) => {
-    this.props.selectAge(suggestion);
+  onAgeSuggestionSelected = (_, { suggestion }) => {
+    if (this.props.selectAge !== undefined) {
+      this.props.selectAge(suggestion);
+    }
     this.setState({
-      age_a: suggestion
-    });
-  };
-
-  onAgeSuggestionSelected_b = (_, { suggestion }) => {
-    this.props.selectAge(suggestion);
-    this.setState({
-      age_b: suggestion
+      age: suggestion
     });
   };
 
   onGenderSuggestionSelected = (_, { suggestion }) => {
+    if (this.props.selectGender !== undefined) {
+      this.props.selectGender(suggestion);
+    }
     this.setState({
       gender: suggestion
     });
@@ -151,11 +147,11 @@ class CodeInputField extends React.Component {
     this.getMatchingCodesFromAPI(value);
   };
 
-  onAgeSuggestionFetchRequested_a = ({ value }) => {
+  onAgeSuggestionFetchRequested = ({ value }) => {
     if (value !== "") {
       const regex = new RegExp("^" + value, "i");
       const results = ageOptions.filter(item => regex.test(item));
-      this.setState({ ageAutoCompleteDisplayed_a: results });
+      this.setState({ ageAutoCompleteDisplayed: results });
     }
   };
 
@@ -216,9 +212,11 @@ class CodeInputField extends React.Component {
       autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
     }
 
-    const codeAndDescription = Array.from(this.props.codeCache);
+    const codeAndDescription =
+      this.props.codeCache !== undefined ? Array.from(this.props.codeCache) : Array.from(suggestionsFromAPI);
     const regex = new RegExp("^" + enteredCode, "i");
     const codeMatches = codeAndDescription.filter(item => regex.test(item.code));
+
     if (codeMatches.length > 0) {
       autoCompleteList.push({ title: "Code Matches", codes: codeMatches });
     }
@@ -232,28 +230,17 @@ class CodeInputField extends React.Component {
   onSuggestionsClearRequested = () => {};
 
   render() {
-    const {
-      id_code,
-      id_age_a,
-      id_age_b,
-      id_gender,
-      placeholder_code,
-      placeholder_age_a,
-      placeholder_age_b,
-      placeholder_gender
-    } = this.props;
+    const { id_code, id_age, id_gender, placeholder_code, placeholder_age, placeholder_gender } = this.props;
     // if id_age and id_gender are not defined in props, the corresponding inputfields will not be rendered
-    const enable_age_a = this.props.id_age_a === undefined ? false : true;
-    const enable_age_b = this.props.id_age_b === undefined ? false : true;
+    const enable_code = this.props.id_code === undefined ? false : true;
+    const enable_age = this.props.id_age === undefined ? false : true;
     const enable_gender = this.props.id_gender === undefined ? false : true;
     const {
       value,
-      age_a,
-      age_b,
+      age,
       gender,
       codeAutoCompleteDisplayed,
-      ageAutoCompleteDisplayed_a,
-      ageAutoCompleteDisplayed_b,
+      ageAutoCompleteDisplayed,
       genderAutoCompleteDisplayed
     } = this.state;
     const inputProps = {
@@ -261,16 +248,12 @@ class CodeInputField extends React.Component {
       value: value,
       onChange: this.onChange
     };
-    const ageInputProps_a = {
-      placeholder: placeholder_age_a,
-      value: age_a,
-      onChange: this.onAgeChange_a
+    const ageInputProps = {
+      placeholder: placeholder_age,
+      value: age,
+      onChange: this.onAgeChange
     };
-    const ageInputProps_b = {
-      placeholder: placeholder_age_b,
-      value: age_b,
-      onChange: this.onAgeChange_b
-    };
+
     const genderInputProps = {
       placeholder: placeholder_gender,
       value: gender,
@@ -296,35 +279,18 @@ class CodeInputField extends React.Component {
       </div>
     );
 
-    const ageInputBox_a = (
+    const ageInputBox = (
       <div className="age_input">
         <AutoSuggest
-          id={id_age_a}
-          suggestions={ageAutoCompleteDisplayed_a}
-          onSuggestionsFetchRequested={this.onAgeSuggestionFetchRequested_a}
+          id={id_age}
+          suggestions={ageAutoCompleteDisplayed}
+          onSuggestionsFetchRequested={this.onAgeSuggestionFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
           getSuggestionValue={this.getAgeSuggestionValue}
-          onSuggestionSelected={this.onAgeSuggestionSelected_a}
+          onSuggestionSelected={this.onAgeSuggestionSelected}
           renderSuggestion={this.renderAgeSuggestion}
-          onSuggestionSelected={this.onAgeSuggestionSelected_a}
-          inputProps={ageInputProps_a}
-          highlightFirstSuggestion={true}
-        />
-      </div>
-    );
-
-    const ageInputBox_b = (
-      <div className="age_input">
-        <AutoSuggest
-          id={id_age_b}
-          suggestions={ageAutoCompleteDisplayed_b}
-          onSuggestionsFetchRequested={this.onAgeSuggestionFetchRequested_b}
-          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={this.getAgeSuggestionValue}
-          onSuggestionSelected={this.onAgeSuggestionSelected_b}
-          renderSuggestion={this.renderAgeSuggestion}
-          onSuggestionSelected={this.onAgeSuggestionSelected_b}
-          inputProps={ageInputProps_b}
+          onSuggestionSelected={this.onAgeSuggestionSelected}
+          inputProps={ageInputProps}
           highlightFirstSuggestion={true}
         />
       </div>
@@ -349,9 +315,8 @@ class CodeInputField extends React.Component {
 
     return (
       <div>
-        {codeInputBox}
-        {enable_age_a ? ageInputBox_a : null}
-        {enable_age_b ? ageInputBox_b : null}
+        {enable_code ? codeInputBox : null}
+        {enable_age ? ageInputBox : null}
         {enable_gender ? genderInputBox : null}
       </div>
     );

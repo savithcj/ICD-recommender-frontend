@@ -80,7 +80,7 @@ class App extends Component {
    * @param {*} oFunc optional function to be called at end of the method
    * @param {*} oArg optinal argument for the optional function
    */
-  appendCodeToCache = (results, oFunc, oArg) => {
+  appendCodeToCache = results => {
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
     for (let i = 0, l = results.length; i < l; i++) {
@@ -91,12 +91,9 @@ class App extends Component {
       }
     }
 
-    this.setState(
-      {
-        cachedCodeWithDescription: codesWithDescript
-      },
-      oFunc === undefined ? () => {} : oFunc(oArg)
-    );
+    this.setState({
+      cachedCodeWithDescription: codesWithDescript
+    });
   };
 
   /**
@@ -372,15 +369,16 @@ class App extends Component {
     userInputBoxes = (
       <CodeInputField
         id_code="input1"
-        id_age_a="input2"
+        id_age="input2"
         id_gender="input3"
         placeholder_code="Search for a code"
-        placeholder_age_a="Age"
+        placeholder_age="Age"
         placeholder_gender="Gender"
         selectCode={this.addSelectedCode}
         selectAge={this.handleAgeSelection}
         codeCache={this.state.cachedCodeWithDescription}
         appendCodeToCache={this.appendCodeToCache}
+        autoClearCode={true}
       />
     );
 
