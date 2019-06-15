@@ -526,7 +526,10 @@ class App extends Component {
                 removeItemButton={this.handleRemoveSelectedCode}
                 exploreButton={this.handleExploreSelectedCodeButton}
                 onSortEnd={updatedListOfSelectedCodes => {
-                  this.setState({ recommendedCodes: updatedListOfSelectedCodes });
+                  this.setState(
+                    { recommendedCodes: updatedListOfSelectedCodes },
+                    this.getRecommendedCodes(this.state.selectedCodes)
+                  );
                 }}
                 allowRearrage={true}
                 menuOptions={selectedCodesComponentMenuItems}

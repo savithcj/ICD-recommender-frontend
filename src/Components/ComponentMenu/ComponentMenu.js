@@ -25,7 +25,6 @@ export default function ComponentMenu(props) {
     if (menuItems.length < 1) {
       return false;
     }
-    console.log(menuItems.filter(option => option.menuItemOnClick).length > 0);
     return menuItems.filter(option => option.menuItemOnClick).length > 0;
   }
 
