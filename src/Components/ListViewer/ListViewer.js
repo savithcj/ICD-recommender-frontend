@@ -77,12 +77,14 @@ function ListViewer(props) {
   const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
 
   useEffect(() => {
-    if (props.allowRearrage) {
-      const rearrangeItems = () => setItemRearrangeMode(true);
-      props.menuOptions.push({
-        menuItemOnClick: rearrangeItems,
-        menuItemText: "Rearrange Items"
-      });
+    if (props.allowRearrage && Array.isArray(props.items)) {
+      if (props.items.length > 0) {
+        const rearrangeItems = () => setItemRearrangeMode(true);
+        props.menuOptions.push({
+          menuItemOnClick: rearrangeItems,
+          menuItemText: "Rearrange Items"
+        });
+      }
     }
   }, [props.menuOptions]);
 
@@ -109,9 +111,9 @@ function ListViewer(props) {
       </IconButton>
     );
 
-    const showIndexOrAcceptButton = areItemsRearrangable ? (
-      <ListItemText className={classes.listItemIndex}>{id + 1}</ListItemText>
-    ) : (
+    const itemIndex = <ListItemText className={classes.listItemIndex}>{id + 1}</ListItemText>;
+
+    const showAcceptButton = props.acceptItemButton ? (
       <IconButton
         id={id}
         edge="end"
@@ -122,9 +124,9 @@ function ListViewer(props) {
       >
         <CheckIcon />
       </IconButton>
-    );
+    ) : null;
 
-    const showRemoveButton = areItemsRearrangable ? null : (
+    const showRemoveButton = props.removeItemButton ? (
       <IconButton
         id={id}
         edge="end"
@@ -135,15 +137,16 @@ function ListViewer(props) {
       >
         <RejectIcon />
       </IconButton>
-    );
+    ) : null;
 
     return (
       <Card className={classes.card}>
         <ListItem>
           {showDragHandleOrExploreButton}
           <ListItemText primary={value} secondary={description === "" ? "Description N/A" : description} />
-          {showIndexOrAcceptButton}
-          {showRemoveButton}
+          {areItemsRearrangable ? itemIndex : null}
+          {areItemsRearrangable ? null : showAcceptButton}
+          {areItemsRearrangable ? null : showRemoveButton}
         </ListItem>
       </Card>
     );
