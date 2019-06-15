@@ -21,11 +21,8 @@ export default function ComponentMenu(props) {
     setAnchorEl(null);
   }
 
-  return (
-    <span>
-      <IconButton aria-label="More" aria-controls="long-menu" aria-haspopup="true" title="Menu" onClick={handleClick}>
-        <MoreVertIcon />
-      </IconButton>
+  const showMenu =
+    props.menuOptions.length > 0 ? (
       <Menu
         id="long-menu"
         anchorEl={anchorEl}
@@ -53,6 +50,14 @@ export default function ComponentMenu(props) {
           }
         })}
       </Menu>
+    ) : null;
+
+  return (
+    <span>
+      <IconButton aria-label="More" aria-controls="long-menu" aria-haspopup="true" title="Menu" onClick={handleClick}>
+        <MoreVertIcon />
+      </IconButton>
+      {showMenu}
     </span>
   );
 }

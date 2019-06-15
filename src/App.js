@@ -497,6 +497,9 @@ class App extends Component {
     const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
+    const selectedCodesComponentMenuItems = [];
+    const recommendedCodesComponentMenuItems = [];
+
     return (
       <div className="App">
         <MenuBar
@@ -549,7 +552,7 @@ class App extends Component {
                   this.setState({ recommendedCodes: updatedListOfRecommendedCodes });
                 }}
                 allowRearrage={true}
-                menuOptions={[]}
+                menuOptions={recommendedCodesComponentMenuItems}
               />
             </div>
 
