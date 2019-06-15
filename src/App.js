@@ -369,8 +369,7 @@ class App extends Component {
   handleAcceptRecommendedCode = event => {
     //TODO: Call API function to increase code accepted number
 
-    const acceptedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
-
+    const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
     const newCode = acceptedCodeObject.rhs;
 
@@ -386,9 +385,8 @@ class App extends Component {
    */
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
-    const rejectedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
-
-    this.removeRecommendedCode(rejectedCodeIndex);
+    const removedCodeIndex = parseInt(event.currentTarget.id, 10);
+    this.removeRecommendedCode(removedCodeIndex);
   };
 
   /**
@@ -466,8 +464,8 @@ class App extends Component {
    * Called upon to center the tree on the clicked recommended code
    */
   handleExploreRecommendedCodeButton = event => {
-    const recommendedCodeIndex = this.state.recommendedCodes.findIndex(codeObj => codeObj.id == event.currentTarget.id);
-    this.treeViewDiv.current.changeTree(this.state.recommendedCodes[recommendedCodeIndex].rhs);
+    const exploredRecommendedCodeIndex = parseInt(event.currentTarget.id, 10);
+    this.treeViewDiv.current.changeTree(this.state.recommendedCodes[exploredRecommendedCodeIndex].rhs);
   };
 
   /**
@@ -541,15 +539,15 @@ class App extends Component {
                 noItemsMessage="No recommendations for the selected codes and age"
                 nullItemsMessage="Select codes to get recommendations"
                 customMessage="loading..."
-                keyName="id"
                 valueName="rhs"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
                 exploreButton={this.handleExploreRecommendedCodeButton}
-                tooltipValueName="reason"
+                onSortEnd={updatedListOfRecommendedCodes => {
+                  this.setState({ recommendedCodes: updatedListOfRecommendedCodes });
+                }}
               />
-              {/* <CustomListItem /> */}
             </div>
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>

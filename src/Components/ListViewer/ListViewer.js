@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-// import "./ListViewer.css";
 
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -9,10 +7,9 @@ import { ThemeProvider, makeStyles } from "@material-ui/styles";
 
 import red from "@material-ui/core/colors/red";
 import green from "@material-ui/core/colors/green";
-import AcceptIcon from "@material-ui/icons/CheckCircleOutlined";
 import RejectIcon from "@material-ui/icons/HighlightOff";
 
-import Explore from "@material-ui/icons/ExploreOutlined";
+import Typography from "@material-ui/core/Typography";
 
 import Card from "@material-ui/core/Card";
 
@@ -23,10 +20,10 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import ExploreIcon from "@material-ui/icons/ExploreOutlined";
 import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
 
-import { sortableContainer, sortableElement } from "react-sortable-hoc";
+import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import arrayMove from "array-move";
 
-import RearrangeableList from "../SortableList/SortableList";
+import Menu from "../ComponentMenu/ComponentMenu";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -36,14 +33,14 @@ const theme = createMuiTheme({
   }
 });
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
     width: "100%",
     height: "100%",
     overflow: "auto",
     backgroundColor: "inherit",
-    paddingBottom: 0
+    padding: 0
   },
   listSection: {
     backgroundColor: "inherit",
@@ -54,7 +51,13 @@ const useStyles = makeStyles(theme => ({
     padding: "2%"
   },
   card: {
-    margin: "1% 0"
+    margin: "3% 0"
+  },
+  listTitle: {
+    fontWeight: "bold",
+    textAlign: "left",
+    padding: 0,
+    margin: "0 0 2% 0"
   }
 }));
 
@@ -62,20 +65,39 @@ function ListViewer(props) {
   const classes = useStyles();
   const [areItemsRearrangable, setItemRearrangeMode] = useState(true);
 
-  const SortableItem = sortableElement(({ value }) => (
+  const onSortEnd = ({ oldIndex, newIndex }) => {
+    if (Array.isArray(props.items)) {
+      if (props.items.length > 0) {
+        props.onSortEnd(arrayMove(props.items, oldIndex, newIndex));
+      }
+    }
+  };
+
+  const SortableItem = sortableElement(({ value, description, id }) => (
     <Card className={classes.card}>
       <ListItem>
-        <IconButton aria-label="Explore" title="Explore on Tree">
+        <IconButton id={id} aria-label="Explore" title="Explore on Tree" onClick={props.exploreButton}>
           <ExploreIcon />
         </IconButton>
-        <ListItemText
-          primary={value}
-          secondary="elsewhere classified, undetermined intent elsewhere classified, undetermined intent elsewhere classified, undetermined intent elsewhere classified, undetermined intent elsewhere classified, undetermined intent"
-        />
-        <IconButton edge="end" aria-label="Accept" title="Accept" color="primary">
+        <ListItemText primary={value} secondary={description === "" ? "Description N/A" : description} />
+        <IconButton
+          id={id}
+          edge="end"
+          aria-label="Accept"
+          title="Accept"
+          color="primary"
+          onClick={props.acceptItemButton}
+        >
           <CheckIcon />
         </IconButton>
-        <IconButton edge="end" aria-label="Reject" title="Reject" color="secondary">
+        <IconButton
+          id={id}
+          edge="end"
+          aria-label="Reject"
+          title="Reject"
+          color="secondary"
+          onClick={props.removeItemButton}
+        >
           <RejectIcon />
         </IconButton>
       </ListItem>
@@ -83,186 +105,55 @@ function ListViewer(props) {
   ));
 
   const SortableContainer = sortableContainer(({ children }) => {
+    let displayItems = null;
+
+    if (props.items === null || props.items === undefined) {
+      displayItems = <Typography variant="body2">{props.nullItemsMessage}</Typography>;
+    } else if (props.items === 1) {
+      displayItems = <Typography variant="body2">{props.customMessage}</Typography>;
+    } else if (props.items.length === 0) {
+      displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
+    } else {
+      displayItems = <ul className={classes.ul}>{children}</ul>;
+    }
     return (
-      <List dense={true} className={classes.root} subheader={<li />}>
-        <ul className={classes.ul}>{children}</ul>
+      <List dense={true} className={classes.root}>
+        <ThemeProvider theme={theme}>
+          <ListSubheader className={classes.listTitle} disableSticky={false}>
+            <span>
+              <Menu />
+            </span>
+            <span>{props.title}</span>
+          </ListSubheader>
+          {displayItems}
+        </ThemeProvider>
       </List>
     );
   });
 
-  const onSortEnd = () => {
-    console.log("test");
-  };
+  let listItems = null;
 
-  const nonRearrangableList = (
-    <List dense={true} className={classes.root} subheader={<li />}>
-      <ThemeProvider theme={theme}>
-        <li className={classes.listSection}>
-          <ul className={classes.ul}>
-            <ListSubheader disableSticky={false}>{props.title}</ListSubheader>
-            <ListItem>
-              <IconButton aria-label="Explore" title="Explore on Tree">
-                <ExploreIcon />
-              </IconButton>
-              <ListItemText
-                primary="A00"
-                secondary="Poisoning by and exposure to antiepileptic, sedative-hypnotic, antiparkinsonism and psychotropic drugs, not elsewhere classified, undetermined intent"
-              />
-              <IconButton edge="end" aria-label="Accept" title="Accept" color="primary">
-                <CheckIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="Reject" title="Reject" color="secondary">
-                <RejectIcon />
-              </IconButton>
-            </ListItem>
-
-            <ListItem>
-              <IconButton aria-label="Explore" title="Explore on Tree">
-                <ExploreIcon />
-              </IconButton>
-              <ListItemText
-                primary="A00"
-                secondary="Poisoning by and exposure to antiepileptic, sedative-hypnotic, antiparkinsonism and psychotropic drugs, not elsewhere classified, undetermined intent"
-              />
-              <IconButton edge="end" aria-label="Accept" title="Accept">
-                <CheckIcon />
-              </IconButton>
-              <IconButton edge="end" aria-label="Reject" title="Reject">
-                <RejectIcon />
-              </IconButton>
-            </ListItem>
-          </ul>
-        </li>
-      </ThemeProvider>
-    </List>
-  );
-
-  const rearrangableList = (
-    <SortableContainer onSortEnd={onSortEnd} lockAxis="y">
-      <SortableItem key={`1`} index={0} value={1} disabled={!areItemsRearrangable} />
-      <SortableItem key={`2`} index={1} value={2} disabled={!areItemsRearrangable} />
-      {/* <SortableItem key={`3`} index={2} value={2} /> */}
-      {/* <SortableItem key={`4`} index={3} value={2} /> */}
-    </SortableContainer>
-  );
-
-  return rearrangableList;
-}
-
-/**
- * This component takes a list of items and returns
- * a JSX element containing the list of items.
- */
-function ListViewer2(props) {
-  let displayItems = null;
-
-  if (props.items === null || props.items === undefined) {
-    displayItems = <p>{props.nullItemsMessage}</p>;
-  } else if (props.items === 1) {
-    displayItems = <p>{props.customMessage}</p>;
-  } else if (props.items.length === 0) {
-    displayItems = <p>{props.noItemsMessage}</p>;
-  } else {
-    displayItems = props.items.map(item => {
-      const exploreIcon =
-        props.exploreButton === undefined ? (
-          ""
-        ) : (
-          <span className="exploreButton">
-            <IconButton
-              variant="outlined"
-              // className={classes.button}
-              id={item[props.keyName]}
-              onClick={props.exploreButton}
-              color="default"
-              title="Explore on tree"
-            >
-              <Explore />
-            </IconButton>
-          </span>
-        );
-      const value = props.valueName === undefined ? "" : <span className="itemValue">{item[props.valueName]}</span>;
-
-      const displayValue = (
-        <div className="column value">
-          {exploreIcon}
-          {value}
-        </div>
-      );
-
-      const descriptionValue = (
-        <div className="column description">
-          {item[props.descriptionName] === "" ? "Description N/A" : item[props.descriptionName]}
-        </div>
-      );
-      const tooltip =
-        props.tooltipValueName === undefined ? "" : <div className="tooltiptext">{item[props.tooltipValueName]}</div>;
-
-      const acceptItemButton =
-        props.acceptItemButton === undefined ? (
-          ""
-        ) : (
-          // <ThemeProvider theme={theme}>
-          <IconButton
-            variant="outlined"
-            // className={classes.button}
-            id={item[props.keyName]}
-            onClick={props.acceptItemButton}
-            color="primary"
-            title="Accept"
-          >
-            <AcceptIcon />
-          </IconButton>
-          // </ThemeProvider>
-        );
-
-      const removeItemButton =
-        props.removeItemButton === undefined ? (
-          ""
-        ) : (
-          <IconButton
-            variant="outlined"
-            // className={classes.button}
-            id={item[props.keyName]}
-            onClick={props.removeItemButton}
-            color="secondary"
-            title="Remove"
-          >
-            <RejectIcon />
-          </IconButton>
-        );
-
-      return (
-        <div className="tooltip" key={"tooltip" + item[props.keyName]}>
-          {tooltip}
-          <div className="listItem" key={"listItem" + item[props.keyName]}>
-            {displayValue}
-            {descriptionValue}
-            <div className="column buttonSet">
-              {acceptItemButton}
-              {removeItemButton}
-            </div>
-          </div>
-        </div>
-      );
-    });
+  if (Array.isArray(props.items)) {
+    if (props.items.length > 0) {
+      {
+        listItems = props.items.map((value, index) => (
+          <SortableItem
+            key={`item-${index}`}
+            id={index}
+            index={index}
+            value={value[props.valueName]}
+            description={value[props.descriptionName]}
+            disabled={!areItemsRearrangable}
+          />
+        ));
+      }
+    }
   }
 
-  const removeAllItemsButton =
-    props.removeAllItemsButton === undefined || props.removeAllItemsButton === null ? (
-      ""
-    ) : (
-      <Button color="default" onClick={props.removeAllItemsButton}>
-        Remove All
-      </Button>
-    );
-
   return (
-    <div className="listViewer">
-      <div className="containerTitle">{props.title}</div>
-      <div className="itemContainer">{displayItems}</div>
-      <div className="footer">{removeAllItemsButton}</div>
-    </div>
+    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle={areItemsRearrangable}>
+      {listItems}
+    </SortableContainer>
   );
 }
 
