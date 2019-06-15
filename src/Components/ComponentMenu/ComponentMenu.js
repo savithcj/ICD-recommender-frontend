@@ -4,11 +4,9 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 
-const options = ["None", "Atria", "Callisto"];
-
 const ITEM_HEIGHT = 20;
 
-export default function ComponentMenu() {
+export default function ComponentMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -16,7 +14,10 @@ export default function ComponentMenu() {
     setAnchorEl(event.currentTarget);
   }
 
-  function handleClose() {
+  function handleClose(functionToComplete) {
+    if (functionToComplete != null || functionToComplete != undefined) {
+      functionToComplete();
+    }
     setAnchorEl(null);
   }
 
@@ -30,7 +31,7 @@ export default function ComponentMenu() {
         anchorEl={anchorEl}
         keepMounted
         open={open}
-        onClose={handleClose}
+        onClose={() => handleClose(null)}
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 10,
@@ -38,11 +39,19 @@ export default function ComponentMenu() {
           }
         }}
       >
-        {options.map(option => (
-          <MenuItem key={option} selected={option === "Pyxis"} onClick={handleClose}>
-            {option}
-          </MenuItem>
-        ))}
+        {props.menuOptions.map(option => {
+          if (option.menuItemOnClick != null || option.menuItemOnClick != undefined) {
+            return (
+              <MenuItem
+                key={option.menuItemText}
+                selected={option.menuItemText === "Pyxis"}
+                onClick={() => handleClose(option.menuItemOnClick)}
+              >
+                {option.menuItemText}
+              </MenuItem>
+            );
+          }
+        })}
       </Menu>
     </span>
   );

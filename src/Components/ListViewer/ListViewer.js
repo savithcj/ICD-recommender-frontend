@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import IconButton from "@material-ui/core/IconButton";
 
@@ -7,7 +7,6 @@ import { ThemeProvider, makeStyles } from "@material-ui/styles";
 
 import red from "@material-ui/core/colors/red";
 import green from "@material-ui/core/colors/green";
-import RejectIcon from "@material-ui/icons/HighlightOff";
 
 import Typography from "@material-ui/core/Typography";
 
@@ -19,6 +18,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ExploreIcon from "@material-ui/icons/ExploreOutlined";
 import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
+import RejectIcon from "@material-ui/icons/HighlightOff";
 
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import arrayMove from "array-move";
@@ -48,22 +48,32 @@ const useStyles = makeStyles(() => ({
   },
   ul: {
     backgroundColor: "inherit",
-    padding: "2%"
+    padding: "0 2% 2% 2%"
   },
   card: {
-    margin: "3% 0"
+    margin: "13px 0"
   },
   listTitle: {
     fontWeight: "bold",
     textAlign: "left",
     padding: 0,
-    margin: "0 0 2% 0"
+    margin: "0"
   }
 }));
 
 function ListViewer(props) {
   const classes = useStyles();
-  const [areItemsRearrangable, setItemRearrangeMode] = useState(true);
+  const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
+
+  useEffect(() => {
+    if (props.allowRearrage) {
+      const rearrangeItems = () => setItemRearrangeMode(true);
+      props.menuOptions.push({
+        menuItemOnClick: rearrangeItems,
+        menuItemText: "Rearrange Items"
+      });
+    }
+  }, [props.menuOptions]);
 
   const onSortEnd = ({ oldIndex, newIndex }) => {
     if (Array.isArray(props.items)) {
@@ -116,14 +126,20 @@ function ListViewer(props) {
     } else {
       displayItems = <ul className={classes.ul}>{children}</ul>;
     }
+
+    const confirmRearrange = areItemsRearrangable ? (
+      <button onClick={() => setItemRearrangeMode(false)}>confirm</button>
+    ) : null;
+
     return (
       <List dense={true} className={classes.root}>
         <ThemeProvider theme={theme}>
           <ListSubheader className={classes.listTitle} disableSticky={false}>
             <span>
-              <Menu />
+              <Menu menuOptions={props.menuOptions} />
             </span>
             <span>{props.title}</span>
+            {confirmRearrange}
           </ListSubheader>
           {displayItems}
         </ThemeProvider>
@@ -151,7 +167,7 @@ function ListViewer(props) {
   }
 
   return (
-    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle={areItemsRearrangable}>
+    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle={false}>
       {listItems}
     </SortableContainer>
   );
