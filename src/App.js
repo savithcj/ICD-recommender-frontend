@@ -1,11 +1,12 @@
-import React, { Component, PureComponent } from "react";
+import React, { Component } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import "./App.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
-import ListViewer from "./Components/ListViewer/ListViewer2";
+// import ListViewer from "./Components/ListViewer/FunctionalListViewer";
+import ListViewer from "./Components/ListViewer/ClassBasedListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
@@ -385,14 +386,11 @@ class App extends Component {
 
     const selectedCodesComponentMenuItems = [
       {
-        menuItemOnClick: this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes,
+        menuItemOnClick: this.state.selectedCodes.length > 1 ? this.resetSelectedCodes : null,
         menuItemText: "Remove All Items"
       }
     ];
     const recommendedCodesComponentMenuItems = [];
-
-    //memo components are similar to Pure Components
-    const MemoizedListViewer = React.memo(ListViewer, () => true);
 
     return (
       <div className="App">
@@ -424,17 +422,13 @@ class App extends Component {
                 items={this.state.selectedCodes}
                 noItemsMessage="No codes selected"
                 valueName="code"
-                keyName="code"
                 descriptionName="description"
                 removeItemButton={this.handleRemoveSelectedCode}
                 exploreButton={this.handleExploreSelectedCodeButton}
-                onSortEnd={updatedListOfSelectedCodes => {
-                  this.setState(
-                    { recommendedCodes: updatedListOfSelectedCodes },
-                    this.getRecommendedCodes(this.state.selectedCodes)
-                  );
+                onSortEndCallback={updatedListOfSelectedCodes => {
+                  this.setState({ selectedCodes: updatedListOfSelectedCodes }, console.log(this.state.selectedCodes));
                 }}
-                allowRearrage={true}
+                allowRearrage={this.state.selectedCodes.length > 1}
                 menuOptions={selectedCodesComponentMenuItems}
               />
             </div>
@@ -448,15 +442,11 @@ class App extends Component {
                 nullItemsMessage="Select codes to get recommendations"
                 customMessage="loading..."
                 valueName="rhs"
-                keyName="id"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
                 exploreButton={this.handleExploreRecommendedCodeButton}
-                onSortEnd={updatedListOfRecommendedCodes => {
-                  this.setState({ recommendedCodes: updatedListOfRecommendedCodes });
-                }}
-                allowRearrage={true}
+                allowRearrage={false}
                 menuOptions={recommendedCodesComponentMenuItems}
               />
             </div>

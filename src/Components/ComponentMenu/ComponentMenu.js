@@ -21,14 +21,15 @@ export default function ComponentMenu(props) {
     setAnchorEl(null);
   }
 
-  function shouldDisplayMenu(menuItems) {
-    if (menuItems.length < 1) {
+  //self-executing arrow function!
+  const shouldDisplayMenu = (() => {
+    if (props.menuOptions < 1) {
       return false;
     }
-    return menuItems.filter(option => option.menuItemOnClick).length > 0;
-  }
+    return props.menuOptions.filter(option => option.menuItemOnClick).length > 0;
+  })();
 
-  const showMenu = shouldDisplayMenu(props.menuOptions) ? (
+  const showMenu = shouldDisplayMenu ? (
     <Menu
       id="long-menu"
       anchorEl={anchorEl}
@@ -60,7 +61,14 @@ export default function ComponentMenu(props) {
 
   return (
     <span>
-      <IconButton aria-label="More" aria-controls="long-menu" aria-haspopup="true" title="Menu" onClick={handleClick}>
+      <IconButton
+        aria-label="More"
+        aria-controls="long-menu"
+        aria-haspopup="true"
+        title="Menu"
+        onClick={handleClick}
+        disabled={!shouldDisplayMenu}
+      >
         <MoreVertIcon />
       </IconButton>
       {showMenu}

@@ -71,7 +71,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: "flex-end"
   }
 }));
-
+//FIXME: fix the redundant re-rendering of this component before using!
 function ListViewer(props) {
   console.log(props.items);
   const classes = useStyles();
@@ -90,7 +90,7 @@ function ListViewer(props) {
   const onSortEnd = ({ oldIndex, newIndex }) => {
     if (Array.isArray(props.items)) {
       if (props.items.length > 0) {
-        props.onSortEnd(arrayMove(props.items, oldIndex, newIndex));
+        props.onSortEndCallback(arrayMove(props.items, oldIndex, newIndex));
       }
     }
   };
@@ -170,17 +170,17 @@ function ListViewer(props) {
   }
 
   const SortableContainer = sortableContainer(() => {
-    // let displayItems = null;
+    let displayItems = null;
 
-    // if (props.items === null || props.items === undefined) {
-    //   const displayItems = <Typography variant="body2">{props.nullItemsMessage}</Typography>;
-    // } else if (props.items === 1) {
-    //   const displayItems = <Typography variant="body2">{props.customMessage}</Typography>;
-    // } else if (props.items.length === 0) {
-    //   const displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
-    // } else {
-    //   const displayItems = <ul className={classes.ul}>{createItems(props.items)}</ul>;
-    // }
+    if (props.items === null || props.items === undefined) {
+      displayItems = <Typography variant="body2">{props.nullItemsMessage}</Typography>;
+    } else if (props.items === 1) {
+      displayItems = <Typography variant="body2">{props.customMessage}</Typography>;
+    } else if (props.items.length === 0) {
+      displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
+    } else {
+      displayItems = <ul className={classes.ul}>{createItems(props.items)}</ul>;
+    }
 
     const showRearrangeConfirmationOrMenu = areItemsRearrangable ? (
       <IconButton title="Confirm Item Order" onClick={() => setItemRearrangeMode(false)}>
@@ -197,7 +197,7 @@ function ListViewer(props) {
             <span>{showRearrangeConfirmationOrMenu}</span>
             <span>{props.title}</span>
           </ListSubheader>
-          {Array.isArray(props.items) ? <ul className={classes.ul}>{createItems(props.items)}</ul> : null}
+          {displayItems}
         </ThemeProvider>
       </List>
     );
