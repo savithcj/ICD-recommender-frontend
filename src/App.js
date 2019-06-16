@@ -5,8 +5,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
-// import ListViewer from "./Components/ListViewer/FunctionalListViewer";
-import ListViewer from "./Components/ListViewer/ClassBasedListViewer";
+import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 

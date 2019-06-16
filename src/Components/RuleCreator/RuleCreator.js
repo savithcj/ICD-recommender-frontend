@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
-import ListViewer from "../../Components/ListViewer/ClassBasedListViewer";
+import ListViewer from "../../Components/ListViewer/ListViewer";
 import "./RuleCreator.css";
 
 function RuleCreator(props) {

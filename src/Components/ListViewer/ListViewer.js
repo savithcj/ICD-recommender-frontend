@@ -18,6 +18,7 @@ import { ReactComponent as CheckMark } from "../../Assets/Icons/baseline-done-24
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import arrayMove from "array-move";
 import Menu from "../ComponentMenu/ComponentMenu";
+import "./ListViewer.css";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -63,11 +64,13 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+//Memoized ListViewer
 export default React.memo(
   function ListViewer(props) {
     const classes = useStyles();
     const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
 
+    //if the allowRearrage prop is true. Adds a menu item that allows users to rearrange items within the list viewer
     useEffect(() => {
       if (props.allowRearrage) {
         const rearrangeItems = () => setItemRearrangeMode(true);
@@ -78,10 +81,12 @@ export default React.memo(
       }
     }, [props.menuOptions]);
 
+    //function that gets called after ListViewer items are rearranged
     const onSortEnd = ({ oldIndex, newIndex }) => {
       props.onSortEndCallback(arrayMove(props.items, oldIndex, newIndex));
     };
 
+    //sortableElement() returns a Component. i.e: SortableItem is a React HOC
     const SortableItem = sortableElement(({ value, description, id }) => {
       const DragHandleButton = sortableHandle(() => (
         <span>
@@ -140,7 +145,6 @@ export default React.memo(
 
     function createItems(arrayOfItems) {
       return arrayOfItems.map((value, index) => {
-        console.log("ListViewer map items called");
         return (
           <SortableItem
             key={`item-${index}`}
@@ -154,6 +158,7 @@ export default React.memo(
       });
     }
 
+    //sortableContainer also returns a Component; another React HOC
     const SortableContainer = sortableContainer(() => {
       let displayItems = null;
 
@@ -191,6 +196,7 @@ export default React.memo(
     return <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle />;
   },
   (prevProps, nextProps) => {
+    // Component will only re-render if the array of items to be displayed (props.items) changes
     return nextProps.items === prevProps.items;
   }
 );
