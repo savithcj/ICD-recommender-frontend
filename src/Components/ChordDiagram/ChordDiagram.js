@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import { sliderBottom } from "d3-simple-slider";
 import ReactDOM from "react-dom";
 
 class ChordDiagram extends Component {
   constructor(props) {
     super(props);
 
+    this.sliderMin = 1;
+    this.sliderMax = 100;
+    this.numTicks = 10;
+    this.fontType = "sans-serif";
+    this.textColor = "black";
+    this.defaultSliderValue = 1;
     this.chordClass = "chordVis" + this.props.id;
   }
 
@@ -22,6 +29,7 @@ class ChordDiagram extends Component {
     this.height = 500; //elem.offsetHeight;
     const minSize = Math.min(this.width, this.height);
     this.cRadius = minSize / 3;
+    this.textSize = minSize / 40;
     this.barHeight = 0.15 * minSize;
   }
 
@@ -37,13 +45,6 @@ class ChordDiagram extends Component {
       .append("svg")
       .attr("width", this.width)
       .attr("height", this.height);
-
-    // this.svg
-    //   .append("circle")
-    //   .attr("r", this.cRadius)
-    //   .attr("cx", this.width / 2)
-    //   .attr("cy", this.height / 2)
-    //   .style("fill", "red");
 
     this.getDataFromAPI().then(() => {
       this.chapterNames = new Set();
@@ -85,19 +86,17 @@ class ChordDiagram extends Component {
           normTimes: this.data[i].times_coded / this.maxCoded,
           parent: this.data[i].parent
         });
-        //console.log(this.bars[i]);
       }
 
-      console.log(this.bars);
-
       this.svg
-        .selectAll("rect.testRect")
+        .selectAll("rect.barRect")
         .data(this.bars)
         .enter()
         .append("rect")
         .attr("x", d => d.x)
         .attr("y", d => d.y)
         .attr("fill", d => this.calcColour(d.parent))
+        .attr("class", "barRect")
         .attr("width", d => {
           return this.barHeight * d.normTimes;
         })
@@ -107,59 +106,50 @@ class ChordDiagram extends Component {
           return "rotate(" + angle + "," + d.x + "," + d.y + ")";
         });
 
-      //generate startpoints and endpoints for the rule curves
-      //start points are a little offset from the endpoints
-      let centerX = this.width / 2;
-      let centerY = this.height / 2;
-      let startPoints = [];
-      let endPoints = [];
-      for (let i = 0; i < this.data.length; i++) {
-        let angle = (((i * 360) / this.numBars - 90) * Math.PI) / 180;
-        let offset = ((360 / this.numBars) * Math.PI) / 180 / 3;
-        startPoints.push({
-          x: this.cRadius * Math.cos(angle + offset) + this.width / 2,
-          y: this.cRadius * Math.sin(angle + offset) + this.height / 2,
-          parent: this.data[i].parent
+      var slider = sliderBottom()
+        .min(this.sliderMin)
+        .max(this.sliderMax)
+        .width(this.width / 2)
+        .ticks(this.numTicks)
+        .default(this.defaultSliderValue)
+        .on("onchange", val => {
+          this.minRules = val;
+          this.generateCurves();
         });
-        endPoints.push({
-          x: this.cRadius * Math.cos(angle + 2 * offset) + this.width / 2,
-          y: this.cRadius * Math.sin(angle + 2 * offset) + this.height / 2
-        });
-      }
+
+      this.svg
+        .append("g")
+        .attr("transform", "translate(" + this.width * 0.25 + "," + this.height * 0.9 + ")")
+        .call(slider);
 
       //this is the cutoff for the minimum number of rules
       this.minRules = 1;
 
-      //draw rule curves
-      for (let i = 0; i < this.data.length; i++) {
-        let destinations = this.data[i].destination_counts.split(",").map(Number);
-        for (let j = 0; j < destinations.length; j++) {
-          if (i !== j && destinations[j] >= this.minRules) {
-            let bezierString =
-              "M" +
-              startPoints[i].x +
-              "," +
-              startPoints[i].y +
-              " Q" +
-              centerX +
-              "," +
-              centerY +
-              " " +
-              endPoints[j].x +
-              "," +
-              endPoints[j].y;
-            this.svg
-              .append("svg:path")
-              .attr("d", bezierString)
-              // .attr("fill", "blue")
-              .style("stroke", this.calcColour(startPoints[i].parent))
-              .attr("stroke-width", 0.25)
-              // .attr("marker-end", "url(#arrow)")
-              .attr("fill", "none")
-              .append("text");
-          }
-        }
-      }
+      this.generateCurves();
+
+      this.svg
+        .append("text")
+        .text("Minimum rules:")
+        .attr("font-family", this.fontType)
+        .attr("font-size", this.textSize)
+        .attr("fill", this.textColor)
+        .attr("y", 0.9 * this.height)
+        .attr("x", 0.2 * this.width)
+        .attr("class", "minRuleText")
+        .style("text-anchor", "end");
+      // // input box
+      // this.inputBox = this.svg
+      //   .append("foreignObject")
+      //   .attr("x", this.width * 0.5)
+      //   .attr("y", this.height * 0.85)
+      //   .attr("width", this.width * 0.5)
+      //   .attr("height", this.height * 0.5)
+      //   .attr("class", "svg-inputBox");
+
+      // this.inputBox.append("xhtml:div").html(
+      //   "<form>Minimum number of rules:<input type='number' name='numRules' min='1'><input type='submit'></form>"
+      //   //"<p>Minimum number of rules:<input type='number' min='1' value='1' name='numRules' size='5'><input type='button' onclick='this.data.minRules=numRules' value='Click Me!'></p>"
+      // );
     });
 
     // drawing border around - delete later
@@ -198,6 +188,62 @@ class ChordDiagram extends Component {
       .attr("stroke", "black");
     ///////////////////////////////////////
     ///////////////////////////////////////
+  }
+
+  generateCurves() {
+    this.svg.selectAll("path.curve").remove();
+
+    //generate startpoints and endpoints for the rule curves
+    //start points are a little offset from the endpoints
+    let centerX = this.width / 2;
+    let centerY = this.height / 2;
+    let startPoints = [];
+    let endPoints = [];
+    for (let i = 0; i < this.data.length; i++) {
+      let angle = (((i * 360) / this.numBars - 90) * Math.PI) / 180;
+      let offset = ((360 / this.numBars) * Math.PI) / 180 / 3;
+      startPoints.push({
+        x: this.cRadius * Math.cos(angle + offset) + this.width / 2,
+        y: this.cRadius * Math.sin(angle + offset) + this.height / 2,
+        parent: this.data[i].parent
+      });
+      endPoints.push({
+        x: this.cRadius * Math.cos(angle + 2 * offset) + this.width / 2,
+        y: this.cRadius * Math.sin(angle + 2 * offset) + this.height / 2
+      });
+    }
+
+    //draw rule curves
+    for (let i = 0; i < this.data.length; i++) {
+      let destinations = this.data[i].destination_counts.split(",").map(Number);
+      for (let j = 0; j < destinations.length; j++) {
+        if (i !== j && destinations[j] >= this.minRules) {
+          let bezierString =
+            "M" +
+            startPoints[i].x +
+            "," +
+            startPoints[i].y +
+            " Q" +
+            centerX +
+            "," +
+            centerY +
+            " " +
+            endPoints[j].x +
+            "," +
+            endPoints[j].y;
+          this.svg
+            .append("svg:path")
+            .attr("class", "curve")
+            .attr("d", bezierString)
+            // .attr("fill", "blue")
+            .style("stroke", this.calcColour(startPoints[i].parent))
+            .attr("stroke-width", 0.25)
+            // .attr("marker-end", "url(#arrow)")
+            .attr("fill", "none")
+            .append("text");
+        }
+      }
+    }
   }
 
   calcColour(parent) {
