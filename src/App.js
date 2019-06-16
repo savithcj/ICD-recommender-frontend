@@ -5,7 +5,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
-import ListViewer from "./Components/ListViewer/ListViewer";
+import ListViewer from "./Components/ListViewer/ListViewer2";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
@@ -201,9 +201,9 @@ class App extends Component {
     if (stringOfCodes !== "") {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
 
-      this.setState({
-        recommendedCodes: 1
-      });
+      // this.setState({
+      //   recommendedCodes: 1
+      // });
 
       fetch(url)
         .then(response => response.json())
@@ -364,9 +364,7 @@ class App extends Component {
    * input field is rendered only once the data is retrieved
    */
   render() {
-    let userInputBoxes = null;
-
-    userInputBoxes = (
+    const userInputBoxes = (
       <CodeInputField
         id_code="input1"
         id_age="input2"
