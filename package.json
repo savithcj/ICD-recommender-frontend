@@ -25,7 +25,8 @@
     "react-sortable-hoc": "^1.9.1",
     "react-textfit": "^1.1.0",
     "recursive-install": "^1.4.0",
-    "shallow-equal": "^1.1.0"
+    "shallow-equal": "^1.1.0",
+    "why-did-you-update": "^1.0.6"
   },
   "scripts": {
     "start": "react-scripts start",

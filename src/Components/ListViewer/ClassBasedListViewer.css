@@ -1,0 +1,39 @@
+.root {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: inherit;
+  padding: 0%;
+}
+
+.listSection {
+  background-color: inherit;
+  padding: 0%;
+}
+
+.customUl {
+  background-color: inherit;
+  padding: 0% 2% 2% 2%;
+}
+
+.card {
+  margin: 13px 0;
+  padding: 0%;
+}
+
+.listTitle {
+  font-weight: bold;
+  text-align: left;
+  padding: 0%;
+}
+
+.drag {
+  cursor: row-resize;
+  padding: 12px;
+}
+
+.listItemIndex {
+  display: flex;
+  justify-content: flex-end;
+}

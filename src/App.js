@@ -5,7 +5,8 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
-import ListViewer from "./Components/ListViewer/ListViewer";
+// import ListViewer from "./Components/ListViewer/FunctionalListViewer";
+import ListViewer from "./Components/ListViewer/ClassBasedListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
 
@@ -201,9 +202,9 @@ class App extends Component {
     if (stringOfCodes !== "") {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
 
-      this.setState({
-        recommendedCodes: 1
-      });
+      // this.setState({
+      //   recommendedCodes: 1
+      // });
 
       fetch(url)
         .then(response => response.json())
@@ -364,9 +365,7 @@ class App extends Component {
    * input field is rendered only once the data is retrieved
    */
   render() {
-    let userInputBoxes = null;
-
-    userInputBoxes = (
+    const userInputBoxes = (
       <CodeInputField
         id_code="input1"
         id_age="input2"
@@ -387,7 +386,7 @@ class App extends Component {
 
     const selectedCodesComponentMenuItems = [
       {
-        menuItemOnClick: this.state.selectedCodes.length === 0 ? null : this.resetSelectedCodes,
+        menuItemOnClick: this.state.selectedCodes.length > 1 ? this.resetSelectedCodes : null,
         menuItemText: "Remove All Items"
       }
     ];
@@ -426,13 +425,10 @@ class App extends Component {
                 descriptionName="description"
                 removeItemButton={this.handleRemoveSelectedCode}
                 exploreButton={this.handleExploreSelectedCodeButton}
-                onSortEnd={updatedListOfSelectedCodes => {
-                  this.setState(
-                    { recommendedCodes: updatedListOfSelectedCodes },
-                    this.getRecommendedCodes(this.state.selectedCodes)
-                  );
+                onSortEndCallback={updatedListOfSelectedCodes => {
+                  this.setState({ selectedCodes: updatedListOfSelectedCodes }, console.log(this.state.selectedCodes));
                 }}
-                allowRearrage={true}
+                allowRearrage={this.state.selectedCodes.length > 1}
                 menuOptions={selectedCodesComponentMenuItems}
               />
             </div>
@@ -450,10 +446,7 @@ class App extends Component {
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
                 exploreButton={this.handleExploreRecommendedCodeButton}
-                onSortEnd={updatedListOfRecommendedCodes => {
-                  this.setState({ recommendedCodes: updatedListOfRecommendedCodes });
-                }}
-                allowRearrage={true}
+                allowRearrage={false}
                 menuOptions={recommendedCodesComponentMenuItems}
               />
             </div>

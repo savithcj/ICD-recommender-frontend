@@ -6,8 +6,6 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
-import ListViewer from "./Components/ListViewer/ListViewer";
-import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
