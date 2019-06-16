@@ -122,6 +122,15 @@ class ChordDiagram extends Component {
         .attr("transform", "translate(" + this.width * 0.25 + "," + this.height * 0.9 + ")")
         .call(slider);
 
+      // rectangle to make it so cursor isn't shown when hovering over ticks
+      this.svg
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", this.height * 0.95)
+        .attr("width", this.width)
+        .attr("height", this.height * 0.05)
+        .style("fill-opacity", 1e-6);
+
       //this is the cutoff for the minimum number of rules
       this.minRules = 1;
 
