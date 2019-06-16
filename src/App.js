@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import "./App.css";
 import "react-grid-layout/css/styles.css";
@@ -492,6 +492,9 @@ class App extends Component {
     ];
     const recommendedCodesComponentMenuItems = [];
 
+    //memo components are similar to Pure Components
+    const MemoizedListViewer = React.memo(ListViewer, () => true);
+
     return (
       <div className="App">
         <MenuBar
@@ -517,11 +520,12 @@ class App extends Component {
             </div>
 
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <ListViewer
+              <MemoizedListViewer
                 title="Selected Codes"
                 items={this.state.selectedCodes}
                 noItemsMessage="No codes selected"
                 valueName="code"
+                keyName="code"
                 descriptionName="description"
                 removeItemButton={this.handleRemoveSelectedCode}
                 exploreButton={this.handleExploreSelectedCodeButton}
@@ -537,7 +541,7 @@ class App extends Component {
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              <ListViewer
+              <MemoizedListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}
@@ -545,6 +549,7 @@ class App extends Component {
                 nullItemsMessage="Select codes to get recommendations"
                 customMessage="loading..."
                 valueName="rhs"
+                keyName="id"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}

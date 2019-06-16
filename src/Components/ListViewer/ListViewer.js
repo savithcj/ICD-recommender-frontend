@@ -73,20 +73,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 function ListViewer(props) {
+  console.log("list viewer renedered");
   const classes = useStyles();
   const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
 
   useEffect(() => {
-    if (props.allowRearrage && Array.isArray(props.items)) {
-      if (props.items.length > 0) {
-        const rearrangeItems = () => setItemRearrangeMode(true);
-        props.menuOptions.push({
-          menuItemOnClick: rearrangeItems,
-          menuItemText: "Rearrange Items"
-        });
-      }
+    if (props.allowRearrage) {
+      const rearrangeItems = () => setItemRearrangeMode(true);
+      props.menuOptions.push({
+        menuItemOnClick: rearrangeItems,
+        menuItemText: "Rearrange Items"
+      });
     }
-  }, [props.menuOptions]);
+  }, [props]);
 
   const onSortEnd = ({ oldIndex, newIndex }) => {
     if (Array.isArray(props.items)) {
@@ -96,7 +95,7 @@ function ListViewer(props) {
     }
   };
 
-  const SortableItem = sortableElement(({ value, description, id }) => {
+  const SortableItem = sortableElement(({ value, description, id, keyName }) => {
     const DragHandleButton = sortableHandle(() => (
       <span>
         <DragHandle className={classes.drag} />
@@ -140,8 +139,8 @@ function ListViewer(props) {
     ) : null;
 
     return (
-      <Card className={classes.card}>
-        <ListItem>
+      <Card key={keyName} className={classes.card}>
+        <ListItem key={keyName}>
           {showDragHandleOrExploreButton}
           <ListItemText primary={value} secondary={description === "" ? "Description N/A" : description} />
           {areItemsRearrangable ? itemIndex : null}
@@ -152,7 +151,23 @@ function ListViewer(props) {
     );
   });
 
-  const SortableContainer = sortableContainer(({ children }) => {
+  function createItems(arrayOfItems) {
+    return arrayOfItems.map((value, index) => {
+      return (
+        <SortableItem
+          key={value[props.keyName]}
+          keyName={value[props.keyName]}
+          id={index}
+          index={index}
+          value={value[props.valueName]}
+          description={value[props.descriptionName]}
+          disabled={!areItemsRearrangable}
+        />
+      );
+    });
+  }
+
+  const SortableContainer = sortableContainer(() => {
     let displayItems = null;
 
     if (props.items === null || props.items === undefined) {
@@ -162,7 +177,7 @@ function ListViewer(props) {
     } else if (props.items.length === 0) {
       displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
     } else {
-      displayItems = <ul className={classes.ul}>{children}</ul>;
+      displayItems = <ul className={classes.ul}>{createItems(props.items)}</ul>;
     }
 
     const showRearrangeConfirmationOrMenu = areItemsRearrangable ? (
@@ -186,30 +201,7 @@ function ListViewer(props) {
     );
   });
 
-  let listItems = null;
-
-  if (Array.isArray(props.items)) {
-    if (props.items.length > 0) {
-      {
-        listItems = props.items.map((value, index) => (
-          <SortableItem
-            key={`item-${index}`}
-            id={index}
-            index={index}
-            value={value[props.valueName]}
-            description={value[props.descriptionName]}
-            disabled={!areItemsRearrangable}
-          />
-        ));
-      }
-    }
-  }
-
-  return (
-    <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle>
-      {listItems}
-    </SortableContainer>
-  );
+  return <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle />;
 }
 
 export default ListViewer;
