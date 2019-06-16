@@ -419,7 +419,7 @@ class App extends Component {
             </div>
 
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <MemoizedListViewer
+              <ListViewer
                 title="Selected Codes"
                 items={this.state.selectedCodes}
                 noItemsMessage="No codes selected"
@@ -440,7 +440,7 @@ class App extends Component {
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              <MemoizedListViewer
+              <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
                 items={this.state.recommendedCodes}

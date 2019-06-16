@@ -1,9 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 
 class ListViewer extends Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("compared");
+    return this.props.items !== nextProps.items;
+  }
+
   createItems(arrayOfItems) {
     return arrayOfItems.map((value, index) => {
-      console.log("ListViewer map items called");
+      console.log("item map called");
       return (
         <li key={value[this.props.keyName]} id={index}>
           {value[this.props.descriptionName]}
