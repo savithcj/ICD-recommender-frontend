@@ -34,10 +34,12 @@ class ListViewer extends Component {
     areItemsRearrangable: false
   };
 
+  // Component will only re-render if the state or the list of items to be displayed changes
   shouldComponentUpdate(nextProps, nextState) {
     return this.props.items !== nextProps.items || this.state.areItemsRearrangable !== nextState.areItemsRearrangable;
   }
 
+  //if the allowRearrage prop is true. Adds a menu item that allows users to rearrange items within the list viewer
   componentDidUpdate(prevProps) {
     if (this.props.menuOptions !== prevProps.menuOptions) {
       if (this.props.allowRearrage) {
@@ -50,11 +52,12 @@ class ListViewer extends Component {
     }
   }
 
+  //function that gets called after items are rearranged
   onSortEnd = ({ oldIndex, newIndex }) => {
     this.props.onSortEndCallback(arrayMove(this.props.items, oldIndex, newIndex));
   };
 
-  //sortableElement returns a Component
+  //sortableElement returns a Component. i.e: SortableItem is a React.Component....
   SortableItem = sortableElement(({ value, description, id }) => {
     const DragHandleButton = sortableHandle(() => (
       <span>
