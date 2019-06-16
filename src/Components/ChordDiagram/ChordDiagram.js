@@ -6,14 +6,6 @@ class ChordDiagram extends Component {
   constructor(props) {
     super(props);
 
-    let colormap = require("colormap");
-    this.colours = colormap({
-      colormap: "rainbow-soft",
-      nshades: 22, // number of chapters
-      format: "hex",
-      alpha: 1
-    });
-    console.log(this.colors);
     this.chordClass = "chordVis" + this.props.id;
   }
 
@@ -25,7 +17,7 @@ class ChordDiagram extends Component {
   }
 
   recalculateSizes() {
-    let elem = ReactDOM.findDOMNode(this).parentNode;
+    //let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = 500; //elem.offsetWidth;
     this.height = 500; //elem.offsetHeight;
     const minSize = Math.min(this.width, this.height);
@@ -54,6 +46,19 @@ class ChordDiagram extends Component {
     //   .style("fill", "red");
 
     this.getDataFromAPI().then(() => {
+      this.chapterNames = new Set();
+      for (let i = 0; i < this.data.length; i++) {
+        this.chapterNames.add(this.data[i].parent);
+      }
+      this.chapterNames = Array.from(this.chapterNames);
+      let colormap = require("colormap");
+      this.colours = colormap({
+        colormap: "rainbow-soft",
+        nshades: this.chapterNames.length, // number of chapters
+        format: "hex",
+        alpha: 1
+      });
+      console.log(this.colours);
       this.numBars = this.data.length;
       this.barWidth = 2 * this.cRadius * Math.sin(Math.PI / this.numBars);
       this.maxCoded = 0;
@@ -101,6 +106,62 @@ class ChordDiagram extends Component {
           let angle = (Math.atan2(d.y - d.nextY, d.x - d.nextX) * 180) / Math.PI + 90;
           return "rotate(" + angle + "," + d.x + "," + d.y + ")";
         });
+
+      //generate startpoints and endpoints for the rule curves
+      //start points are a little offset from the endpoints
+      let centerX = this.width / 2;
+      let centerY = this.height / 2;
+      let startPoints = [];
+      let endPoints = [];
+      for (let i = 0; i < this.data.length; i++) {
+        let angle = (((i * 360) / this.numBars - 90) * Math.PI) / 180;
+        let offset = ((360 / this.numBars) * Math.PI) / 180 / 3;
+        startPoints.push({
+          x: this.cRadius * Math.cos(angle + offset) + this.width / 2,
+          y: this.cRadius * Math.sin(angle + offset) + this.height / 2,
+          parent: this.data[i].parent
+        });
+        endPoints.push({
+          x: this.cRadius * Math.cos(angle + 2 * offset) + this.width / 2,
+          y: this.cRadius * Math.sin(angle + 2 * offset) + this.height / 2
+        });
+      }
+
+      //this is the cutoff for the minimum number of rules
+      this.minRules = 1;
+
+      //draw rule curves
+      for (let i = 0; i < this.data.length; i++) {
+        let destinations = this.data[i].destination_counts.split(",").map(Number);
+        console.log(destinations);
+        for (let j = 0; j < destinations.length; j++) {
+          if (i !== j && destinations[j] >= this.minRules) {
+            let bezierString =
+              "M" +
+              startPoints[i].x +
+              "," +
+              startPoints[i].y +
+              " Q" +
+              centerX +
+              "," +
+              centerY +
+              " " +
+              endPoints[j].x +
+              "," +
+              endPoints[j].y;
+            console.log(bezierString);
+            this.svg
+              .append("svg:path")
+              .attr("d", bezierString)
+              // .attr("fill", "blue")
+              .style("stroke", this.calcColour(startPoints[i].parent))
+              .attr("stroke-width", 0.25)
+              // .attr("marker-end", "url(#arrow)")
+              .attr("fill", "none")
+              .append("text");
+          }
+        }
+      }
     });
 
     // drawing border around - delete later
@@ -142,74 +203,7 @@ class ChordDiagram extends Component {
   }
 
   calcColour(parent) {
-    let colour;
-    if (parent === "Chapter 01") {
-      colour = this.colours[0];
-    }
-    if (parent === "Chapter 02") {
-      colour = this.colours[1];
-    }
-    if (parent === "Chapter 03") {
-      colour = this.colours[2];
-    }
-    if (parent === "Chapter 04") {
-      colour = this.colours[3];
-    }
-    if (parent === "Chapter 05") {
-      colour = this.colours[4];
-    }
-    if (parent === "Chapter 06") {
-      colour = this.colours[5];
-    }
-    if (parent === "Chapter 07") {
-      colour = this.colours[6];
-    }
-    if (parent === "Chapter 08") {
-      colour = this.colours[7];
-    }
-    if (parent === "Chapter 09") {
-      colour = this.colours[8];
-    }
-    if (parent === "Chapter 10") {
-      colour = this.colours[9];
-    }
-    if (parent === "Chapter 11") {
-      colour = this.colours[10];
-    }
-    if (parent === "Chapter 12") {
-      colour = this.colours[11];
-    }
-    if (parent === "Chapter 13") {
-      colour = this.colours[12];
-    }
-    if (parent === "Chapter 14") {
-      colour = this.colours[13];
-    }
-    if (parent === "Chapter 15") {
-      colour = this.colours[14];
-    }
-    if (parent === "Chapter 16") {
-      colour = this.colours[15];
-    }
-    if (parent === "Chapter 17") {
-      colour = this.colours[16];
-    }
-    if (parent === "Chapter 18") {
-      colour = this.colours[17];
-    }
-    if (parent === "Chapter 19") {
-      colour = this.colours[18];
-    }
-    if (parent === "Chapter 22") {
-      colour = this.colours[19];
-    }
-    if (parent === "Chapter 20") {
-      colour = this.colours[20];
-    }
-    if (parent === "Chapter 21") {
-      colour = this.colours[21];
-    }
-    return colour;
+    return this.colours[this.chapterNames.indexOf(parent)];
   }
 
   getDataFromAPI = () => {
