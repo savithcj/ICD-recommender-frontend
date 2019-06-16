@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
+import RuleCreator from "../../Components/RuleCreator/RuleCreator";
 
 import "./Admin.css";
 
@@ -77,7 +78,7 @@ function Admin(props) {
           isResizable={isLayoutModifiable}
         >
           <div key="0">
-            <p>lol</p>
+            <RuleCreator />
           </div>
           <div key="1">
             <p>lol</p>
