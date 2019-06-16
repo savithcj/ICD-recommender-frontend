@@ -48,7 +48,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
 
 function Admin(props) {
-  const [layouts, setLayouts] = useState([]);
+  const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(true);
 
   async function onLayoutChange(layouts) {
@@ -79,15 +79,6 @@ function Admin(props) {
         >
           <div key="0">
             <RuleCreator />
-          </div>
-          <div key="1">
-            <p>lol</p>
-          </div>
-          <div key="2">
-            <p>lol</p>
-          </div>
-          <div key="3">
-            <p>lol</p>
           </div>
         </ResponsiveReactGridLayout>
       </div>

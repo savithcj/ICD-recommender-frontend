@@ -116,7 +116,6 @@ class ListViewer extends Component {
 
   createItems(arrayOfItems) {
     return arrayOfItems.map((value, index) => {
-      console.log("map called");
       return (
         <this.SortableItem
           key={`item-${index}`}
