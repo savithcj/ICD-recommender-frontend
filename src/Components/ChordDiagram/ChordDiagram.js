@@ -133,7 +133,6 @@ class ChordDiagram extends Component {
       //draw rule curves
       for (let i = 0; i < this.data.length; i++) {
         let destinations = this.data[i].destination_counts.split(",").map(Number);
-        console.log(destinations);
         for (let j = 0; j < destinations.length; j++) {
           if (i !== j && destinations[j] >= this.minRules) {
             let bezierString =
@@ -149,7 +148,6 @@ class ChordDiagram extends Component {
               endPoints[j].x +
               "," +
               endPoints[j].y;
-            console.log(bezierString);
             this.svg
               .append("svg:path")
               .attr("d", bezierString)
