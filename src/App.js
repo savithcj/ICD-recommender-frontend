@@ -201,9 +201,10 @@ class App extends Component {
     if (stringOfCodes !== "") {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
 
-      // this.setState({
-      //   recommendedCodes: 1
-      // });
+      //ListViewer will display a loading indicator while the API promise is being fullfilled
+      this.setState({
+        recommendedCodes: "LOADING"
+      });
 
       fetch(url)
         .then(response => response.json())
@@ -439,7 +440,6 @@ class App extends Component {
                 items={this.state.recommendedCodes}
                 noItemsMessage="No recommendations for the selected codes and age"
                 nullItemsMessage="Select codes to get recommendations"
-                customMessage="loading..."
                 valueName="rhs"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}

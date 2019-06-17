@@ -18,6 +18,7 @@ import { ReactComponent as CheckMark } from "../../Assets/Icons/baseline-done-24
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
 import arrayMove from "array-move";
 import Menu from "../ComponentMenu/ComponentMenu";
+import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import "./ListViewer.css";
 
 //theme used by the accept and reject buttons
@@ -164,8 +165,8 @@ export default React.memo(
 
       if (props.items === null || props.items === undefined) {
         displayItems = <Typography variant="body2">{props.nullItemsMessage}</Typography>;
-      } else if (props.items === 1) {
-        displayItems = <Typography variant="body2">{props.customMessage}</Typography>;
+      } else if (props.items === "LOADING") {
+        displayItems = <LoadingIndicator />;
       } else if (props.items.length === 0) {
         displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
       } else {
