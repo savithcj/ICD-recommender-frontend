@@ -89,16 +89,13 @@ body {
 }
 
 .code_input {
-  width: 60%;
   display: inline-block;
 }
 
 .age_input {
-  width: 15%;
   display: inline-block;
 }
 
 .gender_input {
-  width: 15%;
   display: inline-block;
 }

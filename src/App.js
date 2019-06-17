@@ -69,6 +69,8 @@ class App extends Component {
 
     ////// Code Selection Feature
     selectedCodes: [], // list of selected code with descriptions
+    selectedAge: null,
+    selectedGender: null,
     recommendedCodes: null //list of recommended codes based on the selected codes
   };
 
@@ -157,7 +159,12 @@ class App extends Component {
    * Called upon by AgeInputField when a new age is selected
    */
   handleAgeSelection = newAgeValue => {
+    this.setState({ selectedAge: newAgeValue });
     this.getRecommendedCodes(this.state.selectedCodes, newAgeValue);
+  };
+
+  handleGenderSelection = newGenderValue => {
+    this.setState({ selectedGender: newGenderValue });
   };
 
   /**
@@ -200,10 +207,6 @@ class App extends Component {
 
     if (stringOfCodes !== "") {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
-
-      // this.setState({
-      //   recommendedCodes: 1
-      // });
 
       fetch(url)
         .then(response => response.json())
@@ -374,9 +377,13 @@ class App extends Component {
         placeholder_gender="Gender"
         selectCode={this.addSelectedCode}
         selectAge={this.handleAgeSelection}
+        selectGender={this.handleGenderSelection}
         codeCache={this.state.cachedCodeWithDescription}
         appendCodeToCache={this.appendCodeToCache}
         autoClearCode={true}
+        width_code="60%"
+        width_age="20%"
+        width_gender="20%"
       />
     );
 
