@@ -7,6 +7,7 @@ import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
+import BarChart from "./Components/BarChart/BarChart";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -278,6 +279,9 @@ class App extends Component {
       <div className="Sandbox">
         <div>
           <ChordDiagram id="123" />
+        </div>
+        <div>
+          <BarChart id="1" />
         </div>
       </div>
     );

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider, makeStyles } from "@material-ui/styles";
 import red from "@material-ui/core/colors/red";
@@ -62,6 +63,11 @@ const useStyles = makeStyles(() => ({
   listItemIndex: {
     display: "flex",
     justifyContent: "flex-end"
+  },
+  clearButton: {
+    float: "right",
+    padding: "12px 0",
+    marginRight: "15px"
   }
 }));
 
@@ -70,17 +76,6 @@ export default React.memo(
   function ListViewer(props) {
     const classes = useStyles();
     const [areItemsRearrangable, setItemRearrangeMode] = useState(false);
-
-    //if the allowRearrage prop is true. Adds a menu item that allows users to rearrange items within the list viewer
-    useEffect(() => {
-      if (props.allowRearrage) {
-        const rearrangeItems = () => setItemRearrangeMode(true);
-        props.menuOptions.push({
-          menuItemOnClick: rearrangeItems,
-          menuItemText: "Rearrange Items"
-        });
-      }
-    }, [props.menuOptions, props.allowRearrage]);
 
     //function that gets called after ListViewer items are rearranged
     const onSortEnd = ({ oldIndex, newIndex }) => {
@@ -173,6 +168,17 @@ export default React.memo(
         displayItems = <ul className={classes.ul}>{createItems(props.items)}</ul>;
       }
 
+      if (props.allowRearrage) {
+        const matchingOptions = props.menuOptions.filter(option => option.menuItemText === "Rearrange Items").length;
+        if (matchingOptions === 0) {
+          const rearrangeItems = () => setItemRearrangeMode(true);
+          props.menuOptions.push({
+            menuItemOnClick: rearrangeItems,
+            menuItemText: "Rearrange Items"
+          });
+        }
+      }
+
       const showRearrangeConfirmationOrMenu = areItemsRearrangable ? (
         <IconButton title="Confirm Item Order" onClick={() => setItemRearrangeMode(false)}>
           <CheckMark />
@@ -181,12 +187,20 @@ export default React.memo(
         <Menu menuOptions={props.menuOptions} />
       );
 
+      const showClearAllButton =
+        props.clearButton && !areItemsRearrangable ? (
+          <Button className={classes.clearButton} onClick={props.clearButton.onClick}>
+            {props.clearButton.title}
+          </Button>
+        ) : null;
+
       return (
         <List dense={true} className={classes.root}>
           <ThemeProvider theme={theme}>
             <ListSubheader className={classes.listTitle} disableSticky={false}>
               <span>{showRearrangeConfirmationOrMenu}</span>
               <span>{props.title}</span>
+              {showClearAllButton}
             </ListSubheader>
             {displayItems}
           </ThemeProvider>
