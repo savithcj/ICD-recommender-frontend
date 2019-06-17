@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import { createMuiTheme } from "@material-ui/core/styles";
@@ -187,11 +187,12 @@ export default React.memo(
         <Menu menuOptions={props.menuOptions} />
       );
 
-      const showClearAllButton = props.clearButton ? (
-        <Button className={classes.clearButton} onClick={props.clearButton.onClick}>
-          {props.clearButton.title}
-        </Button>
-      ) : null;
+      const showClearAllButton =
+        props.clearButton && !areItemsRearrangable ? (
+          <Button className={classes.clearButton} onClick={props.clearButton.onClick}>
+            {props.clearButton.title}
+          </Button>
+        ) : null;
 
       return (
         <List dense={true} className={classes.root}>
