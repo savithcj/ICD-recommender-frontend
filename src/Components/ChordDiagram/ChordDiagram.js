@@ -17,9 +17,6 @@ class ChordDiagram extends Component {
   }
 
   componentDidMount() {
-    // this.getDataFromAPI("Chapter 01").then(() => {
-    //   this.drawInitialTree();
-    // });
     this.getDataFromAPI().then(() => {
       this.drawChordDiagram();
     });
@@ -27,12 +24,14 @@ class ChordDiagram extends Component {
 
   recalculateSizes() {
     //let elem = ReactDOM.findDOMNode(this).parentNode;
-    this.width = 500; //elem.offsetWidth;
-    this.height = 500; //elem.offsetHeight;
+    this.width = 800; //elem.offsetWidth;
+    this.height = 600; //elem.offsetHeight;
     const minSize = Math.min(this.width, this.height);
     this.cRadius = minSize / 3;
-    this.textSize = minSize / 40;
-    this.barHeight = 0.15 * minSize;
+    this.textSize = minSize / 45;
+    this.barHeight = 0.1 * minSize;
+    this.centerX = this.width * 0.4;
+    this.centerY = this.height / 2;
   }
 
   addInfoText() {
@@ -40,9 +39,9 @@ class ChordDiagram extends Component {
     this.infoText = infoG
       .append("text")
       .attr("y", this.height * 0.05)
-      .attr("x", this.width * 0.05)
-      // .attr("font-family", this.fontType)
-      // .attr("font-size", this.textSize)
+      .attr("x", this.width * 0.02)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
       // .attr("fill", this.textColor)
       .text("")
       .style("text-anchor", "left");
@@ -63,15 +62,17 @@ class ChordDiagram extends Component {
 
     this.addInfoText();
 
-    this.chapterNames = new Set();
+    this.parentNames = new Set();
+    this.parentDescriptions = new Set();
     for (let i = 0; i < this.data.length; i++) {
-      this.chapterNames.add(this.data[i].parent);
+      this.parentNames.add(this.data[i].parent);
+      this.parentDescriptions.add(this.data[i].parent + ": " + this.data[i].parent_description);
     }
-    this.chapterNames = Array.from(this.chapterNames);
+    this.parentNames = Array.from(this.parentNames);
     let colormap = require("colormap");
     this.colours = colormap({
       colormap: "rainbow-soft",
-      nshades: this.chapterNames.length, // number of chapters
+      nshades: this.parentNames.length, // number of chapters
       format: "hex",
       alpha: 1
     });
@@ -85,6 +86,7 @@ class ChordDiagram extends Component {
       }
     }
     this.bars = [];
+    this.sliceAngle = 360 / this.data.length;
     for (let i = 0; i < this.numBars; i++) {
       let angle = (((i * 360) / this.numBars - 90) * Math.PI) / 180;
       let nextAngle;
@@ -94,14 +96,15 @@ class ChordDiagram extends Component {
         nextAngle = Math.PI / -2;
       }
       this.bars.push({
-        x: this.cRadius * Math.cos(angle) + this.width / 2,
-        y: this.cRadius * Math.sin(angle) + this.height / 2,
-        nextX: this.cRadius * Math.cos(nextAngle) + this.width / 2,
-        nextY: this.cRadius * Math.sin(nextAngle) + this.width / 2,
+        x: this.cRadius * Math.cos(angle) + this.centerX,
+        y: this.cRadius * Math.sin(angle) + this.centerY,
+        nextX: this.cRadius * Math.cos(nextAngle) + this.centerX,
+        nextY: this.cRadius * Math.sin(nextAngle) + this.centerX,
         block: this.data[i].block,
         normTimes: this.data[i].times_coded / this.maxCoded,
         parent: this.data[i].parent,
-        description: this.data[i].description
+        description: this.data[i].description,
+        angle: angle
       });
     }
 
@@ -119,7 +122,23 @@ class ChordDiagram extends Component {
       })
       .attr("height", this.barWidth)
       .attr("transform", d => {
-        let angle = (Math.atan2(d.y - d.nextY, d.x - d.nextX) * 180) / Math.PI + 90;
+        let angle = (d.angle * 180) / Math.PI + this.sliceAngle / 2;
+        return "rotate(" + angle + "," + d.x + "," + d.y + ")";
+      });
+
+    this.svg
+      .selectAll("rect.invisibleRect")
+      .data(this.bars)
+      .enter()
+      .append("rect")
+      .attr("x", d => d.x)
+      .attr("y", d => d.y)
+      .attr("class", "invisibleRect")
+      .attr("width", this.barHeight)
+      .style("fill-opacity", 1e-6)
+      .attr("height", this.barWidth)
+      .attr("transform", d => {
+        let angle = (d.angle * 180) / Math.PI + this.sliceAngle / 2;
         return "rotate(" + angle + "," + d.x + "," + d.y + ")";
       })
       .on("mouseover", (d, i) => {
@@ -134,9 +153,10 @@ class ChordDiagram extends Component {
     var slider = sliderBottom()
       .min(this.sliderMin)
       .max(this.sliderMax)
-      .width(this.width / 2)
+      .width(this.cRadius * 2)
       .ticks(this.numTicks)
       .default(this.defaultSliderValue)
+      .step(1)
       .on("onchange", val => {
         this.minRules = val;
         this.generateCurves();
@@ -144,7 +164,7 @@ class ChordDiagram extends Component {
 
     this.svg
       .append("g")
-      .attr("transform", "translate(" + this.width * 0.25 + "," + this.height * 0.9 + ")")
+      .attr("transform", "translate(" + (this.centerX - this.cRadius) + "," + this.height * 0.9 + ")")
       .call(slider);
 
     // rectangle to make it so cursor isn't shown when hovering over ticks
@@ -168,46 +188,57 @@ class ChordDiagram extends Component {
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
       .attr("y", 0.9 * this.height)
-      .attr("x", 0.2 * this.width)
+      .attr("x", this.centerX - this.cRadius - 0.02 * this.width)
       .attr("class", "minRuleText")
       .style("text-anchor", "end");
 
-    // drawing border around - delete later
-    ///////////////////////////////////////
+    let sorted = [...this.parentNames];
+    let sortedDescriptions = [...this.parentDescriptions];
+    sorted.sort();
+    sortedDescriptions.sort();
     this.svg
-      .append("line")
-      .attr("x1", 0)
-      .attr("y1", 0)
-      .attr("x2", this.width)
-      .attr("y2", 0)
-      .attr("stroke-width", 10)
-      .attr("stroke", "black");
+      .selectAll("text.legendText")
+      .data(sorted)
+      .enter()
+      .append("text")
+      .text(d => d)
+      .attr("font-family", this.fontType)
+      .attr("font-size", this.textSize)
+      .attr("fill", this.textColor)
+      .attr("y", (d, i) => {
+        return i * this.textSize * 1.5 + 0.15 * this.height;
+      })
+      .attr("x", this.width * 0.9)
+      .attr("class", "legendText")
+      .style("text-anchor", "end")
+      .on("mouseover", (d, i) => {
+        this.infoText.text(sortedDescriptions[i]);
+      })
+      .on("mouseout", (d, i) => {
+        this.infoText.text("");
+      });
+
     this.svg
-      .append("line")
-      .attr("x1", 0)
-      .attr("y1", 0)
-      .attr("x2", 0)
-      .attr("y2", this.height)
-      .attr("stroke-width", 10)
-      .attr("stroke", "black");
-    this.svg
-      .append("line")
-      .attr("x1", this.width)
-      .attr("y1", 0)
-      .attr("x2", this.width)
-      .attr("y2", this.height)
-      .attr("stroke-width", 10)
-      .attr("stroke", "black");
-    this.svg
-      .append("line")
-      .attr("x1", 0)
-      .attr("y1", this.height)
-      .attr("x2", this.width)
-      .attr("y2", this.height)
-      .attr("stroke-width", 10)
-      .attr("stroke", "black");
-    ///////////////////////////////////////
-    ///////////////////////////////////////
+      .selectAll("rect.legendRect")
+      .data(sorted)
+      .enter()
+      .append("rect")
+      .attr("fill", d => {
+        return this.calcColour(d);
+      })
+      .attr("y", (d, i) => {
+        return i * this.textSize * 1.5 + 0.137 * this.height;
+      })
+      .attr("x", this.width * 0.905)
+      .attr("class", "legendRect")
+      .attr("width", this.width * 0.05)
+      .attr("height", this.height * 0.01)
+      .on("mouseover", (d, i) => {
+        this.infoText.text(sortedDescriptions[i]);
+      })
+      .on("mouseout", (d, i) => {
+        this.infoText.text("");
+      });
   }
 
   drawOverlayCurves(row) {
@@ -223,21 +254,19 @@ class ChordDiagram extends Component {
 
     //generate startpoints and endpoints for the rule curves
     //start points are a little offset from the endpoints
-    this.centerX = this.width / 2;
-    this.centerY = this.height / 2;
     this.startPoints = [];
     this.endPoints = [];
     for (let i = 0; i < this.data.length; i++) {
       let angle = (((i * 360) / this.numBars - 90) * Math.PI) / 180;
       let offset = ((360 / this.numBars) * Math.PI) / 180 / 3;
       this.startPoints.push({
-        x: this.cRadius * Math.cos(angle + offset) + this.width / 2,
-        y: this.cRadius * Math.sin(angle + offset) + this.height / 2,
+        x: this.cRadius * Math.cos(angle + offset) + this.centerX,
+        y: this.cRadius * Math.sin(angle + offset) + this.centerY,
         parent: this.data[i].parent
       });
       this.endPoints.push({
-        x: this.cRadius * Math.cos(angle + 2 * offset) + this.width / 2,
-        y: this.cRadius * Math.sin(angle + 2 * offset) + this.height / 2
+        x: this.cRadius * Math.cos(angle + 2 * offset) + this.centerX,
+        y: this.cRadius * Math.sin(angle + 2 * offset) + this.centerY
       });
     }
 
@@ -279,7 +308,7 @@ class ChordDiagram extends Component {
   }
 
   calcColour(parent) {
-    return this.colours[this.chapterNames.indexOf(parent)];
+    return this.colours[this.parentNames.indexOf(parent)];
   }
 
   getDataFromAPI = () => {

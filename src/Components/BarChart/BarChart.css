@@ -1,0 +1,5 @@
+div.barVis1 {
+  float: left;
+  overflow-y: scroll;
+  height: 500px;
+}
