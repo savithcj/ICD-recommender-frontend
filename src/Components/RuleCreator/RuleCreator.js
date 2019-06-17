@@ -94,7 +94,37 @@ function RuleCreator(props) {
     setRHS([]);
   };
 
-  const exploreCodeDetail = code => {};
+  const createRule = async () => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const LHSCodes = LHS.map(codeObj => codeObj.code);
+    const RHSCodes = RHS.map(codeObj => codeObj.code);
+
+    const data = { LHSCodes, RHSCodes, ageStart, ageEnd, gender };
+
+    const options = {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(data)
+    };
+
+    const request = new Request("http://localhost:8000/api/modifyRule/", options);
+    const response = await fetch(request);
+    const status = await response.status;
+
+    if (status === 200 || status === 201) {
+      setLHS([]);
+      setRHS([]);
+      setAgeStart(0);
+      setAgeEnd(0);
+      setGender();
+    }
+  };
+
+  const exploreCodeDetail = code => {
+    //TODO: Implement
+  };
 
   const LHSCodesComponentMenuItems = [
     {
@@ -162,6 +192,7 @@ function RuleCreator(props) {
           <CodeInputField
             id_code="inputCodeRHS"
             placeholder_code="Enter code to be added to RHS"
+            setCodeValue={setRHS}
             selectCode={addCodeRHS}
             codeCache={cachedCodeWithDescription}
             appendCodeToCache={appendCodeToCache}
@@ -170,6 +201,7 @@ function RuleCreator(props) {
           />
         </div>
       </div>
+
       <div className="ageGenderInput">
         <CodeInputField id_age="inputAgeStart" placeholder_age="Age(Start)" selectAge={addAgeStart} width_age="30%" />
         <CodeInputField id_age="inputAgeEnd" placeholder_age="Age(End)" selectAge={addAgeEnd} width_age="30%" />
@@ -181,7 +213,9 @@ function RuleCreator(props) {
         />
       </div>
       <div>
-        <button type="button">Submit</button>
+        <button type="button" onClick={createRule}>
+          Submit
+        </button>
       </div>
     </div>
   );
