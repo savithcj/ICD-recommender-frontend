@@ -191,6 +191,11 @@ class App extends Component {
    * Used to reset the selected code list to an empty list.
    */
   resetSelectedCodes = () => {
+    const stringOfCodes = this.getStringFromListOfCodes(this.state.selectedCodes);
+    const url = "http://localhost:8000/api/codeUsed/" + stringOfCodes + "/";
+
+    fetch(url, { method: "PUT" });
+
     this.setState({
       selectedCodes: [],
       recommendedCodes: null
@@ -397,13 +402,10 @@ class App extends Component {
     const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-    const selectedCodesComponentMenuItems = [
-      {
-        menuItemOnClick: this.state.selectedCodes.length > 1 ? this.resetSelectedCodes : null,
-        menuItemText: "Remove All Items"
-      }
-    ];
+    const selectedCodesComponentMenuItems = [];
     const recommendedCodesComponentMenuItems = [];
+
+    const clearButtonProp = { title: "Clear Codes", onClick: this.resetSelectedCodes };
 
     return (
       <div className="App">
@@ -447,6 +449,7 @@ class App extends Component {
                 }}
                 allowRearrage={this.state.selectedCodes.length > 1}
                 menuOptions={selectedCodesComponentMenuItems}
+                clearButton={this.state.selectedCodes.length > 0 ? clearButtonProp : null}
               />
             </div>
 
