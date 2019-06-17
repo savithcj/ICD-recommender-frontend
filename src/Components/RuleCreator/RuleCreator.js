@@ -58,15 +58,6 @@ function RuleCreator(props) {
     setGender(value);
   };
 
-  /**
-   *  Required for code searchbox Auto-Complete
-   * Cache code suggestion results from API call to state for repeated quiries
-   * Updates the cachedCodeList and cachedCodeWithDescription in App.state
-   * @param {*} results
-   * @param {*} oFunc optional function to be called at end of the method
-   * @param {*} oArg optinal argument for the optional function
-   */
-
   const appendCodeToCache = results => {
     let codesWithDescript = Array.from(cachedCodeWithDescription);
 
@@ -141,11 +132,12 @@ function RuleCreator(props) {
         <div>
           <CodeInputField
             id_code="inputCodeLHS"
-            placeholder_code="LHS Code"
+            placeholder_code="Enter Code to be added to LHS"
             selectCode={addCodeLHS}
             codeCache={cachedCodeWithDescription}
             appendCodeToCache={appendCodeToCache}
             autoClearCode={true}
+            width_code="100%"
           />
         </div>
       </div>
@@ -169,22 +161,24 @@ function RuleCreator(props) {
         <div>
           <CodeInputField
             id_code="inputCodeRHS"
-            placeholder_code="RHS Code"
+            placeholder_code="Enter code to be added to RHS"
             selectCode={addCodeRHS}
             codeCache={cachedCodeWithDescription}
             appendCodeToCache={appendCodeToCache}
             autoClearCode={true}
+            width_code="100%"
           />
         </div>
       </div>
-      <div>
-        <CodeInputField id_age="inputAgeStart" placeholder_age="Age(Start)" selectAge={addAgeStart} />
-      </div>
-      <div>
-        <CodeInputField id_age="inputAgeEnd" placeholder_age="Age(End)" selectAge={addAgeEnd} />
-      </div>
-      <div>
-        <CodeInputField id_gender="inputGender" placeholder_gender="Gender" selectGender={addGender} />
+      <div className="ageGenderInput">
+        <CodeInputField id_age="inputAgeStart" placeholder_age="Age(Start)" selectAge={addAgeStart} width_age="30%" />
+        <CodeInputField id_age="inputAgeEnd" placeholder_age="Age(End)" selectAge={addAgeEnd} width_age="30%" />
+        <CodeInputField
+          id_gender="inputGender"
+          placeholder_gender="Gender"
+          selectGender={addGender}
+          width_gender="30%"
+        />
       </div>
       <div>
         <button type="button">Submit</button>
