@@ -80,7 +80,7 @@ export default React.memo(
           menuItemText: "Rearrange Items"
         });
       }
-    }, [props.menuOptions]);
+    }, [props.menuOptions, props.allowRearrage]);
 
     //function that gets called after ListViewer items are rearranged
     const onSortEnd = ({ oldIndex, newIndex }) => {
