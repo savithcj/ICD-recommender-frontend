@@ -5,10 +5,11 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
-// import ListViewer from "./Components/ListViewer/FunctionalListViewer";
-import ListViewer from "./Components/ListViewer/ClassBasedListViewer";
+import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
+import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
+import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
 
 import { __esModule } from "d3-random";
 
@@ -70,6 +71,8 @@ class App extends Component {
 
     ////// Code Selection Feature
     selectedCodes: [], // list of selected code with descriptions
+    selectedAge: null,
+    selectedGender: null,
     recommendedCodes: null //list of recommended codes based on the selected codes
   };
 
@@ -158,7 +161,12 @@ class App extends Component {
    * Called upon by AgeInputField when a new age is selected
    */
   handleAgeSelection = newAgeValue => {
+    this.setState({ selectedAge: newAgeValue });
     this.getRecommendedCodes(this.state.selectedCodes, newAgeValue);
+  };
+
+  handleGenderSelection = newGenderValue => {
+    this.setState({ selectedGender: newGenderValue });
   };
 
   /**
@@ -202,9 +210,10 @@ class App extends Component {
     if (stringOfCodes !== "") {
       const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
 
-      // this.setState({
-      //   recommendedCodes: 1
-      // });
+      //ListViewer will display a loading indicator while the API promise is being fullfilled
+      this.setState({
+        recommendedCodes: "LOADING"
+      });
 
       fetch(url)
         .then(response => response.json())
@@ -375,9 +384,13 @@ class App extends Component {
         placeholder_gender="Gender"
         selectCode={this.addSelectedCode}
         selectAge={this.handleAgeSelection}
+        selectGender={this.handleGenderSelection}
         codeCache={this.state.cachedCodeWithDescription}
         appendCodeToCache={this.appendCodeToCache}
         autoClearCode={true}
+        width_code="60%"
+        width_age="20%"
+        width_gender="20%"
       />
     );
 
@@ -413,6 +426,10 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
+              {/* <SwipablePanel
+                tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
+                chord={<ChordDiagram id="123" />}
+              /> */}
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
 
@@ -426,7 +443,7 @@ class App extends Component {
                 removeItemButton={this.handleRemoveSelectedCode}
                 exploreButton={this.handleExploreSelectedCodeButton}
                 onSortEndCallback={updatedListOfSelectedCodes => {
-                  this.setState({ selectedCodes: updatedListOfSelectedCodes }, console.log(this.state.selectedCodes));
+                  this.setState({ selectedCodes: updatedListOfSelectedCodes });
                 }}
                 allowRearrage={this.state.selectedCodes.length > 1}
                 menuOptions={selectedCodesComponentMenuItems}
@@ -440,7 +457,6 @@ class App extends Component {
                 items={this.state.recommendedCodes}
                 noItemsMessage="No recommendations for the selected codes and age"
                 nullItemsMessage="Select codes to get recommendations"
-                customMessage="loading..."
                 valueName="rhs"
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}

@@ -20,6 +20,10 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
+  },
+  menuBar: {
+    backgroundColor: "#3949ab", //set the color of the Main menu bar
+    color: "white"
   }
 }));
 
@@ -112,7 +116,7 @@ function ButtonAppBar(props) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar className={classes.menuBar} position="static">
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu" />
           <Typography variant="h6" className={classes.title}>

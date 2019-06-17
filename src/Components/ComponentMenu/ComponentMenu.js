@@ -55,6 +55,7 @@ export default function ComponentMenu(props) {
             </MenuItem>
           );
         }
+        return null;
       })}
     </Menu>
   ) : null;

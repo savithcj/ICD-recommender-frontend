@@ -261,7 +261,10 @@ class CodeInputField extends React.Component {
     };
 
     const codeInputBox = (
-      <div className="code_input">
+      <div
+        className="code_input"
+        style={{ width: this.props.width_code === undefined ? "100%" : this.props.width_code }}
+      >
         <AutoSuggest
           id={id_code}
           multiSection={true}
@@ -280,7 +283,7 @@ class CodeInputField extends React.Component {
     );
 
     const ageInputBox = (
-      <div className="age_input">
+      <div className="age_input" style={{ width: this.props.width_age === undefined ? "100%" : this.props.width_age }}>
         <AutoSuggest
           id={id_age}
           suggestions={ageAutoCompleteDisplayed}
@@ -297,7 +300,10 @@ class CodeInputField extends React.Component {
     );
 
     const genderInputBox = (
-      <div className="gender_input">
+      <div
+        className="gender_input"
+        style={{ width: this.props.width_gender === undefined ? "100%" : this.props.width_gender }}
+      >
         <AutoSuggest
           id={id_gender}
           suggestions={genderAutoCompleteDisplayed}
@@ -314,11 +320,11 @@ class CodeInputField extends React.Component {
     );
 
     return (
-      <div>
+      <React.Fragment>
         {enable_code ? codeInputBox : null}
         {enable_age ? ageInputBox : null}
         {enable_gender ? genderInputBox : null}
-      </div>
+      </React.Fragment>
     );
   }
 }
