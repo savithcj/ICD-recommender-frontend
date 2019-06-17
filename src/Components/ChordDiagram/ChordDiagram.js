@@ -17,9 +17,6 @@ class ChordDiagram extends Component {
   }
 
   componentDidMount() {
-    // this.getDataFromAPI("Chapter 01").then(() => {
-    //   this.drawInitialTree();
-    // });
     this.drawChordDiagram();
   }
 
