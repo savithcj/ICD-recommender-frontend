@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./index.css";
+import "typeface-roboto";
 import App from "./App";
 import Sandbox from "./Sandbox";
 import Admin from "./Components/Admin/Admin";

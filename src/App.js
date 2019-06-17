@@ -8,6 +8,8 @@ import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
+import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
+import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
 
 import { __esModule } from "d3-random";
 
@@ -424,7 +426,10 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
-              <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
+              <SwipablePanel
+                tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
+                chord={<ChordDiagram id="123" />}
+              />
             </div>
 
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
