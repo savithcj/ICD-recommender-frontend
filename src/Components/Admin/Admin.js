@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import RuleCreator from "../../Components/RuleCreator/RuleCreator";
-import CodeUsageBarGraph from "../../Components/CodeUsageBarGraph/CodeUsageBarGraph";
 
 import "./Admin.css";
 import ChordDiagram from "../ChordDiagram/ChordDiagram";
@@ -85,14 +84,11 @@ function Admin(props) {
           isResizable={isLayoutModifiable}
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
-          <div key="0">
+          <div key="0" className="ruleCreator">
             <RuleCreator />
           </div>
-          <div key="1">
-            <CodeUsageBarGraph id="300" />
-          </div>
-          <div key="2">
-            <ChordDiagram id="100" ref={chordDiagramDiv} />
+          <div key="1" className="chordDiagram">
+            <ChordDiagram id="100" ref={chordDiagramDiv} />{" "}
           </div>
         </ResponsiveReactGridLayout>
       </div>
