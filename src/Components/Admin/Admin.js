@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import RuleCreator from "../../Components/RuleCreator/RuleCreator";
+import CodeUsageBarGraph from "../../Components/CodeUsageBarGraph/CodeUsageBarGraph";
 
 import "./Admin.css";
 
@@ -79,6 +80,11 @@ function Admin(props) {
         >
           <div key="0">
             <RuleCreator />
+          </div>
+          <div key="1">
+            <div>
+              <CodeUsageBarGraph id="3" />
+            </div>
           </div>
         </ResponsiveReactGridLayout>
       </div>
