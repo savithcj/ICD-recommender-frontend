@@ -22,10 +22,19 @@ class ChordDiagram extends Component {
     });
   }
 
+  handleResize(e) {
+    if (this.data === undefined) {
+      // variable is undefined
+    } else {
+      this.recalculateSizes();
+      this.drawChordDiagram();
+    }
+  }
+
   recalculateSizes() {
-    //let elem = ReactDOM.findDOMNode(this).parentNode;
-    this.width = 700; //elem.offsetWidth;
-    this.height = 700; //elem.offsetHeight;
+    let elem = ReactDOM.findDOMNode(this).parentNode;
+    this.width = elem.offsetWidth;
+    this.height = elem.offsetHeight;
     const minSize = Math.min(this.width, this.height);
     this.cRadius = minSize / 3.5;
     this.textSize = minSize / 45;
