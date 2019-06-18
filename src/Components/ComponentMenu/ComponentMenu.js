@@ -62,16 +62,19 @@ export default function ComponentMenu(props) {
 
   return (
     <span>
-      <IconButton
-        aria-label="More"
-        aria-controls="long-menu"
-        aria-haspopup="true"
-        title="Menu"
-        onClick={handleClick}
-        disabled={!shouldDisplayMenu}
-      >
-        <MoreVertIcon />
-      </IconButton>
+      {shouldDisplayMenu ? (
+        <IconButton
+          aria-label="More"
+          aria-controls="long-menu"
+          aria-haspopup="true"
+          title="Menu"
+          onClick={handleClick}
+          disabled={!shouldDisplayMenu}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      ) : null}
+
       {showMenu}
     </span>
   );

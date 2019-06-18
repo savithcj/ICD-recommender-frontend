@@ -53,7 +53,7 @@ const useStyles = makeStyles(() => ({
   listTitle: {
     fontWeight: "bold",
     textAlign: "left",
-    padding: 0,
+    padding: "0px 0px 0px 10px",
     width: "100%",
     textTransform: "uppercase"
   },
