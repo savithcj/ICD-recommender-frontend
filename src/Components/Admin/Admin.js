@@ -62,7 +62,6 @@ function Admin(props) {
     await saveToLS("layouts", layouts);
     setLayouts(layouts);
     chordDiagramDiv.current.handleResize();
-    console.log("Changing layout");
   }
 
   return (

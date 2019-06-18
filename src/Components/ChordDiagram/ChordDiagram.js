@@ -24,9 +24,8 @@ class ChordDiagram extends Component {
 
   handleResize() {
     if (this.data === undefined) {
-      console.log("No data");
+      // console.log("No data");
     } else {
-      console.log("Resizing..");
       this.recalculateSizes();
       this.drawChordDiagram();
     }
@@ -52,7 +51,7 @@ class ChordDiagram extends Component {
       .attr("x", this.width * 0.02)
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
-      // .attr("fill", this.textColor)
+      .attr("fill", this.textColor)
       .text("")
       .style("text-anchor", "left");
   }
