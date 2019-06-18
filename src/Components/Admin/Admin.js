@@ -5,11 +5,12 @@ import RuleCreator from "../../Components/RuleCreator/RuleCreator";
 import CodeUsageBarGraph from "../../Components/CodeUsageBarGraph/CodeUsageBarGraph";
 
 import "./Admin.css";
+import ChordDiagram from "../ChordDiagram/ChordDiagram";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
   { w: 5, h: 9, x: 7, y: 0, i: "1" },
-  { w: 5, h: 9, x: 7, y: 11, i: "2" },
+  { w: 10, h: 10, x: 7, y: 11, i: "2" },
   { w: 7, h: 2, x: 0, y: 0, i: "3" }
 ];
 const defaultLayoutMd = [
@@ -47,6 +48,7 @@ const defaultLayouts = {
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
+const chordDiagramDiv = React.createRef();
 
 function Admin(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
@@ -55,6 +57,7 @@ function Admin(props) {
   async function onLayoutChange(layouts) {
     await saveToLS("layouts", layouts);
     setLayouts(layouts);
+    chordDiagramDiv.current.handleResize();
   }
 
   return (
@@ -82,9 +85,10 @@ function Admin(props) {
             <RuleCreator />
           </div>
           <div key="1">
-            <div>
-              <CodeUsageBarGraph id="3" />
-            </div>
+            <CodeUsageBarGraph id="3" />
+          </div>
+          <div key="2">
+            <ChordDiagram id="100" ref={chordDiagramDiv} />
           </div>
         </ResponsiveReactGridLayout>
       </div>
