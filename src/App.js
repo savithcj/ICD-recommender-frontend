@@ -312,12 +312,12 @@ class App extends Component {
   /**
    * Helper method to convert the code objects within the passed array
    * to a single string with comma separated codes.
-   * @param {*} listOfCodeObjects Array of code objects
+   * @param {*} arrayOfCodeObjects Array of code objects
    * @returns A comma separated string version of the array of codes
    */
-  getStringFromListOfCodes(listOfCodeObjects) {
+  getStringFromListOfCodes(arrayOfCodeObjects) {
     let stringOfCodes = "";
-    listOfCodeObjects.forEach(codeObj => {
+    arrayOfCodeObjects.forEach(codeObj => {
       stringOfCodes += codeObj.code + ",";
     });
 
@@ -405,7 +405,24 @@ class App extends Component {
     const selectedCodesComponentMenuItems = [];
     const recommendedCodesComponentMenuItems = [];
 
-    const clearButtonProp = { title: "Clear Codes", onClick: this.resetSelectedCodes };
+    const acceptSelectedCodesButton = {
+      text: "Accept",
+      onClick: this.resetSelectedCodes,
+      title: "Accept all selected codes"
+    };
+
+    //TODO: possible implementation of rejecting all remaining codes in the recommended codes viewer
+
+    // let rejectRemainingRecommendationsButton = null;
+
+    // if (Array.isArray(this.state.recommendedCodes))
+    //   if (this.state.recommendedCodes.length > 0) {
+    //     rejectRemainingRecommendationsButton = {
+    //       text: "Reject",
+    //       onClick: () => {},
+    //       title: "Reject remaining recommended codes"
+    //     };
+    //   }
 
     return (
       <div className="App">
@@ -449,7 +466,7 @@ class App extends Component {
                 }}
                 allowRearrage={this.state.selectedCodes.length > 1}
                 menuOptions={selectedCodesComponentMenuItems}
-                clearButton={this.state.selectedCodes.length > 0 ? clearButtonProp : null}
+                button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
               />
             </div>
 
@@ -467,6 +484,7 @@ class App extends Component {
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 allowRearrage={false}
                 menuOptions={recommendedCodesComponentMenuItems}
+                // button={rejectRemainingRecommendationsButton}
               />
             </div>
 
