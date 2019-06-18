@@ -24,12 +24,12 @@ class ChordDiagram extends Component {
 
   recalculateSizes() {
     //let elem = ReactDOM.findDOMNode(this).parentNode;
-    this.width = 800; //elem.offsetWidth;
-    this.height = 600; //elem.offsetHeight;
+    this.width = 700; //elem.offsetWidth;
+    this.height = 700; //elem.offsetHeight;
     const minSize = Math.min(this.width, this.height);
-    this.cRadius = minSize / 3;
+    this.cRadius = minSize / 3.5;
     this.textSize = minSize / 45;
-    this.barHeight = 0.1 * minSize;
+    this.barHeight = 0.08 * minSize;
     this.centerX = this.width * 0.4;
     this.centerY = this.height / 2;
   }
@@ -153,7 +153,7 @@ class ChordDiagram extends Component {
     var slider = sliderBottom()
       .min(this.sliderMin)
       .max(this.sliderMax)
-      .width(this.cRadius * 2)
+      .width(1.5 * this.cRadius)
       .ticks(this.numTicks)
       .default(this.defaultSliderValue)
       .step(1)
@@ -164,7 +164,7 @@ class ChordDiagram extends Component {
 
     this.svg
       .append("g")
-      .attr("transform", "translate(" + (this.centerX - this.cRadius) + "," + this.height * 0.9 + ")")
+      .attr("transform", "translate(" + (this.centerX - 0.5 * this.cRadius) + "," + this.height * 0.9 + ")")
       .call(slider);
 
     // rectangle to make it so cursor isn't shown when hovering over ticks
@@ -188,7 +188,7 @@ class ChordDiagram extends Component {
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
       .attr("y", 0.9 * this.height)
-      .attr("x", this.centerX - this.cRadius - 0.02 * this.width)
+      .attr("x", this.centerX - 0.5 * this.cRadius - 0.02 * this.width)
       .attr("class", "minRuleText")
       .style("text-anchor", "end");
 
@@ -206,9 +206,11 @@ class ChordDiagram extends Component {
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
       .attr("y", (d, i) => {
-        return i * this.textSize * 1.5 + 0.15 * this.height;
+        return i * this.textSize * 1.5 + (this.centerY - 0.75 * this.textSize * sorted.length);
       })
-      .attr("x", this.width * 0.9)
+      .attr("x", () => {
+        return this.centerX + this.cRadius + 2.5 * this.barHeight;
+      })
       .attr("class", "legendText")
       .style("text-anchor", "end")
       .on("mouseover", (d, i) => {
@@ -227,9 +229,12 @@ class ChordDiagram extends Component {
         return this.calcColour(d);
       })
       .attr("y", (d, i) => {
-        return i * this.textSize * 1.5 + 0.137 * this.height;
+        return i * this.textSize * 1.5 + (this.centerY - 0.75 * this.textSize * sorted.length - 0.01 * this.height);
+        //return i * this.textSize * 1.5 + 0.137 * this.height;
       })
-      .attr("x", this.width * 0.905)
+      .attr("x", () => {
+        return this.centerX + this.cRadius + 2.5 * this.barHeight + 5;
+      })
       .attr("class", "legendRect")
       .attr("width", this.width * 0.05)
       .attr("height", this.height * 0.01)
