@@ -54,7 +54,8 @@ const useStyles = makeStyles(() => ({
     fontWeight: "bold",
     textAlign: "left",
     padding: 0,
-    margin: "0"
+    width: "100%",
+    textTransform: "uppercase"
   },
   drag: {
     cursor: "row-resize",
@@ -64,10 +65,11 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     justifyContent: "flex-end"
   },
-  clearButton: {
+  button: {
     float: "right",
-    padding: "12px 0",
-    marginRight: "15px"
+    margin: "6px 6px 0px 0px",
+    fontSize: "0.875rem",
+    color: "#767676"
   }
 }));
 
@@ -82,7 +84,7 @@ export default React.memo(
       props.onSortEndCallback(arrayMove(props.items, oldIndex, newIndex));
     };
 
-    //sortableElement() returns a Component. i.e: SortableItem is a React HOC
+    //sortableElement() returns a Component. i.e.: SortableItem is a React HOC
     const SortableItem = sortableElement(({ value, description, id }) => {
       const DragHandleButton = sortableHandle(() => (
         <span>
@@ -187,10 +189,10 @@ export default React.memo(
         <Menu menuOptions={props.menuOptions} />
       );
 
-      const showClearAllButton =
-        props.clearButton && !areItemsRearrangable ? (
-          <Button className={classes.clearButton} onClick={props.clearButton.onClick}>
-            {props.clearButton.title}
+      const showButton =
+        props.button && !areItemsRearrangable ? (
+          <Button className={classes.button} onClick={props.button.onClick} title={props.button.title}>
+            {props.button.text}
           </Button>
         ) : null;
 
@@ -198,9 +200,9 @@ export default React.memo(
         <List dense={true} className={classes.root}>
           <ThemeProvider theme={theme}>
             <ListSubheader className={classes.listTitle} disableSticky={false}>
-              <span>{showRearrangeConfirmationOrMenu}</span>
-              <span>{props.title}</span>
-              {showClearAllButton}
+              {showRearrangeConfirmationOrMenu}
+              {props.title}
+              {showButton}
             </ListSubheader>
             {displayItems}
           </ThemeProvider>
@@ -211,7 +213,7 @@ export default React.memo(
     return <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle />;
   },
   (prevProps, nextProps) => {
-    // Component will only re-render if the array of items to be displayed (props.items) changes
+    // Component will only re-render if the array of items to be displayed (i.e., props.items) changes
     return nextProps.items === prevProps.items;
   }
 );
