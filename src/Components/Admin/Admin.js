@@ -54,10 +54,15 @@ function Admin(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(true);
 
+  const resetLayout = () => {
+    setLayouts(defaultLayouts);
+  };
+
   async function onLayoutChange(layouts) {
     await saveToLS("layouts", layouts);
     setLayouts(layouts);
     chordDiagramDiv.current.handleResize();
+    console.log("Changing layout");
   }
 
   return (
@@ -68,9 +73,8 @@ function Admin(props) {
           firstLinkRoute="/"
           title="Admin Page"
           handleLayoutConfirm={() => {}}
-          handleResetLayout={() => {}}
+          handleResetLayout={resetLayout}
           inModifyMode={false}
-          onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         />
       </div>
       <div>
@@ -80,12 +84,13 @@ function Admin(props) {
           draggableCancel="input,textarea"
           isDraggable={isLayoutModifiable}
           isResizable={isLayoutModifiable}
+          onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
           <div key="0">
             <RuleCreator />
           </div>
           <div key="1">
-            <CodeUsageBarGraph id="3" />
+            <CodeUsageBarGraph id="300" />
           </div>
           <div key="2">
             <ChordDiagram id="100" ref={chordDiagramDiv} />

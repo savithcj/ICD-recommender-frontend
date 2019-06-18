@@ -6,7 +6,7 @@ class CodeUsageBarGraph extends Component {
   constructor(props) {
     super(props);
 
-    this.dataset = [80, 500, 50, 60, 40, 30, 20];
+    this.dataset = [80, 10, 20, 60, 40];
     this.svgWidth = 500;
     this.svgHeight = 500;
     this.barPadding = 5;
@@ -44,11 +44,12 @@ class CodeUsageBarGraph extends Component {
         return i * this.barWidth;
       })
       .attr("y", function(d) {
-        return this.svgHeight - d;
+        return this.svgHeight - yScale(d);
       })
       .attr("fill", "black")
+      .style("fill-opacity", 0.5)
       .attr("height", function(d) {
-        return d;
+        return yScale(d);
       })
       .attr("width", this.barWidth - this.barPadding);
 
@@ -69,7 +70,8 @@ class CodeUsageBarGraph extends Component {
       })
       .attr("x", function(d, i) {
         return this.barWidth * i;
-      });
+      })
+      .attr("fill", "black");
   };
 
   render() {

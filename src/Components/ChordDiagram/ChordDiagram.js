@@ -22,10 +22,11 @@ class ChordDiagram extends Component {
     });
   }
 
-  handleResize(e) {
+  handleResize() {
     if (this.data === undefined) {
-      // variable is undefined
+      console.log("No data");
     } else {
+      console.log("Resizing..");
       this.recalculateSizes();
       this.drawChordDiagram();
     }
