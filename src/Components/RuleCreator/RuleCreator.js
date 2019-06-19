@@ -76,6 +76,10 @@ function RuleCreator(props) {
     setLHS([]);
   };
 
+  const resetRHSCodes = () => {
+    setRHS([]);
+  };
+
   const handleRemoveLHSCode = event => {
     const removeCodeIndex = parseInt(event.currentTarget.id, 10);
     const codes = [...LHS];
@@ -88,10 +92,6 @@ function RuleCreator(props) {
     const codes = [...RHS];
     codes.splice(removeCodeIndex, 1);
     setRHS(codes);
-  };
-
-  const resetRHSCodes = () => {
-    setRHS([]);
   };
 
   const createRule = async () => {
@@ -122,10 +122,6 @@ function RuleCreator(props) {
     }
   };
 
-  const exploreCodeDetail = code => {
-    //TODO: Implement
-  };
-
   const LHSCodesComponentMenuItems = [
     {
       menuItemOnClick: LHS.length > 1 ? resetLHSCodes : null,
@@ -151,7 +147,6 @@ function RuleCreator(props) {
             valueName="code"
             descriptionName="description"
             removeItemButton={handleRemoveLHSCode}
-            exploreButton={exploreCodeDetail}
             onSortEndCallback={updatedListOfSelectedCodes => {
               setLHS({ updatedListOfSelectedCodes });
             }}
@@ -180,7 +175,6 @@ function RuleCreator(props) {
             valueName="code"
             descriptionName="description"
             removeItemButton={handleRemoveRHSCode}
-            exploreButton={exploreCodeDetail}
             onSortEndCallback={updatedListOfSelectedCodes => {
               setRHS({ updatedListOfSelectedCodes });
             }}
