@@ -2,7 +2,7 @@ import React from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import ExpandMenuIcon from "@material-ui/icons/ExpandMore";
 
 const ITEM_HEIGHT = 20;
 
@@ -33,8 +33,8 @@ export default function ComponentMenu(props) {
     <Menu
       id="long-menu"
       anchorEl={anchorEl}
-      keepMounted
       open={open}
+      keepMounted
       onClose={() => handleClose(null)}
       PaperProps={{
         style: {
@@ -42,6 +42,9 @@ export default function ComponentMenu(props) {
           width: 200
         }
       }}
+      getContentAnchorEl={null}
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      transformOrigin={{ vertical: "top", horizontal: "center" }}
     >
       {props.menuOptions.map(option => {
         if (option.menuItemOnClick) {
@@ -62,16 +65,19 @@ export default function ComponentMenu(props) {
 
   return (
     <span>
-      <IconButton
-        aria-label="More"
-        aria-controls="long-menu"
-        aria-haspopup="true"
-        title="Menu"
-        onClick={handleClick}
-        disabled={!shouldDisplayMenu}
-      >
-        <MoreVertIcon />
-      </IconButton>
+      {shouldDisplayMenu ? (
+        <IconButton
+          aria-label="More"
+          aria-controls="long-menu"
+          aria-haspopup="true"
+          title="More Actions"
+          onClick={handleClick}
+          disabled={!shouldDisplayMenu}
+        >
+          <ExpandMenuIcon />
+        </IconButton>
+      ) : null}
+
       {showMenu}
     </span>
   );

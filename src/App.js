@@ -81,8 +81,6 @@ class App extends Component {
    * Cache code suggestion results from API call to state for repeated quiries
    * Updates the cachedCodeList and cachedCodeWithDescription in App.state
    * @param {*} results
-   * @param {*} oFunc optional function to be called at end of the method
-   * @param {*} oArg optinal argument for the optional function
    */
   appendCodeToCache = results => {
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
@@ -191,6 +189,17 @@ class App extends Component {
    * Used to reset the selected code list to an empty list.
    */
   resetSelectedCodes = () => {
+    this.setState({
+      selectedCodes: [],
+      recommendedCodes: null
+    });
+  };
+
+  /**
+   * Used to accept all the selected codes. Everytime a user "accepts", the
+   * database gets updataded with the code usage
+   */
+  acceptSelectedCodes = () => {
     const stringOfCodes = this.getStringFromListOfCodes(this.state.selectedCodes);
     const url = "http://localhost:8000/api/codeUsed/" + stringOfCodes + "/";
 
@@ -373,11 +382,6 @@ class App extends Component {
     this.treeViewDiv.current.changeTree(this.state.recommendedCodes[exploredRecommendedCodeIndex].rhs);
   };
 
-  /**
-   * React calls the render method asynchronously before the data is retrieved
-   * from the API call. The following if statement is needed make sure that the
-   * input field is rendered only once the data is retrieved
-   */
   render() {
     const userInputBoxes = (
       <CodeInputField
@@ -402,12 +406,17 @@ class App extends Component {
     const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-    const selectedCodesComponentMenuItems = [];
+    const selectedCodesComponentMenuItems = [
+      {
+        menuItemOnClick: this.state.selectedCodes.length < 2 ? null : this.resetSelectedCodes,
+        menuItemText: "Remove All Items"
+      }
+    ];
     const recommendedCodesComponentMenuItems = [];
 
     const acceptSelectedCodesButton = {
       text: "Accept",
-      onClick: this.resetSelectedCodes,
+      onClick: this.acceptSelectedCodes,
       title: "Accept all selected codes"
     };
 
@@ -445,6 +454,7 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
+              {/* FIXME: fix the display bug in the SwipabalePanel  */}
               {/* <SwipablePanel
                 tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
                 chord={<ChordDiagram id="123" />}

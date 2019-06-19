@@ -53,7 +53,6 @@ const useStyles = makeStyles(() => ({
   listTitle: {
     fontWeight: "bold",
     textAlign: "left",
-    padding: 0,
     width: "100%",
     textTransform: "uppercase"
   },
@@ -182,7 +181,7 @@ export default React.memo(
       }
 
       const showRearrangeConfirmationOrMenu = areItemsRearrangable ? (
-        <IconButton title="Confirm Item Order" onClick={() => setItemRearrangeMode(false)}>
+        <IconButton className={classes.button} title="Confirm Item Order" onClick={() => setItemRearrangeMode(false)}>
           <CheckMark />
         </IconButton>
       ) : (
@@ -200,8 +199,8 @@ export default React.memo(
         <List dense={true} className={classes.root}>
           <ThemeProvider theme={theme}>
             <ListSubheader className={classes.listTitle} disableSticky={false}>
-              {showRearrangeConfirmationOrMenu}
               {props.title}
+              {showRearrangeConfirmationOrMenu}
               {showButton}
             </ListSubheader>
             {displayItems}
