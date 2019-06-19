@@ -439,11 +439,11 @@ class App extends Component {
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
               {/* FIXME: fix the display bug in the SwipabalePanel  */}
-              <SwipablePanel
+              {/* <SwipablePanel
                 tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
                 chord={<ChordDiagram id="123" />}
-              />
-              {/* <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} /> */}
+              /> */}
+              <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
 
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
