@@ -81,8 +81,6 @@ class App extends Component {
    * Cache code suggestion results from API call to state for repeated quiries
    * Updates the cachedCodeList and cachedCodeWithDescription in App.state
    * @param {*} results
-   * @param {*} oFunc optional function to be called at end of the method
-   * @param {*} oArg optinal argument for the optional function
    */
   appendCodeToCache = results => {
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
@@ -373,11 +371,6 @@ class App extends Component {
     this.treeViewDiv.current.changeTree(this.state.recommendedCodes[exploredRecommendedCodeIndex].rhs);
   };
 
-  /**
-   * React calls the render method asynchronously before the data is retrieved
-   * from the API call. The following if statement is needed make sure that the
-   * input field is rendered only once the data is retrieved
-   */
   render() {
     const userInputBoxes = (
       <CodeInputField
@@ -445,11 +438,12 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
-              {/* <SwipablePanel
+              {/* FIXME: fix the display bug in the SwipabalePanel  */}
+              <SwipablePanel
                 tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
                 chord={<ChordDiagram id="123" />}
-              /> */}
-              <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
+              />
+              {/* <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} /> */}
             </div>
 
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
