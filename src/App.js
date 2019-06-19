@@ -189,6 +189,17 @@ class App extends Component {
    * Used to reset the selected code list to an empty list.
    */
   resetSelectedCodes = () => {
+    this.setState({
+      selectedCodes: [],
+      recommendedCodes: null
+    });
+  };
+
+  /**
+   * Used to accept all the selected codes. Everytime a user "accepts", the
+   * database gets updataded with the code usage
+   */
+  acceptSelectedCodes = () => {
     const stringOfCodes = this.getStringFromListOfCodes(this.state.selectedCodes);
     const url = "http://localhost:8000/api/codeUsed/" + stringOfCodes + "/";
 
@@ -395,12 +406,17 @@ class App extends Component {
     const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-    const selectedCodesComponentMenuItems = [];
+    const selectedCodesComponentMenuItems = [
+      {
+        menuItemOnClick: this.state.selectedCodes.length < 2 ? null : this.resetSelectedCodes,
+        menuItemText: "Remove All Items"
+      }
+    ];
     const recommendedCodesComponentMenuItems = [];
 
     const acceptSelectedCodesButton = {
       text: "Accept",
-      onClick: this.resetSelectedCodes,
+      onClick: this.acceptSelectedCodes,
       title: "Accept all selected codes"
     };
 
