@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import RuleCreator from "../../Components/RuleCreator/RuleCreator";
-
-import "./Admin.css";
 import ChordDiagram from "../ChordDiagram/ChordDiagram";
+import BarChart from "../BarChart/BarChart";
+// import css?
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -48,8 +47,9 @@ const defaultLayouts = {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
 const chordDiagramDiv = React.createRef();
+const barChartDiv = React.createRef();
 
-function Admin(props) {
+function Visualization(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(true);
 
@@ -61,6 +61,7 @@ function Admin(props) {
     await saveToLS("layouts", layouts);
     setLayouts(layouts);
     chordDiagramDiv.current.handleResize();
+    barChartDiv.current.handleResize();
   }
 
   return (
@@ -69,9 +70,9 @@ function Admin(props) {
         <MenuBar
           firstLinkName="Home"
           firstLinkRoute="/"
-          secondLinkName="Visualization"
-          secondLinkRoute="/visualization"
-          title="Admin Page"
+          secondLinkName="Admin"
+          secondLinkRoute="/admin"
+          title="Visualization Page"
           handleLayoutConfirm={() => {}}
           handleResetLayout={resetLayout}
           inModifyMode={false}
@@ -86,11 +87,11 @@ function Admin(props) {
           isResizable={isLayoutModifiable}
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
-          <div key="0" className="ruleCreator">
-            <RuleCreator />
+          <div key="0" id="myID" className="barChart">
+            <BarChart id="100" ref={barChartDiv} />{" "}
           </div>
           <div key="1" className="chordDiagram">
-            <ChordDiagram id="100" ref={chordDiagramDiv} />{" "}
+            <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
           </div>
         </ResponsiveReactGridLayout>
       </div>
@@ -121,4 +122,4 @@ function saveToLS(key, value) {
   }
 }
 
-export default Admin;
+export default Visualization;

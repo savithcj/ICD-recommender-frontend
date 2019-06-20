@@ -439,6 +439,8 @@ class App extends Component {
           title="ICD-10 Code Suggestion and Usage Insight"
           firstLinkName="Admin"
           firstLinkRoute="/admin"
+          secondLinkName="Visualization"
+          secondLinkRoute="/visualization"
           handleLayoutConfirm={this.handleLayoutModifierButton}
           handleResetLayout={this.resetLayout}
           inModifyMode={this.state.isLayoutModifiable}

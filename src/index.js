@@ -7,6 +7,7 @@ import App from "./App";
 import Sandbox from "./Sandbox";
 import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./serviceWorker";
+import Visualization from "./Components/Visualization/Visualization";
 
 const notFound = () => <h1>Not Found</h1>;
 
@@ -18,6 +19,7 @@ const routing = (
         <Route exact path="/" component={App} />
         <Route path="/admin" component={Admin} />
         <Route path="/sandbox" component={Sandbox} />
+        <Route path="/visualization" component={Visualization} />
         <Route>{notFound}</Route>
       </Switch>
     </div>
