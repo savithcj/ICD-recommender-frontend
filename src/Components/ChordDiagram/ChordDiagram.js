@@ -173,7 +173,14 @@ class ChordDiagram extends Component {
 
     this.svg
       .append("g")
-      .attr("transform", "translate(" + (this.centerX - 0.5 * this.cRadius) + "," + this.height * 0.9 + ")")
+      .attr(
+        "transform",
+        "translate(" +
+          (this.centerX - 0.5 * this.cRadius) +
+          "," +
+          (this.centerY + this.cRadius + 1.2 * this.barHeight) +
+          ")"
+      )
       .call(slider);
 
     // rectangle to make it so cursor isn't shown when hovering over ticks
@@ -196,7 +203,7 @@ class ChordDiagram extends Component {
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
-      .attr("y", 0.9 * this.height)
+      .attr("y", this.centerY + this.cRadius + 1.2 * this.barHeight)
       .attr("x", this.centerX - 0.5 * this.cRadius - 0.02 * this.width)
       .attr("class", "minRuleText")
       .style("text-anchor", "end");
