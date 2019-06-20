@@ -245,7 +245,8 @@ class App extends Component {
               "-" +
               codeObj.max_age;
             codeObj.rule = codeObj.lhs + " -> " + codeObj.rhs;
-            codeObj.shouldHideDislikeButton = codeObj["review_status"] === 2;
+            //dislike button should be disabled if an admin has reviewed and accepted a rule
+            codeObj.shouldDisableDislikeButton = codeObj["review_status"] === 2;
           });
 
           this.addRecommendedCodesToCachedCodes(results);
@@ -515,7 +516,7 @@ class App extends Component {
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 allowRearrage={false}
                 menuOptions={recommendedCodesComponentMenuItems}
-                hideDislikeButtonField="shouldHideDislikeButton"
+                disableDislikeButtonField="shouldDisableDislikeButton"
                 // button={rejectRemainingRecommendationsButton}
               />
             </div>

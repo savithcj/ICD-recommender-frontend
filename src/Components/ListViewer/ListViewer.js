@@ -131,19 +131,19 @@ export default React.memo(
         </IconButton>
       ) : null;
 
-      const showDislikeButton =
-        props.dislikeButton && !shouldHideDislikeButton ? (
-          <IconButton
-            id={id}
-            edge="end"
-            aria-label="Dislike"
-            title="Dislike"
-            color="secondary"
-            onClick={props.dislikeButton}
-          >
-            <ThumbDownIcon />
-          </IconButton>
-        ) : null;
+      const showDislikeButton = props.dislikeButton ? (
+        <IconButton
+          id={id}
+          edge="end"
+          aria-label="Dislike"
+          title="Dislike"
+          color="secondary"
+          onClick={props.dislikeButton}
+          disabled={shouldHideDislikeButton}
+        >
+          <ThumbDownIcon />
+        </IconButton>
+      ) : null;
 
       return (
         <Card className={classes.card}>
@@ -169,7 +169,7 @@ export default React.memo(
             value={value[props.valueName]}
             description={value[props.descriptionName]}
             disabled={!areItemsRearrangable}
-            shouldHideDislikeButton={value[props.hideDislikeButtonField]}
+            shouldHideDislikeButton={value[props.disableDislikeButtonField]}
           />
         );
       });
