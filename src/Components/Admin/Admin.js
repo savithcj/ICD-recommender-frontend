@@ -84,7 +84,12 @@ function Admin(props) {
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
           <div key="0" className="ruleCreator">
+            <h3>Create Rules</h3>
             <RuleCreator />
+          </div>
+
+          <div key="1" className="flaggedRuleReviewer">
+            <h3>Review Flagged Rules</h3>
           </div>
         </ResponsiveReactGridLayout>
       </div>

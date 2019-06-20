@@ -88,19 +88,20 @@ export default React.memo(
     //Whereas a component transforms props into UI, a HOC transforms a component into another component.
     //https://reactjs.org/docs/higher-order-components.html
     const SortableItem = sortableElement(({ value, description, id }) => {
+      //sortableHandle() is also an HOC
       const DragHandleButton = sortableHandle(() => (
         <span>
           <DragHandle className={classes.drag} />
         </span>
       ));
 
-      const showDragHandleOrExploreButton = areItemsRearrangable ? (
-        <DragHandleButton />
-      ) : (
+      const showExploreButton = props.exploreButton ? (
         <IconButton id={id} aria-label="Explore" title="Explore on Tree" onClick={props.exploreButton}>
           <ExploreIcon />
         </IconButton>
-      );
+      ) : null;
+
+      const showDragHandleOrExploreButton = areItemsRearrangable ? <DragHandleButton /> : showExploreButton;
 
       const itemIndex = <ListItemText className={classes.listItemIndex}>{id + 1}</ListItemText>;
 
