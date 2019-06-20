@@ -30,7 +30,7 @@ class SankeyDiagram extends Component {
     if (this.data === undefined) {
       // console.log("No data");
     } else {
-      this.drawChordDiagram();
+      this.drawSankeyDiagram();
       // this.forceUpdate();
     }
   }
@@ -47,7 +47,7 @@ class SankeyDiagram extends Component {
       .attr("width", this.width)
       .attr("height", this.height);
 
-    this.pIndex1 = 5;
+    this.pIndex1 = 3;
     this.pIndex2 = 8;
     this.infoText = this.addInfoText();
 
@@ -120,7 +120,7 @@ class SankeyDiagram extends Component {
     let sliderHeight = Math.ceil(gSlider1.node().getBBox().height);
     let descHeight = Math.ceil(descText1.node().getBBox().height);
     let labelHeight = Math.ceil(labelText1.node().getBBox().height);
-    this.curHeight = this.height - sliderHeight;
+    this.curHeight = this.height - sliderHeight * 1.5;
     gSlider2.attr("transform", "translate(" + this.width / 8 + "," + this.curHeight + ")");
     this.curHeight -= descHeight;
     descText2.attr("y", this.curHeight);

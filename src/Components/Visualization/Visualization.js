@@ -3,7 +3,7 @@ import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import ChordDiagram from "../ChordDiagram/ChordDiagram";
 import BarChart from "../BarChart/BarChart";
-//import SankeyDiagram from "../SankeyDiagram/SankeyDiagram";
+import SankeyDiagram from "../SankeyDiagram/SankeyDiagram";
 import "./Visualization.css";
 
 const defaultLayoutLg = [
@@ -69,6 +69,7 @@ function Visualization(props) {
     setLayouts(layouts);
     chordDiagramDiv.current.handleResize();
     barChartDiv.current.handleResize();
+    SankeyDiagramDiv.current.handleResize();
   }
 
   const shakeDiv = isLayoutModifiable ? "shake" : "";
@@ -100,9 +101,9 @@ function Visualization(props) {
           <div key="0" className={highlightEditDiv}>
             <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
           </div>
-          {/*<div key="1" className={highlightEditDiv}>
-            <BarChart id="100" ref={SankeyDiagramDiv} />{" "}
-  </div>*/}
+          <div key="1" className={highlightEditDiv}>
+            <SankeyDiagram id="100" ref={SankeyDiagramDiv} />{" "}
+          </div>
 
           <div key="2" id="barDiv" className={highlightEditDiv}>
             <BarChart id="100" ref={barChartDiv} />{" "}
