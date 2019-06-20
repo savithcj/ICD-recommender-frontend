@@ -9,81 +9,70 @@ export default function RuleReviewer() {
   }, []);
 
   const getFlaggedRulesFromAPI = () => {
-    const url = "http://localhost:8000/api/flaggedRules/";
+    const url = "http://localhost:8000/api/flaggedRules/?format=json";
+
     fetch(url)
-      .then(response => response.json)
-      .then(results => setFlaggedRules(results));
+      .then(response => response.json())
+      .then(results => {
+        results.forEach(ruleObject => {
+          ruleObject.rule = ruleObject.lhs + " -> " + ruleObject.rhs;
+        });
+        return setFlaggedRules(results);
+      });
   };
 
   const handleAcceptRule = event => {
-    const removeCodeIndex = parseInt(event.currentTarget.id, 10);
-    const codes = [...LHS];
-    codes.splice(removeCodeIndex, 1);
-    setLHS(codes);
+    const acceptRuleIndex = parseInt(event.currentTarget.id, 10);
+
+    const url = "http://localhost:8000/api/updateFlaggedRule/" + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
+
+    console.log(url);
+
+    const rules = [...flaggedRules];
+
+    //ListViewer will display a loading indicator while the API promise is being fullfilled
+    setFlaggedRules("LOADING");
+
+    fetch(url, { method: "PUT" }).then(response => {
+      console.log(response.status);
+      if (response.status === 200) {
+        rules.splice(acceptRuleIndex, 1);
+      }
+      setFlaggedRules(rules);
+    });
   };
 
   const handleRejectRule = event => {
-    const removeCodeIndex = parseInt(event.currentTarget.id, 10);
-    const codes = [...RHS];
-    codes.splice(removeCodeIndex, 1);
-    setRHS(codes);
+    const rejectRuleIndex = parseInt(event.currentTarget.id, 10);
+
+    const url = "http://localhost:8000/api/updateFlaggedRule/" + flaggedRules[rejectRuleIndex].id + ",REJECT/";
+
+    const rules = [...flaggedRules];
+
+    //ListViewer will display a loading indicator while the API promise is being fullfilled
+    setFlaggedRules("LOADING");
+
+    fetch(url, { method: "PUT" }).then(response => {
+      console.log(response.status);
+      if (response.status === 200) {
+        rules.splice(rejectRuleIndex, 1);
+      }
+      setFlaggedRules(rules);
+    });
   };
-
-  const createRule = async () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-
-    const LHSCodes = LHS.map(codeObj => codeObj.code);
-    const RHSCodes = RHS.map(codeObj => codeObj.code);
-
-    const data = { LHSCodes, RHSCodes, ageStart, ageEnd, gender };
-
-    const options = {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(data)
-    };
-
-    const request = new Request("http://localhost:8000/api/modifyRule/", options);
-    const response = await fetch(request);
-    const status = await response.status;
-
-    if (status === 200 || status === 201) {
-      setLHS([]);
-      setRHS([]);
-      setAgeStart(0);
-      setAgeEnd(0);
-      setGender();
-    }
-  };
-
-  const LHSCodesComponentMenuItems = [
-    {
-      menuItemOnClick: LHS.length > 1 ? resetLHSCodes : null,
-      menuItemText: "Remove All Items"
-    }
-  ];
-
-  const RHSCodesComponentMenuItems = [
-    {
-      menuItemOnClick: RHS.length > 1 ? resetRHSCodes : null,
-      menuItemText: "Remove All Items"
-    }
-  ];
 
   return (
     <ListViewer
-      title="List of fagged rules"
-      items={RHS}
+      className="ruleReviwer"
+      title="List of flagged rules"
+      items={flaggedRules}
       noItemsMessage="No flagged rules"
-      valueName="code"
+      valueName="rule"
       descriptionName="description"
-      removeItemButton={handleRemoveRHSCode}
-      onSortEndCallback={updatedListOfSelectedCodes => {
-        setRHS({ updatedListOfSelectedCodes });
-      }}
+      acceptItemButton={handleAcceptRule}
+      removeItemButton={handleRejectRule}
       allowRearrage={false}
-      menuOptions={RHSCodesComponentMenuItems}
+      menuOptions={[]}
     />
   );
 }
