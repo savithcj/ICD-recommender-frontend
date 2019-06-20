@@ -84,7 +84,9 @@ export default React.memo(
       props.onSortEndCallback(arrayMove(props.items, oldIndex, newIndex));
     };
 
-    //sortableElement() returns a Component. i.e.: SortableItem is a React HOC
+    //sortableElement() returns a Component. i.e.: sortableElement is a React higher-order component (HOC)
+    //Whereas a component transforms props into UI, a HOC transforms a component into another component.
+    //https://reactjs.org/docs/higher-order-components.html
     const SortableItem = sortableElement(({ value, description, id }) => {
       const DragHandleButton = sortableHandle(() => (
         <span>
@@ -185,8 +187,8 @@ export default React.memo(
       }
 
       if (props.allowRearrage) {
-        const matchingOptions = props.menuOptions.filter(option => option.menuItemText === "Rearrange Items").length;
-        if (matchingOptions === 0) {
+        const matchingOptions = props.menuOptions.filter(option => option.menuItemText === "Rearrange Items");
+        if (matchingOptions.length === 0) {
           const rearrangeItems = () => setItemRearrangeMode(true);
           props.menuOptions.push({
             menuItemOnClick: rearrangeItems,
