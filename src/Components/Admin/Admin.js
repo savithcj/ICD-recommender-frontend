@@ -46,7 +46,6 @@ const defaultLayouts = {
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
-const chordDiagramDiv = React.createRef();
 
 function Admin(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
@@ -59,7 +58,6 @@ function Admin(props) {
   async function onLayoutChange(layouts) {
     await saveToLS("layouts", layouts);
     setLayouts(layouts);
-    chordDiagramDiv.current.handleResize();
   }
 
   return (
