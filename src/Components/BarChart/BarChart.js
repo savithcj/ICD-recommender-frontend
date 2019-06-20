@@ -13,7 +13,6 @@ class BarChart extends Component {
   }
 
   componentDidMount() {
-    //console.log(document.getElementById("myID").clientHeight);
     this.getDataFromAPI().then(() => {
       this.drawBarChart();
       this.forceUpdate();
@@ -24,7 +23,7 @@ class BarChart extends Component {
     let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = elem.offsetWidth - 30;
     this.divHeight = elem.offsetHeight;
-    this.height = this.data.length * 60; //elem.offsetHeight;
+    this.height = this.data.length * 60;
     this.barHeight = (this.height - 50) / this.data.length / 2;
     const minSize = Math.min(this.width, this.divHeight);
     this.textSize = minSize / 30;
@@ -206,7 +205,6 @@ class BarChart extends Component {
   };
 
   render() {
-    console.log("divheight:", this.divHeight);
     const style = {
       height: this.divHeight,
       overflowY: "scroll"
