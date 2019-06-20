@@ -3,6 +3,7 @@ import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import ChordDiagram from "../ChordDiagram/ChordDiagram";
 import BarChart from "../BarChart/BarChart";
+//import SankeyDiagram from "../SankeyDiagram/SankeyDiagram";
 import "./Visualization.css";
 
 const defaultLayoutLg = [
@@ -48,14 +49,20 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
 const chordDiagramDiv = React.createRef();
 const barChartDiv = React.createRef();
+const SankeyDiagramDiv = React.createRef();
 
 function Visualization(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
-  const [isLayoutModifiable, setLayoutModifiable] = useState(true);
+  const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
   };
+
+  function handleLayoutModifierButton() {
+    const layoutModifiable = !isLayoutModifiable;
+    setLayoutModifiable(layoutModifiable);
+  }
 
   async function onLayoutChange(layouts) {
     await saveToLS("layouts", layouts);
@@ -64,21 +71,24 @@ function Visualization(props) {
     barChartDiv.current.handleResize();
   }
 
+  const shakeDiv = isLayoutModifiable ? "shake" : "";
+  const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
   return (
     <div>
       <div>
         <MenuBar
+          title="Visualization Page"
           firstLinkName="Home"
           firstLinkRoute="/"
           secondLinkName="Admin"
           secondLinkRoute="/admin"
-          title="Visualization Page"
-          handleLayoutConfirm={() => {}}
+          handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
-          inModifyMode={false}
+          inModifyMode={isLayoutModifiable}
         />
       </div>
-      <div>
+      <div className={shakeDiv}>
         <ResponsiveReactGridLayout
           rowHeight={30}
           layouts={layouts}
@@ -87,11 +97,15 @@ function Visualization(props) {
           isResizable={isLayoutModifiable}
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
-          <div key="0" id="myID" className="grid-block">
-            <BarChart id="100" ref={barChartDiv} />{" "}
-          </div>
-          <div key="1" className="grid-block">
+          <div key="0" className={highlightEditDiv}>
             <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
+          </div>
+          {/*<div key="1" className={highlightEditDiv}>
+            <BarChart id="100" ref={SankeyDiagramDiv} />{" "}
+  </div>*/}
+
+          <div key="2" id="barDiv" className={highlightEditDiv}>
+            <BarChart id="100" ref={barChartDiv} />{" "}
           </div>
         </ResponsiveReactGridLayout>
       </div>
