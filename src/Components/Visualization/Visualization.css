@@ -1,12 +1,7 @@
-.ruleCreator {
+.grid-block {
   background: #fff;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
   height: 100%;
-  overflow-y: auto;
   width: 100%;
-}
-
-.cardContainer {
-  padding: 10px 10px 10px 30px;
 }

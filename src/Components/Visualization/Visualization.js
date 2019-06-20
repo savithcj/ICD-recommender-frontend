@@ -3,7 +3,7 @@ import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import ChordDiagram from "../ChordDiagram/ChordDiagram";
 import BarChart from "../BarChart/BarChart";
-// import css?
+import "./Visualization.css";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -87,10 +87,10 @@ function Visualization(props) {
           isResizable={isLayoutModifiable}
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
-          <div key="0" id="myID" className="barChart">
+          <div key="0" id="myID" className="grid-block">
             <BarChart id="100" ref={barChartDiv} />{" "}
           </div>
-          <div key="1" className="chordDiagram">
+          <div key="1" className="grid-block">
             <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
           </div>
         </ResponsiveReactGridLayout>
