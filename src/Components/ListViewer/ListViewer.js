@@ -87,7 +87,7 @@ export default React.memo(
     //sortableElement() returns a Component. i.e.: sortableElement is a React higher-order component (HOC)
     //Whereas a component transforms props into UI, a HOC transforms a component into another component.
     //https://reactjs.org/docs/higher-order-components.html
-    const SortableItem = sortableElement(({ value, description, id }) => {
+    const SortableItem = sortableElement(({ value, description, id, shouldHideDislikeButton }) => {
       //sortableHandle() is also an HOC
       const DragHandleButton = sortableHandle(() => (
         <span>
@@ -131,18 +131,19 @@ export default React.memo(
         </IconButton>
       ) : null;
 
-      const showDislikeButton = props.dislikeButton ? (
-        <IconButton
-          id={id}
-          edge="end"
-          aria-label="Dislike"
-          title="Dislike"
-          color="secondary"
-          onClick={props.dislikeButton}
-        >
-          <ThumbDownIcon />
-        </IconButton>
-      ) : null;
+      const showDislikeButton =
+        props.dislikeButton && !shouldHideDislikeButton ? (
+          <IconButton
+            id={id}
+            edge="end"
+            aria-label="Dislike"
+            title="Dislike"
+            color="secondary"
+            onClick={props.dislikeButton}
+          >
+            <ThumbDownIcon />
+          </IconButton>
+        ) : null;
 
       return (
         <Card className={classes.card}>
@@ -168,6 +169,7 @@ export default React.memo(
             value={value[props.valueName]}
             description={value[props.descriptionName]}
             disabled={!areItemsRearrangable}
+            shouldHideDislikeButton={value[props.hideDislikeButtonField]}
           />
         );
       });
