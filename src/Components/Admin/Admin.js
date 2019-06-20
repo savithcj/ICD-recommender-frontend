@@ -4,7 +4,6 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import RuleCreator from "../../Components/RuleCreator/RuleCreator";
 
 import "./Admin.css";
-import ChordDiagram from "../ChordDiagram/ChordDiagram";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
@@ -88,9 +87,6 @@ function Admin(props) {
         >
           <div key="0" className="ruleCreator">
             <RuleCreator />
-          </div>
-          <div key="1" className="chordDiagram">
-            <ChordDiagram id="100" ref={chordDiagramDiv} />{" "}
           </div>
         </ResponsiveReactGridLayout>
       </div>
