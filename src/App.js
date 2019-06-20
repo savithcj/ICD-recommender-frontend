@@ -232,6 +232,7 @@ class App extends Component {
       fetch(url)
         .then(response => response.json())
         .then(results => {
+          console.log(results);
           results.forEach(codeObj => {
             codeObj.reason =
               codeObj.lhs +
@@ -301,6 +302,20 @@ class App extends Component {
     //TODO: Call API function to increase code rejected number
     const removedCodeIndex = parseInt(event.currentTarget.id, 10);
     this.removeRecommendedCode(removedCodeIndex);
+  };
+
+  userFlagRuleForReview = event => {
+    const recommendedCodeIndex = parseInt(event.currentTarget.id, 10);
+    const recommendedCode = this.state.recommendedCodes[recommendedCodeIndex];
+    const ruleId = recommendedCode.id;
+    console.log("flagging rule id=" + ruleId);
+
+    const url = "http://localhost:8000/api/flagRuleForReview/" + ruleId.toString() + "/?format=json";
+    fetch(url)
+      .then(response => response.json())
+      .then(results => {
+        console.log(results);
+      });
   };
 
   /**
@@ -493,6 +508,7 @@ class App extends Component {
                 descriptionName="description"
                 acceptItemButton={this.handleAcceptRecommendedCode}
                 removeItemButton={this.handleRemoveRecommendedCode}
+                dislikeButton={this.userFlagRuleForReview}
                 exploreButton={this.handleExploreRecommendedCodeButton}
                 allowRearrage={false}
                 menuOptions={recommendedCodesComponentMenuItems}

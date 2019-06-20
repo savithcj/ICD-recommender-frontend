@@ -14,6 +14,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import ExploreIcon from "@material-ui/icons/ExploreOutlined";
 import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
 import RejectIcon from "@material-ui/icons/HighlightOff";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import DragHandle from "@material-ui/icons/DragHandle";
 import { ReactComponent as CheckMark } from "../../Assets/Icons/baseline-done-24px.svg";
 import { sortableContainer, sortableElement, sortableHandle } from "react-sortable-hoc";
@@ -127,6 +128,19 @@ export default React.memo(
         </IconButton>
       ) : null;
 
+      const showDislikeButton = props.dislikeButton ? (
+        <IconButton
+          id={id}
+          edge="end"
+          aria-label="Dislike"
+          title="Dislike"
+          color="secondary"
+          onClick={props.dislikeButton}
+        >
+          <ThumbDownIcon />
+        </IconButton>
+      ) : null;
+
       return (
         <Card className={classes.card}>
           <ListItem>
@@ -135,6 +149,7 @@ export default React.memo(
             {areItemsRearrangable ? itemIndex : null}
             {areItemsRearrangable ? null : showAcceptButton}
             {areItemsRearrangable ? null : showRemoveButton}
+            {areItemsRearrangable ? null : showDislikeButton}
           </ListItem>
         </Card>
       );
