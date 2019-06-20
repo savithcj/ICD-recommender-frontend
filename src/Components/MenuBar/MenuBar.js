@@ -78,6 +78,9 @@ function ButtonAppBar(props) {
       <MenuItem component={Link} to={props.firstLinkRoute}>
         {props.firstLinkName}
       </MenuItem>
+      <MenuItem component={Link} to={props.secondLinkRoute}>
+        {props.secondLinkName}
+      </MenuItem>
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>

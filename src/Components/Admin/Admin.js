@@ -69,6 +69,8 @@ function Admin(props) {
         <MenuBar
           firstLinkName="Home"
           firstLinkRoute="/"
+          secondLinkName="Visualization"
+          secondLinkRoute="/visualization"
           title="Admin Page"
           handleLayoutConfirm={() => {}}
           handleResetLayout={resetLayout}

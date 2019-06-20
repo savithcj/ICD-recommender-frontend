@@ -13,24 +13,34 @@ class BarChart extends Component {
   }
 
   componentDidMount() {
+    //console.log(document.getElementById("myID").clientHeight);
     this.getDataFromAPI().then(() => {
       this.drawBarChart();
+      this.forceUpdate();
     });
   }
 
   recalculateSizes() {
-    //let elem = ReactDOM.findDOMNode(this).parentNode;
-    this.width = 500; //elem.offsetWidth;
+    let elem = ReactDOM.findDOMNode(this).parentNode;
+    this.width = elem.offsetWidth - 30;
+    this.divHeight = elem.offsetHeight;
     this.height = this.data.length * 60; //elem.offsetHeight;
     this.barHeight = (this.height - 50) / this.data.length / 2;
-    //const minSize = Math.min(this.width, this.height);
-    //this.textSize = minSize / 40;
-    console.log(this.data.length);
+    const minSize = Math.min(this.width, this.divHeight);
+    this.textSize = minSize / 30;
+  }
+
+  handleResize() {
+    if (this.data === undefined) {
+      // console.log("No data");
+    } else {
+      this.drawBarChart();
+      this.forceUpdate();
+    }
   }
 
   drawBarChart() {
     this.recalculateSizes();
-
     d3.select("div." + this.barClass)
       .select("svg")
       .remove();
@@ -196,7 +206,12 @@ class BarChart extends Component {
   };
 
   render() {
-    return <div id={"bar" + this.props.id} className={this.barClass} />;
+    console.log("divheight:", this.divHeight);
+    const style = {
+      height: this.divHeight,
+      overflowY: "scroll"
+    };
+    return <div id={"bar" + this.props.id} className={this.barClass} style={style} />;
   }
 }
 
