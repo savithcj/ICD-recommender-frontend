@@ -316,6 +316,8 @@ class App extends Component {
       .then(results => {
         console.log(results);
       });
+
+    this.removeRecommendedCode(recommendedCodeIndex);
   };
 
   /**
