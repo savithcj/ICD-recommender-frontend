@@ -26,8 +26,6 @@ export default function RuleReviewer() {
 
     const url = "http://localhost:8000/api/updateFlaggedRule/" + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
 
-    console.log(url);
-
     const rules = [...flaggedRules];
 
     //ListViewer will display a loading indicator while the API promise is being fullfilled
@@ -35,6 +33,8 @@ export default function RuleReviewer() {
 
     fetch(url, { method: "PUT" }).then(response => {
       console.log(response.status);
+      //Only removes a rule from the list viewer if the put request was successful
+      //TODO: show a message to the user if the request failed
       if (response.status === 200) {
         rules.splice(acceptRuleIndex, 1);
       }
@@ -49,11 +49,12 @@ export default function RuleReviewer() {
 
     const rules = [...flaggedRules];
 
-    //ListViewer will display a loading indicator while the API promise is being fullfilled
     setFlaggedRules("LOADING");
 
     fetch(url, { method: "PUT" }).then(response => {
       console.log(response.status);
+      //Only removes a rule from the list viewer if the put request was successful
+      //TODO: show a message to the user if the request failed
       if (response.status === 200) {
         rules.splice(rejectRuleIndex, 1);
       }
