@@ -15,7 +15,7 @@ export default function RuleReviewer() {
       .then(response => response.json())
       .then(results => {
         results.forEach(ruleObject => {
-          ruleObject.rule = ruleObject.lhs + " -> " + ruleObject.rhs;
+          ruleObject.rule = ruleObject.lhs + " \u2192 " + ruleObject.rhs;
         });
         return setFlaggedRules(results);
       });
