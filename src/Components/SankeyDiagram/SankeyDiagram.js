@@ -185,6 +185,7 @@ class SankeyDiagram extends Component {
     }
 
     this.svg.selectAll("path.sankey").remove();
+    this.svg.selectAll("path.sankeyInvis").remove();
 
     this.drawHalfArcs(data1, data2, this.color1, -1);
     this.drawHalfArcs(data2, data1, this.color2, 1);
@@ -284,7 +285,22 @@ class SankeyDiagram extends Component {
             .attr("originatorBlock", d1.blocks[i])
             .attr("destinationBlock", d2.blocks[j])
             .attr("numRules", numRules)
-            .style("opacity", this.brightOpacity)
+            .style("opacity", this.brightOpacity);
+
+          //invisible arcs to mouseover easier
+          var invisArc = d3
+            .arc()
+            .innerRadius(radius - this.arcThickness * 4)
+            .outerRadius(radius + this.arcThickness * 4)
+            .startAngle(0)
+            .endAngle(Math.PI);
+          this.svg
+            .append("path")
+            .attr("class", "sankeyInvis")
+            .attr("d", invisArc)
+            .attr("fill", color)
+            .attr("transform", "translate(" + centerPoint + "," + this.centerY + ") rotate (" + direction * 90 + ")")
+            .style("opacity", 1e-6)
             .on("mouseover", d => {
               this.dimArcs();
               let matchStr =
