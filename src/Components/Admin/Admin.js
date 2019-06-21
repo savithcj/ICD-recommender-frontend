@@ -85,21 +85,21 @@ function Admin(props) {
           isResizable={isLayoutModifiable}
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
-          <div key="0" className="grid-block">
+          <div key="0" className="grid-border">
             <div className="cardContainer">
               <h3>Create Rules</h3>
               <RuleCreator />
             </div>
           </div>
 
-          <div key="1" className="grid-block">
+          <div key="1" className="grid-border">
             <div className="cardContainer">
               <h3>Review Flagged Rules</h3>
               <RuleReviewer />
             </div>
           </div>
 
-          <div key="2" className="grid-block">
+          <div key="2" className="grid-border">
             <div className="cardContainer">
               <h3>Search for Rule</h3>
               <RuleSearch />

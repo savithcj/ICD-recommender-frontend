@@ -484,45 +484,49 @@ class App extends Component {
             </div>
 
             <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
-              <ListViewer
-                title="Selected Codes"
-                items={this.state.selectedCodes}
-                noItemsMessage="No codes selected"
-                valueName="code"
-                descriptionName="description"
-                removeItemButton={this.handleRemoveSelectedCode}
-                exploreButton={this.handleExploreSelectedCodeButton}
-                onSortEndCallback={updatedListOfSelectedCodes => {
-                  this.setState({ selectedCodes: updatedListOfSelectedCodes });
-                }}
-                allowRearrage={this.state.selectedCodes.length > 1}
-                menuOptions={selectedCodesComponentMenuItems}
-                button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
-              />
+              <div className="cardContainer">
+                <ListViewer
+                  title="Selected Codes"
+                  items={this.state.selectedCodes}
+                  noItemsMessage="No codes selected"
+                  valueName="code"
+                  descriptionName="description"
+                  removeItemButton={this.handleRemoveSelectedCode}
+                  exploreButton={this.handleExploreSelectedCodeButton}
+                  onSortEndCallback={updatedListOfSelectedCodes => {
+                    this.setState({ selectedCodes: updatedListOfSelectedCodes });
+                  }}
+                  allowRearrage={this.state.selectedCodes.length > 1}
+                  menuOptions={selectedCodesComponentMenuItems}
+                  button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
+                />
+              </div>
             </div>
 
             <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
-              <ListViewer
-                className="recommendedCodes"
-                title="Recommended Codes"
-                items={this.state.recommendedCodes}
-                noItemsMessage="No recommendations for the selected codes and age"
-                nullItemsMessage="Select codes to get recommendations"
-                valueName="rhs"
-                descriptionName="description"
-                acceptItemButton={this.handleAcceptRecommendedCode}
-                removeItemButton={this.handleRemoveRecommendedCode}
-                dislikeButton={this.userFlagRuleForReview}
-                exploreButton={this.handleExploreRecommendedCodeButton}
-                allowRearrage={false}
-                menuOptions={recommendedCodesComponentMenuItems}
-                disableDislikeButtonField="shouldDisableDislikeButton"
-                // button={rejectRemainingRecommendationsButton}
-              />
+              <div className="cardContainer">
+                <ListViewer
+                  className="recommendedCodes"
+                  title="Recommended Codes"
+                  items={this.state.recommendedCodes}
+                  noItemsMessage="No recommendations for the selected codes and age"
+                  nullItemsMessage="Select codes to get recommendations"
+                  valueName="rhs"
+                  descriptionName="description"
+                  acceptItemButton={this.handleAcceptRecommendedCode}
+                  removeItemButton={this.handleRemoveRecommendedCode}
+                  dislikeButton={this.userFlagRuleForReview}
+                  exploreButton={this.handleExploreRecommendedCodeButton}
+                  allowRearrage={false}
+                  menuOptions={recommendedCodesComponentMenuItems}
+                  disableDislikeButtonField="shouldDisableDislikeButton"
+                  // button={rejectRemainingRecommendationsButton}
+                />
+              </div>
             </div>
 
             <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
-              {userInputBoxes}
+              <div className="cardContainer">{userInputBoxes}</div>
             </div>
           </ResponsiveReactGridLayout>
         </div>

@@ -118,7 +118,7 @@ function getFromLS(key) {
   let ls = {};
   if (global.localStorage) {
     try {
-      ls = JSON.parse(global.localStorage.getItem("rgl-7")) || {};
+      ls = JSON.parse(global.localStorage.getItem("rgl-6")) || {};
     } catch (e) {
       /*Ignore*/
     }
@@ -129,7 +129,7 @@ function getFromLS(key) {
 function saveToLS(key, value) {
   if (global.localStorage) {
     global.localStorage.setItem(
-      "rgl-7",
+      "rgl-6",
       JSON.stringify({
         [key]: value
       })
