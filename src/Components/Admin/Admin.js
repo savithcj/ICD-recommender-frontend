@@ -8,34 +8,29 @@ import RuleSearch from "../../Components/RuleSearch/RuleSearch";
 import "./Admin.css";
 
 const defaultLayoutLg = [
-  { w: 7, h: 16, x: 0, y: 2, i: "0" },
-  { w: 5, h: 9, x: 7, y: 0, i: "1" },
-  { w: 10, h: 10, x: 7, y: 11, i: "2" },
-  { w: 7, h: 2, x: 0, y: 0, i: "3" }
+  { w: 6, h: 14, x: 0, y: 10, i: "0" },
+  { w: 6, h: 10, x: 0, y: 0, i: "1" },
+  { w: 6, h: 17, x: 6, y: 0, i: "2" }
 ];
 const defaultLayoutMd = [
-  { w: 6, h: 17, x: 0, y: 2, i: "0" },
-  { w: 4, h: 10, x: 6, y: 0, i: "1" },
-  { w: 4, h: 9, x: 6, y: 10, i: "2" },
-  { w: 6, h: 2, x: 0, y: 0, i: "3" }
+  { w: 9, h: 16, x: 0, y: 28, i: "0" },
+  { w: 9, h: 13, x: 0, y: 0, i: "1" },
+  { w: 9, h: 15, x: 0, y: 13, i: "2" }
 ];
 const defaultLayoutSm = [
-  { w: 6, h: 14, x: 0, y: 20, i: "0" },
-  { w: 6, h: 9, x: 0, y: 2, i: "1" },
-  { w: 6, h: 9, x: 0, y: 11, i: "2" },
-  { w: 6, h: 2, x: 0, y: 0, i: "3" }
+  { w: 6, h: 14, x: 0, y: 13, i: "0" },
+  { w: 6, h: 13, x: 0, y: 0, i: "1" },
+  { w: 6, h: 16, x: 0, y: 27, i: "2" }
 ];
 const defaultLayoutXs = [
-  { w: 4, h: 14, x: 0, y: 19, i: "0" },
-  { w: 4, h: 9, x: 0, y: 2, i: "1" },
-  { w: 4, h: 8, x: 0, y: 11, i: "2" },
-  { w: 4, h: 2, x: 0, y: 0, i: "3" }
+  { w: 4, h: 14, x: 0, y: 9, i: "0" },
+  { w: 4, h: 9, x: 0, y: 0, i: "1" },
+  { w: 4, h: 15, x: 0, y: 23, i: "2" }
 ];
 const defaultLayoutXxs = [
   { w: 2, h: 12, x: 0, y: 19, i: "0" },
   { w: 2, h: 9, x: 0, y: 2, i: "1" },
-  { w: 2, h: 8, x: 0, y: 11, i: "2" },
-  { w: 2, h: 2, x: 0, y: 0, i: "3" }
+  { w: 2, h: 8, x: 0, y: 11, i: "2" }
 ];
 
 const defaultLayouts = {
@@ -65,6 +60,7 @@ function Admin(props) {
   async function onLayoutChange(layouts) {
     await saveToLS("layouts", layouts);
     setLayouts(layouts);
+    console.log(layouts);
   }
 
   const shakeDiv = isLayoutModifiable ? "shake" : "";
