@@ -145,7 +145,12 @@ class ChordDiagram extends Component {
       .attr("class", "invisibleRect")
       .attr("width", this.barHeight)
       .style("fill-opacity", 1e-6)
+      .style("stroke", "black")
+      .style("stroke-opacity", 1e-6)
       .attr("height", this.barWidth)
+      .attr("id", (d, i) => {
+        return "rect" + i;
+      })
       .attr("transform", d => {
         let angle = (d.angle * 180) / Math.PI + this.sliceAngle / 2;
         return "rotate(" + angle + "," + d.x + "," + d.y + ")";
@@ -153,10 +158,17 @@ class ChordDiagram extends Component {
       .on("mouseover", (d, i) => {
         this.infoText.text(d.block + ":" + d.description);
         this.drawOverlayCurves(i);
+        console.log("#rect" + i);
+        this.svg
+          .select("#rect" + i)
+          //.style("fill-opacity", 1)
+          //.attr("fill", "black")
+          .style("stroke-opacity", 1);
       })
       .on("mouseout", (d, i) => {
         this.infoText.text("");
         this.deleteOverlayCurves(i);
+        this.svg.select("#rect" + i).style("stroke-opacity", 1e-6);
       });
 
     var slider = sliderBottom()
