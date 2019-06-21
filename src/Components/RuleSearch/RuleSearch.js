@@ -163,6 +163,7 @@ function RuleSearch(props) {
             removeItemButton={handleRemoveLHSCode}
             allowRearrage={false}
             menuOptions={listComponentMenuItems}
+            disableTitleGutters={true}
           />
         </div>
         <div>
@@ -188,6 +189,7 @@ function RuleSearch(props) {
             removeItemButton={handleRemoveRHSCode}
             allowRearrage={false}
             menuOptions={listComponentMenuItems}
+            disableTitleGutters={true}
           />
         </div>
         <div>
@@ -219,6 +221,7 @@ function RuleSearch(props) {
           removeItemButton={adminSetRuleInactive}
           allowRearrage={false}
           menuOptions={listComponentMenuItems}
+          disableTitleGutters={true}
         />
       </div>
     </div>
