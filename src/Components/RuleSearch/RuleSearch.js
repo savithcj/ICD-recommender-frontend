@@ -86,7 +86,43 @@ function RuleSearch(props) {
     const request = new Request("http://localhost:8000/api/ruleSearch/", options);
     fetch(request)
       .then(response => response.json())
-      .then(data => setSearchResults(data));
+      .then(data => parseSearchResults(data));
+  };
+
+  /**
+   * FIXME:Temporary implementation of populating search results
+   * Parse each rule in data into the format that contains a "code" and "description" fields
+   * so that they can be displayed by the ListView component
+   * @param {*} data
+   */
+  const parseSearchResults = data => {
+    let formattedResults = [];
+    if (data.length > 1) {
+      data.forEach(item => {
+        // console.log(item);
+        formattedResults.push({
+          id: item.id,
+          code: item.lhs + " -> " + item.rhs,
+          description:
+            "Conf=" +
+            item.confidence +
+            ", Supp=" +
+            item.support +
+            ", #Accepted=" +
+            item.num_accepted +
+            ", #Rejected=" +
+            item.num_rejected +
+            ", #Suggested=" +
+            item.num_suggested +
+            ", Ages(" +
+            item.min_age +
+            "-" +
+            item.max_age +
+            ")"
+        });
+      });
+    }
+    setSearchResults(formattedResults);
   };
 
   const appendCodeToCache = results => {
