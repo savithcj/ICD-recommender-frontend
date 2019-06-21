@@ -14,7 +14,7 @@ body {
   width: 90%;
   left: 5%;
   height: 30px;
-  /* padding: 10px 2.5% 10px 2.5%; */
+  padding: 10px 2.5% 10px 2.5%;
   font-family: "Roboto", sans-serif;
   font-weight: 300;
   font-size: 16px;
@@ -38,9 +38,9 @@ body {
 .react-autosuggest__suggestions-container--open {
   display: block;
   position: absolute;
-  /* top: 51px; */
-  width: 90%;
-  left: 5%;
+  top: 51px;
+  width: 95%;
+  left: 2.5%;
   border: 1px solid #aaa;
   background-color: #e8e9ea;
   font-family: "Roboto", sans-serif;
