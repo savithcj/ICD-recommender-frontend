@@ -65,18 +65,20 @@ export default function RuleReviewer() {
   };
 
   return (
-    <ListViewer
-      className="ruleReviwer"
-      title="List of flagged rules"
-      items={flaggedRules}
-      noItemsMessage="No flagged rules"
-      valueName="rule"
-      descriptionName="description"
-      acceptItemButton={handleAcceptRule}
-      removeItemButton={handleRejectRule}
-      allowRearrage={false}
-      menuOptions={[]}
-      disableTitleGutters={true}
-    />
+    <div className="grid-block">
+      <ListViewer
+        className="ruleReviwer"
+        title="List of flagged rules"
+        items={flaggedRules}
+        noItemsMessage="No flagged rules"
+        valueName="rule"
+        descriptionName="description"
+        acceptItemButton={handleAcceptRule}
+        removeItemButton={handleRejectRule}
+        allowRearrage={false}
+        menuOptions={[]}
+        disableTitleGutters={true}
+      />
+    </div>
   );
 }
