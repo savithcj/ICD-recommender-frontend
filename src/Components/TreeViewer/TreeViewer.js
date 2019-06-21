@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 import ReactDOM from "react-dom";
 
+import APIClass from "../../Model/API";
+
 class TreeViewer extends Component {
   constructor(props) {
     super(props);
@@ -954,7 +956,7 @@ class TreeViewer extends Component {
   }
 
   getAncestorsFromAPI = code => {
-    const url = "http://localhost:8000/api/ancestors/" + code + "/?format=json";
+    const url = APIClass.getAPIURL("ANCESTORS") + code + "/?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
@@ -1686,7 +1688,9 @@ class TreeViewer extends Component {
   }
 
   getDataFromAPI = code => {
-    const url = "http://localhost:8000/api/family/" + code + "/?format=json";
+    const url = APIClass.getAPIURL("FAMILY") + code + "/?format=json";
+    console.log(url);
+    // const url = "http://localhost:8000/api/family/" + code + "/?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
