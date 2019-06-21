@@ -17,7 +17,7 @@ export default function RuleReviewer() {
         results.forEach(ruleObject => {
           ruleObject.rule = ruleObject.lhs + " \u2192 " + ruleObject.rhs;
         });
-        return setFlaggedRules(results);
+        setFlaggedRules(results);
       });
   };
 
@@ -74,6 +74,7 @@ export default function RuleReviewer() {
       removeItemButton={handleRejectRule}
       allowRearrage={false}
       menuOptions={[]}
+      disableTitleGutters={true}
     />
   );
 }
