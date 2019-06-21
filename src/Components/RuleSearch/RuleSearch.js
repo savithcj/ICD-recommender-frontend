@@ -8,6 +8,7 @@ function RuleSearch(props) {
   const [cachedCodeWithDescription, setCachedCodes] = useState([]);
   const [LHS, setLHS] = useState([]);
   const [RHS, setRHS] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const addCodeLHS = newCodeObj => {
     let selectedCodes = Array.from(LHS);
@@ -77,31 +78,77 @@ function RuleSearch(props) {
     const data = { LHSCodes, RHSCodes };
 
     const options = {
-      method: "GET",
+      method: "POST",
       headers,
       body: JSON.stringify(data)
     };
 
     const request = new Request("http://localhost:8000/api/ruleSearch/", options);
-    const response = await fetch(request);
-    const status = await response.status;
-
-    console.log(response);
+    fetch(request)
+      .then(response => response.json())
+      .then(data => parseSearchResults(data));
   };
 
-  const LHSCodesComponentMenuItems = [
+  /**
+   * FIXME:Temporary implementation of populating search results
+   * Parse each rule in data into the format that contains a "code" and "description" fields
+   * so that they can be displayed by the ListView component
+   * @param {*} data
+   */
+  const parseSearchResults = data => {
+    console.log(data);
+    let formattedResults = [];
+    if (data.length > 0) {
+      data.forEach(item => {
+        // console.log(item);
+        formattedResults.push({
+          id: item.id,
+          code: item.lhs + " -> " + item.rhs,
+          description:
+            "Conf=" +
+            item.confidence +
+            ", Supp=" +
+            item.support +
+            ", #Accepted=" +
+            item.num_accepted +
+            ", #Rejected=" +
+            item.num_rejected +
+            ", #Suggested=" +
+            item.num_suggested +
+            ", Ages(" +
+            item.min_age +
+            "-" +
+            item.max_age +
+            ")"
+        });
+      });
+    }
+    setSearchResults(formattedResults);
+  };
+
+  const appendCodeToCache = results => {
+    let codesWithDescript = Array.from(cachedCodeWithDescription);
+
+    for (let i = 0, l = results.length; i < l; i++) {
+      let thisCode = results[i];
+      let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode.code);
+      if (codeFound === undefined) {
+        codesWithDescript.push(thisCode);
+      }
+    }
+
+    setCachedCodes(codesWithDescript);
+  };
+
+  const listComponentMenuItems = [
     {
       menuItemOnClick: LHS.length > 1 ? resetLHSCodes : null,
       menuItemText: "Remove All Items"
     }
   ];
 
-  const RHSCodesComponentMenuItems = [
-    {
-      menuItemOnClick: RHS.length > 1 ? resetRHSCodes : null,
-      menuItemText: "Remove All Items"
-    }
-  ];
+  const adminSetRuleActive = () => {};
+  const adminSetRuleInactive = () => {};
 
   return (
     <div>
@@ -114,11 +161,8 @@ function RuleSearch(props) {
             valueName="code"
             descriptionName="description"
             removeItemButton={handleRemoveLHSCode}
-            onSortEndCallback={updatedListOfSelectedCodes => {
-              setLHS({ updatedListOfSelectedCodes });
-            }}
             allowRearrage={false}
-            menuOptions={LHSCodesComponentMenuItems}
+            menuOptions={listComponentMenuItems}
           />
         </div>
         <div>
@@ -142,11 +186,8 @@ function RuleSearch(props) {
             valueName="code"
             descriptionName="description"
             removeItemButton={handleRemoveRHSCode}
-            onSortEndCallback={updatedListOfSelectedCodes => {
-              setRHS({ updatedListOfSelectedCodes });
-            }}
             allowRearrage={false}
-            menuOptions={RHSCodesComponentMenuItems}
+            menuOptions={listComponentMenuItems}
           />
         </div>
         <div>
@@ -167,6 +208,21 @@ function RuleSearch(props) {
           Search
         </button>
       </div>
+      <div>
+        <ListViewer
+          title="Search Results"
+          items={searchResults}
+          noItemsMessage="No results"
+          valueName="code"
+          descriptionName="description"
+          acceptItemButton={adminSetRuleActive}
+          removeItemButton={adminSetRuleInactive}
+          allowRearrage={false}
+          menuOptions={listComponentMenuItems}
+        />
+      </div>
     </div>
   );
 }
+
+export default RuleSearch;

@@ -19,8 +19,8 @@
 .grid-border {
   background: #fff;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  padding: 3px 3px 3px 3px;
-  /* border-radius: 5px; */
+  /* padding: 3px 3px 3px 3px; */
+  border-radius: 5px;
   height: 100%;
   width: 100%;
 }
