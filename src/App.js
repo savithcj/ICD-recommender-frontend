@@ -4,6 +4,8 @@ import "./App.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
+import APIClass from "./Model/API";
+
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
@@ -201,7 +203,7 @@ class App extends Component {
    */
   acceptSelectedCodes = () => {
     const stringOfCodes = this.getStringFromListOfCodes(this.state.selectedCodes);
-    const url = "http://localhost:8000/api/codeUsed/" + stringOfCodes + "/";
+    const url = APIClass.getAPIURL("CODE_USED") + stringOfCodes + "/";
 
     fetch(url, { method: "PUT" });
 
@@ -222,7 +224,7 @@ class App extends Component {
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
 
     if (stringOfCodes !== "") {
-      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json" + ageParam;
+      const url = APIClass.getAPIURL("REQUEST_RULES") + stringOfCodes + "/?format=json" + ageParam;
 
       //ListViewer will display a loading indicator while the API promise is being fullfilled
       this.setState({
@@ -267,7 +269,7 @@ class App extends Component {
    */
   addRecommendedCodesToCachedCodes(arrayOfRecommendedCodes) {
     arrayOfRecommendedCodes.forEach(codeObj => {
-      const url = "http://localhost:8000/api/codeDescription/" + codeObj.rhs + "/?format=json";
+      const url = APIClass.getAPIURL("CODE_DESCRIPTION") + codeObj.rhs + "/?format=json";
 
       fetch(url)
         .then(response => response.json())
@@ -312,7 +314,7 @@ class App extends Component {
     const ruleId = recommendedCode.id;
     console.log("flagging rule id=" + ruleId);
 
-    const url = "http://localhost:8000/api/flagRuleForReview/" + ruleId.toString() + "/?format=json";
+    const url = APIClass.getAPIURL("FLAG_RULE_FOR_REVIEW") + ruleId.toString() + "/?format=json";
     fetch(url, { method: "PUT" })
       .then(response => response.json())
       .then(results => {

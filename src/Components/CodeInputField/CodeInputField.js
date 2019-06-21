@@ -4,6 +4,8 @@ import AutosuggestHighlightMatch from "../AutoSuggest/match";
 import AutosuggestHighlightParse from "../AutoSuggest/parse";
 import "./CodeInputField.css";
 
+import APIClass from "./../../Model/API";
+
 const ageOptions = [...Array(120).keys()].map(x => "" + x);
 const genderOptions = ["Male", "Female", "Other"];
 
@@ -180,7 +182,7 @@ class CodeInputField extends React.Component {
     const { appendCodeToCache } = this.props;
 
     if (inputValue !== "") {
-      const url = "http://localhost:8000/api/codeAutosuggestions/" + inputValue + "/?format=json";
+      const url = APIClass.getAPIURL("CODE_AUTO_SUGGESTIONS");
 
       fetch(url)
         .then(response => response.json())

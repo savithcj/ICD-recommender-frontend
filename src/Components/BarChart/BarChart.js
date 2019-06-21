@@ -3,6 +3,8 @@ import * as d3 from "d3";
 import "./BarChart.css";
 import ReactDOM from "react-dom";
 
+import APIClass from "./../../Model/API";
+
 class BarChart extends Component {
   constructor(props) {
     super(props);
@@ -196,7 +198,7 @@ class BarChart extends Component {
   }
 
   getDataFromAPI = () => {
-    const url = "http://localhost:8000/api/rules/?format=json";
+    const url = APIClass.getAPIURL("RULES") + "?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
