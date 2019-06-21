@@ -159,11 +159,7 @@ class ChordDiagram extends Component {
         this.infoText.text(d.block + ":" + d.description);
         this.drawOverlayCurves(i);
         console.log("#rect" + i);
-        this.svg
-          .select("#rect" + i)
-          //.style("fill-opacity", 1)
-          //.attr("fill", "black")
-          .style("stroke-opacity", 1);
+        this.svg.select("#rect" + i).style("stroke-opacity", 1);
       })
       .on("mouseout", (d, i) => {
         this.infoText.text("");
