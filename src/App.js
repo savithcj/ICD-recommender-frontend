@@ -313,7 +313,7 @@ class App extends Component {
     console.log("flagging rule id=" + ruleId);
 
     const url = "http://localhost:8000/api/flagRuleForReview/" + ruleId.toString() + "/?format=json";
-    fetch(url)
+    fetch(url, { method: "PUT" })
       .then(response => response.json())
       .then(results => {
         console.log(results);

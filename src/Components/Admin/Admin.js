@@ -3,6 +3,7 @@ import MenuBar from "../../Components/MenuBar/MenuBar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import RuleCreator from "../../Components/RuleCreator/RuleCreator";
 import RuleReviewer from "../../Components/RuleReviewer/RuleReviewer";
+import RuleSearch from "../../Components/RuleSearch/RuleSearch";
 
 import "./Admin.css";
 
@@ -84,18 +85,24 @@ function Admin(props) {
           isResizable={isLayoutModifiable}
           onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
         >
-          <div key="0" className="ruleCreator">
+          <div key="0" className="grid-block">
             <div className="cardContainer">
               <h3>Create Rules</h3>
               <RuleCreator />
             </div>
           </div>
 
-          {/* TODO: add a differet className and update CSS */}
-          <div key="1" className="ruleCreator">
+          <div key="1" className="grid-block">
             <div className="cardContainer">
               <h3>Review Flagged Rules</h3>
               <RuleReviewer />
+            </div>
+          </div>
+
+          <div key="2" className="grid-block">
+            <div className="cardContainer">
+              <h3>Search for Rule</h3>
+              <RuleSearch />
             </div>
           </div>
         </ResponsiveReactGridLayout>
