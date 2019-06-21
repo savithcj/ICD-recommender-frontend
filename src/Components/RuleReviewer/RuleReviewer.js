@@ -26,7 +26,7 @@ export default function RuleReviewer() {
   const handleAcceptRule = event => {
     const acceptRuleIndex = parseInt(event.currentTarget.id, 10);
 
-    const url = APIClass.getAPIURL("UPDATE_FLAGGED_RULES") + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
+    const url = APIClass.getAPIURL("UPDATE_FLAGGED_RULE") + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
 
     const rules = [...flaggedRules];
 
@@ -47,7 +47,7 @@ export default function RuleReviewer() {
   const handleRejectRule = event => {
     const rejectRuleIndex = parseInt(event.currentTarget.id, 10);
 
-    const url = APIClass.getAPIURL("UPDATE_FLAGGED_RULES") + flaggedRules[rejectRuleIndex].id + ",REJECT/";
+    const url = APIClass.getAPIURL("UPDATE_FLAGGED_RULE") + flaggedRules[rejectRuleIndex].id + ",REJECT/";
 
     const rules = [...flaggedRules];
 
