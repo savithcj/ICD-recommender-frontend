@@ -151,7 +151,7 @@ function RuleSearch(props) {
   const adminSetRuleInactive = () => {};
 
   return (
-    <div>
+    <div className="grid-block">
       <div>
         <div>
           <ListViewer

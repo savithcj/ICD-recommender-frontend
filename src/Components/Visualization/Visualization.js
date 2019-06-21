@@ -65,7 +65,6 @@ function Visualization(props) {
     chordDiagramDiv.current.handleResize();
     barChartDiv.current.handleResize();
     SankeyDiagramDiv.current.handleResize();
-    console.log(layouts);
   }
 
   const shakeDiv = isLayoutModifiable ? "shake" : "";
