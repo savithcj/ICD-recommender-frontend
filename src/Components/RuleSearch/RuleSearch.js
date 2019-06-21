@@ -96,8 +96,9 @@ function RuleSearch(props) {
    * @param {*} data
    */
   const parseSearchResults = data => {
+    console.log(data);
     let formattedResults = [];
-    if (data.length > 1) {
+    if (data.length > 0) {
       data.forEach(item => {
         // console.log(item);
         formattedResults.push({
