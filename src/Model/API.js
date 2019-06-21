@@ -20,7 +20,7 @@ export default class API {
         return this.urlBegnining + "matchDescription/";
       case "ANCESTORS":
         return this.urlBegnining + "ancestors/";
-      case "CODE_SUGGESTIONS":
+      case "CODE_AUTO_SUGGESTIONS":
         return this.urlBegnining + "codeAutosuggestions/";
       case "CODE_USED":
         return this.urlBegnining + "codeUsed/";

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 
+import APIClass from "./../../Model/API";
+
 export default function RuleReviewer() {
   const [flaggedRules, setFlaggedRules] = useState([]);
 
@@ -9,7 +11,7 @@ export default function RuleReviewer() {
   }, []);
 
   const getFlaggedRulesFromAPI = () => {
-    const url = "http://localhost:8000/api/flaggedRules/?format=json";
+    const url = APIClass.getAPIURL("FLAGGED_RULES") + "?format=json";
 
     fetch(url)
       .then(response => response.json())
@@ -24,7 +26,7 @@ export default function RuleReviewer() {
   const handleAcceptRule = event => {
     const acceptRuleIndex = parseInt(event.currentTarget.id, 10);
 
-    const url = "http://localhost:8000/api/updateFlaggedRule/" + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
+    const url = APIClass.getAPIURL("UPDATE_FLAGGED_RULES") + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
 
     const rules = [...flaggedRules];
 
@@ -45,7 +47,7 @@ export default function RuleReviewer() {
   const handleRejectRule = event => {
     const rejectRuleIndex = parseInt(event.currentTarget.id, 10);
 
-    const url = "http://localhost:8000/api/updateFlaggedRule/" + flaggedRules[rejectRuleIndex].id + ",REJECT/";
+    const url = APIClass.getAPIURL("UPDATE_FLAGGED_RULES") + flaggedRules[acceptRuleIndex].id + ",REJECT/";
 
     const rules = [...flaggedRules];
 

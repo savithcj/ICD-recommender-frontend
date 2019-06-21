@@ -14,7 +14,6 @@ import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
 
 import { __esModule } from "d3-random";
-import API from "./Model/API";
 
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },

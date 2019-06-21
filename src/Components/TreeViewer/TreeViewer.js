@@ -1690,7 +1690,6 @@ class TreeViewer extends Component {
   getDataFromAPI = code => {
     const url = APIClass.getAPIURL("FAMILY") + code + "/?format=json";
     console.log(url);
-    // const url = "http://localhost:8000/api/family/" + code + "/?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {

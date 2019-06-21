@@ -10,6 +10,8 @@ import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 import BarChart from "./Components/BarChart/BarChart";
 import SortableTable from "./Components/SortableTable/SortableTable";
 
+import APIClass from "./Model/API";
+
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
 // const originalLayouts = {};
@@ -77,7 +79,7 @@ class App extends Component {
    */
   searchCodeViaAPI(code) {
     if (code !== "") {
-      const url = "http://localhost:8000/api/children/" + code + "/?format=json";
+      const url = APIClass.getAPIURL("CHILDREN") + code + "/?format=json";
 
       console.log("look up code from API call: " + url);
       let searchedCodes = Array.from(this.state.searchedCodeList);
@@ -184,7 +186,7 @@ class App extends Component {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
 
     if (stringOfCodes !== "") {
-      const url = "http://localhost:8000/api/requestRules/" + stringOfCodes + "/?format=json";
+      const url = APIClass.getAPIURL("REQUEST_RULES") + stringOfCodes + "/?format=json";
 
       this.setState({
         selectedCodes: listOfCodeObjects,
