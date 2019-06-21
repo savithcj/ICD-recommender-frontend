@@ -218,7 +218,11 @@ export default React.memo(
       return (
         <List dense={true} className={classes.root}>
           <ThemeProvider theme={theme}>
-            <ListSubheader className={classes.listTitle} disableSticky={false}>
+            <ListSubheader
+              className={classes.listTitle}
+              disableSticky={false}
+              disableGutters={props.disableTitleGutters}
+            >
               {props.title}
               {showRearrangeConfirmationOrMenu}
               {showButton}

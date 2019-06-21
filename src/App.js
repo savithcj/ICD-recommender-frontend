@@ -517,6 +517,7 @@ class App extends Component {
                 allowRearrage={false}
                 menuOptions={recommendedCodesComponentMenuItems}
                 disableDislikeButtonField="shouldDisableDislikeButton"
+                disableTitleGutters={false}
                 // button={rejectRemainingRecommendationsButton}
               />
             </div>

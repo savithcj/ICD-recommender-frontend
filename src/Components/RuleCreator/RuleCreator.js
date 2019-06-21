@@ -152,6 +152,7 @@ function RuleCreator(props) {
             }}
             allowRearrage={false}
             menuOptions={LHSCodesComponentMenuItems}
+            disableTitleGutters={true}
           />
         </div>
         <div>
@@ -180,6 +181,7 @@ function RuleCreator(props) {
             }}
             allowRearrage={false}
             menuOptions={RHSCodesComponentMenuItems}
+            disableTitleGutters={true}
           />
         </div>
         <div>

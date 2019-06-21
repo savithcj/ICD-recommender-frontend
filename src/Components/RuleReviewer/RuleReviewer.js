@@ -74,6 +74,7 @@ export default function RuleReviewer() {
       removeItemButton={handleRejectRule}
       allowRearrage={false}
       menuOptions={[]}
+      disableTitleGutters={true}
     />
   );
 }

@@ -8,6 +8,7 @@ import "react-resizable/css/styles.css";
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 import BarChart from "./Components/BarChart/BarChart";
+import SortableTable from "./Components/SortableTable/SortableTable";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -282,6 +283,9 @@ class App extends Component {
         </div>
         <div>
           <BarChart id="1" />
+        </div>
+        <div>
+          <SortableTable />
         </div>
       </div>
     );
