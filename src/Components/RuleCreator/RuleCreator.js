@@ -8,8 +8,8 @@ function RuleCreator(props) {
   const [cachedCodeWithDescription, setCachedCodes] = useState([]);
   const [LHS, setLHS] = useState([]);
   const [RHS, setRHS] = useState([]);
-  const [ageStart, setAgeStart] = useState();
-  const [ageEnd, setAgeEnd] = useState();
+  const [ageStart, setAgeStart] = useState(0);
+  const [ageEnd, setAgeEnd] = useState(150);
   const [gender, setGender] = useState();
 
   const addCodeLHS = newCodeObj => {
@@ -117,7 +117,7 @@ function RuleCreator(props) {
       setLHS([]);
       setRHS([]);
       setAgeStart(0);
-      setAgeEnd(0);
+      setAgeEnd(150);
       setGender();
     }
   };
