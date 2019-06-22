@@ -3,6 +3,8 @@ import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import "./RuleSearch.css";
 
+import APIClass from "./../../Model/API";
+
 function RuleSearch(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
   const [cachedCodeWithDescription, setCachedCodes] = useState([]);
@@ -83,7 +85,7 @@ function RuleSearch(props) {
       body: JSON.stringify(data)
     };
 
-    const request = new Request("http://localhost:8000/api/ruleSearch/", options);
+    const request = new Request(APIClass.getAPIURL("RULE_SEARCH"), options);
     fetch(request)
       .then(response => response.json())
       .then(data => parseSearchResults(data));

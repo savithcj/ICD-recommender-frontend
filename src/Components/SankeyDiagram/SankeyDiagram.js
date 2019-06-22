@@ -3,6 +3,8 @@ import * as d3 from "d3";
 import { sliderBottom } from "d3-simple-slider";
 import ReactDOM from "react-dom";
 
+import APIClass from "./../../Model/API";
+
 class SankeyDiagram extends Component {
   constructor(props) {
     super(props);
@@ -344,7 +346,7 @@ class SankeyDiagram extends Component {
   }
 
   getDataFromAPI = () => {
-    const url = "http://localhost:8000/api/codeBlockUsage/?format=json";
+    const url = APIClass.getAPIURL("CODE_BLOCK_USAGE") + "?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {

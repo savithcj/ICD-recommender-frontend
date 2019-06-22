@@ -3,6 +3,8 @@ import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import "./RuleCreator.css";
 
+import APIClass from "./../../Model/API";
+
 function RuleCreator(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
   const [cachedCodeWithDescription, setCachedCodes] = useState([]);
@@ -109,7 +111,7 @@ function RuleCreator(props) {
       body: JSON.stringify(data)
     };
 
-    const request = new Request("http://localhost:8000/api/modifyRule/", options);
+    const request = new Request(APIClass.getAPIURL("MODIFY_RULE"), options);
     const response = await fetch(request);
     const status = await response.status;
 
