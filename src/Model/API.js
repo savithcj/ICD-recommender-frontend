@@ -1,5 +1,5 @@
 export default class API {
-  static serverAdress = "10.14.166.85";
+  static serverAdress = "localhost";
   static portAdress = ":8000";
   static urlBegnining = "http://" + this.serverAdress + this.portAdress + "/api/";
 
