@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { sliderBottom } from "d3-simple-slider";
 import ReactDOM from "react-dom";
 
-import APIClass from "./../../Model/API";
+import APIClass from "../../Assets/Util/API";
 
 class SankeyDiagram extends Component {
   constructor(props) {

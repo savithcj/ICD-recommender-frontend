@@ -3,7 +3,7 @@ import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import "./RuleCreator.css";
 
-import APIClass from "./../../Model/API";
+import APIClass from "../../Assets/Util/API";
 
 function RuleCreator(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);

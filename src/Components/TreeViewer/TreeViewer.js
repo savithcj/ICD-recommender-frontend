@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 import ReactDOM from "react-dom";
 
-import APIClass from "../../Model/API";
+import APIClass from "../../Assets/Util/API";
 
 class TreeViewer extends Component {
   constructor(props) {

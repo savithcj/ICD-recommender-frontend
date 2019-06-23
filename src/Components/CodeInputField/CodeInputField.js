@@ -4,7 +4,7 @@ import AutosuggestHighlightMatch from "../AutoSuggest/match";
 import AutosuggestHighlightParse from "../AutoSuggest/parse";
 import "./CodeInputField.css";
 
-import APIClass from "./../../Model/API";
+import APIClass from "../../Assets/Util/API";
 
 const ageOptions = [...Array(120).keys()].map(x => "" + x);
 const genderOptions = ["Male", "Female", "Other"];

@@ -10,7 +10,7 @@ import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 import BarChart from "./Components/BarChart/BarChart";
 import SortableTable from "./Components/SortableTable/SortableTable";
 
-import APIClass from "./Model/API";
+import APIClass from "./Assets/Util/API";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};

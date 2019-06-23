@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 
-import APIClass from "./../../Model/API";
+import APIClass from "../../Assets/Util/API";
 
 export default function RuleReviewer() {
   const [flaggedRules, setFlaggedRules] = useState([]);

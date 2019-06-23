@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import "./BarChart.css";
 import ReactDOM from "react-dom";
 
-import APIClass from "./../../Model/API";
+import APIClass from "../../Assets/Util/API";
 
 class BarChart extends Component {
   constructor(props) {
