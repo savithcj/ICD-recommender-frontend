@@ -7,53 +7,55 @@ import APIClass from "../../Assets/Util/API";
 class TreeViewer extends Component {
   constructor(props) {
     super(props);
-    this.duration = 500;
+    this.duration = 500; // Duration of all transitions
 
-    this.fontType = "sans-serif";
-    this.treeClass = "treeVis" + this.props.id;
-    this.selectedColor = "#3748ac";
-    this.otherColor = "pink";
-    this.textColor = "#0019a8";
-    this.fontWeight = 2;
-    this.linkColor = "#f0f0f0";
-    this.linkWidth = 7;
-    this.handlingClick = false;
-
-    this.link = d3
-      .linkHorizontal()
-      .x(function(d) {
-        return d.x;
-      })
-      .y(function(d) {
-        return d.y;
-      });
+    this.fontType = "sans-serif"; // Font type
+    this.treeClass = "treeVis" + this.props.id; // Class name
+    this.selectedColor = "#3748ac"; // Colour of selected node
+    this.otherColor = "pink"; // Colour of other nodes
+    this.textColor = "#0019a8"; // Colour of text
+    this.linkColor = "#f0f0f0"; // Colour of links
+    this.linkWidth = 7; // Width of links
+    this.handlingClick = false; // Initializing handlingClick to false, used to prevent two clicks from happening at the same time
   }
 
+  // Function to create links
+  link = d3
+    .linkHorizontal()
+    .x(function(d) {
+      return d.x;
+    })
+    .y(function(d) {
+      return d.y;
+    });
+
+  // Handles resizing of the tree in the main page. Is called by App
   handleResize(e) {
     if (this.data === undefined) {
       // variable is undefined
     } else {
-      this.recalculateSizes();
-      this.drawInitialTree();
+      this.recalculateSizes(); // Caclulate sizes
+      this.drawInitialTree(); // Draw tree
     }
   }
 
+  // Recalculates all sizes based upon the size of the window passed by App
   recalculateSizes() {
     let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = elem.offsetWidth;
     this.height = elem.offsetHeight;
-    const minSize = Math.min(this.width, this.height);
-    this.vPadding = this.height * 0.1;
-    this.leftPadding = this.width * 0.05;
-    this.rightPadding = this.width * 0.3;
-    this.cRadius = minSize / 60;
-    this.textSize = minSize / 50;
-    this.middle = (this.width - this.leftPadding - this.rightPadding) / 2 + this.leftPadding;
-    this.maxChar = Math.floor(this.width / 25);
-    this.buttonWidth = this.rightPadding / 2;
-    this.buttonHeight = this.vPadding / 2;
+    const minSize = Math.min(this.width, this.height); // Minimum of width and height
+    this.vPadding = this.height * 0.1; // Vertical padding
+    this.leftPadding = this.width * 0.05; // Left padding
+    this.rightPadding = this.width * 0.3; // Right padding
+    this.cRadius = minSize / 60; // Circle radius
+    this.textSize = minSize / 50; // Font size
+    this.middle = (this.width - this.leftPadding - this.rightPadding) / 2 + this.leftPadding; // Middle of the non-padded space
+    this.buttonWidth = this.rightPadding / 2; // Width of "add code" button
+    this.buttonHeight = this.vPadding / 2; // Height of "add code" button
   }
 
+  // Adds the text element to the top left corner to display what is being hovered over
   addInfoText() {
     let infoG = this.svg.append("g").attr("class", "infoG");
     this.infoText = infoG
@@ -67,6 +69,9 @@ class TreeViewer extends Component {
       .style("text-anchor", "left");
   }
 
+  // Sets the text in the top left corner
+  // Tiers: 0 for parent, 1 for sibling, 2 for children
+  // Index is for sibling or children, the index of the sibling or child to display the text of
   setInfoText(tier, index) {
     let codeDesc = "";
     if (tier === 0) {
@@ -85,29 +90,36 @@ class TreeViewer extends Component {
     this.infoText.text(codeDesc);
   }
 
+  // Sets the text in the top left corner if one of the ancestor circles is hovered over
   setInfoTextChain(index) {
     let codeDesc = "";
     codeDesc = this.codeFormat(this.ancestors[index], 0);
     this.infoText.text(codeDesc);
   }
 
+  // Clears the text in the top left corner
   clearInfoText() {
     this.infoText.text("");
   }
 
   componentDidMount() {
     this.getDataFromAPI("Chapter 01").then(() => {
-      this.drawInitialTree();
+      // Get data from API
+      this.drawInitialTree(); // Draw tree
     });
   }
 
+  // Changes the tree to the specified code.
+  // Used by App when a user clicks on the explore button from a code in a ListViewer
   async changeTree(code) {
+    // Transitions the current tree out
     d3.select("div." + this.treeClass)
       .transition()
       .duration(0.5 * this.duration)
       .style("opacity", 1e-6);
 
-    await this.sleep(0.5 * this.duration);
+    await this.sleep(0.5 * this.duration); // Wait for current to disappear
+    // Transition new tree in
     this.getDataFromAPI(code).then(() => {
       this.drawInitialTree();
       d3.select("div." + this.treeClass)
@@ -118,30 +130,34 @@ class TreeViewer extends Component {
   }
 
   drawInitialTree() {
-    this.recalculateSizes();
+    this.recalculateSizes(); // Calculates sizes to draw the tree
 
+    // Remove any existing tree svg
     d3.select("div." + this.treeClass)
       .select("svg")
       .remove();
 
+    // Create the svg to draw the tree
     this.svg = d3
       .select("div." + this.treeClass)
       .append("svg")
       .attr("width", this.width)
       .attr("height", this.height);
 
-    this.addChain();
+    this.addChain(); // Adds the ancestry chain at the bottom
 
-    this.addInfoText();
+    this.addInfoText(); // Adds the info text
+    // Creating g elements here in a specified order to set what is drawn on top
     this.linkG = this.svg.append("g").attr("class", "pathG");
     this.rightG = this.svg.append("g").attr("class", "rightG");
     this.middleG = this.svg.append("g").attr("class", "middleG");
     this.leftG = this.svg.append("g").attr("class", "leftG");
 
-    //////////// PARENT NODE ////////////
-    /////////////////////////////////////
+    //////////// PARENT NODE ///////////////
+    ////////////////////////////////////////
     if (this.data.parent) {
-      let parentg = this.leftG
+      // Can only draw the parent node if the self node has a parent
+      let parentg = this.leftG // Attach parent g to the left g
         .append("g")
         .attr("transform", () => {
           return "translate(" + this.leftPadding + "," + this.height / 2 + ")";
@@ -149,9 +165,11 @@ class TreeViewer extends Component {
         .attr("class", "parentG");
       parentg
         .on("mouseover", (d, i) => {
+          // Set info text
           this.setInfoText(0, 0);
         })
         .on("mouseout", () => {
+          // Clear info text
           this.clearInfoText();
         })
         .append("text")
@@ -164,23 +182,27 @@ class TreeViewer extends Component {
         .attr("class", "parentText")
         .style("text-anchor", "right");
 
+      // Add parent circle to the parent g
       parentg
         .append("circle")
         .attr("r", this.cRadius)
         .attr("fill", this.otherColor)
         .attr("class", "parentCircle")
         .on("click", (d, i) => {
-          this.handleParentClick(d, i);
+          this.handleParentClick(d, i); // Handles the parent click
         });
     }
+    ////////////////////////////////////////
+    ////////////////////////////////////////
 
     //////////// SIBLING NODES ////////////
     ///////////////////////////////////////
-    this.selfIndex = 0;
-    this.findIndex();
-    this.calcSiblingHeights();
-    this.calcSiblingColours();
+    this.selfIndex = 0; // Initialize selfIndex to 0
+    this.findIndex(); // Find index of self node
+    this.calcSiblingHeights(); // Calculate heights of sibling circles
+    this.calcSiblingColours(); // Calculate colours of sibling circles (self index is different then the rest)
 
+    // Attach sibling g to the middle g
     let siblingGs = this.middleG
       .selectAll("g.siblingG")
       .data(this.siblingHeights)
@@ -197,6 +219,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "siblingG");
 
+    // Attach the text for each sibling
     siblingGs
       .data(this.data.siblings)
       .append("text")
@@ -209,6 +232,7 @@ class TreeViewer extends Component {
       .attr("class", "siblingText")
       .style("text-anchor", "right");
 
+    // Attach the circles for each sibling
     siblingGs
       .data(this.siblingColours)
       .append("circle")
@@ -218,12 +242,16 @@ class TreeViewer extends Component {
       })
       .attr("class", "siblingCircle")
       .on("click", (d, i) => {
-        this.handleSiblingClick(d, i);
+        this.handleSiblingClick(d, i); // Handle sibling click
       });
+    ////////////////////////////////////////
+    ////////////////////////////////////////
 
     //////////// CHILDREN NODES ////////////
     ////////////////////////////////////////
-    this.calcChildrenHeights();
+    this.calcChildrenHeights(); // Calculate the height of the children
+
+    // Attach children g to the right g
     let childrenGs = this.rightG
       .selectAll("g.childrenG")
       .data(this.childrenHeights)
@@ -240,6 +268,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "childrenG");
 
+    // Attach the text for each child
     childrenGs
       .data(this.data.children)
       .append("text")
@@ -252,6 +281,7 @@ class TreeViewer extends Component {
       .attr("class", "childrenText")
       .style("text-anchor", "right");
 
+    // Attach the circles for each child
     childrenGs
       .append("circle")
       .attr("r", this.cRadius)
@@ -260,11 +290,15 @@ class TreeViewer extends Component {
       .on("click", (d, i) => {
         this.handleChildrenClick(d, i);
       });
+    ////////////////////////////////////////
+    ////////////////////////////////////////
 
     // LINKS //////////////////////////////
     ///////////////////////////////////////
+    // If there is a parent, need to draw links from parent to self and siblings
     if (this.data.parent) {
-      this.createParentLinks();
+      this.createParentLinks(); // Creates the parent links
+      // Attachs the created parent links
       this.linkG
         .selectAll("siblingG")
         .data(this.parentLinks)
@@ -277,7 +311,8 @@ class TreeViewer extends Component {
         .style("stroke-width", this.linkWidth);
     }
 
-    this.createChildrenLinks();
+    this.createChildrenLinks(); // Creates the children links
+    // Attachs the created children links
     this.linkG
       .selectAll("childrenG")
       .data(this.childrenLinks)
@@ -288,29 +323,35 @@ class TreeViewer extends Component {
       .style("fill", "none")
       .style("stroke", this.linkColor)
       .style("stroke-width", this.linkWidth);
+    ////////////////////////////////////////
+    ////////////////////////////////////////
 
-    this.createButton();
+    this.createButton(); // Creates the "Add Code" button
   }
   // END OF DRAW INITIAL TREE /////////////////
   /////////////////////////////////////////////
 
   // HANDLE CLICKS ////////////////////////////
   /////////////////////////////////////////////
+
+  // Handles the user clicking on the parent node
   handleParentClick() {
+    // Checks to ensure that it isn't already handling a click
     if (!this.handlingClick) {
-      this.handlingClick = true;
-      this.prevAncestors = this.ancestors;
-      this.getDataFromAPI(this.data.parent.code)
-        .then(() => this.getAncestorsFromAPI(this.data.self.code))
+      this.handlingClick = true; // Sets handling click to true
+      this.prevAncestors = this.ancestors; // Saves current ancestors in another variable
+      this.getDataFromAPI(this.data.parent.code) // Gets data for parent node
+        .then(() => this.getAncestorsFromAPI(this.data.self.code)) // Gets new ancestors
         .then(async () => {
-          this.removeChildren();
-          this.moveSiblingsToChildren();
-          this.moveParentToSibling();
-          this.transitionParentLinks();
+          this.removeChildren(); // Removes children
+          this.moveSiblingsToChildren(); // Transitions the siblings to children spots
+          this.moveParentToSibling(); // Moves the parent to sibling spot
+          this.transitionParentLinks(); // Transitions the links
           await this.sleep(this.duration);
-          this.parentChain();
+          this.parentChain(); // Handles the chain
           await this.sleep(this.duration);
-          this.spawnParentAndSiblings();
+          this.spawnParentAndSiblings(); // Spawns parents and siblings from the new self (previously parent) node
+          // Removes old g's
           this.svg.selectAll("g.oldChainG").remove();
           this.svg.selectAll("g.oldChildren").remove();
           await this.sleep(this.duration);
@@ -318,20 +359,24 @@ class TreeViewer extends Component {
           this.svg.selectAll("g.tempG").remove();
         })
         .then(() => {
-          this.handlingClick = false;
+          this.handlingClick = false; // Sets handling click to false to enable clicking on a node again
         });
     }
   }
 
+  // Handles the parent clicking on a sibling node
   handleSiblingClick(d, i) {
+    // Checks to ensure that it isn't already handling a click
     if (!this.handlingClick) {
-      this.handlingClick = true;
-      this.getDataFromAPI(this.data.siblings[i].code)
+      this.handlingClick = true; // Sets handling click to true
+      this.getDataFromAPI(this.data.siblings[i].code) // Gets data from API for clicked sibling
         .then(async () => {
+          // No need to do anything if they clicked on the already selected circle
           if (i !== this.selfIndex) {
-            this.removeChildren();
-            this.findIndex();
-            this.calcSiblingColours();
+            this.removeChildren(); // Remove the children
+            this.findIndex(); // Find the self index
+            this.calcSiblingColours(); // Calculate the colours (self node different)
+            // Transition to the new colours
             this.svg
               .selectAll("circle.siblingCircle")
               .data(this.siblingColours)
@@ -350,44 +395,49 @@ class TreeViewer extends Component {
               .attr("x", 1.5 * this.cRadius)
               .attr("class", "siblingText")
               .style("text-anchor", "right");
-            this.changeSelfAncestor();
+            this.changeSelfAncestor(); // Changes the self node on the ancestor chain
             await this.sleep(this.duration);
-            this.spawnChildren();
+            this.spawnChildren(); // Creates children for the new self
           }
         })
         .then(() => {
-          this.handlingClick = false;
+          this.handlingClick = false; // Sets handling click to false to enable clicking on a node again
         });
     }
   }
 
+  // Handles the user clicking on a child node
   handleChildrenClick(d, i) {
+    // Checks to ensure that it isn't already handling a click
     if (!this.handlingClick) {
-      this.handlingClick = true;
-      this.prevAncestors = this.ancestors;
-      this.getDataFromAPI(this.data.children[i].code)
-        .then(() => this.getAncestorsFromAPI(this.data.self.code))
+      this.handlingClick = true; // Sets handling click to true
+      this.prevAncestors = this.ancestors; // Saves current ancestors in another variable
+      this.getDataFromAPI(this.data.children[i].code) // Gets data for the clicked child
+        .then(() => this.getAncestorsFromAPI(this.data.self.code)) // Gets ancestor data
         .then(async () => {
-          this.createNewParent();
-          this.removeParentAndSiblings();
+          this.createNewParent(); // Creates new parent
+          this.removeParentAndSiblings(); // Transitions parent and siblings to the current self
           await this.sleep(this.duration);
+          // Removes old elements
           this.linkG.selectAll("path.parentLink").remove();
           this.svg.selectAll("g.siblingG").remove();
           this.svg.selectAll("g.oldParentG").remove();
-          this.moveSelfToParent();
-          this.moveChildrenToSiblings();
-          this.transitionChildrenLinks();
-          this.childrenChain();
+          this.moveSelfToParent(); // Moves the old self to the parent spot
+          this.moveChildrenToSiblings(); // Move children to siblings
+          this.transitionChildrenLinks(); // Transition the links
+          this.childrenChain(); // Handles the chain
           await this.sleep(this.duration);
-          this.spawnChildren();
+          this.spawnChildren(); // Spawns children for the new selected node
         })
         .then(() => {
-          this.handlingClick = false;
+          this.handlingClick = false; // Sets handling click to false to enable clicking on a node again
         });
     }
   }
 
+  // Redraws the tree if one of the ancestor circles is clicked
   handleChainClick(d, i) {
+    // Only change if the circle clicked isn't self
     if (this.ancestors[i].code !== this.data.self.code) {
       this.changeTree(this.ancestors[i].code);
     }
@@ -396,7 +446,9 @@ class TreeViewer extends Component {
   // END OF HANDLE CLICKS //////////////////////
   //////////////////////////////////////////////
 
+  // Creates the "Add Code" button
   createButton() {
+    // Creating g for the button rectangles and text
     let buttonG = this.svg
       .append("g")
       .attr("transform", d => {
@@ -407,6 +459,7 @@ class TreeViewer extends Component {
         this.props.addCodeFromTree(this.data.self);
       });
 
+    // Create rectangle for colour
     buttonG
       .append("rect")
       .attr("width", this.buttonWidth)
@@ -416,6 +469,7 @@ class TreeViewer extends Component {
       .attr("rx", this.cRadius)
       .attr("ry", this.cRadius);
 
+    // Create text on the button
     buttonG
       .append("text")
       .text("Add Code")
@@ -428,6 +482,7 @@ class TreeViewer extends Component {
       .attr("class", "buttonText")
       .style("text-anchor", "middle");
 
+    // Create a new rectangle for flashing effect when clicked
     let overButton = buttonG
       .append("rect")
       .attr("width", this.buttonWidth)
@@ -450,14 +505,18 @@ class TreeViewer extends Component {
       .attr("ry", this.cRadius);
   }
 
+  // Transitions chain when a parent is clicked
   async parentChain() {
+    // Removing old elements
     this.svg.selectAll("g.chainG").attr("class", "oldChainG");
     this.svg.selectAll("text.chainText").attr("class", "oldChainText");
     this.svg.selectAll("circle.chainCircle").attr("class", "oldChainCircle");
     this.svg.selectAll("path.chainLink").attr("class", "oldChainLink");
 
-    // create all except last on same spots
+    // Create all nodes except for the last in the same position
+    //////////////////////////////////////////////////
     this.chainPositions.shift();
+    // Creating svgs for chain circles/text
     let chainGs = this.svg
       .selectAll("g.chainG")
       .data(this.chainPositions)
@@ -467,6 +526,8 @@ class TreeViewer extends Component {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       })
       .attr("class", "chainG");
+
+    // Adding text to the g's
     chainGs
       .data(this.ancestors)
       .append("text")
@@ -478,7 +539,11 @@ class TreeViewer extends Component {
       .attr("class", "chainText")
       .style("fill-opacity", 1)
       .style("text-anchor", "middle");
+
+    // Calculating ancestor colours (last is self colour)
     this.calcAncestorColours();
+
+    // Adding circles
     chainGs
       .data(this.ancestorColours)
       .append("circle")
@@ -501,8 +566,9 @@ class TreeViewer extends Component {
         this.clearInfoText();
       });
 
-    this.calcChainSpacing();
-    this.addChainLinks();
+    this.calcChainSpacing(); // Calculating spacing
+    this.addChainLinks(); // Adds the links
+    // Transition the new circles/text to new position
     this.svg
       .selectAll("g.chainG")
       .data(this.chainPositions)
@@ -511,11 +577,14 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       });
+    // Fade the old text out
     this.svg
       .selectAll("text.oldChainText")
       .transition()
       .duration(this.duration)
       .style("fill-opacity", 1e-6);
+
+    // Fade the old circles out
     this.svg
       .selectAll("circle.oldChainCircle")
       .transition()
@@ -523,6 +592,7 @@ class TreeViewer extends Component {
       .attr("r", 1e-6);
 
     if (this.ancestors.length > 1) {
+      // Creating temp g to add new self node
       let tempG = this.svg
         .append("g")
         .attr("transform", () => {
@@ -530,12 +600,14 @@ class TreeViewer extends Component {
         })
         .attr("class", "tempG");
 
+      // Adding circle
       tempG
         .append("circle")
         .attr("r", this.cRadius)
         .attr("fill", this.selectedColor)
         .attr("class", "TempCircle");
 
+      // Adding text
       tempG
         .append("text")
         .text(this.prevAncestors[0].code)
@@ -547,20 +619,24 @@ class TreeViewer extends Component {
         .style("fill-opacity", 1)
         .style("text-anchor", "middle");
 
+      // Fading out the tempText
       this.svg
         .selectAll("text.TempText")
         .transition()
         .duration(this.duration)
         .style("fill-opacity", 1e-6);
 
+      // Fading out the tempCircle
       this.svg
         .selectAll("circle.TempCircle")
         .transition()
         .duration(this.duration)
         .attr("r", 1e-6);
-      this.svg.selectAll("g.oldChainG").remove();
+      this.svg.selectAll("g.oldChainG").remove(); // Removing old g
     } else {
+      // If lenght of ancestors == 1
       this.ancestorLinks = [];
+      // Creating new ancestor links
       this.ancestorLinks[0] = {
         source: {
           x: this.leftPadding + this.cRadius,
@@ -572,6 +648,7 @@ class TreeViewer extends Component {
         }
       };
 
+      // Appending the links to the chain on the same spots as they were
       this.linkG
         .selectAll("g.chainG")
         .data(this.ancestorLinks)
@@ -595,6 +672,7 @@ class TreeViewer extends Component {
         }
       };
 
+      // Transition the newly created links to the correct positions
       this.svg
         .selectAll("path.chainLink")
         .data(this.ancestorLinks)
@@ -602,6 +680,7 @@ class TreeViewer extends Component {
         .duration(this.duration)
         .attr("d", d => this.link(d));
 
+      // Adding svg for selected code
       let tempG = this.svg
         .append("g")
         .attr("transform", () => {
@@ -626,6 +705,7 @@ class TreeViewer extends Component {
         .style("fill-opacity", 1)
         .style("text-anchor", "middle");
 
+      // Transition the selected one to the new position
       tempG
         .transition()
         .duration(this.duration)
@@ -633,29 +713,34 @@ class TreeViewer extends Component {
           return "translate(" + this.leftPadding + "," + (this.height - this.vPadding / 2) + ")";
         });
 
+      // Fading out the text
       this.svg
         .selectAll("text.TempText")
         .transition()
         .duration(this.duration)
         .style("fill-opacity", 1e-6);
 
+      // Fading out the circle
       this.svg
         .selectAll("circle.TempCircle")
         .transition()
         .duration(this.duration)
         .attr("r", 1e-6);
-      this.svg.selectAll("g.oldChainG").remove();
+      this.svg.selectAll("g.oldChainG").remove(); // Removing old g
     }
   }
 
+  // Handles the chain when a child is selected
   childrenChain() {
+    // Sets all current chain elements to old
     this.svg.selectAll("g.chainG").attr("class", "oldChainG");
     this.svg.selectAll("text.chainText").attr("class", "oldChainText");
     this.svg.selectAll("circle.chainCircle").attr("class", "oldChainCircle");
     this.svg.selectAll("path.chainLink").attr("class", "oldChainLink");
 
-    // create new on same spots, last one invisible at end
+    // Create new on same spots, last one invisible at end
     this.chainPositions.unshift(this.chainPositions[0]);
+    // Creating new chain g
     let chainGs = this.svg
       .selectAll("g.chainG")
       .data(this.chainPositions)
@@ -665,6 +750,7 @@ class TreeViewer extends Component {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       })
       .attr("class", "chainG");
+    // Adding text
     chainGs
       .data(this.ancestors)
       .append("text")
@@ -676,19 +762,21 @@ class TreeViewer extends Component {
       .attr("class", "chainText")
       .style("fill-opacity", (d, i) => {
         if (i === 0) {
+          // Invisible text for last one
           return 1e-6;
         } else {
           return 1;
         }
       })
       .style("text-anchor", "middle");
-    this.calcAncestorColours();
+    this.calcAncestorColours(); // Calculate chain colours
+    // Adding circles on top of other ones
     chainGs
       .data(this.ancestorColours)
       .append("circle")
       .attr("r", i => {
         if (i === 0) {
-          return 1e-6;
+          return 1e-6; // Last one is invisible again
         } else {
           return this.cRadius;
         }
@@ -705,9 +793,9 @@ class TreeViewer extends Component {
         this.clearInfoText();
       });
 
-    // remove old (no transition necessary)
+    // Remove old (no transition necessary)
     this.svg.selectAll("g.oldChainG").remove();
-    // transition new to new spots
+    // Transition new to new spots
     this.calcChainSpacing();
     this.svg
       .selectAll("g.chainG")
@@ -718,7 +806,7 @@ class TreeViewer extends Component {
       })
       .duration(this.duration);
 
-    // transition invisible one in
+    // Transition invisible one in
     this.svg
       .selectAll("circle.chainCircle")
       .transition()
@@ -730,7 +818,7 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .style("fill-opacity", 1);
 
-    // create new links and transition
+    // Creating new links
     if (this.prevAncestors.length !== 1) {
       this.addChainLinks();
     } else {
@@ -746,6 +834,7 @@ class TreeViewer extends Component {
         }
       };
 
+      // Transitioning new links
       this.linkG
         .selectAll("g.chainG")
         .data(this.ancestorLinks)
@@ -757,6 +846,7 @@ class TreeViewer extends Component {
         .style("stroke", this.linkColor)
         .style("stroke-width", this.linkWidth);
 
+      // Link for the last circle (first in array)
       this.ancestorLinks = [];
       this.ancestorLinks[0] = {
         source: {
@@ -769,6 +859,7 @@ class TreeViewer extends Component {
         }
       };
 
+      // Transition
       this.svg
         .selectAll("path.chainLink")
         .data(this.ancestorLinks)
@@ -778,10 +869,13 @@ class TreeViewer extends Component {
     }
   }
 
+  // If a sibling is clicked, the ancestry chain remains the same, except for the selected code
   changeSelfAncestor() {
+    // Changing elements to old
     this.svg.selectAll("g.chainG").attr("class", "oldChainG");
     this.svg.selectAll("text.chainText").attr("class", "oldChainText");
 
+    // Creating new g's
     let chainGs = this.svg
       .selectAll("g.chainG")
       .data(this.chainPositions)
@@ -792,6 +886,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "chainG");
 
+    // Adding text
     chainGs
       .data(this.ancestors)
       .append("text")
@@ -809,13 +904,14 @@ class TreeViewer extends Component {
       .attr("class", "chainText")
       .style("fill-opacity", (d, i) => {
         if (i === 0) {
-          return 1e-6;
+          return 1e-6; // new one is invisible to start
         } else {
           return 1;
         }
       })
       .style("text-anchor", "middle");
 
+    // Adding circles
     chainGs
       .data(this.ancestorColours)
       .append("circle")
@@ -834,12 +930,14 @@ class TreeViewer extends Component {
         this.clearInfoText();
       });
 
+    // Fading out old text
     this.svg
       .selectAll("text.oldChainText")
       .transition()
       .duration(this.duration)
       .style("fill-opacity", 1e-6);
 
+    // Fading in next text
     this.svg
       .selectAll("text.chainText")
       .transition()
@@ -847,24 +945,24 @@ class TreeViewer extends Component {
       .delay(this.duration)
       .style("fill-opacity", 1);
 
-    this.svg.selectAll("g.oldChainG").remove();
+    this.svg.selectAll("g.oldChainG").remove(); // Removing old g
   }
 
+  // Adds the ancestry chain at the bottom
   addChain() {
     this.getAncestorsFromAPI(this.data.self.code).then(() => {
-      this.numCircles = this.ancestors.length;
-      this.calcChainSpacing();
-      this.addChainGs();
-      this.addChainLinks();
+      // Gets ancestors from API
+      this.numCircles = this.ancestors.length; // Determines the number of circles
+      this.calcChainSpacing(); // Caclulates circle spacing
+      this.addChainGs(); // Adds "g" elements and circles for the chain
+      this.addChainLinks(); // Adds the chain links
     });
   }
 
-  removeChainLinks() {
-    this.svg.selectAll("path.oldChainLink");
-  }
-
+  // Adds chain links
   addChainLinks() {
-    this.ancestorLinks = [];
+    this.ancestorLinks = []; // Sets list to empty
+    // Adds the links to the list
     for (let i = 0; i < this.chainPositions.length - 1; i++) {
       this.ancestorLinks[i] = {
         source: {
@@ -878,6 +976,7 @@ class TreeViewer extends Component {
       };
     }
 
+    // Adds the paths to the "g"
     this.linkG
       .selectAll("g.chainG")
       .data(this.ancestorLinks)
@@ -889,14 +988,17 @@ class TreeViewer extends Component {
       .style("stroke", this.linkColor)
       .style("stroke-width", this.linkWidth);
 
+    // Removes old chain links
     this.svg.selectAll("path.oldChainLink").remove();
   }
 
+  // Calculates the locations of the ancestry chain circles
   calcChainSpacing() {
-    const totalSpace = this.width - this.leftPadding - this.rightPadding;
-    this.chainPositions = [];
-    let gap = 0;
+    const totalSpace = this.width - this.leftPadding - this.rightPadding; // Calculates total available space
+    this.chainPositions = []; // Initalizes to empty list
+    let gap = 0; // Initialize before so it can be used later
     if (this.ancestors.length > 1) {
+      // If only 1 circle in ancestors, gap remains 0 and circle is made at the very left
       gap = totalSpace / (this.ancestors.length - 1);
     }
     for (let i = 0; i < this.ancestors.length; i++) {
@@ -905,7 +1007,9 @@ class TreeViewer extends Component {
     this.chainPositions.reverse();
   }
 
+  // Adds chain g's
   addChainGs() {
+    // Creates the g's
     let chainGs = this.svg
       .selectAll("g.chainG")
       .data(this.chainPositions)
@@ -916,6 +1020,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "chainG");
 
+    // Adds text
     chainGs
       .data(this.ancestors)
       .append("text")
@@ -928,6 +1033,7 @@ class TreeViewer extends Component {
       .style("text-anchor", "middle");
 
     this.calcAncestorColours();
+    // Adds circles
     chainGs
       .data(this.ancestorColours)
       .append("circle")
@@ -947,6 +1053,8 @@ class TreeViewer extends Component {
       });
   }
 
+  // Calculates the colour of the ancestor chain
+  // Self node (last on chain, first in array) is different than the last
   calcAncestorColours() {
     this.ancestorColours = [];
     this.ancestorColours.push(this.selectedColor);
@@ -955,6 +1063,9 @@ class TreeViewer extends Component {
     }
   }
 
+  // Gets the ancestors from API
+  // Parameter: code to get ancestors for
+  // Puts the array of ancestors into a member variable
   getAncestorsFromAPI = code => {
     const url = APIClass.getAPIURL("ANCESTORS") + code + "/?format=json";
     return fetch(url)
@@ -964,11 +1075,13 @@ class TreeViewer extends Component {
       });
   };
 
+  // Creates new parent circle/text
   createNewParent() {
+    // Set current parent elements to old
     this.svg.selectAll("g.parentG").attr("class", "oldParentG");
     this.svg.selectAll("circle.parentCircle").attr("class", "oldParentCircle");
     this.svg.selectAll("text.parentText").attr("class", "oldParentText");
-    // make new parent circle on top of current self
+    // Make new parent circle on top of current self
     let parentg = this.leftG
       .append("g")
       .attr("transform", () => {
@@ -981,6 +1094,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .attr("class", "parentG");
+    // Adding text
     parentg
       .append("text")
       .text(this.codeFormat(this.data.parent, 1))
@@ -991,6 +1105,7 @@ class TreeViewer extends Component {
       .attr("x", 1.5 * this.cRadius)
       .attr("class", "parentText")
       .style("text-anchor", "right");
+    // Adding circle
     parentg
       .append("circle")
       .attr("r", this.cRadius)
@@ -1001,7 +1116,9 @@ class TreeViewer extends Component {
       });
   }
 
+  // Transitions the parent and siblings to self node and removes them
   removeParentAndSiblings() {
+    // Moving parent to self and fading out
     this.svg
       .selectAll("g.oldParentG")
       .transition()
@@ -1020,6 +1137,7 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .style("fill-opacity", 1e-6);
 
+    // Moving siblings to self and fading out
     this.svg
       .selectAll("g.siblingG")
       .transition()
@@ -1038,6 +1156,7 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .style("fill-opacity", 1e-6);
 
+    // Creating new parent links
     this.parentLinks = [];
     for (let i = 0; i < this.siblingHeights.length; i++) {
       this.parentLinks[i] = {
@@ -1051,6 +1170,7 @@ class TreeViewer extends Component {
         }
       };
     }
+    // Transitioning links
     this.svg
       .selectAll("path.parentLink")
       .data(this.parentLinks)
@@ -1059,6 +1179,7 @@ class TreeViewer extends Component {
       .attr("d", d => this.link(d));
   }
 
+  // Moving newly created parent from self position to parent position
   moveSelfToParent() {
     this.findIndex();
     this.svg
@@ -1076,6 +1197,7 @@ class TreeViewer extends Component {
       .attr("fill", this.otherColor);
   }
 
+  // Moving the children to sibling spots
   moveChildrenToSiblings() {
     this.svg
       .selectAll("g.childrenG")
@@ -1093,7 +1215,9 @@ class TreeViewer extends Component {
       })
       .attr("class", "siblingG");
 
+    // Calculating colours to colour new self node
     this.calcSiblingColours();
+    // Transitioning circles to sibling spots and giving new class
     this.svg
       .selectAll("circle.childrenCircle")
       .data(this.siblingColours)
@@ -1107,6 +1231,7 @@ class TreeViewer extends Component {
         return d;
       });
 
+    // Transitioning text to sibling text
     this.svg
       .selectAll("text.childrenText")
       .data(this.data.siblings)
@@ -1119,9 +1244,11 @@ class TreeViewer extends Component {
       .style("text-anchor", "right");
   }
 
+  // Transition the links when a child is clicked
   transitionChildrenLinks() {
     this.childrenLinks = [];
     this.calcSiblingHeights();
+    // Creating links
     for (let i = 0; i < this.data.siblings.length; i++) {
       this.childrenLinks[i] = {
         source: {
@@ -1134,18 +1261,20 @@ class TreeViewer extends Component {
         }
       };
     }
+    // Transitioning links to new positions
     this.svg
       .selectAll("path.childrenLink")
       .data(this.childrenLinks)
       .transition()
       .duration(this.duration)
-      //.delay(this.duration)
       .attr("d", d => this.link(d))
       .attr("class", "parentLink");
   }
 
+  // Spawning children from new self node
   spawnChildren() {
-    this.calcChildrenHeights();
+    this.calcChildrenHeights(); // Getting children heights
+    // Adding children g's to attach circles and text
     let childrenGs = this.svg
       .selectAll("g.childrenG")
       .data(this.childrenHeights)
@@ -1162,6 +1291,7 @@ class TreeViewer extends Component {
         return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       });
 
+    // Adding invisible text, to transition in later
     childrenGs
       .data(this.data.children)
       .append("text")
@@ -1175,6 +1305,7 @@ class TreeViewer extends Component {
       .style("text-anchor", "right")
       .style("fill-opacity", 1e-6);
 
+    // Adding invisible circles, to transition in later
     childrenGs
       .data(this.childrenHeights)
       .append("circle")
@@ -1185,6 +1316,7 @@ class TreeViewer extends Component {
         this.handleChildrenClick(d, i);
       });
 
+    // Transition g to the current positions
     this.svg
       .selectAll("g.childrenG")
       .data(this.childrenHeights)
@@ -1193,17 +1325,20 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
       });
+    // Fade text in
     childrenGs
       .selectAll("text.childrenText")
       .transition()
       .duration(this.duration)
       .style("fill-opacity", 1);
+    // Fade circles in
     this.svg
       .selectAll("circle.childrenCircle")
       .transition()
       .duration(this.duration)
       .attr("r", this.cRadius);
 
+    // Creating new children links
     this.childrenLinks = [];
     for (let i = 0; i < this.data.children.length; i++) {
       this.childrenLinks[i] = {
@@ -1218,6 +1353,7 @@ class TreeViewer extends Component {
       };
     }
 
+    // Appending links
     this.linkG
       .selectAll("childrenG")
       .data(this.childrenLinks)
@@ -1230,6 +1366,7 @@ class TreeViewer extends Component {
       .style("stroke-width", this.linkWidth);
 
     this.createChildrenLinks();
+    // Transitioning links
     this.svg
       .selectAll("path.childrenLink")
       .data(this.childrenLinks)
@@ -1238,7 +1375,9 @@ class TreeViewer extends Component {
       .attr("d", d => this.link(d));
   }
 
+  // Moves the siblings to children positions (on handle parent click)
   moveSiblingsToChildren() {
+    // Change sibling g's to children g's and transition
     this.svg
       .selectAll("g.siblingG")
       .on("mouseover", (d, i) => {
@@ -1256,6 +1395,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "childrenG");
 
+    // Adds children class and colours self as the non-selected colour
     this.svg
       .selectAll("circle.siblingCircle")
       .attr("class", "childrenCircle")
@@ -1266,6 +1406,7 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .attr("fill", this.otherColor);
 
+    // Changes class of text
     this.svg
       .selectAll("text.siblingText")
       .data(this.data.children)
@@ -1279,10 +1420,13 @@ class TreeViewer extends Component {
       .style("text-anchor", "right");
   }
 
+  // Moves the parent to the sibling spot
   moveParentToSibling() {
+    // Calculates heights and finds index and colours appropriately
     this.calcSiblingHeights();
     this.findIndex();
     this.calcSiblingColours();
+    // Transition the parent g to self spot
     this.svg
       .selectAll("g.parentG")
       .transition()
@@ -1293,22 +1437,25 @@ class TreeViewer extends Component {
       })
       .attr("class", "oldParentG");
 
+    // Transitions circle
     this.svg
       .selectAll("circle.parentCircle")
       .transition()
       .duration(this.duration)
-      .attr("class", "siblingCircle") //**HERE**
+      .attr("class", "siblingCircle")
       .attr("fill", this.selectedColor);
 
     this.svg.selectAll("circle.siblingCircle").on("click", (d, i) => {
       this.handleSiblingClick(d, i);
     });
-    this.svg.selectAll("g.oldParentG").remove();
+    this.svg.selectAll("g.oldParentG").remove(); // Removes old parent g because sibling g is created
   }
 
+  // Spawns the parent and siblings
   spawnParentAndSiblings() {
-    // creating invisible parent at self
+    // Creating invisible parent at self
     if (this.data.parent) {
+      // Creating parent g
       let parentG = this.svg
         .append("g")
         .on("mouseover", (d, i) => {
@@ -1321,6 +1468,7 @@ class TreeViewer extends Component {
         .attr("transform", d => {
           return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
         });
+      // Adding invisible text
       parentG
         .append("text")
         .text(this.codeFormat(this.data.parent, 1))
@@ -1332,6 +1480,7 @@ class TreeViewer extends Component {
         .attr("class", "parentText")
         .style("text-anchor", "right")
         .style("fill-opacity", 1e-6);
+      // Adding invisible circle
       parentG
         .append("circle")
         .attr("r", 1e-6)
@@ -1341,7 +1490,7 @@ class TreeViewer extends Component {
           this.handleParentClick(d, i);
         });
 
-      // transition new parent
+      // Transition new parent
       parentG
         .transition()
         .duration(this.duration)
@@ -1359,7 +1508,7 @@ class TreeViewer extends Component {
         .duration(this.duration)
         .attr("r", this.cRadius);
 
-      // create links
+      // Create links
       this.parentLinks = [];
       for (let i = 0; i < this.data.siblings.length; i++) {
         this.parentLinks[i] = {
@@ -1374,6 +1523,7 @@ class TreeViewer extends Component {
         };
       }
 
+      // Add the links
       this.linkG
         .selectAll("siblingG")
         .data(this.parentLinks)
@@ -1387,6 +1537,7 @@ class TreeViewer extends Component {
 
       this.createParentLinks();
 
+      // Transition the link
       this.svg
         .selectAll("path.parentLink")
         .data(this.parentLinks)
@@ -1395,7 +1546,7 @@ class TreeViewer extends Component {
         .attr("d", d => this.link(d));
     }
 
-    // create invisible siblings at self
+    // Create invisible siblings at self
     let siblingG = this.middleG
       .selectAll("g.siblingG")
       .data(this.siblingHeights)
@@ -1411,6 +1562,7 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       });
+    // Add invisible text
     siblingG
       .data(this.data.siblings)
       .append("text")
@@ -1424,6 +1576,7 @@ class TreeViewer extends Component {
       .style("text-anchor", "right")
       .style("fill-opacity", 1e-6);
 
+    // Add invisible circles
     this.calcSiblingColours();
     siblingG
       .data(this.siblingColours)
@@ -1437,7 +1590,7 @@ class TreeViewer extends Component {
         this.handleSiblingClick(d, i);
       });
 
-    // transition new siblings
+    // Transition new siblings
     this.svg
       .selectAll("g.siblingG")
       .data(this.siblingHeights)
@@ -1458,7 +1611,9 @@ class TreeViewer extends Component {
       .attr("r", this.cRadius);
   }
 
+  // Removes children nodes by transitioning them to self and invisible
   async removeChildren() {
+    // Transition children g to self and fade elements
     this.svg
       .selectAll("g.childrenG")
       .transition()
@@ -1477,6 +1632,7 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .style("fill-opacity", 1e-6);
+    // Remove children links
     this.undoChildrenLinks();
     this.svg
       .selectAll("path.childrenLink")
@@ -1490,10 +1646,12 @@ class TreeViewer extends Component {
     this.linkG.selectAll("path.oldChildrenLink").remove();
   }
 
+  // Sleep, used to wait between transitions
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Creates parent links
   createParentLinks() {
     this.parentLinks = [];
     for (let i = 0; i < this.data.siblings.length; i++) {
@@ -1510,22 +1668,27 @@ class TreeViewer extends Component {
     }
   }
 
+  // Formats the code and description to display as much as possible in the given space
+  // Truncates if not enough room for the whole thing, adds "..." to the end if truncated
   codeFormat = (d, truncFlag) => {
-    let room;
+    let room; // Total room available, initialized
+    // If the code is a sibling
     if (this.data.siblings.includes(d)) {
+      // If the sibling has no children, it has more room to use
       if (this.data.children.length > 0) {
-        console.log("has children");
         room = this.width - this.rightPadding - this.middle - 3 * this.cRadius;
       } else {
-        console.log("no children");
         room = this.width - this.middle - 3 * this.cRadius;
       }
-    } else if (this.data.children.includes(d)) {
+    } // If the code is a child
+    else if (this.data.children.includes(d)) {
       room = this.rightPadding - 3 * this.cRadius;
-    } else if (this.data.parent === d) {
+    } // If the code is the parent
+    else if (this.data.parent === d) {
       room = this.middle - this.leftPadding - 3 * this.cRadius;
     }
 
+    // Appending description to the code
     let codeDesc;
     if (d.description) {
       codeDesc = d.code + ": " + d.description;
@@ -1533,7 +1696,9 @@ class TreeViewer extends Component {
       codeDesc = d.code;
     }
 
+    // Truncation flag === 1, truncate code if not enough room
     if (truncFlag === 1) {
+      // Making sample string off screen to check the width
       this.svg
         .append("text")
         .text(codeDesc)
@@ -1543,13 +1708,16 @@ class TreeViewer extends Component {
         .attr("x", -999999)
         .attr("class", "truncText");
 
+      // Getting values of the text off screen
       let values = this.svg
         .selectAll("text.truncText")
         .node()
         .getBBox();
-      this.svg.selectAll("text.truncText").remove();
+      this.svg.selectAll("text.truncText").remove(); // Removing off screen text
 
+      // While the text is larger than the room
       while (values.width > room) {
+        // Create text off screen and check width
         this.svg
           .append("text")
           .text(codeDesc + "...")
@@ -1559,12 +1727,13 @@ class TreeViewer extends Component {
           .attr("x", -999999)
           .attr("class", "truncText");
 
+        // Get values
         values = this.svg
           .selectAll("text.truncText")
           .node()
           .getBBox();
         this.svg.selectAll("text.truncText").remove();
-        codeDesc = codeDesc.slice(0, codeDesc.length - 1);
+        codeDesc = codeDesc.slice(0, codeDesc.length - 1); // Slice code description to remove 1 character from the end
       }
       if (d.description) {
         if (codeDesc !== d.code + ": " + d.description) {
@@ -1572,17 +1741,10 @@ class TreeViewer extends Component {
         }
       }
     }
-
-    // if (truncFlag === 1) {
-    //   if (codeDesc.length < this.maxChar + 1) {
-    //     return codeDesc;
-    //   } else {
-    //     return codeDesc.substring(0, this.maxChar) + "...";
-    //   }
-    // }
     return codeDesc;
   };
 
+  // Creates the children links
   createChildrenLinks() {
     this.childrenLinks = [];
     for (let i = 0; i < this.data.children.length; i++) {
@@ -1599,6 +1761,8 @@ class TreeViewer extends Component {
     }
   }
 
+  // Transitions children links to self node
+  // Used for removing children nodes
   undoChildrenLinks() {
     this.childrenLinks = [];
     for (let i = 0; i < this.childrenHeights.length; i++) {
@@ -1615,9 +1779,11 @@ class TreeViewer extends Component {
     }
   }
 
+  // Transitions the parent links to new locations
   transitionParentLinks() {
     this.parentLinks = [];
     this.calcChildrenHeights();
+    // Creates new links
     for (let i = 0; i < this.data.children.length; i++) {
       this.parentLinks[i] = {
         source: {
@@ -1630,6 +1796,7 @@ class TreeViewer extends Component {
         }
       };
     }
+    // Transitions the links
     this.svg
       .selectAll("path.parentLink")
       .data(this.parentLinks)
@@ -1640,6 +1807,7 @@ class TreeViewer extends Component {
       .attr("class", "childrenLink");
   }
 
+  // Finds the index of the self node
   findIndex() {
     const numSiblings = this.data.siblings.length;
     let i = 0;
@@ -1650,6 +1818,7 @@ class TreeViewer extends Component {
     }
   }
 
+  // Calculates the height of the sibling nodes
   calcSiblingHeights() {
     this.siblingHeights = [];
     if (this.data.siblings.length === 1) {
@@ -1663,6 +1832,7 @@ class TreeViewer extends Component {
     }
   }
 
+  // Calculates the height of the children nodes
   calcChildrenHeights() {
     this.childrenHeights = [];
     if (this.data.children.length === 1) {
@@ -1676,6 +1846,7 @@ class TreeViewer extends Component {
     }
   }
 
+  // Calculates the colours of the sibling nodes (all the same except self)
   calcSiblingColours() {
     this.siblingColours = [];
     for (let i = 0; i < this.data.siblings.length; i++) {
@@ -1687,6 +1858,7 @@ class TreeViewer extends Component {
     }
   }
 
+  // Gets the data from API for the specified code and stores it in a member variable
   getDataFromAPI = code => {
     const url = APIClass.getAPIURL("FAMILY") + code + "/?format=json";
     console.log(url);
@@ -1697,6 +1869,7 @@ class TreeViewer extends Component {
       });
   };
 
+  // Renders the tree
   render() {
     return <div id={"tree" + this.props.id} className={this.treeClass} />;
   }
