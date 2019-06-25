@@ -4,6 +4,7 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import ChordDiagram from "../ChordDiagram/ChordDiagram";
 import BarChart from "../BarChart/BarChart";
 import SankeyDiagram from "../SankeyDiagram/SankeyDiagram";
+import RulesTable from "../RulesTable/RulesTable";
 import "./Visualization.css";
 
 const defaultLayoutLg = [
@@ -101,6 +102,9 @@ function Visualization(props) {
           </div>
 
           <div key="2" id="barDiv" className={highlightEditDiv}>
+            <RulesTable />{" "}
+          </div>
+          <div key="3" id="barDiv" className={highlightEditDiv}>
             <BarChart id="100" ref={barChartDiv} />{" "}
           </div>
         </ResponsiveReactGridLayout>
