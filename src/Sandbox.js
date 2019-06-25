@@ -8,6 +8,7 @@ import "react-resizable/css/styles.css";
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 import BarChart from "./Components/BarChart/BarChart";
+import NetworkDiagram from "./Components/NetworkDiagram/NetworkDiagram";
 
 import APIClass from "./Assets/Util/API";
 
@@ -284,6 +285,9 @@ class App extends Component {
         </div>
         <div>
           <BarChart id="1" />
+        </div>
+        <div>
+          <NetworkDiagram id="1" />
         </div>
       </div>
     );
