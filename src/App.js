@@ -120,7 +120,6 @@ class App extends Component {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(this.state.cachedCodeWithDescription);
       const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
-      console.log(cachedCode);
       // construct new code object
       const newCode = {
         code: cachedCode.code,
@@ -311,7 +310,7 @@ class App extends Component {
           });
         });
     } else {
-      this.setState({ recommendedCodes: null });
+      this.setState({ suggestedDaggerAsterisks: null });
     }
   }
 
@@ -671,7 +670,6 @@ class App extends Component {
                 descriptionName="daggerAsteriskDescription"
                 acceptItemButton={this.handleAcceptDaggerAsteriskCode}
                 removeItemButton={this.handleRemoveDaggerAsteriskCode}
-                //removeItemButton={this.handleRemoveSelectedCode}
                 //exploreButton={this.handleExploreSelectedCodeButton}
                 allowRearrage={false}
                 menuOptions={daggerAsteriskComponentMenuItems}
