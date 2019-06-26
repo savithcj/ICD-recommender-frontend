@@ -297,37 +297,35 @@ class App extends Component {
         suggestedDaggerAsterisks: "LOADING"
       });
       let DagAstObjs = [];
+
       fetch(url)
         .then(response => response.json())
         .then(results => {
+          let promiseList = [];
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
-
             let url2 = APIClass.getAPIURL("CODE_DESCRIPTION");
             if (codes.find(codeObj => codeObj.code === result.dagger) === undefined) {
               url2 += result.dagger + "/?format=json";
             } else {
               url2 += result.asterisk + "/?format=json";
             }
-            fetch(url2)
-              .then(response => response.json())
-              .then(codeObject => {
-                result.description = codeObject.code + ": " + codeObject.description;
-                //DagAstObjs.push(result);
-              })
-              .then(() => {
-                //console.log(result);
-                //DagAstObjs.push(result);
-              });
-            DagAstObjs.push(result);
+            promiseList.push(
+              fetch(url2)
+                .then(response => response.json())
+                .then(codeObject => {
+                  result.description = codeObject.code + ": " + codeObject.description;
+                })
+            );
           });
-        })
-        .then(() => {
-          console.log(DagAstObjs);
-          this.setState({
-            suggestedDaggerAsterisks: DagAstObjs
+          Promise.all(promiseList).then(() => {
+            this.setState({ suggestedDaggerAsterisks: results });
           });
         });
+      // Promise.all(promiseList).then(promiseList => {
+      //   console.log(promiseList);
+      //   this.setState({ suggestedDaggerAsterisks: promiseList });
+      // });
     } else {
       this.setState({ suggestedDaggerAsterisks: null });
     }
