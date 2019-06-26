@@ -19,31 +19,36 @@ const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 2, i: "0" },
   { w: 5, h: 9, x: 7, y: 0, i: "1" },
   { w: 5, h: 9, x: 7, y: 11, i: "2" },
-  { w: 7, h: 2, x: 0, y: 0, i: "3" }
+  { w: 7, h: 2, x: 0, y: 0, i: "3" },
+  { w: 5, h: 9, x: 7, y: 20, i: "4" }
 ];
 const defaultLayoutMd = [
   { w: 6, h: 17, x: 0, y: 2, i: "0" },
   { w: 4, h: 10, x: 6, y: 0, i: "1" },
   { w: 4, h: 9, x: 6, y: 10, i: "2" },
-  { w: 6, h: 2, x: 0, y: 0, i: "3" }
+  { w: 6, h: 2, x: 0, y: 0, i: "3" },
+  { w: 4, h: 9, x: 6, y: 19, i: "4" }
 ];
 const defaultLayoutSm = [
   { w: 6, h: 14, x: 0, y: 20, i: "0" },
   { w: 6, h: 9, x: 0, y: 2, i: "1" },
   { w: 6, h: 9, x: 0, y: 11, i: "2" },
-  { w: 6, h: 2, x: 0, y: 0, i: "3" }
+  { w: 6, h: 2, x: 0, y: 0, i: "3" },
+  { w: 6, h: 9, x: 0, y: 34, i: "4" }
 ];
 const defaultLayoutXs = [
   { w: 4, h: 14, x: 0, y: 19, i: "0" },
   { w: 4, h: 9, x: 0, y: 2, i: "1" },
   { w: 4, h: 8, x: 0, y: 11, i: "2" },
-  { w: 4, h: 2, x: 0, y: 0, i: "3" }
+  { w: 4, h: 2, x: 0, y: 0, i: "3" },
+  { w: 4, h: 8, x: 0, y: 33, i: "4" }
 ];
 const defaultLayoutXxs = [
   { w: 2, h: 12, x: 0, y: 19, i: "0" },
   { w: 2, h: 9, x: 0, y: 2, i: "1" },
   { w: 2, h: 8, x: 0, y: 11, i: "2" },
-  { w: 2, h: 2, x: 0, y: 0, i: "3" }
+  { w: 2, h: 2, x: 0, y: 0, i: "3" },
+  { w: 2, h: 8, x: 0, y: 31, i: "4" }
 ];
 
 const defaultLayouts = {
@@ -75,7 +80,8 @@ class App extends Component {
     selectedCodes: [], // list of selected code with descriptions
     selectedAge: null,
     selectedGender: null,
-    recommendedCodes: null //list of recommended codes based on the selected codes
+    recommendedCodes: null, //list of recommended codes based on the selected codes
+    suggestedDaggerAsterisks: null
   };
 
   /**
@@ -87,7 +93,7 @@ class App extends Component {
   appendCodeToCache = results => {
     let codesWithDescript = Array.from(this.state.cachedCodeWithDescription);
 
-    for (let i = 0, l = results.length; i < l; i++) {
+    for (let i = 0; i < results.length; i++) {
       let thisCode = results[i];
       let codeFound = codesWithDescript.find(codeObj => codeObj.code === thisCode.code);
       if (codeFound === undefined) {
@@ -114,7 +120,7 @@ class App extends Component {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(this.state.cachedCodeWithDescription);
       const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
-
+      console.log(cachedCode);
       // construct new code object
       const newCode = {
         code: cachedCode.code,
@@ -126,6 +132,25 @@ class App extends Component {
       this.setState({ selectedCodes });
 
       this.getRecommendedCodes(selectedCodes);
+      this.getDaggerAsterisks(selectedCodes);
+    } else {
+      console.log("Duplicate code entered");
+    }
+  };
+
+  /**
+   * Called to add selected dagger/asterisk code to selected codes
+   */
+  addSelectedDaggerAsterisk = newCodeObj => {
+    let selectedCodes = Array.from(this.state.selectedCodes);
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj.code);
+    if (getDuplicate === undefined) {
+      selectedCodes.push(newCodeObj);
+
+      this.setState({ selectedCodes });
+
+      this.getRecommendedCodes(selectedCodes);
+      this.getDaggerAsterisks(selectedCodes);
     } else {
       console.log("Duplicate code entered");
     }
@@ -150,7 +175,7 @@ class App extends Component {
       selectedCodes.push(newCode);
 
       this.setState({ selectedCodes });
-
+      this.getDaggerAsterisks(selectedCodes);
       this.getRecommendedCodes(selectedCodes);
     } else {
       console.log("Duplicate code entered");
@@ -185,6 +210,7 @@ class App extends Component {
     });
 
     this.getRecommendedCodes(codes);
+    this.getDaggerAsterisks(codes);
   };
 
   /**
@@ -234,7 +260,6 @@ class App extends Component {
       fetch(url)
         .then(response => response.json())
         .then(results => {
-          console.log(results);
           results.forEach(codeObj => {
             codeObj.reason =
               codeObj.lhs +
@@ -263,6 +288,34 @@ class App extends Component {
   }
 
   /**
+   * Calls the DaggerAsterisk API and returns any dagger/asterisk for the selected codes
+   * @param {*} listOfCodeObjects List of the code objects to get recommendations from
+   */
+  getDaggerAsterisks(listOfCodeObjects) {
+    const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
+    if (stringOfCodes !== "") {
+      const url = APIClass.getAPIURL("DAGGER_ASTERISK") + stringOfCodes + "/?format=json";
+      //ListViewer will display a loading indicator while the API promise is being fullfilled
+      this.setState({
+        suggestedDaggerAsterisks: "LOADING"
+      });
+
+      fetch(url)
+        .then(response => response.json())
+        .then(results => {
+          results.forEach(result => {
+            result.combo = result.dagger + "\u271D " + result.asterisk + "*";
+          });
+          this.setState({
+            suggestedDaggerAsterisks: results
+          });
+        });
+    } else {
+      this.setState({ recommendedCodes: null });
+    }
+  }
+
+  /**
    * Function used to get the descriptions of the codes within an array
    * and add each code to the cachedCodes list maintained in the state
    * @param {*} arrayOfRecommendedCodes an array codes to get the descriptions
@@ -277,6 +330,20 @@ class App extends Component {
           this.appendCodeToCache([results]);
         });
     });
+  }
+
+  /**
+   * Function used to get the descriptions of the dagger/asterisk
+   * and add each code to the cachedCodes list maintained in the state
+   * @param {*} dagger/asterisk code to add to cache
+   */
+  addDaggerAsteriskToCachedCodes(code) {
+    const url = APIClass.getAPIURL("CODE_DESCRIPTION") + code + "/?format=json";
+    fetch(url)
+      .then(response => response.json())
+      .then(results => {
+        this.appendCodeToCache([results]);
+      });
   }
 
   /**
@@ -308,6 +375,55 @@ class App extends Component {
     this.removeRecommendedCode(removedCodeIndex);
   };
 
+  /**
+   * Handler method that gets called when a user accepts a recommended dagger/asterisk.
+   * Removes the specified code from the dagger/asterisk codes list and adds it
+   * to the selectedCodes list.
+   */
+  handleAcceptDaggerAsteriskCode = event => {
+    const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
+    const acceptedCodeObject = this.state.suggestedDaggerAsterisks[acceptedCodeIndex];
+    const codes = Array.from(this.state.selectedCodes);
+
+    let dagger = {};
+    dagger.code = acceptedCodeObject.dagger;
+    const urlDagger = APIClass.getAPIURL("CODE_DESCRIPTION") + dagger.code + "/?format=json";
+    fetch(urlDagger)
+      .then(response => response.json())
+      .then(result => {
+        dagger.description = result.description;
+        this.addDaggerAsteriskToCachedCodes(dagger);
+      });
+
+    let asterisk = {};
+    asterisk.code = acceptedCodeObject.asterisk;
+    const urlAsterisk = APIClass.getAPIURL("CODE_DESCRIPTION") + asterisk.code + "/?format=json";
+    fetch(urlAsterisk)
+      .then(response => response.json())
+      .then(result => {
+        asterisk.description = result.description;
+        this.addDaggerAsteriskToCachedCodes(asterisk);
+      })
+      .then(() => {
+        if (codes.find(codeObj => codeObj.code === dagger.code) === undefined) {
+          this.addSelectedDaggerAsterisk(dagger);
+        } else {
+          this.addSelectedDaggerAsterisk(asterisk);
+        }
+
+        this.removeDaggerAsteriskCode(acceptedCodeIndex);
+      });
+  };
+
+  /**
+   * Handler method that gets called when a user rejects a dagger/asterisk code.
+   * Removes the specified code from the recommended codes list.
+   */
+  handleRemoveDaggerAsteriskCode = event => {
+    const removedCodeIndex = parseInt(event.currentTarget.id, 10);
+    this.removeDaggerAsteriskCode(removedCodeIndex);
+  };
+
   userFlagRuleForReview = event => {
     const recommendedCodeIndex = parseInt(event.currentTarget.id, 10);
     const recommendedCode = this.state.recommendedCodes[recommendedCodeIndex];
@@ -336,6 +452,21 @@ class App extends Component {
 
     this.setState({
       recommendedCodes: codes
+    });
+  }
+
+  /**
+   * Helper method used to remove the specified code from the list of
+   * DaggerAsteriskCodes
+   * @param {*} codeIndex Index of the code to be removed
+   */
+  removeDaggerAsteriskCode(codeIndex) {
+    const codes = [...this.state.suggestedDaggerAsterisks];
+
+    codes.splice(codeIndex, 1);
+
+    this.setState({
+      suggestedDaggerAsterisks: codes
     });
   }
 
@@ -377,6 +508,7 @@ class App extends Component {
     saveToLS("layouts", layouts);
     await this.setState({ layouts });
     this.treeViewDiv.current.handleResize();
+    console.log("layouts:", layouts);
   }
 
   /**
@@ -434,6 +566,7 @@ class App extends Component {
       }
     ];
     const recommendedCodesComponentMenuItems = [];
+    const daggerAsteriskComponentMenuItems = [];
 
     const acceptSelectedCodesButton = {
       text: "Accept",
@@ -476,7 +609,7 @@ class App extends Component {
             isResizable={this.state.isLayoutModifiable} //if a button is pressed
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
-            <div className={highlightEditDiv} key="0" data-grid={{ x: 0, y: 19, w: 4, h: 14 }}>
+            <div className={highlightEditDiv} key="0">
               {/* FIXME: fix the display bug in the SwipabalePanel  */}
               {/* <SwipablePanel
                 tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
@@ -485,7 +618,7 @@ class App extends Component {
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
 
-            <div key="1" className={highlightEditDiv} data-grid={{ x: 0, y: 2, w: 4, h: 9 }}>
+            <div key="1" className={highlightEditDiv}>
               <ListViewer
                 title="Selected Codes"
                 items={this.state.selectedCodes}
@@ -503,7 +636,7 @@ class App extends Component {
               />
             </div>
 
-            <div key="2" className={highlightEditDiv} data-grid={{ x: 0, y: 11, w: 4, h: 8 }}>
+            <div key="2" className={highlightEditDiv}>
               <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
@@ -524,8 +657,26 @@ class App extends Component {
               />
             </div>
 
-            <div key="3" className={highlightEditDiv} data-grid={{ x: 0, y: 0, w: 4, h: 2, minW: 4, minH: 2 }}>
+            <div key="3" className={highlightEditDiv}>
               {userInputBoxes}
+            </div>
+
+            <div key="4" className={highlightEditDiv}>
+              <ListViewer
+                title="Dagger/Asterisks"
+                items={this.state.suggestedDaggerAsterisks}
+                noItemsMessage="No dagger or asterisks suggested"
+                nullItemsMessage="Add codes to see dagger/asterisks"
+                valueName="combo"
+                descriptionName="daggerAsteriskDescription"
+                acceptItemButton={this.handleAcceptDaggerAsteriskCode}
+                removeItemButton={this.handleRemoveDaggerAsteriskCode}
+                //removeItemButton={this.handleRemoveSelectedCode}
+                //exploreButton={this.handleExploreSelectedCodeButton}
+                allowRearrage={false}
+                menuOptions={daggerAsteriskComponentMenuItems}
+                //button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
+              />
             </div>
           </ResponsiveReactGridLayout>
         </div>
