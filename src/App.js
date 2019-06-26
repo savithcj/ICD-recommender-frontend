@@ -10,7 +10,6 @@ import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
-import ChordDiagram from "./Components/ChordDiagram/ChordDiagram";
 import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
 
 import { __esModule } from "d3-random";

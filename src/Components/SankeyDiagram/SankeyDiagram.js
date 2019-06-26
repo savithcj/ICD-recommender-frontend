@@ -16,7 +16,6 @@ class SankeyDiagram extends Component {
   componentDidMount() {
     this.getDataFromAPI().then(() => {
       this.drawSankeyDiagram();
-      // this.forceUpdate();
     });
   }
 
@@ -30,10 +29,8 @@ class SankeyDiagram extends Component {
 
   handleResize() {
     if (this.data === undefined) {
-      // console.log("No data");
     } else {
       this.drawSankeyDiagram();
-      // this.forceUpdate();
     }
   }
 
@@ -260,13 +257,10 @@ class SankeyDiagram extends Component {
   }
 
   drawHalfArcs(d1, d2, color, direction) {
-    console.log("Finding matches");
-    let arcs = [];
     for (let i = 0; i < d1.blocks.length; i++) {
       for (let j = 0; j < d2.blocks.length; j++) {
         let numRules = d1["destCounts"][i][j + d2.startIndex];
         if (numRules > 0) {
-          console.log("FOUND MATCH", d1.blocks[i], d2.blocks[j]);
           let x1 = d1["xArr"][i];
           let x2 = d2["xArr"][j];
           let centerPoint = (x1 + x2) / 2;
@@ -307,7 +301,6 @@ class SankeyDiagram extends Component {
               this.dimArcs();
               let matchStr =
                 "path.sankey[originatorBlock='" + d1.blocks[i] + "'][destinationBlock='" + d2.blocks[j] + "']";
-              console.log(matchStr);
               this.svg.selectAll(matchStr).style("opacity", this.brightOpacity);
               let infoString =
                 "(" +
@@ -334,8 +327,6 @@ class SankeyDiagram extends Component {
   }
 
   lightArc(originatorBlock, destinationBlock) {
-    let mystr = "path.sankey[originatorBlock=" + originatorBlock + "][destinationBlock=" + destinationBlock + "]";
-    console.log(mystr);
     this.svg
       .selectAll("path.sankey[originatorBlock=" + originatorBlock + "][destinationBlock=" + destinationBlock + "]")
       .style("opacity", this.brightOpacity);
@@ -356,7 +347,7 @@ class SankeyDiagram extends Component {
         let pIndex = -1;
         for (let i = 0; i < this.data.length; i++) {
           let curElem = this.data[i];
-          if (parentName != curElem.parent) {
+          if (parentName !== curElem.parent) {
             pIndex++;
             parentName = curElem.parent;
             this.orgData.push({
