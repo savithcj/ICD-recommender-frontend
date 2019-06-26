@@ -142,17 +142,13 @@ class App extends Component {
    */
   addSelectedDaggerAsterisk = newCodeObj => {
     let selectedCodes = Array.from(this.state.selectedCodes);
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj.code);
-    if (getDuplicate === undefined) {
-      selectedCodes.push(newCodeObj);
 
-      this.setState({ selectedCodes });
+    selectedCodes.push(newCodeObj);
 
+    this.setState({ selectedCodes }, () => {
       this.getRecommendedCodes(selectedCodes);
       this.getDaggerAsterisks(selectedCodes);
-    } else {
-      console.log("Duplicate code entered");
-    }
+    });
   };
 
   //the only reason we are not using addSelectedCode here is because we already have descriptions.
@@ -218,7 +214,8 @@ class App extends Component {
   resetSelectedCodes = () => {
     this.setState({
       selectedCodes: [],
-      recommendedCodes: null
+      recommendedCodes: null,
+      suggestedDaggerAsterisks: null
     });
   };
 
@@ -293,20 +290,42 @@ class App extends Component {
   getDaggerAsterisks(listOfCodeObjects) {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
     if (stringOfCodes !== "") {
+      const codes = Array.from(this.state.selectedCodes);
       const url = APIClass.getAPIURL("DAGGER_ASTERISK") + stringOfCodes + "/?format=json";
       //ListViewer will display a loading indicator while the API promise is being fullfilled
       this.setState({
         suggestedDaggerAsterisks: "LOADING"
       });
-
+      let DagAstObjs = [];
       fetch(url)
         .then(response => response.json())
         .then(results => {
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
+
+            let url2 = APIClass.getAPIURL("CODE_DESCRIPTION");
+            if (codes.find(codeObj => codeObj.code === result.dagger) === undefined) {
+              url2 += result.dagger + "/?format=json";
+            } else {
+              url2 += result.asterisk + "/?format=json";
+            }
+            fetch(url2)
+              .then(response => response.json())
+              .then(codeObject => {
+                result.description = codeObject.code + ": " + codeObject.description;
+                //DagAstObjs.push(result);
+              })
+              .then(() => {
+                //console.log(result);
+                //DagAstObjs.push(result);
+              });
+            DagAstObjs.push(result);
           });
+        })
+        .then(() => {
+          console.log(DagAstObjs);
           this.setState({
-            suggestedDaggerAsterisks: results
+            suggestedDaggerAsterisks: DagAstObjs
           });
         });
     } else {
@@ -384,33 +403,29 @@ class App extends Component {
     const acceptedCodeObject = this.state.suggestedDaggerAsterisks[acceptedCodeIndex];
     const codes = Array.from(this.state.selectedCodes);
 
-    let dagger = {};
-    dagger.code = acceptedCodeObject.dagger;
-    const urlDagger = APIClass.getAPIURL("CODE_DESCRIPTION") + dagger.code + "/?format=json";
+    let daggerObject = {};
+    daggerObject.code = acceptedCodeObject.dagger;
+    let asteriskObject = {};
+    asteriskObject.code = acceptedCodeObject.asterisk;
+    const urlDagger = APIClass.getAPIURL("CODE_DESCRIPTION") + daggerObject.code + "/?format=json";
     fetch(urlDagger)
       .then(response => response.json())
       .then(result => {
-        dagger.description = result.description;
-        this.addDaggerAsteriskToCachedCodes(dagger);
-      });
-
-    let asterisk = {};
-    asterisk.code = acceptedCodeObject.asterisk;
-    const urlAsterisk = APIClass.getAPIURL("CODE_DESCRIPTION") + asterisk.code + "/?format=json";
-    fetch(urlAsterisk)
-      .then(response => response.json())
-      .then(result => {
-        asterisk.description = result.description;
-        this.addDaggerAsteriskToCachedCodes(asterisk);
-      })
-      .then(() => {
-        if (codes.find(codeObj => codeObj.code === dagger.code) === undefined) {
-          this.addSelectedDaggerAsterisk(dagger);
-        } else {
-          this.addSelectedDaggerAsterisk(asterisk);
-        }
-
-        this.removeDaggerAsteriskCode(acceptedCodeIndex);
+        daggerObject.description = result.description;
+        const urlAsterisk = APIClass.getAPIURL("CODE_DESCRIPTION") + asteriskObject.code + "/?format=json";
+        fetch(urlAsterisk)
+          .then(response => response.json())
+          .then(result => {
+            asteriskObject.description = result.description;
+          })
+          .then(() => {
+            if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
+              this.addSelectedDaggerAsterisk(daggerObject);
+            } else {
+              this.addSelectedDaggerAsterisk(asteriskObject);
+            }
+            this.removeDaggerAsteriskCode(acceptedCodeIndex);
+          });
       });
   };
 
@@ -532,6 +547,23 @@ class App extends Component {
   handleExploreRecommendedCodeButton = event => {
     const exploredRecommendedCodeIndex = parseInt(event.currentTarget.id, 10);
     this.treeViewDiv.current.changeTree(this.state.recommendedCodes[exploredRecommendedCodeIndex].rhs);
+  };
+
+  /**
+   * Called upon to center the tree on the clicked dagger/asterisk code
+   */
+  handleExploreDaggerAsterisk = event => {
+    const codeIndex = parseInt(event.currentTarget.id, 10);
+    const dagAstObj = this.state.suggestedDaggerAsterisks[codeIndex];
+    const codes = Array.from(this.state.selectedCodes);
+
+    const daggerCode = dagAstObj.dagger;
+    const asteriskCode = dagAstObj.asterisk;
+    if (codes.find(codeObj => codeObj.code === daggerCode) === undefined) {
+      this.treeViewDiv.current.changeTree(daggerCode);
+    } else {
+      this.treeViewDiv.current.changeTree(asteriskCode);
+    }
   };
 
   render() {
@@ -667,10 +699,10 @@ class App extends Component {
                 noItemsMessage="No dagger or asterisks suggested"
                 nullItemsMessage="Add codes to see dagger/asterisks"
                 valueName="combo"
-                descriptionName="daggerAsteriskDescription"
+                descriptionName="description"
                 acceptItemButton={this.handleAcceptDaggerAsteriskCode}
                 removeItemButton={this.handleRemoveDaggerAsteriskCode}
-                //exploreButton={this.handleExploreSelectedCodeButton}
+                exploreButton={this.handleExploreDaggerAsterisk}
                 allowRearrage={false}
                 menuOptions={daggerAsteriskComponentMenuItems}
                 //button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
