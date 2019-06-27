@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
-import "./RuleCreator.css";
-
 import APIClass from "../../Assets/Util/API";
+
+import "./RuleCreator.css";
 
 function RuleCreator(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
@@ -142,61 +142,63 @@ function RuleCreator(props) {
     <div>
       <div className="sameRow">
         <div className="sameRowComponent">
-          <ListViewer
-            title="LHS Codes"
-            items={LHS}
-            noItemsMessage="No codes selected"
-            valueName="code"
-            descriptionName="description"
-            removeItemButton={handleRemoveLHSCode}
-            onSortEndCallback={updatedListOfSelectedCodes => {
-              setLHS({ updatedListOfSelectedCodes });
-            }}
-            allowRearrage={false}
-            menuOptions={LHSCodesComponentMenuItems}
-            disableTitleGutters={true}
-          />
+          <div>
+            <CodeInputField
+              id_code="inputCodeLHS"
+              placeholder_code="Enter Code to be added to LHS"
+              selectCode={addCodeLHS}
+              codeCache={cachedCodeWithDescription}
+              appendCodeToCache={appendCodeToCache}
+              autoClearCode={true}
+              width_code="100%"
+            />
+          </div>
+          <div>
+            <ListViewer
+              title="LHS Codes"
+              items={LHS}
+              noItemsMessage="No codes selected"
+              valueName="code"
+              descriptionName="description"
+              removeItemButton={handleRemoveLHSCode}
+              onSortEndCallback={updatedListOfSelectedCodes => {
+                setLHS({ updatedListOfSelectedCodes });
+              }}
+              allowRearrage={false}
+              menuOptions={LHSCodesComponentMenuItems}
+              disableTitleGutters={true}
+            />
+          </div>
         </div>
         <div className="sameRowComponent">
-          <ListViewer
-            title="RHS Codes"
-            items={RHS}
-            noItemsMessage="No codes selected"
-            valueName="code"
-            descriptionName="description"
-            removeItemButton={handleRemoveRHSCode}
-            onSortEndCallback={updatedListOfSelectedCodes => {
-              setRHS({ updatedListOfSelectedCodes });
-            }}
-            allowRearrage={false}
-            menuOptions={RHSCodesComponentMenuItems}
-            disableTitleGutters={true}
-          />
-        </div>
-      </div>
-      <div className="sameRow">
-        <div className="sameRowComponent">
-          <CodeInputField
-            id_code="inputCodeLHS"
-            placeholder_code="Enter Code to be added to LHS"
-            selectCode={addCodeLHS}
-            codeCache={cachedCodeWithDescription}
-            appendCodeToCache={appendCodeToCache}
-            autoClearCode={true}
-            width_code="100%"
-          />
-        </div>
-        <div className="sameRowComponent">
-          <CodeInputField
-            id_code="inputCodeRHS"
-            placeholder_code="Enter code to be added to RHS"
-            setCodeValue={setRHS}
-            selectCode={addCodeRHS}
-            codeCache={cachedCodeWithDescription}
-            appendCodeToCache={appendCodeToCache}
-            autoClearCode={true}
-            width_code="100%"
-          />
+          <div>
+            <CodeInputField
+              id_code="inputCodeRHS"
+              placeholder_code="Enter code to be added to RHS"
+              setCodeValue={setRHS}
+              selectCode={addCodeRHS}
+              codeCache={cachedCodeWithDescription}
+              appendCodeToCache={appendCodeToCache}
+              autoClearCode={true}
+              width_code="100%"
+            />
+          </div>
+          <div>
+            <ListViewer
+              title="RHS Codes"
+              items={RHS}
+              noItemsMessage="No codes selected"
+              valueName="code"
+              descriptionName="description"
+              removeItemButton={handleRemoveRHSCode}
+              onSortEndCallback={updatedListOfSelectedCodes => {
+                setRHS({ updatedListOfSelectedCodes });
+              }}
+              allowRearrage={false}
+              menuOptions={RHSCodesComponentMenuItems}
+              disableTitleGutters={true}
+            />
+          </div>
         </div>
       </div>
 

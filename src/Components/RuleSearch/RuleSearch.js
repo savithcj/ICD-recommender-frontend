@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
-import "./RuleSearch.css";
-
 import APIClass from "../../Assets/Util/API";
+
+import "./RuleSearch.css";
 
 function RuleSearch(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
@@ -156,58 +156,60 @@ function RuleSearch(props) {
     <div className="grid-block">
       <div className="sameRow">
         <div className="sameRowComponent">
-          <ListViewer
-            title="LHS Codes"
-            items={LHS}
-            noItemsMessage="No codes selected"
-            valueName="code"
-            descriptionName="description"
-            removeItemButton={handleRemoveLHSCode}
-            allowRearrage={false}
-            menuOptions={listComponentMenuItems}
-            disableTitleGutters={true}
-          />
+          <div>
+            <CodeInputField
+              id_code="inputCodeLHS"
+              placeholder_code="Search for Code in LHS"
+              selectCode={addCodeLHS}
+              codeCache={cachedCodeWithDescription}
+              appendCodeToCache={appendCodeToCache}
+              autoClearCode={true}
+              width_code="100%"
+            />
+          </div>
+          <div>
+            <ListViewer
+              title="LHS Codes"
+              items={LHS}
+              noItemsMessage="No codes selected"
+              valueName="code"
+              descriptionName="description"
+              removeItemButton={handleRemoveLHSCode}
+              allowRearrage={false}
+              menuOptions={listComponentMenuItems}
+              disableTitleGutters={true}
+            />
+          </div>
         </div>
         <div className="sameRowComponent">
-          <ListViewer
-            title="RHS Codes"
-            items={RHS}
-            noItemsMessage="No codes selected"
-            valueName="code"
-            descriptionName="description"
-            removeItemButton={handleRemoveRHSCode}
-            allowRearrage={false}
-            menuOptions={listComponentMenuItems}
-            disableTitleGutters={true}
-          />
+          <div>
+            <CodeInputField
+              id_code="inputCodeRHS"
+              placeholder_code="Search for Code in RHS"
+              setCodeValue={setRHS}
+              selectCode={addCodeRHS}
+              codeCache={cachedCodeWithDescription}
+              appendCodeToCache={appendCodeToCache}
+              autoClearCode={true}
+              width_code="100%"
+            />
+          </div>
+          <div>
+            <ListViewer
+              title="RHS Codes"
+              items={RHS}
+              noItemsMessage="No codes selected"
+              valueName="code"
+              descriptionName="description"
+              removeItemButton={handleRemoveRHSCode}
+              allowRearrage={false}
+              menuOptions={listComponentMenuItems}
+              disableTitleGutters={true}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="sameRow">
-        <div className="sameRowComponent">
-          <CodeInputField
-            id_code="inputCodeLHS"
-            placeholder_code="Enter Code to be added to LHS"
-            selectCode={addCodeLHS}
-            codeCache={cachedCodeWithDescription}
-            appendCodeToCache={appendCodeToCache}
-            autoClearCode={true}
-            width_code="100%"
-          />
-        </div>
-        <div className="sameRowComponent">
-          <CodeInputField
-            id_code="inputCodeRHS"
-            placeholder_code="Enter code to be added to RHS"
-            setCodeValue={setRHS}
-            selectCode={addCodeRHS}
-            codeCache={cachedCodeWithDescription}
-            appendCodeToCache={appendCodeToCache}
-            autoClearCode={true}
-            width_code="100%"
-          />
-        </div>
-      </div>
       <div>
         <button type="button" onClick={searchForRule}>
           Search
