@@ -22,8 +22,6 @@ export default class API {
         return this.urlBeginning + "ancestors/";
       case "CODE_AUTO_SUGGESTIONS":
         return this.urlBeginning + "codeAutosuggestions/";
-      case "CODE_USED":
-        return this.urlBeginning + "codeUsed/";
       case "CODE_BLOCK_USAGE":
         return this.urlBeginning + "codeBlockUsage/";
       case "MODIFY_RULE":
@@ -38,6 +36,8 @@ export default class API {
         return this.urlBeginning + "updateFlaggedRule/";
       case "DAGGER_ASTERISK":
         return this.urlBeginning + "daggerAsterisk/";
+      case "ENTER_LOG":
+        return this.urlBeginning + "enterLog/";
       default:
         return null;
     }
