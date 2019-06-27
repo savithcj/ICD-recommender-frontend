@@ -38,6 +38,8 @@ export default class API {
         return this.urlBeginning + "updateFlaggedRule/";
       case "DAGGER_ASTERISK":
         return this.urlBeginning + "daggerAsterisk/";
+      default:
+        return null;
     }
   }
 }

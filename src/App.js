@@ -224,9 +224,11 @@ class App extends Component {
    */
   acceptSelectedCodes = () => {
     const stringOfCodes = this.getStringFromListOfCodes(this.state.selectedCodes);
-    const url = APIClass.getAPIURL("CODE_USED") + stringOfCodes + "/";
+    // this is where we call the api
 
-    fetch(url, { method: "PUT" });
+    // const url = APIClass.getAPIURL("CODE_USED") + stringOfCodes + "/";
+
+    // fetch(url, { method: "PUT" });
 
     this.setState({
       selectedCodes: [],
@@ -289,13 +291,11 @@ class App extends Component {
   getDaggerAsterisks(listOfCodeObjects) {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
     if (stringOfCodes !== "") {
-      const codes = Array.from(this.state.selectedCodes);
       const url = APIClass.getAPIURL("DAGGER_ASTERISK") + stringOfCodes + "/?format=json";
       //ListViewer will display a loading indicator while the API promise is being fullfilled
       this.setState({
         suggestedDaggerAsterisks: "LOADING"
       });
-      let DagAstObjs = [];
 
       fetch(url)
         .then(response => response.json())
@@ -304,7 +304,7 @@ class App extends Component {
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
             let url2 = APIClass.getAPIURL("CODE_DESCRIPTION");
-            if (codes.find(codeObj => codeObj.code === result.dagger) === undefined) {
+            if (listOfCodeObjects.find(codeObject => codeObject.code === result.dagger) === undefined) {
               url2 += result.dagger + "/?format=json";
             } else {
               url2 += result.asterisk + "/?format=json";
@@ -321,10 +321,6 @@ class App extends Component {
             this.setState({ suggestedDaggerAsterisks: results });
           });
         });
-      // Promise.all(promiseList).then(promiseList => {
-      //   console.log(promiseList);
-      //   this.setState({ suggestedDaggerAsterisks: promiseList });
-      // });
     } else {
       this.setState({ suggestedDaggerAsterisks: null });
     }
