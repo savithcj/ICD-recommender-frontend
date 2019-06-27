@@ -15,10 +15,10 @@ import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
 import { __esModule } from "d3-random";
 
 const defaultLayoutLg = [
-  { w: 18, h: 28, x: 0, y: 4, i: "tree" },
-  { w: 16, h: 16, x: 18, y: 0, i: "selectedCodes" },
-  { w: 14, h: 32, x: 34, y: 0, i: "recommendedCodes" },
-  { w: 16, h: 16, x: 18, y: 16, i: "daggerCodes" },
+  { w: 18, h: 33, x: 0, y: 4, i: "tree" },
+  { w: 16, h: 19, x: 18, y: 0, i: "selectedCodes" },
+  { w: 14, h: 37, x: 34, y: 0, i: "recommendedCodes" },
+  { w: 16, h: 18, x: 18, y: 16, i: "daggerCodes" },
   { w: 18, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 const defaultLayoutMd = [
@@ -627,7 +627,6 @@ class App extends Component {
           <ResponsiveReactGridLayout
             className="layout"
             rowHeight={10}
-            // width={2400}
             cols={{ lg: 48, md: 40, sm: 24, xs: 16, xxs: 8 }}
             layouts={this.state.layouts}
             draggableCancel="input,textarea"
