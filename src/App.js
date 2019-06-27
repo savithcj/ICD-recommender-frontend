@@ -15,39 +15,39 @@ import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
 import { __esModule } from "d3-random";
 
 const defaultLayoutLg = [
-  { w: 7, h: 16, x: 0, y: 2, i: "0" },
-  { w: 5, h: 9, x: 7, y: 0, i: "1" },
-  { w: 5, h: 9, x: 7, y: 11, i: "2" },
-  { w: 7, h: 2, x: 0, y: 0, i: "3" },
-  { w: 5, h: 9, x: 7, y: 20, i: "4" }
+  { w: 18, h: 28, x: 0, y: 4, i: "tree" },
+  { w: 16, h: 16, x: 18, y: 0, i: "selectedCodes" },
+  { w: 14, h: 32, x: 34, y: 0, i: "recommendedCodes" },
+  { w: 16, h: 16, x: 18, y: 16, i: "daggerCodes" },
+  { w: 18, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 const defaultLayoutMd = [
-  { w: 6, h: 17, x: 0, y: 2, i: "0" },
-  { w: 4, h: 10, x: 6, y: 0, i: "1" },
-  { w: 4, h: 9, x: 6, y: 10, i: "2" },
-  { w: 6, h: 2, x: 0, y: 0, i: "3" },
-  { w: 4, h: 9, x: 6, y: 19, i: "4" }
+  { w: 21, h: 21, x: 0, y: 20, i: "tree" },
+  { w: 21, h: 16, x: 0, y: 4, i: "selectedCodes" },
+  { w: 19, h: 26, x: 21, y: 15, i: "recommendedCodes" },
+  { w: 19, h: 15, x: 21, y: 0, i: "daggerCodes" },
+  { w: 21, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 const defaultLayoutSm = [
-  { w: 6, h: 14, x: 0, y: 20, i: "0" },
-  { w: 6, h: 9, x: 0, y: 2, i: "1" },
-  { w: 6, h: 9, x: 0, y: 11, i: "2" },
-  { w: 6, h: 2, x: 0, y: 0, i: "3" },
-  { w: 6, h: 9, x: 0, y: 34, i: "4" }
+  { w: 24, h: 32, x: 0, y: 32, i: "tree" },
+  { w: 14, h: 14, x: 0, y: 4, i: "selectedCodes" },
+  { w: 10, h: 32, x: 14, y: 0, i: "recommendedCodes" },
+  { w: 14, h: 14, x: 0, y: 18, i: "daggerCodes" },
+  { w: 14, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 const defaultLayoutXs = [
-  { w: 4, h: 14, x: 0, y: 19, i: "0" },
-  { w: 4, h: 9, x: 0, y: 2, i: "1" },
-  { w: 4, h: 8, x: 0, y: 11, i: "2" },
-  { w: 4, h: 2, x: 0, y: 0, i: "3" },
-  { w: 4, h: 8, x: 0, y: 33, i: "4" }
+  { w: 16, h: 31, x: 0, y: 63, i: "tree" },
+  { w: 16, h: 15, x: 0, y: 4, i: "selectedCodes" },
+  { w: 16, h: 27, x: 0, y: 36, i: "recommendedCodes" },
+  { w: 16, h: 17, x: 0, y: 39, i: "daggerCodes" },
+  { w: 16, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 const defaultLayoutXxs = [
-  { w: 2, h: 12, x: 0, y: 19, i: "0" },
-  { w: 2, h: 9, x: 0, y: 2, i: "1" },
-  { w: 2, h: 8, x: 0, y: 11, i: "2" },
-  { w: 2, h: 2, x: 0, y: 0, i: "3" },
-  { w: 2, h: 8, x: 0, y: 31, i: "4" }
+  { w: 8, h: 31, x: 0, y: 55, i: "tree" },
+  { w: 8, h: 15, x: 0, y: 4, i: "selectedCodes" },
+  { w: 8, h: 19, x: 0, y: 36, i: "recommendedCodes" },
+  { w: 8, h: 17, x: 0, y: 19, i: "daggerCodes" },
+  { w: 2, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 
 const defaultLayouts = {
@@ -574,9 +574,9 @@ class App extends Component {
         codeCache={this.state.cachedCodeWithDescription}
         appendCodeToCache={this.appendCodeToCache}
         autoClearCode={true}
-        width_code="60%"
-        width_age="20%"
-        width_gender="20%"
+        width_code="72%"
+        width_age="10%"
+        width_gender="15%"
       />
     );
 
@@ -623,17 +623,19 @@ class App extends Component {
           handleResetLayout={this.resetLayout}
           inModifyMode={this.state.isLayoutModifiable}
         />
-        <div className={shakeDiv}>
+        <div>
           <ResponsiveReactGridLayout
             className="layout"
-            rowHeight={30}
+            rowHeight={10}
+            // width={2400}
+            cols={{ lg: 48, md: 40, sm: 24, xs: 16, xxs: 8 }}
             layouts={this.state.layouts}
             draggableCancel="input,textarea"
             isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
             isResizable={this.state.isLayoutModifiable} //if a button is pressed
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
-            <div className={highlightEditDiv} key="0">
+            <div className={highlightEditDiv} key="tree">
               {/* FIXME: fix the display bug in the SwipabalePanel  */}
               {/* <SwipablePanel
                 tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
@@ -642,7 +644,7 @@ class App extends Component {
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
 
-            <div key="1" className={highlightEditDiv}>
+            <div key="selectedCodes" className={highlightEditDiv}>
               <ListViewer
                 title="Selected Codes"
                 items={this.state.selectedCodes}
@@ -660,7 +662,7 @@ class App extends Component {
               />
             </div>
 
-            <div key="2" className={highlightEditDiv}>
+            <div key="recommendedCodes" className={highlightEditDiv}>
               <ListViewer
                 className="recommendedCodes"
                 title="Recommended Codes"
@@ -681,11 +683,7 @@ class App extends Component {
               />
             </div>
 
-            <div key="3" className={highlightEditDiv}>
-              {userInputBoxes}
-            </div>
-
-            <div key="4" className={highlightEditDiv}>
+            <div key="daggerCodes" className={highlightEditDiv}>
               <ListViewer
                 title="Dagger/Asterisks"
                 items={this.state.suggestedDaggerAsterisks}
@@ -700,6 +698,10 @@ class App extends Component {
                 menuOptions={daggerAsteriskComponentMenuItems}
                 //button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
               />
+            </div>
+
+            <div key="inputBoxes" className={highlightEditDiv}>
+              {userInputBoxes}
             </div>
           </ResponsiveReactGridLayout>
         </div>
