@@ -1,41 +1,43 @@
 export default class API {
   static serverAdress = "localhost";
   static portAdress = ":8000";
-  static urlBegnining = "http://" + this.serverAdress + this.portAdress + "/api/";
+  static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
 
   static getAPIURL(endpoint) {
     console.log();
     switch (endpoint) {
       case "RULES":
-        return this.urlBegnining + "rules/";
+        return this.urlBeginning + "rules/";
       case "CHILDREN":
-        return this.urlBegnining + "children/";
+        return this.urlBeginning + "children/";
       case "FAMILY":
-        return this.urlBegnining + "family/";
+        return this.urlBeginning + "family/";
       case "CODE_DESCRIPTION":
-        return this.urlBegnining + "codeDescription/";
+        return this.urlBeginning + "codeDescription/";
       case "REQUEST_RULES":
-        return this.urlBegnining + "requestRules/";
+        return this.urlBeginning + "requestRules/";
       case "MATCH_DESCRIPTION":
-        return this.urlBegnining + "matchDescription/";
+        return this.urlBeginning + "matchDescription/";
       case "ANCESTORS":
-        return this.urlBegnining + "ancestors/";
+        return this.urlBeginning + "ancestors/";
       case "CODE_AUTO_SUGGESTIONS":
-        return this.urlBegnining + "codeAutosuggestions/";
+        return this.urlBeginning + "codeAutosuggestions/";
       case "CODE_USED":
-        return this.urlBegnining + "codeUsed/";
+        return this.urlBeginning + "codeUsed/";
       case "CODE_BLOCK_USAGE":
-        return this.urlBegnining + "codeBlockUsage/";
+        return this.urlBeginning + "codeBlockUsage/";
       case "MODIFY_RULE":
-        return this.urlBegnining + "modifyRule/";
+        return this.urlBeginning + "modifyRule/";
       case "RULE_SEARCH":
-        return this.urlBegnining + "ruleSearch/";
+        return this.urlBeginning + "ruleSearch/";
       case "FLAG_RULE_FOR_REVIEW":
-        return this.urlBegnining + "flagRuleForReview/";
+        return this.urlBeginning + "flagRuleForReview/";
       case "FLAGGED_RULES":
-        return this.urlBegnining + "flaggedRules/";
+        return this.urlBeginning + "flaggedRules/";
       case "UPDATE_FLAGGED_RULE":
-        return this.urlBegnining + "updateFlaggedRule/";
+        return this.urlBeginning + "updateFlaggedRule/";
+      case "DAGGER_ASTERISK":
+        return this.urlBeginning + "daggerAsterisk/";
     }
   }
 }

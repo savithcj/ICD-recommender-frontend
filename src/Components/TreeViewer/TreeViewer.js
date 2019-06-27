@@ -1861,7 +1861,6 @@ class TreeViewer extends Component {
   // Gets the data from API for the specified code and stores it in a member variable
   getDataFromAPI = code => {
     const url = APIClass.getAPIURL("FAMILY") + code + "/?format=json";
-    console.log(url);
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
