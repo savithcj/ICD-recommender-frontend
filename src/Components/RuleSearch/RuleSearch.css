@@ -1,0 +1,8 @@
+.sameRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.sameRowComponent {
+  width: 100%;
+}

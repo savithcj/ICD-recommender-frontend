@@ -154,8 +154,8 @@ function RuleSearch(props) {
 
   return (
     <div className="grid-block">
-      <div>
-        <div>
+      <div className="sameRow">
+        <div className="sameRowComponent">
           <ListViewer
             title="LHS Codes"
             items={LHS}
@@ -168,20 +168,7 @@ function RuleSearch(props) {
             disableTitleGutters={true}
           />
         </div>
-        <div>
-          <CodeInputField
-            id_code="inputCodeLHS"
-            placeholder_code="Enter Code to be added to LHS"
-            selectCode={addCodeLHS}
-            codeCache={cachedCodeWithDescription}
-            appendCodeToCache={appendCodeToCache}
-            autoClearCode={true}
-            width_code="100%"
-          />
-        </div>
-      </div>
-      <div>
-        <div>
+        <div className="sameRowComponent">
           <ListViewer
             title="RHS Codes"
             items={RHS}
@@ -194,7 +181,21 @@ function RuleSearch(props) {
             disableTitleGutters={true}
           />
         </div>
-        <div>
+      </div>
+
+      <div className="sameRow">
+        <div className="sameRowComponent">
+          <CodeInputField
+            id_code="inputCodeLHS"
+            placeholder_code="Enter Code to be added to LHS"
+            selectCode={addCodeLHS}
+            codeCache={cachedCodeWithDescription}
+            appendCodeToCache={appendCodeToCache}
+            autoClearCode={true}
+            width_code="100%"
+          />
+        </div>
+        <div className="sameRowComponent">
           <CodeInputField
             id_code="inputCodeRHS"
             placeholder_code="Enter code to be added to RHS"
