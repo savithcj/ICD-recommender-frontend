@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import APIClass from "../../Assets/Util/API";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 
 import "./RuleCreator.css";
+const useStyles = makeStyles(theme => ({
+  createButton: {
+    margin: theme.spacing(1)
+  }
+}));
 
 function RuleCreator(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
@@ -13,6 +20,8 @@ function RuleCreator(props) {
   const [ageStart, setAgeStart] = useState(0);
   const [ageEnd, setAgeEnd] = useState(150);
   const [gender, setGender] = useState();
+
+  const classes = useStyles();
 
   const addCodeLHS = newCodeObj => {
     let selectedCodes = Array.from(LHS);
@@ -140,8 +149,8 @@ function RuleCreator(props) {
 
   return (
     <div>
-      <div className="sameRow">
-        <div className="sameRowComponent">
+      <div className="ruleSideBySideContainer">
+        <div className="ruleSideBySideComponent">
           <div>
             <CodeInputField
               id_code="inputCodeLHS"
@@ -170,7 +179,7 @@ function RuleCreator(props) {
             />
           </div>
         </div>
-        <div className="sameRowComponent">
+        <div className="ruleSideBySideComponent">
           <div>
             <CodeInputField
               id_code="inputCodeRHS"
@@ -213,9 +222,9 @@ function RuleCreator(props) {
         />
       </div>
       <div>
-        <button type="button" onClick={createRule}>
-          Submit
-        </button>
+        <Button variant="contained" color="default" className={classes.createButton} onClick={createRule} size="large">
+          Create
+        </Button>
       </div>
     </div>
   );
