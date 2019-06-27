@@ -190,6 +190,7 @@ function RuleSearch(props) {
             />
           </div>
         </div>
+
         <div className="ruleSideBySideComponent">
           <div>
             <CodeInputField
