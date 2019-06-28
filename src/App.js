@@ -208,6 +208,42 @@ class App extends Component {
   handleRemoveSelectedCode = event => {
     const removeCodeIndex = parseInt(event.currentTarget.id, 10);
 
+    let rulesUsedSession = Array.from(this.state.rulesUsedDuringSession);
+    let recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
+
+    ///// Cleaning up rules used during session
+
+    const ruleIndicesToRemove = [];
+
+    rulesUsedSession.forEach((ruleObj, index) => {
+      console.log("REMOVED SELECTED CODE: " + this.state.selectedCodes[removeCodeIndex].code);
+      console.log("RULE LHS: " + ruleObj.lhs);
+
+      if (ruleObj.lhs === this.state.selectedCodes[removeCodeIndex].code) {
+        ruleIndicesToRemove.push(index);
+      }
+    });
+
+    console.log(ruleIndicesToRemove);
+
+    rulesUsedSession = rulesUsedSession.filter((result, index) => {
+      return !ruleIndicesToRemove.includes(index);
+    });
+
+    ///// Cleaning up recommendations made during session
+
+    const recommendationsIndicesToRemove = [];
+
+    recommendedCodesSession.forEach((ruleObj, index) => {
+      if (ruleObj.lhs === this.state.selectedCodes[removeCodeIndex].code) {
+        recommendationsIndicesToRemove.push(index);
+      }
+    });
+
+    recommendedCodesSession = recommendedCodesSession.filter((result, index) => {
+      return !recommendationsIndicesToRemove.includes(index);
+    });
+
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
 
@@ -215,12 +251,15 @@ class App extends Component {
       this.resetSession();
     }
 
-    this.setState({
-      selectedCodes: codes
-    });
-
-    this.getRecommendedCodes(codes);
-    this.getDaggerAsterisks(codes);
+    this.setState(
+      {
+        selectedCodes: codes,
+        rulesUsedDuringSession: rulesUsedSession,
+        recommendedCodesDuringSession: recommendedCodesSession
+      },
+      this.getRecommendedCodes(codes),
+      this.getDaggerAsterisks(codes)
+    );
   };
 
   /**
@@ -307,14 +346,15 @@ class App extends Component {
 
             if (shouldShowRule) {
               cleanedResults.push(results[i]);
-              const newRuleObj = { id: results[i].id, rhs: results[i].rhs, action: "I" };
+              const newRuleObj = { ...results[i] };
+              newRuleObj.action = "I";
               rulesUsedSession.push(newRuleObj);
             }
           }
 
-          cleanedResults = cleanedResults.concat(recommendedCodesSession);
+          console.log(this.state.selectedCodes);
 
-          console.log(cleanedResults);
+          cleanedResults = cleanedResults.concat(recommendedCodesSession);
 
           this.addRecommendedCodesToCachedCodes(cleanedResults);
 
