@@ -322,10 +322,10 @@ class App extends Component {
 
           //this list is used to stop showing any recommendations that have already been
           //"ACCEPTED" or "REJECTED" in any given session
-          const listOfResultsRHSToRemove = [];
+          const listOfIndicesToRemove = [];
 
           //TODO: recheck logic of this for loop
-          cleanedResults.forEach(ruleObj => {
+          cleanedResults.forEach((ruleObj, index) => {
             if (recommendedCodesSession.find(recommendation => recommendation.code === ruleObj.rhs) === undefined) {
               //if the code was not recommended previously, add to the list of recommended codes shown during the session
               //TODO: clean up creation of new recommendation object
@@ -339,23 +339,21 @@ class App extends Component {
             } else {
               //if the code was recommended before, remove it from the list of results as long as the action associated
               //with the recomendation is "ACCEPTED" or "REJECTED"; i.e, we still want to show any recommendation that the
-              //user had previously "IGNORED" during the same session even though the recommendation was already made.
+              //user had previously "IGNORED" during the same session even though the recommendation was already shown before.
               if (
                 recommendedCodesSession.find(recommendationObj => ruleObj.rhs === recommendationObj.code).action !== "I"
               ) {
                 //add the RHS of the rule that resulted in a recommendation that was already either "ACCEPTED" or "REJECTED"
                 //to the listOfResultsRHSToRemove, so that they can be removed from the results list
-                listOfResultsRHSToRemove.push(ruleObj.rhs);
+                listOfIndicesToRemove.push(index);
               }
             }
           });
 
-          //FIXME: doesnt work as intented
           //remove all "duplicate recommendations" from the results list
-          // listOfResultsRHSToRemove.forEach(rhs => {
-          //   let index = cleanedResults.findIndex(ruleObj => ruleObj.rhs === rhs);
-          //   cleanedResults.splice(index, 1);
-          // });
+          cleanedResults = cleanedResults.filter((result, index) => {
+            return !listOfIndicesToRemove.includes(index);
+          });
 
           //sort the remaining results in descending order of score
           cleanedResults.sort((a, b) => (a.score < b.score ? 1 : b.score < a.score ? -1 : 0));
