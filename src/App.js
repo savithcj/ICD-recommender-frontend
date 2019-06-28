@@ -506,16 +506,16 @@ class App extends Component {
    */
   resetLayout = () => {
     this.setState({ layouts: defaultLayouts });
+    saveToLS("layouts", defaultLayouts);
   };
 
   /**
    * Called upon when layout is being modified
    */
-  async onLayoutChange(layouts) {
-    saveToLS("layouts", layouts);
-    await this.setState({ layouts });
+  onLayoutChange(layouts) {
+    this.setState({ layouts: layouts });
     this.treeViewDiv.current.handleResize();
-    console.log("layouts:", layouts);
+    saveToLS("layouts", layouts);
   }
 
   /**
