@@ -6,8 +6,6 @@ export default class API {
   static getAPIURL(endpoint) {
     console.log();
     switch (endpoint) {
-      case "RULES":
-        return this.urlBeginning + "rules/";
       case "CHILDREN":
         return this.urlBeginning + "children/";
       case "FAMILY":
