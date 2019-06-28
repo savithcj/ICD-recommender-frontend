@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import APIClass from "../../Assets/Util/API";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 
 import "./RuleSearch.css";
+const useStyles = makeStyles(theme => ({
+  searchButton: {
+    margin: theme.spacing(1)
+  }
+}));
 
 function RuleSearch(props) {
   const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
@@ -11,6 +18,8 @@ function RuleSearch(props) {
   const [LHS, setLHS] = useState([]);
   const [RHS, setRHS] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+
+  const classes = useStyles();
 
   const addCodeLHS = newCodeObj => {
     let selectedCodes = Array.from(LHS);
@@ -154,8 +163,8 @@ function RuleSearch(props) {
 
   return (
     <div className="grid-block">
-      <div className="sameRow">
-        <div className="sameRowComponent">
+      <div className="ruleSideBySideContainer">
+        <div className="ruleSideBySideComponent">
           <div>
             <CodeInputField
               id_code="inputCodeLHS"
@@ -181,7 +190,8 @@ function RuleSearch(props) {
             />
           </div>
         </div>
-        <div className="sameRowComponent">
+
+        <div className="ruleSideBySideComponent">
           <div>
             <CodeInputField
               id_code="inputCodeRHS"
@@ -211,9 +221,15 @@ function RuleSearch(props) {
       </div>
 
       <div>
-        <button type="button" onClick={searchForRule}>
+        <Button
+          variant="contained"
+          color="default"
+          className={classes.searchButton}
+          onClick={searchForRule}
+          size="large"
+        >
           Search
-        </button>
+        </Button>
       </div>
       <div>
         <ListViewer
