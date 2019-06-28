@@ -211,6 +211,10 @@ class App extends Component {
     const codes = [...this.state.selectedCodes];
     codes.splice(removeCodeIndex, 1);
 
+    if (codes.length === 0) {
+      this.resetSession();
+    }
+
     this.setState({
       selectedCodes: codes
     });
@@ -265,6 +269,7 @@ class App extends Component {
     //creating a shallow copied instance of the recommendedCodesDuringSession to
     //prevent direct modification of the array in the state
     const recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
+    const rulesUsedSession = Array.from(this.state.rulesUsedDuringSession);
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
 
@@ -280,22 +285,38 @@ class App extends Component {
         .then(response => response.json())
         .then(results => {
           results.forEach(ruleObj => {
-            ruleObj.reason =
-              ruleObj.lhs +
-              " -> " +
-              ruleObj.rhs +
-              " || confidence: " +
-              Math.round(ruleObj.confidence * 1000) / 1000 +
-              " for ages: " +
-              ruleObj.min_age +
-              "-" +
-              ruleObj.max_age;
+            ruleObj.description = ruleObj.description + " ~ Score: " + (ruleObj.score * 100).toFixed(1);
             ruleObj.rule = ruleObj.lhs + " -> " + ruleObj.rhs;
             //dislike button should be disabled if an admin has reviewed and accepted a rule
             ruleObj.shouldDisableDislikeButton = ruleObj["review_status"] === 2;
           });
 
-          this.addRecommendedCodesToCachedCodes(results);
+          ////// Cleaning up results received from API call.
+
+          let cleanedResults = [];
+
+          //TODO: check the logic of this for loop
+          for (let i = 0; i < results.length; i++) {
+            if (rulesUsedSession.find(ruleObjInSessionRules => ruleObjInSessionRules.id === results[i].id)) {
+              continue;
+            }
+            if (rulesUsedSession.find(ruleObjInSessionRules => ruleObjInSessionRules.rhs === results[i].rhs)) {
+              continue;
+            }
+            const shouldShowRule = Math.random() < results[i].score;
+
+            if (shouldShowRule) {
+              cleanedResults.push(results[i]);
+              const newRuleObj = { id: results[i].id, rhs: results[i].rhs, action: "I" };
+              rulesUsedSession.push(newRuleObj);
+            }
+          }
+
+          cleanedResults = cleanedResults.concat(recommendedCodesSession);
+
+          console.log(cleanedResults);
+
+          this.addRecommendedCodesToCachedCodes(cleanedResults);
 
           ////// Dealing with duplicate recommendations during a single session
 
@@ -303,10 +324,14 @@ class App extends Component {
           //"ACCEPTED" or "REJECTED" in any given session
           const listOfResultsRHSToRemove = [];
 
-          results.forEach(ruleObj => {
+          //TODO: recheck logic of this for loop
+          cleanedResults.forEach(ruleObj => {
             if (recommendedCodesSession.find(recommendation => recommendation.code === ruleObj.rhs) === undefined) {
               //if the code was not recommended previously, add to the list of recommended codes shown during the session
-              let newRecommendation = { code: ruleObj.rhs, action: "I" }; //initialize the action to "IGNORED" by default.
+              //TODO: clean up creation of new recommendation object
+              let newRecommendation = { ...ruleObj };
+              newRecommendation.code = newRecommendation.rhs;
+              newRecommendation.action = "I"; //initialize the action to "IGNORED" by default.
               //this initialization was made because all recommended codes(even duplicates) need to be shown as long as
               //they were not "ACCEPTED" or "REJECTED" previously within the same session.
 
@@ -325,15 +350,20 @@ class App extends Component {
             }
           });
 
+          //FIXME: doesnt work as intented
           //remove all "duplicate recommendations" from the results list
-          listOfResultsRHSToRemove.forEach(rhs => {
-            let index = results.findIndex(ruleObj => ruleObj.rhs === rhs);
-            results.splice(index, 1);
-          });
+          // listOfResultsRHSToRemove.forEach(rhs => {
+          //   let index = cleanedResults.findIndex(ruleObj => ruleObj.rhs === rhs);
+          //   cleanedResults.splice(index, 1);
+          // });
+
+          //sort the remaining results in descending order of score
+          cleanedResults.sort((a, b) => (a.score < b.score ? 1 : b.score < a.score ? -1 : 0));
 
           this.setState({
-            recommendedCodes: results,
-            recommendedCodesDuringSession: recommendedCodesSession
+            recommendedCodes: cleanedResults,
+            recommendedCodesDuringSession: recommendedCodesSession,
+            rulesUsedDuringSession: rulesUsedSession
           });
         });
     } else {
@@ -426,14 +456,17 @@ class App extends Component {
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
 
     const recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
+    const rulesUsedSession = Array.from(this.state.rulesUsedDuringSession);
 
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
 
     recommendedCodesSession.find(recommenationObj => recommenationObj.code === acceptedCodeObject.rhs).action = "A";
 
+    rulesUsedSession.find(recommenationObj => recommenationObj.id === acceptedCodeObject.id).action = "A";
+
     const newCode = acceptedCodeObject.rhs;
 
-    this.setState({ recommendedCodesDuringSession: recommendedCodesSession });
+    this.setState({ recommendedCodesDuringSession: recommendedCodesSession, rulesUsedDuringSession: rulesUsedSession });
 
     this.addSelectedCode(newCode);
 
@@ -450,12 +483,14 @@ class App extends Component {
     const removedCodeIndex = parseInt(event.currentTarget.id, 10);
 
     const recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
+    const rulesUsedSession = Array.from(this.state.rulesUsedDuringSession);
 
-    const recommendationRHS = this.state.recommendedCodes[removedCodeIndex].rhs;
+    const removedCodeObject = this.state.recommendedCodes[removedCodeIndex];
 
-    recommendedCodesSession.find(recommenationObj => recommenationObj.code === recommendationRHS).action = "R";
+    recommendedCodesSession.find(recommenationObj => recommenationObj.code === removedCodeObject.rhs).action = "R";
+    rulesUsedSession.find(recommenationObj => recommenationObj.id === removedCodeObject.id).action = "R";
 
-    this.setState({ recommendedCodesDuringSession: recommendedCodesSession });
+    this.setState({ recommendedCodesDuringSession: recommendedCodesSession, rulesUsedDuringSession: rulesUsedSession });
 
     this.removeRecommendedCode(removedCodeIndex);
   };
