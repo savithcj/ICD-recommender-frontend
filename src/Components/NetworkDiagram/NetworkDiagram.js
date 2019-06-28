@@ -1,174 +1,171 @@
-import React, { Component } from "react";
-import * as d3 from "d3";
-import ReactDOM from "react-dom";
+// import React, { Component } from "react";
+// import * as d3 from "d3";
+// import ReactDOM from "react-dom";
 
-import APIClass from "../../Assets/Util/API";
+// import APIClass from "../../Assets/Util/API";
 
-class NetworkDiagram extends Component {
-  constructor(props) {
-    super(props);
-    this.fontType = "sans-serif";
-    this.textColor = "black";
-    this.networkClass = "networkVis" + this.props.id;
-    this.data = null;
-    this.nodes = d3.range(211, 261).map(function(i) {
-      return {
-        userID: i,
-        in: 0,
-        out: 0
-      };
-    });
-  }
+// class NetworkDiagram extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.fontType = "sans-serif";
+//     this.textColor = "black";
+//     this.networkClass = "networkVis" + this.props.id;
+//     this.data = null;
+//     this.nodes = d3.range(211, 261).map(function(i) {
+//       return {
+//         userID: i,
+//         in: 0,
+//         out: 0
+//       };
+//     });
+//   }
 
-  componentDidMount() {
-    this.links = [
-      { source: 27, target: 28 },
-      { source: 28, target: 27 },
-      { source: 28, target: 12 },
-      { source: 47, target: 46 },
-      { source: 41, target: 37 },
-      { source: 41, target: 25 },
-      { source: 27, target: 11 },
-      { source: 38, target: 2 },
-      { source: 28, target: 41 },
-      { source: 28, target: 0 },
-      { source: 13, target: 21 },
-      { source: 46, target: 25 },
-      { source: 39, target: 41 },
-      { source: 21, target: 1 },
-      { source: 1, target: 28 },
-      { source: 14, target: 16 },
-      { source: 28, target: 1 },
-      { source: 28, target: 23 },
-      { source: 21, target: 20 },
-      { source: 32, target: 5 },
-      { source: 28, target: 21 },
-      { source: 38, target: 43 },
-      { source: 2, target: 35 },
-      { source: 31, target: 38 },
-      { source: 22, target: 45 },
-      { source: 37, target: 41 },
-      { source: 20, target: 21 },
-      { source: 0, target: 11 },
-      { source: 13, target: 2 },
-      { source: 25, target: 46 },
-      { source: 1, target: 21 },
-      { source: 27, target: 0 },
-      { source: 23, target: 28 },
-      { source: 21, target: 13 },
-      { source: 1, target: 41 },
-      { source: 25, target: 13 },
-      { source: 12, target: 35 },
-      { source: 35, target: 12 },
-      { source: 12, target: 28 },
-      { source: 31, target: 43 },
-      { source: 0, target: 27 },
-      { source: 16, target: 14 },
-      { source: 0, target: 28 },
-      { source: 43, target: 38 },
-      { source: 41, target: 12 },
-      { source: 0, target: 12 },
-      { source: 35, target: 2 },
-      { source: 34, target: 48 },
-      { source: 11, target: 27 },
-      { source: 25, target: 2 },
-      { source: 20, target: 2 },
-      { source: 28, target: 2 },
-      { source: 38, target: 31 },
-      { source: 45, target: 22 },
-      { source: 19, target: 42 },
-      { source: 2, target: 38 },
-      { source: 13, target: 25 },
-      { source: 41, target: 39 },
-      { source: 2, target: 13 },
-      { source: 41, target: 1 },
-      { source: 3, target: 19 },
-      { source: 46, target: 47 },
-      { source: 25, target: 41 },
-      { source: 2, target: 31 },
-      { source: 21, target: 28 },
-      { source: 11, target: 29 },
-      { source: 12, target: 41 },
-      { source: 48, target: 34 },
-      { source: 37, target: 25 },
-      { source: 43, target: 31 },
-      { source: 29, target: 11 },
-      { source: 31, target: 2 },
-      { source: 2, target: 28 },
-      { source: 28, target: 20 },
-      { source: 5, target: 32 },
-      { source: 2, target: 20 },
-      { source: 27, target: 41 },
-      { source: 41, target: 27 },
-      { source: 2, target: 25 },
-      { source: 42, target: 19 },
-      { source: 20, target: 28 },
-      { source: 12, target: 0 },
-      { source: 41, target: 28 },
-      { source: 25, target: 37 },
-      { source: 19, target: 3 },
-      { source: 11, target: 0 }
-    ];
-    this.drawNetworkDiagram();
-  }
+//   componentDidMount() {
+//     this.drawNetworkDiagram();
+//   }
 
-  drawNetworkDiagram() {
-    d3.select("div." + this.networkClass)
-      .select("svg")
-      .remove();
+//   drawNetworkDiagram() {
+//     d3.select("div." + this.networkClass)
+//       .select("svg")
+//       .remove();
 
-    this.fbBlue = d3.rgb("#3b5998");
-    this.fill = [this.fbBlue.brighter(2), this.fbBlue.brighter(), this.fbBlue, this.fbBlue.darker()];
+//     var svg = d3.select("svg"),
+//       width = +svg.attr("width"),
+//       height = +svg.attr("height");
 
-    this.svg = d3
-      .select("div." + this.networkClass)
-      .append("svg")
-      .attr("width", 1280)
-      .attr("height", 600);
+//     var simulation = d3
+//       .forceSimulation()
+//       .force(
+//         "link",
+//         d3.forceLink().id(function(d) {
+//           return d.id;
+//         })
+//       )
+//       //.force("charge", d3.forceManyBody().strength(-200))
+//       .force(
+//         "charge",
+//         d3
+//           .forceManyBody()
+//           .strength(-200)
+//           .theta(0.8)
+//           .distanceMax(150)
+//       )
+//       // 		.force('collide', d3.forceCollide()
+//       //       .radius(d => 40)
+//       //       .iterations(2)
+//       //     )
+//       .force("center", d3.forceCenter(width / 2, height / 2));
 
-    this.links.forEach(function(d, i) {
-      this.nodes[d.source].out++;
-      this.nodes[d.target].in++;
-    });
+//     const graph = {
+//       nodes: [
+//         { id: "1", group: 1 },
+//         { id: "2", group: 2 },
+//         { id: "4", group: 3 },
+//         { id: "8", group: 4 },
+//         { id: "16", group: 5 },
+//         { id: "11", group: 1 },
+//         { id: "12", group: 2 },
+//         { id: "14", group: 3 },
+//         { id: "18", group: 4 },
+//         { id: "116", group: 5 }
+//       ],
+//       links: [
+//         { source: "1", target: "2", value: 1 },
+//         { source: "2", target: "4", value: 1 },
+//         { source: "4", target: "8", value: 1 },
+//         { source: "4", target: "8", value: 1 },
+//         { source: "8", target: "16", value: 1 },
+//         { source: "16", target: "1", value: 1 }
+//       ]
+//     };
+//   }
 
-    // var force = d3.layout
-    //   .force()
-    //   .charge(-80)
-    //   .linkDistance(25)
-    //   .linkStrength(0.2)
-    //   .size([w, h])
-    //   .nodes(nodes)
-    //   .links(links)
-    //   .start();
+//   run = function(graph) {
 
-    var link = this.svg
-      .selectAll(".link")
-      .data(this.links)
-      .enter()
-      .append("line")
-      .attr("class", "link");
+//     graph.links.forEach(function(d){
+//   //     d.source = d.source_id;
+//   //     d.target = d.target_id;
+//     });
 
-    var node = this.svg
-      .selectAll("circle.node")
-      .data(this.nodes)
-      .enter()
-      .append("svg:circle")
-      .attr("class", "node")
-      .attr("cx", function(d) {
-        return d.x;
-      }) //x
-      .attr("cy", function(d) {
-        return d.y;
-      }) //y
-      .attr("r", 8)
-      .style("fill", function(d, i) {
-        return this.fill[parseInt((d.in + 1) / 3)];
-      });
-  }
+//     var link = svg.append("g")
+//                   .style("stroke", "#aaa")
+//                   .selectAll("line")
+//                   .data(graph.links)
+//                   .enter().append("line");
 
-  render() {
-    return <div id={"network" + this.props.id} className={this.networkClass} />;
-  }
-}
+//     var node = svg.append("g")
+//               .attr("class", "nodes")
+//     .selectAll("circle")
+//               .data(graph.nodes)
+//     .enter().append("circle")
+//             .attr("r", 2)
+//             .call(d3.drag()
+//                 .on("start", dragstarted)
+//                 .on("drag", dragged)
+//                 .on("end", dragended));
 
-export default NetworkDiagram;
+//     var label = svg.append("g")
+//         .attr("class", "labels")
+//         .selectAll("text")
+//         .data(graph.nodes)
+//         .enter().append("text")
+//           .attr("class", "label")
+//           .text(function(d) { return d.id; });
+
+//     simulation
+//         .nodes(graph.nodes)
+//         .on("tick", ticked);
+
+//     simulation.force("link")
+//         .links(graph.links);
+
+//     function ticked() {
+//       link
+//           .attr("x1", function(d) { return d.source.x; })
+//           .attr("y1", function(d) { return d.source.y; })
+//           .attr("x2", function(d) { return d.target.x; })
+//           .attr("y2", function(d) { return d.target.y; });
+
+//       node
+//            .attr("r", 16)
+//            .style("fill", "#efefef")
+//            .style("stroke", "#424242")
+//            .style("stroke-width", "1px")
+//            .attr("cx", function (d) { return d.x+5; })
+//            .attr("cy", function(d) { return d.y-3; });
+
+//       label
+//               .attr("x", function(d) { return d.x; })
+//               .attr("y", function (d) { return d.y; })
+//               .style("font-size", "10px").style("fill", "#333");
+//     }
+//   }
+
+//   function dragstarted(d) {
+//     if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+//     d.fx = d.x
+//     d.fy = d.y
+//   //  simulation.fix(d);
+//   }
+
+//   function dragged(d) {
+//     d.fx = d3.event.x
+//     d.fy = d3.event.y
+//   //  simulation.fix(d, d3.event.x, d3.event.y);
+//   }
+
+//   function dragended(d) {
+//     d.fx = d3.event.x
+//     d.fy = d3.event.y
+//     if (!d3.event.active) simulation.alphaTarget(0);
+//     //simulation.unfix(d);
+//   }
+
+//   run(graph)
+
+//   render() {
+//     return <div id={"network" + this.props.id} className={this.networkClass} />;
+//   }
+// }
+
+// export default NetworkDiagram;
