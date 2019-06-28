@@ -80,8 +80,20 @@ class App extends Component {
     selectedAge: null,
     selectedGender: null,
     recommendedCodes: null, //list of recommended codes based on the selected codes
-    suggestedDaggerAsterisks: null
+    suggestedDaggerAsterisks: null,
+
+    ////// Session Log
+    recommendedCodesDuringSession: [], //array of all codes recommended during a single session. Used to stop showing
+    //the same recommendation more than once
+    rulesUsedDuringSession: [] //array of rules an user has interacted with during a session
   };
+
+  /**
+   * Helper method used to reset the three different arrays tracked during a session
+   */
+  resetSession() {
+    this.setState({ recommendedCodesDuringSession: [], rulesUsedDuringSession: [] });
+  }
 
   /**
    *  Required for code searchbox Auto-Complete
@@ -216,6 +228,8 @@ class App extends Component {
       recommendedCodes: null,
       suggestedDaggerAsterisks: null
     });
+    //resetting the session log without sending the session info to the API
+    this.resetSession();
   };
 
   /**
@@ -228,10 +242,14 @@ class App extends Component {
 
     fetch(url, { method: "PUT" });
 
+    //TODO: call the new session log API
+
     this.setState({
       selectedCodes: [],
       recommendedCodes: null
     });
+    //resetting the session log after sending the session info to the API
+    this.resetSession();
   };
 
   /**
@@ -241,6 +259,10 @@ class App extends Component {
    */
   getRecommendedCodes(listOfCodeObjects, age) {
     const stringOfCodes = this.getStringFromListOfCodes(listOfCodeObjects);
+
+    //creating a shallow copied instance of the recommendedCodesDuringSession to
+    //prevent direct modification of the array in the state
+    const recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
 
@@ -255,30 +277,65 @@ class App extends Component {
       fetch(url)
         .then(response => response.json())
         .then(results => {
-          results.forEach(codeObj => {
-            codeObj.reason =
-              codeObj.lhs +
+          results.forEach(ruleObj => {
+            ruleObj.reason =
+              ruleObj.lhs +
               " -> " +
-              codeObj.rhs +
+              ruleObj.rhs +
               " || confidence: " +
-              Math.round(codeObj.confidence * 1000) / 1000 +
+              Math.round(ruleObj.confidence * 1000) / 1000 +
               " for ages: " +
-              codeObj.min_age +
+              ruleObj.min_age +
               "-" +
-              codeObj.max_age;
-            codeObj.rule = codeObj.lhs + " -> " + codeObj.rhs;
+              ruleObj.max_age;
+            ruleObj.rule = ruleObj.lhs + " -> " + ruleObj.rhs;
             //dislike button should be disabled if an admin has reviewed and accepted a rule
-            codeObj.shouldDisableDislikeButton = codeObj["review_status"] === 2;
+            ruleObj.shouldDisableDislikeButton = ruleObj["review_status"] === 2;
           });
 
           this.addRecommendedCodesToCachedCodes(results);
 
+          ////// Dealing with duplicate recommendations during a single session
+
+          //this list is used to stop showing any recommendations that have already been
+          //"ACCEPTED" or "REJECTED" in any given session
+          const listOfResultsRHSToRemove = [];
+
+          results.forEach(ruleObj => {
+            if (recommendedCodesSession.find(recommendation => recommendation.code === ruleObj.rhs) === undefined) {
+              //if the code was not recommended previously, add to the list of recommended codes shown during the session
+              let newRecommendation = { code: ruleObj.rhs, action: "I" }; //initialize the action to "IGNORED" by default.
+              //this initialization was made because all recommended codes(even duplicates) need to be shown as long as
+              //they were not "ACCEPTED" or "REJECTED" previously within the same session.
+
+              recommendedCodesSession.push(newRecommendation);
+            } else {
+              //if the code was recommended before, remove it from the list of results as long as the action associated
+              //with the recomendation is "ACCEPTED" or "REJECTED"; i.e, we still want to show any recommendation that the
+              //user had previously "IGNORED" during the same session even though the recommendation was already made.
+              if (
+                recommendedCodesSession.find(recommendationObj => ruleObj.rhs === recommendationObj.code).action !== "I"
+              ) {
+                //add the RHS of the rule that resulted in a recommendation that was already either "ACCEPTED" or "REJECTED"
+                //to the listOfResultsRHSToRemove, so that they can be removed from the results list
+                listOfResultsRHSToRemove.push(ruleObj.rhs);
+              }
+            }
+          });
+
+          //remove all "duplicate recommendations" from the results list
+          listOfResultsRHSToRemove.forEach(rhs => {
+            let index = results.findIndex(ruleObj => ruleObj.rhs === rhs);
+            results.splice(index, 1);
+          });
+
           this.setState({
-            recommendedCodes: results
+            recommendedCodes: results,
+            recommendedCodesDuringSession: recommendedCodesSession
           });
         });
     } else {
-      this.setState({ recommendedCodes: null });
+      this.setState({ recommendedCodes: null, recommendedCodesDuringSession: [] });
     }
   }
 
@@ -371,8 +428,16 @@ class App extends Component {
     //TODO: Call API function to increase code accepted number
 
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
+
+    const recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
+
     const acceptedCodeObject = this.state.recommendedCodes[acceptedCodeIndex];
+
+    recommendedCodesSession.find(recommenationObj => recommenationObj.code === acceptedCodeObject.rhs).action = "A";
+
     const newCode = acceptedCodeObject.rhs;
+
+    this.setState({ recommendedCodesDuringSession: recommendedCodesSession });
 
     this.addSelectedCode(newCode);
 
@@ -387,6 +452,15 @@ class App extends Component {
   handleRemoveRecommendedCode = event => {
     //TODO: Call API function to increase code rejected number
     const removedCodeIndex = parseInt(event.currentTarget.id, 10);
+
+    const recommendedCodesSession = Array.from(this.state.recommendedCodesDuringSession);
+
+    const recommendationRHS = this.state.recommendedCodes[removedCodeIndex].rhs;
+
+    recommendedCodesSession.find(recommenationObj => recommenationObj.code === recommendationRHS).action = "R";
+
+    this.setState({ recommendedCodesDuringSession: recommendedCodesSession });
+
     this.removeRecommendedCode(removedCodeIndex);
   };
 
