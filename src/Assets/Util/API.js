@@ -4,7 +4,6 @@ export default class API {
   static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
 
   static getAPIURL(endpoint) {
-    console.log();
     switch (endpoint) {
       case "RULES":
         return this.urlBeginning + "rules/";
