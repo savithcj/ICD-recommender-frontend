@@ -58,6 +58,7 @@ function Visualization(props) {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
+    saveToLS("layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -65,9 +66,9 @@ function Visualization(props) {
     setLayoutModifiable(layoutModifiable);
   }
 
-  async function onLayoutChange(layouts) {
-    await saveToLS("layouts", layouts);
+  function onLayoutChange(layouts) {
     setLayouts(layouts);
+    saveToLS("layouts", layouts);
     chordDiagramDiv.current.handleResize();
     barChartDiv.current.handleResize();
     SankeyDiagramDiv.current.handleResize();
