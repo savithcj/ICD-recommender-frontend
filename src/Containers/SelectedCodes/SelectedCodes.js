@@ -6,8 +6,11 @@ import * as actions from "../../Store/Actions/index";
 
 const selectedCodesViewer = props => {
   const handleRemoveSelectedCode = event => {
+    const selectedCodes = Array.from(props.selectedCodes);
     const removeCodeIndex = parseInt(event.currentTarget.id, 10);
+    selectedCodes.splice(removeCodeIndex, 1);
     props.removeCode(removeCodeIndex);
+    props.getRecommendedCodes(selectedCodes);
   };
 
   //TODO:finish this
@@ -49,7 +52,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     removeCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
-    setCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet))
+    setCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
+    getRecommendedCodes: (codeObjArray, age, gender) =>
+      dispatch(actions.fetchRecommendations(codeObjArray, age, gender))
   };
 };
 
