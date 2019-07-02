@@ -2,6 +2,8 @@ import React from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import { connect } from "react-redux";
 
+import { removeSelectedCode } from "../../Store/Actions/selected";
+
 const selectedCodesViewer = props => {
   const selectedCodesComponentMenuItems = [
     {
@@ -16,7 +18,7 @@ const selectedCodesViewer = props => {
       noItemsMessage="No codes selected"
       valueName="code"
       descriptionName="description"
-      //   removeItemButton={this.handleRemoveSelectedCode}
+      removeItemButton={props.handleRemoveSelectedCode}
       //   exploreButton={this.handleExploreSelectedCodeButton}
       //   onSortEndCallback={updatedListOfSelectedCodes => {
       // this.setState({ selectedCodes: updatedListOfSelectedCodes });
@@ -35,4 +37,16 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(selectedCodesViewer);
+const mapDispatchToProps = dispatch => {
+  return {
+    handleRemoveSelectedCode: event => {
+      const removeCodeIndex = parseInt(event.currentTarget.id, 10);
+      return dispatch(removeSelectedCode(removeCodeIndex));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(selectedCodesViewer);

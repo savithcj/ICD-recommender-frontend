@@ -3,18 +3,39 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import "./App.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-
 import APIClass from "./Assets/Util/API";
-
 import CodeInputField from "./Components/CodeInputField/CodeInputField";
 import ListViewer from "./Components/ListViewer/ListViewer";
 import TreeViewer from "./Components/TreeViewer/TreeViewer";
 import MenuBar from "./Components/MenuBar/MenuBar";
-import SwipablePanel from "./Components/SwipablePanel/SwipablePanel";
-
 import { __esModule } from "d3-random";
-
 import { defaultLayouts } from "./layouts";
+
+function getFromLS(key) {
+  let ls = {};
+  if (global.localStorage) {
+    try {
+      ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
+    } catch (e) {
+      /*Ignore*/
+    }
+  }
+  return ls[key];
+}
+
+function saveToLS(key, value) {
+  if (global.localStorage) {
+    global.localStorage.setItem(
+      "rgl-8",
+      JSON.stringify({
+        [key]: value
+      })
+    );
+  }
+}
+
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLS("layouts") || defaultLayouts;
 
 class App extends Component {
   constructor(props) {
@@ -682,7 +703,6 @@ class App extends Component {
       />
     );
 
-    const shakeDiv = this.state.isLayoutModifiable ? "shake" : "";
     const highlightEditDiv = this.state.isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
     const selectedCodesComponentMenuItems = [
@@ -737,11 +757,6 @@ class App extends Component {
             onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
           >
             <div className={highlightEditDiv} key="tree">
-              {/* FIXME: fix the display bug in the SwipabalePanel  */}
-              {/* <SwipablePanel
-                tree={<TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />}
-                chord={<ChordDiagram id="123" />}
-              /> */}
               <TreeViewer ref={this.treeViewDiv} id="1337" addCodeFromTree={this.addCodeFromTree} />
             </div>
 
@@ -797,7 +812,6 @@ class App extends Component {
                 exploreButton={this.handleExploreDaggerAsterisk}
                 allowRearrage={false}
                 menuOptions={daggerAsteriskComponentMenuItems}
-                //button={this.state.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
               />
             </div>
 
@@ -807,32 +821,6 @@ class App extends Component {
           </ResponsiveReactGridLayout>
         </div>
       </div>
-    );
-  }
-}
-
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || defaultLayouts;
-
-function getFromLS(key) {
-  let ls = {};
-  if (global.localStorage) {
-    try {
-      ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
-    } catch (e) {
-      /*Ignore*/
-    }
-  }
-  return ls[key];
-}
-
-function saveToLS(key, value) {
-  if (global.localStorage) {
-    global.localStorage.setItem(
-      "rgl-8",
-      JSON.stringify({
-        [key]: value
-      })
     );
   }
 }
