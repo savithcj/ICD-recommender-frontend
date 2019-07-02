@@ -1,5 +1,6 @@
 import * as actionTypes from "./actionsTypes";
 import * as APIUtility from "../../Util/API";
+import { getStringFromListOfCodes } from "./utility";
 
 export const removeRecommendedCode = removedCodeIndex => {
   return {
@@ -44,20 +45,4 @@ export const fetchRecommendations = (codeObjArray, age, gender) => {
       dispatch(setRecommendedCodes(null));
     }
   };
-};
-
-/**
- * Helper method to convert the code objects within the passed array
- * to a single string with comma separated codes.
- * @param {*} codeObjArray Array of code objects
- * @returns A comma separated string version of the array of codes
- */
-const getStringFromListOfCodes = codeObjArray => {
-  let stringOfCodes = "";
-  codeObjArray.forEach(codeObj => {
-    stringOfCodes += codeObj.code + ",";
-  });
-
-  //slice method used to remove the last comma
-  return stringOfCodes.slice(0, -1);
 };
