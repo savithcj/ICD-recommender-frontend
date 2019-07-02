@@ -2,7 +2,12 @@ import * as actionTypes from "./actionsTypes";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "./utility";
 
-export const removeDaggerAsterisk = code => {};
+export const removeDaggerAsterisk = codeIndex => {
+  return {
+    type: actionTypes.SET_DAGGER_ASTERISKS,
+    codeIndex
+  };
+};
 
 export const setDaggerAsterisk = value => {
   return {

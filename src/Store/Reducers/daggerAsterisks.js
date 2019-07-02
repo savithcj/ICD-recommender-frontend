@@ -5,22 +5,22 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  const removeCode = () => {
-    const recommendedCodes = Array.from(state.recommendedCodes);
-    recommendedCodes.splice(action.codeIndex, 1);
-    return { recommendedCodes };
+  const removeDagAst = () => {
+    const suggestedDaggerAsterisks = Array.from(state.suggestedDaggerAsterisks);
+    suggestedDaggerAsterisks.splice(action.codeIndex, 1);
+    return { suggestedDaggerAsterisks };
   };
-  const setCodes = () => {
-    const recommendedCodes = action.recommendedCodesValue;
-    return { recommendedCodes };
+  const setDagAst = () => {
+    const suggestedDaggerAsterisks = action.daggerAsterisksValue;
+    return { suggestedDaggerAsterisks };
   };
 
   switch (action.type) {
-    case actionTypes.REMOVE_RECOMMENDED_CODE:
-      return removeCode();
+    case actionTypes.REMOVE_DAGGGER_ASTERISK:
+      return removeDagAst();
 
-    case actionTypes.SET_RECOMMENDED_CODES:
-      return setCodes();
+    case actionTypes.SET_DAGGER_ASTERISKS:
+      return setDagAst();
 
     default:
       return state;

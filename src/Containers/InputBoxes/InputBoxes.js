@@ -25,7 +25,7 @@ const inputBoxes = props => {
       props.addSelectedCodes(newCode);
 
       props.getRecommendedCodes(selectedCodes);
-      // this.getDaggerAsterisks(selectedCodes);
+      props.getDaggerAsterisks(selectedCodes);
     } else {
       console.log("[InputBoxes Container] error: trying to add duplicate code =>", newCodeObj);
     }
@@ -65,7 +65,8 @@ const mapDispatchToProps = dispatch => {
     addSelectedCodes: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
-      dispatch(actions.fetchRecommendations(codeObjArray, age, gender))
+      dispatch(actions.fetchRecommendations(codeObjArray, age, gender)),
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray))
   };
 };
 

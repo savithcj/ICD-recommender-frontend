@@ -9,7 +9,7 @@ const daggerAsterisksViewer = props => {
   return (
     <ListViewer
       title="Dagger/Asterisks"
-      items={this.state.suggestedDaggerAsterisks}
+      items={props.suggestedDaggerAsterisks}
       noItemsMessage="No dagger or asterisks suggested"
       nullItemsMessage="Add codes to see dagger/asterisks"
       valueName="combo"
@@ -25,10 +25,11 @@ const daggerAsterisksViewer = props => {
 
 const mapStateToProps = state => {
   return {
-    suggestedDaggerAsterisks: state.daggerAsterisks.recommendedCodes
+    suggestedDaggerAsterisks: state.daggerAsterisks.suggestedDaggerAsterisks
   };
 };
 
+//TODO: map correct actions correspoding to the dagger asterisks viewer
 const mapDispatchToProps = dispatch => {
   return {
     removeCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
@@ -39,4 +40,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(recommendedCodesViewer);
+)(daggerAsterisksViewer);

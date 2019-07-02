@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 
 const recommendedCodesViewer = props => {
-  const recommendedCodesComponentMenuItems = [];
+  const componentMenuItems = [];
   return (
     <ListViewer
       className="recommendedCodes"
@@ -20,7 +20,7 @@ const recommendedCodesViewer = props => {
       //   dislikeButton={this.userFlagRuleForReview}
       //   exploreButton={this.handleExploreRecommendedCodeButton}
       allowRearrage={false}
-      menuOptions={recommendedCodesComponentMenuItems}
+      menuOptions={componentMenuItems}
       disableDislikeButtonField="shouldDisableDislikeButton"
       disableTitleGutters={false}
       // button={rejectRemainingRecommendationsButton}
