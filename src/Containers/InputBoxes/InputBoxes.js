@@ -5,6 +5,10 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 
 const inputBoxes = props => {
+  const handleCodeSelection = newCodeObj => {
+    props.addSelectedCodes(newCodeObj);
+  };
+
   return (
     <CodeInputField
       id_code="input1"
@@ -13,11 +17,11 @@ const inputBoxes = props => {
       placeholder_code="Search for a code"
       placeholder_age="Age"
       placeholder_gender="Gender"
-      selectCode={this.addSelectedCode}
-      selectAge={this.handleAgeSelection}
-      selectGender={this.handleGenderSelection}
-      codeCache={this.state.cachedCodeWithDescription}
-      appendCodeToCache={this.appendCodeToCache}
+      selectCode={handleCodeSelection}
+      // selectAge={handleAgeSelection}
+      // selectGender={handleGenderSelection}
+      codeCache={props.cachedCodeWithDescription}
+      appendCodeToCache={props.appendCodeToCache}
       autoClearCode={true}
       width_code="72%"
       width_age="10%"
@@ -29,15 +33,19 @@ const inputBoxes = props => {
 const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
-    cachedCodes: state.cached.cachedCodes
+    cachedCodeWithDescription: state.cached.cachedCodeWithDescription
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    appendCodeToCache: codeObjArray => dispatch(actions.appendToCache(codeObjArray)),
+    addSelectedCodes: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
+    setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet))
+  };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)();
+)(inputBoxes);
