@@ -33,6 +33,7 @@
     "react-textfit": "^1.1.0",
     "recursive-install": "^1.4.0",
     "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
     "shallow-equal": "^1.1.0",
     "typeface-roboto": "0.0.54",
     "why-did-you-update": "^1.0.6"

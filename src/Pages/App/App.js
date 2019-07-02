@@ -1,8 +1,8 @@
 import React from "react";
-import SelectedCodesViewer from "../../Containers/SelectedCodesViewer/SelectedCodesViewer";
+import SelectedCodes from "../../Containers/SelectedCodes/SelectedCodes";
 
 const App = () => {
-  return <SelectedCodesViewer />;
+  return <SelectedCodes />;
 };
 
 export default App;

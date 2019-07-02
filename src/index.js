@@ -1,18 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Route, BrowserRouter, Switch } from "react-router-dom";
 import "./index.css";
 import "typeface-roboto";
 import App from "./Pages/App/App";
+import Home from "./App";
 import Sandbox from "./Sandbox";
 import Admin from "./Components/Admin/Admin";
-import * as serviceWorker from "./serviceWorker";
+import * as serviceWorker from "./Util/serviceWorker";
 import Visualization from "./Components/Visualization/Visualization";
 
 import { Provider } from "react-redux";
 import { createStore } from "redux";
 
-import reducer from "./Store/Reducers/selectedCodes"; //TODO: change name to selectedCodesReducer
+import reducer from "./Store/Reducers/selected"; //TODO: change name to selectedCodesReducer
 
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
@@ -21,17 +22,18 @@ const notFound = () => <h1>Not Found</h1>;
 const routing = (
   //TODO: get rid of Sandbox route used for testing
   <Provider store={store}>
-    <Router>
+    <BrowserRouter>
       <div>
         <Switch>
           <Route exact path="/" component={App} />
+          <Route exact path="/home" component={Home} />
           <Route path="/admin" component={Admin} />
           <Route path="/sandbox" component={Sandbox} />
           <Route path="/visualization" component={Visualization} />
           <Route>{notFound}</Route>
         </Switch>
       </div>
-    </Router>
+    </BrowserRouter>
   </Provider>
 );
 

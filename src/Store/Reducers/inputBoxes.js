@@ -1,7 +1,8 @@
-import * as actionTypes from "../Actions/actions";
+import * as actionTypes from "../Actions/actionsTypes";
 
 const initialState = {
-  selectedCodes: []
+  selectedAge: null,
+  selectedGender: null
 };
 
 const reducer = (state = initialState, action) => {
