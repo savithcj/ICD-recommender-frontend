@@ -5,6 +5,9 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
+  const removeCode = () => {};
+  const setCodes = () => {};
+
   return state;
 };
 

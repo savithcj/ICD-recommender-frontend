@@ -13,3 +13,10 @@ export const removeSelectedCode = removedCodeIndex => {
     codeIndex: removedCodeIndex
   };
 };
+
+export const setSelectedCodes = value => {
+  return {
+    type: actionTypes.SET_SELECTED_CODES,
+    selectedCodesValue: value
+  };
+};

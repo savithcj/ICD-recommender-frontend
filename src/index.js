@@ -4,18 +4,19 @@ import { Route, BrowserRouter, Switch } from "react-router-dom";
 import "./index.css";
 import "typeface-roboto";
 import App from "./Pages/App/App";
-import Home from "./App";
-import Sandbox from "./Sandbox";
 import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./Util/serviceWorker";
 import Visualization from "./Components/Visualization/Visualization";
 
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import { createStore, combineReducers } from "redux";
 
-import reducer from "./Store/Reducers/selected"; //TODO: change name to selectedCodesReducer
+import selectedCodesReducer from "./Store/Reducers/selected"; //TODO: change name to selectedCodesReducer
 
-const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = createStore(
+  selectedCodesReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 const notFound = () => <h1>Not Found</h1>;
 
@@ -26,9 +27,7 @@ const routing = (
       <div>
         <Switch>
           <Route exact path="/" component={App} />
-          <Route exact path="/home" component={Home} />
           <Route path="/admin" component={Admin} />
-          <Route path="/sandbox" component={Sandbox} />
           <Route path="/visualization" component={Visualization} />
           <Route>{notFound}</Route>
         </Switch>

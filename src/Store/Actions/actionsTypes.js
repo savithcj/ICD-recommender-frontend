@@ -10,7 +10,6 @@ export const SET_AGE = "SET_AGE";
 export const SET_GENDER = "SET_GENDER";
 
 // Recommended codes action types
-export const GET_RECOMMENDED_CODES = "GET_RECOMMENDED_CODES";
 export const REMOVE_RECOMMENDED_CODE = "REMOVE_RECOMMENDED_CODE";
 export const SET_RECOMMENDED_CODES = "SET_RECOMMENDED_CODES";
 

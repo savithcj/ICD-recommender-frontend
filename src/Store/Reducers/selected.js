@@ -1,7 +1,7 @@
 import * as actionTypes from "../Actions/actionsTypes";
 
 const initialState = {
-  selectedCodes: [{ code: 1 }]
+  selectedCodes: [{ code: 1 }, { code: 2 }]
 };
 
 const reducer = (state = initialState, action) => {
@@ -28,12 +28,20 @@ const reducer = (state = initialState, action) => {
     return { selectedCodes };
   };
 
+  const setCodes = () => {
+    const selectedCodes = action.selectedCodesValue;
+    return { selectedCodes };
+  };
+
   switch (action.type) {
     case actionTypes.ADD_SELECTED_CODE:
       return addCode();
 
     case actionTypes.REMOVE_SELECTED_CODE:
       return removeCode();
+
+    case actionTypes.SET_SELECTED_CODES:
+      return setCodes();
 
     default:
       return state;

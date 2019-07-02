@@ -1,1 +1,1 @@
-export { addSelectedCode, removeSelectedCode } from "./selected";
+export { addSelectedCode, removeSelectedCode, setSelectedCodes } from "./selected";
