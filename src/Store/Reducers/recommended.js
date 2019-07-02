@@ -5,10 +5,26 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  const removeCode = () => {};
-  const setCodes = () => {};
+  const removeCode = () => {
+    const recommendedCodes = Array.from(state.recommendedCodes);
+    recommendedCodes.splice(action.codeIndex, 1);
+    return { recommendedCodes };
+  };
+  const setCodes = () => {
+    const recommendedCodes = action.recommendedCodesValue;
+    return { recommendedCodes };
+  };
 
-  return state;
+  switch (action.type) {
+    case actionTypes.REMOVE_RECOMMENDED_CODE:
+      return removeCode();
+
+    case actionTypes.SET_RECOMMENDED_CODES:
+      return setCodes();
+
+    default:
+      return state;
+  }
 };
 
 export default reducer;

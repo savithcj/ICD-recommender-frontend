@@ -1,5 +1,5 @@
 // Cached codes action types
-export const ADD_CACHED_CODE = "ADD_CACHED_CODE";
+export const APPEND_TO_CACHE = "APPEND_TO_CACHE";
 
 // Dagger/Asterisks codes action types
 export const ADD_DAGGGER_ASTERISK = "ADD_DAGGER_ASTERISK";
