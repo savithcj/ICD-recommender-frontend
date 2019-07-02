@@ -12,12 +12,12 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 
-import selectedCodesReducer from "./Store/Reducers/selected"; //TODO: change name to selectedCodesReducer
+import reducer from "./Store/Reducers/index";
 
 //enabling redux dev-tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(selectedCodesReducer, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
 const notFound = () => <h1>Not Found</h1>;
 

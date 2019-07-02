@@ -1,7 +1,7 @@
 import * as actionTypes from "../Actions/actionsTypes";
 
 const initialState = {
-  selectedCodes: [{ code: 1 }, { code: 2 }]
+  selectedCodes: []
 };
 
 const reducer = (state = initialState, action) => {

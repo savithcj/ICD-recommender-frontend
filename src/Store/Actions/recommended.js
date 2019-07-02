@@ -16,9 +16,9 @@ export const setRecommendedCodes = value => {
 };
 
 //Asysnc redux function using redux-thunk
-export const fetchRecommendations = (arrayOfCodeObjects, age, gender) => {
+export const fetchRecommendations = (codeObjArray, age, gender) => {
   return dispatch => {
-    const stringOfCodes = getStringFromListOfCodes(arrayOfCodeObjects);
+    const stringOfCodes = getStringFromListOfCodes(codeObjArray);
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
     const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;
@@ -49,12 +49,12 @@ export const fetchRecommendations = (arrayOfCodeObjects, age, gender) => {
 /**
  * Helper method to convert the code objects within the passed array
  * to a single string with comma separated codes.
- * @param {*} arrayOfCodeObjects Array of code objects
+ * @param {*} codeObjArray Array of code objects
  * @returns A comma separated string version of the array of codes
  */
-const getStringFromListOfCodes = arrayOfCodeObjects => {
+const getStringFromListOfCodes = codeObjArray => {
   let stringOfCodes = "";
-  arrayOfCodeObjects.forEach(codeObj => {
+  codeObjArray.forEach(codeObj => {
     stringOfCodes += codeObj.code + ",";
   });
 

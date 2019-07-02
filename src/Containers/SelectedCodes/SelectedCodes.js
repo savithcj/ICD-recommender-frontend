@@ -39,7 +39,7 @@ const selectedCodesViewer = props => {
 
 const mapStateToProps = state => {
   return {
-    selectedCodes: state.selectedCodes
+    selectedCodes: state.selected.selectedCodes
   };
 };
 

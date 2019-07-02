@@ -2,6 +2,8 @@ import React from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import { connect } from "react-redux";
 
+import * as actions from "../../Store/Actions/index";
+
 const inputBoxes = props => {
   return (
     <CodeInputField
@@ -26,7 +28,16 @@ const inputBoxes = props => {
 
 const mapStateToProps = state => {
   return {
-    selectedCodes: state.selectedCodes,
-    cachedCodes: state.cachedCodes
+    selectedCodes: state.selected.selectedCodes,
+    cachedCodes: state.cached.cachedCodes
   };
 };
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)();
