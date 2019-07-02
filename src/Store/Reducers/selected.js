@@ -9,15 +9,9 @@ const reducer = (state = initialState, action) => {
     const selectedCodes = Array.from(state.selectedCodes);
     // check if the code already exist in the selection
     if (selectedCodes.find(codeObj => codeObj.code === action.codeObj.code) === undefined) {
-      // get code description from auto-suggest cache
-      const codeDescriptions = Array.from(state.cachedCodeWithDescription);
-      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === action.codeObj.code);
-      // construct new code object
-      const newCode = {
-        code: cachedCode.code,
-        description: cachedCode.description
-      };
-      selectedCodes.push(newCode);
+      selectedCodes.push(action.codeObj);
+    } else {
+      console.log("[Seleced Code Reducer] error: trying to add duplicate code");
     }
     return { selectedCodes };
   };

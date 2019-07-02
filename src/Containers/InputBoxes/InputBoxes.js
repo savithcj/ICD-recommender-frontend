@@ -6,7 +6,29 @@ import * as actions from "../../Store/Actions/index";
 
 const inputBoxes = props => {
   const handleCodeSelection = newCodeObj => {
-    props.addSelectedCodes(newCodeObj);
+    const selectedCodes = Array.from(props.selectedCodes);
+
+    // check if the code already exist in the selection
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj);
+
+    if (getDuplicate === undefined) {
+      // get code description from auto-suggest cache
+      const codeDescriptions = Array.from(props.cachedCodeWithDescription);
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
+      // construct new code object
+      const newCode = {
+        code: cachedCode.code,
+        description: cachedCode.description
+      };
+
+      selectedCodes.push(newCode);
+      props.addSelectedCodes(newCode);
+
+      props.getRecommendedCodes(selectedCodes);
+      // this.getDaggerAsterisks(selectedCodes);
+    } else {
+      console.log("[InputBoxes Container] error: trying to add duplicate code =>", newCodeObj);
+    }
   };
 
   return (
@@ -41,7 +63,9 @@ const mapDispatchToProps = dispatch => {
   return {
     appendCodeToCache: codeObjArray => dispatch(actions.appendToCache(codeObjArray)),
     addSelectedCodes: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
-    setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet))
+    setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
+    getRecommendedCodes: (codeObjArray, age, gender) =>
+      dispatch(actions.fetchRecommendations(codeObjArray, age, gender))
   };
 };
 

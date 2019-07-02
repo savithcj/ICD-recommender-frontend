@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import "./index.css";
 import "typeface-roboto";
-import App from "./Pages/App/App";
+import Home from "./Pages/Home/Home";
 import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./Util/serviceWorker";
 import Visualization from "./Components/Visualization/Visualization";
@@ -27,7 +27,7 @@ const routing = (
     <BrowserRouter>
       <div>
         <Switch>
-          <Route exact path="/" component={App} />
+          <Route exact path="/" component={Home} />
           <Route path="/admin" component={Admin} />
           <Route path="/visualization" component={Visualization} />
           <Route>{notFound}</Route>

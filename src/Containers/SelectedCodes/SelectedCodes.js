@@ -10,6 +10,9 @@ const selectedCodesViewer = props => {
     props.removeCode(removeCodeIndex);
   };
 
+  //TODO:finish this
+  const resetSelectedCodes = () => {};
+
   const selectedCodesComponentMenuItems = [
     {
       menuItemOnClick: props.selectedCodes.length < 2 ? null : null, //this.resetSelectedCodes,
