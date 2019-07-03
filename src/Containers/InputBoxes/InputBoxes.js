@@ -38,8 +38,7 @@ const inputBoxes = props => {
 const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
-    cachedCodeWithDescription: state.cached.cachedCodeWithDescription,
-    selectedAge: state.ageGender.selectedAge
+    cachedCodeWithDescription: state.cached.cachedCodeWithDescription
   };
 };
 
@@ -47,10 +46,8 @@ const mapDispatchToProps = dispatch => {
   return {
     appendCodeToCache: codeObjArray => dispatch(actions.appendToCache(codeObjArray)),
     addSelectedCode: codeToAdd => dispatch(actions.addSelectedCodeAndUpdateRecommendations(codeToAdd)),
-    setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray)),
     setAge: ageValue => dispatch(actions.setAge(ageValue))
   };
 };
