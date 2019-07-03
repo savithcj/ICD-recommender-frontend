@@ -2,17 +2,17 @@ import * as actionTypes from "./actionsTypes";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "./utility";
 
-export const removeRecommendedCode = removedCodeIndex => {
+export const removeRecommendedCode = codeIndex => {
   return {
     type: actionTypes.REMOVE_RECOMMENDED_CODE,
-    codeIndex: removedCodeIndex
+    codeIndex
   };
 };
 
-export const setRecommendedCodes = value => {
+export const setRecommendedCodes = recommendedCodesValue => {
   return {
     type: actionTypes.SET_RECOMMENDED_CODES,
-    recommendedCodesValue: value
+    recommendedCodesValue
   };
 };
 
@@ -39,6 +39,8 @@ export const fetchRecommendations = (codeObjArray, age, gender) => {
             //dislike button should be disabled if an admin has reviewed and accepted a rule
             ruleObj.shouldDisableDislikeButton = ruleObj["review_status"] === 2;
           });
+          //sort the remaining results in descending order of score
+          results.sort((a, b) => (a.score < b.score ? 1 : b.score < a.score ? -1 : 0));
           dispatch(setRecommendedCodes(results));
         });
     } else {

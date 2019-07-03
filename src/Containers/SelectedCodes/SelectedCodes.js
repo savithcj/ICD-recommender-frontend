@@ -1,7 +1,6 @@
 import React from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import { connect } from "react-redux";
-
 import * as actions from "../../Store/Actions/index";
 
 const selectedCodesViewer = props => {

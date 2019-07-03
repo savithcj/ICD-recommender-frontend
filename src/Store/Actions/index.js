@@ -2,3 +2,4 @@ export { addSelectedCode, removeSelectedCode, setSelectedCodes } from "./selecte
 export { fetchRecommendations } from "./recommended";
 export { appendToCache } from "./cached";
 export { fetchDaggerAsterisks } from "./daggerAsterisks";
+export { setAge, setGender } from "./inputBoxes";

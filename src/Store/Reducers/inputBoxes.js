@@ -6,7 +6,21 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  return state;
+  const setAge = () => {
+    return { ...state, selectedAge: action.newAgeValue };
+  };
+  const setGender = () => {
+    return { ...state, selectedGender: action.newGenderValue };
+  };
+
+  switch (actionTypes) {
+    case actionTypes.SET_AGE:
+      return setAge();
+    case actionTypes.SET_GENDER:
+      return setGender();
+    default:
+      return state;
+  }
 };
 
 export default reducer;

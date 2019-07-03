@@ -1,22 +1,22 @@
 import * as actionTypes from "./actionsTypes";
 
-export const addSelectedCode = codeObjToAdd => {
+export const addSelectedCode = codeObj => {
   return {
     type: actionTypes.ADD_SELECTED_CODE,
-    codeObj: codeObjToAdd
+    codeObj
   };
 };
 
-export const removeSelectedCode = removedCodeIndex => {
+export const removeSelectedCode = codeIndex => {
   return {
     type: actionTypes.REMOVE_SELECTED_CODE,
-    codeIndex: removedCodeIndex
+    codeIndex
   };
 };
 
-export const setSelectedCodes = value => {
+export const setSelectedCodes = selectedCodesValue => {
   return {
     type: actionTypes.SET_SELECTED_CODES,
-    selectedCodesValue: value
+    selectedCodesValue
   };
 };

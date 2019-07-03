@@ -9,10 +9,10 @@ export const removeDaggerAsterisk = codeIndex => {
   };
 };
 
-export const setDaggerAsterisk = value => {
+export const setDaggerAsterisk = daggerAsterisksValue => {
   return {
     type: actionTypes.SET_DAGGER_ASTERISKS,
-    daggerAsterisksValue: value
+    daggerAsterisksValue
   };
 };
 

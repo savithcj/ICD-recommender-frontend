@@ -4,7 +4,7 @@ import InputBoxes from "../../Containers/InputBoxes/InputBoxes";
 import SelectedCodes from "../../Containers/SelectedCodes/SelectedCodes";
 import RecommendedCodes from "../../Containers/RecommendedCodes/RecommendedCodes";
 import DaggerAsterisks from "../../Containers/DaggerAsterisks/DaggerAsterisks";
-import TreeViewer from "../../Components/TreeViewer/TreeViewer";
+import TreeViewer from "../../Containers/TreeViewer/TreeViewer";
 import MenuBar from "../../Components/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";

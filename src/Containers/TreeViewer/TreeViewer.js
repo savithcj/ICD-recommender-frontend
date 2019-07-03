@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import ReactDOM from "react-dom";
-
+import { connect } from "react-redux";
+import * as actions from "../../Store/Actions/index";
 import * as APIUtility from "../../Util/API";
 
 class TreeViewer extends Component {
@@ -17,6 +18,30 @@ class TreeViewer extends Component {
     this.linkColor = "#f0f0f0"; // Colour of links
     this.linkWidth = 7; // Width of links
     this.handlingClick = false; // Initializing handlingClick to false, used to prevent two clicks from happening at the same time
+  }
+
+  // Function to add a code to the selected codes list from the tree
+  addCodeFromTree(codeFromTree) {
+    const selectedCodes = Array.from(this.props.selectedCodes);
+
+    // check if the code already exist in the selection
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === codeFromTree);
+
+    if (getDuplicate === undefined) {
+      // construct new code object
+      const newCode = {
+        code: codeFromTree.code,
+        description: codeFromTree.description
+      };
+
+      selectedCodes.push(newCode);
+      this.props.addSelectedCode(newCode);
+
+      this.props.getRecommendedCodes(selectedCodes, this.props.selectedAge);
+      this.props.getDaggerAsterisks(selectedCodes);
+    } else {
+      console.log("[TreeViewer Container] error: trying to add duplicate code =>", codeFromTree);
+    }
   }
 
   // Function to create links
@@ -456,7 +481,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "buttonG")
       .on("click", () => {
-        this.props.addCodeFromTree(this.data.self);
+        this.addCodeFromTree(this.data.self);
       });
 
     // Create rectangle for colour
@@ -1874,4 +1899,23 @@ class TreeViewer extends Component {
   }
 }
 
-export default TreeViewer;
+const mapStateToProps = state => {
+  return {
+    selectedCodes: state.selected.selectedCodes,
+    selectedAge: state.inputBoxes.selectedAge
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addSelectedCode: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
+    getRecommendedCodes: (codeObjArray, age, gender) =>
+      dispatch(actions.fetchRecommendations(codeObjArray, age, gender)),
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TreeViewer);

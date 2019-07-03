@@ -5,16 +5,16 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 
 const inputBoxes = props => {
-  const handleCodeSelection = newCodeObj => {
+  const handleCodeSelection = enteredCode => {
     const selectedCodes = Array.from(props.selectedCodes);
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj);
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCode);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(props.cachedCodeWithDescription);
-      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === enteredCode);
       // construct new code object
       const newCode = {
         code: cachedCode.code,
@@ -22,13 +22,18 @@ const inputBoxes = props => {
       };
 
       selectedCodes.push(newCode);
-      props.addSelectedCodes(newCode);
+      props.addSelectedCode(newCode);
 
-      props.getRecommendedCodes(selectedCodes);
+      props.getRecommendedCodes(selectedCodes, props.selectedAge);
       props.getDaggerAsterisks(selectedCodes);
     } else {
-      console.log("[InputBoxes Container] error: trying to add duplicate code =>", newCodeObj);
+      console.log("[InputBoxes Container] error: trying to add duplicate code =>", enteredCode);
     }
+  };
+
+  const handleAgeSelection = enteredAge => {
+    props.setAge(enteredAge);
+    props.getRecommendedCodes(props.selectedCodes, enteredAge);
   };
 
   return (
@@ -40,7 +45,7 @@ const inputBoxes = props => {
       placeholder_age="Age"
       placeholder_gender="Gender"
       selectCode={handleCodeSelection}
-      // selectAge={handleAgeSelection}
+      selectAge={handleAgeSelection}
       // selectGender={handleGenderSelection}
       codeCache={props.cachedCodeWithDescription}
       appendCodeToCache={props.appendCodeToCache}
@@ -55,18 +60,20 @@ const inputBoxes = props => {
 const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
-    cachedCodeWithDescription: state.cached.cachedCodeWithDescription
+    cachedCodeWithDescription: state.cached.cachedCodeWithDescription,
+    selectedAge: state.inputBoxes.selectedAge
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     appendCodeToCache: codeObjArray => dispatch(actions.appendToCache(codeObjArray)),
-    addSelectedCodes: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
+    addSelectedCode: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendations(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray))
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray)),
+    setAge: ageValue => dispatch(actions.setAge(ageValue))
   };
 };
 
