@@ -23,7 +23,7 @@ export const ENTER_LOG = "ENTER_LOG";
  * API class used to connect to the backend--------------------------------------------
  */
 export class API {
-  static serverAdress = window.location.hostname; //Assumes API on same server as React
+  static serverAdress = window.location.hostname; //Only if API on same server as React
   static portAdress = ":8000";
   static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
 

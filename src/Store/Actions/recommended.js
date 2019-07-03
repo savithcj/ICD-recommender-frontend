@@ -1,6 +1,7 @@
 import * as actionTypes from "./actionsTypes";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "./utility";
+import { appendToCache } from "./cached";
 
 export const removeRecommendedCode = codeIndex => {
   return {
@@ -34,13 +35,17 @@ export const fetchRecommendations = (codeObjArray, age, gender) => {
         .then(response => response.json())
         .then(results => {
           results.forEach(ruleObj => {
-            ruleObj.description = ruleObj.description + " ~ Score: " + (ruleObj.score * 100).toFixed(1);
+            ruleObj.descriptionWithScore = ruleObj.description + " ~ Score: " + (ruleObj.score * 100).toFixed(1);
             ruleObj.rule = ruleObj.lhs + " -> " + ruleObj.rhs;
             //dislike button should be disabled if an admin has reviewed and accepted a rule
             ruleObj.shouldDisableDislikeButton = ruleObj["review_status"] === 2;
           });
           //sort the remaining results in descending order of score
           results.sort((a, b) => (a.score < b.score ? 1 : b.score < a.score ? -1 : 0));
+          const resultsToCache = results.map(recommendedObj => {
+            return { code: recommendedObj.rhs, description: recommendedObj.description };
+          });
+          dispatch(appendToCache(resultsToCache));
           dispatch(setRecommendedCodes(results));
         });
     } else {
