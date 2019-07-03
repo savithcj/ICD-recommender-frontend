@@ -5,6 +5,7 @@ import SelectedCodes from "../../Containers/SelectedCodes/SelectedCodes";
 import RecommendedCodes from "../../Containers/RecommendedCodes/RecommendedCodes";
 import DaggerAsterisks from "../../Containers/DaggerAsterisks/DaggerAsterisks";
 import TreeViewer from "../../Components/TreeViewer/TreeViewer";
+import MenuBar from "../../Components/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
@@ -19,6 +20,16 @@ const Home = () => {
   const highlightEditDiv = "grid-border";
   return (
     <div className="Home">
+      <MenuBar
+        title="ICD-10 Code Suggestion and Usage Insight"
+        // firstLinkName="Admin"
+        // firstLinkRoute="/admin"
+        // secondLinkName="Visualization"
+        // secondLinkRoute="/visualization"
+        // handleLayoutConfirm={this.handleLayoutModifierButton}
+        // handleResetLayout={this.resetLayout}
+        // inModifyMode={this.state.isLayoutModifiable}
+      />
       <ResponsiveReactGridLayout
         className="layout"
         rowHeight={10}
