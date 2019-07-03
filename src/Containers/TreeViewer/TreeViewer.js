@@ -1917,5 +1917,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { forwardRef: true }
 )(TreeViewer);
