@@ -6,6 +6,12 @@ import * as actions from "../../Store/Actions/index";
 
 const recommendedCodesViewer = props => {
   const componentMenuItems = [];
+
+  const handleExploreButton = event => {
+    const exploreCodeIndex = parseInt(event.currentTarget.id, 10);
+    props.treeRef.current.changeTree(props.recommendedCodes[exploreCodeIndex].rhs);
+  };
+
   return (
     <ListViewer
       className="recommendedCodes"
@@ -18,7 +24,7 @@ const recommendedCodesViewer = props => {
       //   acceptItemButton={this.handleAcceptRecommendedCode}
       //   removeItemButton={this.handleRemoveRecommendedCode}
       //   dislikeButton={this.userFlagRuleForReview}
-      //   exploreButton={this.handleExploreRecommendedCodeButton}
+      exploreButton={handleExploreButton}
       allowRearrage={false}
       menuOptions={componentMenuItems}
       disableDislikeButtonField="shouldDisableDislikeButton"
