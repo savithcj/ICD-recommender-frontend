@@ -62,8 +62,8 @@ const mapDispatchToProps = dispatch => {
     removeCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
     setCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
-      dispatch(actions.fetchRecommendations(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray))
+      dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))
   };
 };
 

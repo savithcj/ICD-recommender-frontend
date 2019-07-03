@@ -77,12 +77,12 @@ const mapStateToProps = state => {
 //TODO: map correct actions correspoding to the dagger asterisks viewer
 const mapDispatchToProps = dispatch => {
   return {
-    addSelectedCode: codeObj => dispatch(actions.addSelectedCodeAndUpdate(codeObj)),
+    addSelectedCode: codeObj => dispatch(actions.addSelectedCodeAndUpdateRecommendations(codeObj)),
     removeSelectedCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
-      dispatch(actions.fetchRecommendations(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray))
+      dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))
   };
 };
 

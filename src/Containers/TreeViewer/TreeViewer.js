@@ -1902,7 +1902,7 @@ class TreeViewer extends Component {
 const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
-    selectedAge: state.inputBoxes.selectedAge
+    selectedAge: state.ageGender.selectedAge
   };
 };
 
@@ -1910,8 +1910,8 @@ const mapDispatchToProps = dispatch => {
   return {
     addSelectedCode: codeToAdd => dispatch(actions.addSelectedCode(codeToAdd)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
-      dispatch(actions.fetchRecommendations(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisks(codeObjArray))
+      dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))
   };
 };
 
