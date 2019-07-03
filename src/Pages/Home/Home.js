@@ -18,38 +18,40 @@ const treeViewDiv = React.createRef();
 const Home = () => {
   const highlightEditDiv = "grid-border";
   return (
-    <ResponsiveReactGridLayout
-      className="layout"
-      rowHeight={10}
-      cols={{ lg: 48, md: 40, sm: 24, xs: 16, xxs: 8 }}
-      // layouts={this.state.layouts}
-      layouts={originalLayouts}
-      draggableCancel="input,textarea"
-      isDraggable={false}
-      // isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
-      // isResizable={this.state.isLayoutModifiable} //if a button is pressed
-      // onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
-    >
-      <div key="tree" className={highlightEditDiv}>
-        <TreeViewer ref={treeViewDiv} />
-      </div>
+    <div className="Home">
+      <ResponsiveReactGridLayout
+        className="layout"
+        rowHeight={10}
+        cols={{ lg: 48, md: 40, sm: 24, xs: 16, xxs: 8 }}
+        // layouts={this.state.layouts}
+        layouts={originalLayouts}
+        draggableCancel="input,textarea"
+        isDraggable={false}
+        // isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
+        // isResizable={this.state.isLayoutModifiable} //if a button is pressed
+        // onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
+      >
+        <div key="tree" className={highlightEditDiv}>
+          <TreeViewer ref={treeViewDiv} />
+        </div>
 
-      <div key="selectedCodes" className={highlightEditDiv}>
-        <SelectedCodes treeRef={treeViewDiv} />
-      </div>
+        <div key="selectedCodes" className={highlightEditDiv}>
+          <SelectedCodes treeRef={treeViewDiv} />
+        </div>
 
-      <div key="recommendedCodes" className={highlightEditDiv}>
-        <RecommendedCodes treeRef={treeViewDiv} />
-      </div>
+        <div key="recommendedCodes" className={highlightEditDiv}>
+          <RecommendedCodes treeRef={treeViewDiv} />
+        </div>
 
-      <div key="daggerCodes" className={highlightEditDiv}>
-        <DaggerAsterisks treeRef={treeViewDiv} />
-      </div>
+        <div key="daggerCodes" className={highlightEditDiv}>
+          <DaggerAsterisks treeRef={treeViewDiv} />
+        </div>
 
-      <div key="inputBoxes" className={highlightEditDiv}>
-        <InputBoxes />
-      </div>
-    </ResponsiveReactGridLayout>
+        <div key="inputBoxes" className={highlightEditDiv}>
+          <InputBoxes />
+        </div>
+      </ResponsiveReactGridLayout>
+    </div>
   );
 };
 
