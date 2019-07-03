@@ -81,17 +81,17 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
   };
 };
 
-export const addSelectedCodeAndUpdateRecommendations = newCodeObj => {
+export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
   return (dispatch, getState) => {
     const selectedCodes = Array.from(getState().selected.selectedCodes);
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj);
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCode);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(getState().cached.cachedCodeWithDescription);
-      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === enteredCode);
       // construct new code object
       const newCode = {
         code: cachedCode.code,
@@ -101,11 +101,10 @@ export const addSelectedCodeAndUpdateRecommendations = newCodeObj => {
       selectedCodes.push(newCode);
 
       dispatch(setSelectedCodes(selectedCodes));
-
-      this.getRecommendedCodes(selectedCodes);
-      this.getDaggerAsterisks(selectedCodes);
+      dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
+      dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
     } else {
-      console.log("[addSelectedCodeAndUpdate action] Duplicate code entered", newCodeObj);
+      console.log("[addSelectedCodeAndUpdate action] Duplicate code entered", enteredCode);
     }
   };
 };

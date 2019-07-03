@@ -6,29 +6,7 @@ import * as actions from "../../Store/Actions/index";
 
 const inputBoxes = props => {
   const handleCodeSelection = enteredCode => {
-    const selectedCodes = Array.from(props.selectedCodes);
-
-    // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCode);
-
-    if (getDuplicate === undefined) {
-      // get code description from auto-suggest cache
-      const codeDescriptions = Array.from(props.cachedCodeWithDescription);
-      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === enteredCode);
-      // construct new code object
-      const newCode = {
-        code: cachedCode.code,
-        description: cachedCode.description
-      };
-
-      selectedCodes.push(newCode);
-      props.addSelectedCode(newCode);
-
-      props.getRecommendedCodes(selectedCodes, props.selectedAge);
-      props.getDaggerAsterisks(selectedCodes);
-    } else {
-      console.log("[InputBoxes Container] error: trying to add duplicate code =>", enteredCode);
-    }
+    props.addSelectedCode(enteredCode);
   };
 
   const handleAgeSelection = enteredAge => {
