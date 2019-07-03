@@ -4,9 +4,9 @@ import { Route, BrowserRouter, Switch } from "react-router-dom";
 import "./index.css";
 import "typeface-roboto";
 import Home from "./Pages/Home/Home";
-import Admin from "./Components/Admin/Admin";
+// import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./Util/serviceWorker";
-import Visualization from "./Components/Visualization/Visualization";
+// import Visualization from "./Components/Visualization/Visualization";
 
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
@@ -28,8 +28,8 @@ const routing = (
       <div>
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/admin" component={Admin} />
-          <Route path="/visualization" component={Visualization} />
+          {/* <Route path="/admin" component={Admin} /> */}
+          {/* <Route path="/visualization" component={Visualization} /> */}
           <Route>{notFound}</Route>
         </Switch>
       </div>

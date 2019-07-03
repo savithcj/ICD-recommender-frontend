@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 import ReactDOM from "react-dom";
 
-import APIClass from "../../Assets/Util/API";
+import * as APIUtility from "../../Util/API";
 
 class TreeViewer extends Component {
   constructor(props) {
@@ -1067,7 +1067,7 @@ class TreeViewer extends Component {
   // Parameter: code to get ancestors for
   // Puts the array of ancestors into a member variable
   getAncestorsFromAPI = code => {
-    const url = APIClass.getAPIURL("ANCESTORS") + code + "/?format=json";
+    const url = APIUtility.API.getAPIURL(APIUtility.ANCESTORS) + code + "/?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
@@ -1860,7 +1860,7 @@ class TreeViewer extends Component {
 
   // Gets the data from API for the specified code and stores it in a member variable
   getDataFromAPI = code => {
-    const url = APIClass.getAPIURL("FAMILY") + code + "/?format=json";
+    const url = APIUtility.API.getAPIURL(APIUtility.FAMILY) + code + "/?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
