@@ -2,9 +2,16 @@ import * as actionTypes from "./actionsTypes";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "./utility";
 
+export const addDaggerAsterisk = codeObj => {
+  return {
+    type: actionTypes.ADD_DAGGER_ASTERISK,
+    codeObj
+  };
+};
+
 export const removeDaggerAsterisk = codeIndex => {
   return {
-    type: actionTypes.SET_DAGGER_ASTERISKS,
+    type: actionTypes.REMOVE_DAGGGER_ASTERISK,
     codeIndex
   };
 };

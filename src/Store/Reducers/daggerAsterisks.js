@@ -5,6 +5,12 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
+  const addDagAst = () => {
+    const suggestedDaggerAsterisks = Array.from(state.suggestedDaggerAsterisks);
+    suggestedDaggerAsterisks.push(action.codeObj);
+    return { suggestedDaggerAsterisks };
+  };
+
   const removeDagAst = () => {
     const suggestedDaggerAsterisks = Array.from(state.suggestedDaggerAsterisks);
     suggestedDaggerAsterisks.splice(action.codeIndex, 1);
@@ -16,6 +22,9 @@ const reducer = (state = initialState, action) => {
   };
 
   switch (action.type) {
+    case actionTypes.ADD_DAGGER_ASTERISK:
+      return addDagAst();
+
     case actionTypes.REMOVE_DAGGGER_ASTERISK:
       return removeDagAst();
 

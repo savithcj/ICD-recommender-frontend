@@ -2,6 +2,7 @@
 export const APPEND_TO_CACHE = "APPEND_TO_CACHE";
 
 // Dagger/Asterisks codes action types
+export const ADD_DAGGER_ASTERISK = "ADD_DAGGER_ASTERISK";
 export const REMOVE_DAGGGER_ASTERISK = "REMOVE_DAGGER_ASTERISK";
 export const SET_DAGGER_ASTERISKS = "SET_DAGGER_ASTERISKS";
 
