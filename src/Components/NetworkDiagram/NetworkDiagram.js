@@ -2,7 +2,7 @@
 // import * as d3 from "d3";
 // import ReactDOM from "react-dom";
 
-// import APIClass from "../../Assets/Util/API";
+// import * as APIUtility from "../../Util/API";
 
 // class NetworkDiagram extends Component {
 //   constructor(props) {

@@ -13,8 +13,16 @@ const selectedCodesViewer = props => {
     props.getDaggerAsterisks(selectedCodes);
   };
 
+  const handleExploreSelectedCodeButton = event => {
+    const exploreCodeIndex = parseInt(event.currentTarget.id, 10);
+    props.treeRef.current.changeTree(props.selectedCodes[exploreCodeIndex].code);
+  };
+
   //TODO:finish this
   const resetSelectedCodes = () => {};
+
+  //TODO:finish this
+  const acceptSelectedCodes = () => {};
 
   const selectedCodesComponentMenuItems = [
     {
@@ -31,7 +39,7 @@ const selectedCodesViewer = props => {
       valueName="code"
       descriptionName="description"
       removeItemButton={handleRemoveSelectedCode}
-      //   exploreButton={this.handleExploreSelectedCodeButton}
+      exploreButton={handleExploreSelectedCodeButton}
       onSortEndCallback={updatedListOfSelectedCodes => {
         props.setCodes(updatedListOfSelectedCodes);
       }}

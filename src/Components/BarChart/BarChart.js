@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import "./BarChart.css";
 import ReactDOM from "react-dom";
 
-import APIClass from "../../Assets/Util/API";
+import * as APIUtility from "../../Util/API";
 
 class BarChart extends Component {
   constructor(props) {
@@ -226,7 +226,7 @@ class BarChart extends Component {
 
   // Retrieves data from Django via API call
   getDataFromAPI = () => {
-    const url = APIClass.getAPIURL("RULES") + "?format=json";
+    const url = APIUtility.getAPIURL(APIUtility.RULES) + "?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {

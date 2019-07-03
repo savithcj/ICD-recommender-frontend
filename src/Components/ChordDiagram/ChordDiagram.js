@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { sliderBottom } from "d3-simple-slider";
 import ReactDOM from "react-dom";
 
-import APIClass from "../../Assets/Util/API";
+import * as APIUtility from "../../Util/API";
 
 class ChordDiagram extends Component {
   constructor(props) {
@@ -412,7 +412,7 @@ class ChordDiagram extends Component {
   }
 
   getDataFromAPI = () => {
-    const url = APIClass.getAPIURL("CODE_BLOCK_USAGE") + "?format=json";
+    const url = APIUtility.getAPIURL(APIUtility.CODE_BLOCK_USAGE) + "?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {

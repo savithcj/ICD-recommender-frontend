@@ -3,13 +3,13 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import "./CustomStyle.css";
 
-import APIClass from "../../Assets/Util/API";
+import * as APIUtility from "../../Util/API";
 
 export default function SortableTable() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const url = APIClass.getAPIURL("RULES") + "?format=json";
+    const url = APIUtility.getAPIURL(APIUtility.RULES) + "?format=json";
 
     fetch(url)
       .then(response => response.json())
