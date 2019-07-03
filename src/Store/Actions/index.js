@@ -1,5 +1,10 @@
 export { addSelectedCode, removeSelectedCode, setSelectedCodes } from "./selected";
-export { removeRecommendedCode, setRecommendedCodes, fetchRecommendations } from "./recommended";
+export { removeRecommendedCode, setRecommendedCodes } from "./recommended";
 export { appendToCache } from "./cached";
 export { fetchDaggerAsterisks } from "./daggerAsterisks";
-export { setAge, setGender } from "./inputBoxes";
+export { setAge, setGender } from "./ageGender";
+export {
+  addSelectedCodeAndUpdateRecommendations,
+  fetchRecommendationsAndUpdateCache,
+  fetchDaggerAsterisksAndUpdateCache
+} from "./asyncActions";

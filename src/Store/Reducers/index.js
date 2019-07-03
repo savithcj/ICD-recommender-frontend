@@ -3,12 +3,12 @@ import selected from "./selected";
 import recommended from "./recommended";
 import cached from "./cached";
 import daggerAsterisks from "./daggerAsterisks";
-import inputBoxes from "./inputBoxes";
+import ageGender from "./ageGender";
 
 export default combineReducers({
   cached,
   daggerAsterisks,
   recommended,
   selected,
-  inputBoxes
+  ageGender
 });

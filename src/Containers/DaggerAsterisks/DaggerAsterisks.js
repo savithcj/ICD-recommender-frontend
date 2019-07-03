@@ -17,17 +17,17 @@ const daggerAsterisksViewer = props => {
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
     const acceptedCodeObject = this.state.suggestedDaggerAsterisks[acceptedCodeIndex];
     const codes = Array.from(this.state.selectedCodes);
-
     let daggerObject = {};
     daggerObject.code = acceptedCodeObject.dagger;
     let asteriskObject = {};
     asteriskObject.code = acceptedCodeObject.asterisk;
-    const urlDagger = APIUtility.getAPIURL(APIUtility.CODE_DESCRIPTION) + daggerObject.code + "/?format=json";
+    const urlDagger = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + daggerObject.code + "/?format=json";
     fetch(urlDagger)
       .then(response => response.json())
       .then(result => {
         daggerObject.description = result.description;
-        const urlAsterisk = APIUtility.getAPIURL(APIUtility.CODE_DESCRIPTION) + asteriskObject.code + "/?format=json";
+        const urlAsterisk =
+          APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + asteriskObject.code + "/?format=json";
         fetch(urlAsterisk)
           .then(response => response.json())
           .then(result => {
@@ -46,7 +46,9 @@ const daggerAsterisksViewer = props => {
 
   const handleRemoveDaggerAsteriskCode = event => {};
 
-  const handleExploreDaggerAsterisk = event => {};
+  const handleExploreDaggerAsterisk = event => {
+    props.addSelectedCode({ code: "test", description: "test" });
+  };
 
   const componentMenuItems = [];
   return (
@@ -59,7 +61,7 @@ const daggerAsterisksViewer = props => {
       descriptionName="description"
       //   acceptItemButton={this.handleAcceptDaggerAsteriskCode}
       //   removeItemButton={this.handleRemoveDaggerAsteriskCode}
-      //   exploreButton={this.handleExploreDaggerAsterisk}
+      exploreButton={handleExploreDaggerAsterisk}
       allowRearrage={false}
       menuOptions={componentMenuItems}
     />
@@ -75,7 +77,7 @@ const mapStateToProps = state => {
 //TODO: map correct actions correspoding to the dagger asterisks viewer
 const mapDispatchToProps = dispatch => {
   return {
-    addSelectedCode: codeObj => dispatch(actions.addSelectedCode(codeObj)),
+    addSelectedCode: codeObj => dispatch(actions.addSelectedCodeAndUpdate(codeObj)),
     removeSelectedCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
