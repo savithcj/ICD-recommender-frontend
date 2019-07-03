@@ -4,14 +4,10 @@ import { Route, BrowserRouter, Switch } from "react-router-dom";
 import "./index.css";
 import "typeface-roboto";
 import Home from "./Pages/Home/Home";
-// import Admin from "./Components/Admin/Admin";
 import * as serviceWorker from "./Util/serviceWorker";
-// import Visualization from "./Components/Visualization/Visualization";
-
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
-
 import reducer from "./Store/Reducers/index";
 
 //enabling redux dev-tools

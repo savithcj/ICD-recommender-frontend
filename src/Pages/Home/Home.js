@@ -25,6 +25,7 @@ const Home = () => {
       // layouts={this.state.layouts}
       layouts={originalLayouts}
       draggableCancel="input,textarea"
+      isDraggable={false}
       // isDraggable={this.state.isLayoutModifiable} //used to dynamically allow editing
       // isResizable={this.state.isLayoutModifiable} //if a button is pressed
       // onLayoutChange={(layout, layouts) => this.onLayoutChange(layouts)}
