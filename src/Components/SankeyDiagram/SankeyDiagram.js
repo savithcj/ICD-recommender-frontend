@@ -50,6 +50,7 @@ class SankeyDiagram extends Component {
     this.pIndex2 = 8;
     this.infoText = this.addInfoText();
 
+    //labels for the parent names
     let labelText1 = this.svg
       .append("text")
       .attr("x", this.width / 2)
@@ -66,6 +67,7 @@ class SankeyDiagram extends Component {
       .attr("font-family", this.fontType)
       .style("text-anchor", "middle");
 
+    //descriptions for the parents
     let descText1 = this.svg
       .append("text")
       .attr("x", this.width / 2)
@@ -82,6 +84,7 @@ class SankeyDiagram extends Component {
       .attr("font-family", this.fontType)
       .style("text-anchor", "middle");
 
+    //sliders to select parent
     let slider1 = sliderBottom()
       .min(1)
       .max(this.numParents)
@@ -116,6 +119,7 @@ class SankeyDiagram extends Component {
     gSlider1.call(slider1);
     gSlider2.call(slider2);
 
+    //construct from the bottom up. Sliders and text fill the bottom then the diagram takes the remaining space
     let sliderHeight = Math.ceil(gSlider1.node().getBBox().height);
     let descHeight = Math.ceil(descText1.node().getBBox().height);
     let labelHeight = Math.ceil(labelText1.node().getBBox().height);
@@ -143,6 +147,7 @@ class SankeyDiagram extends Component {
   }
 
   addInfoText() {
+    //create information text box at the top left
     let infoG = this.svg.append("g").attr("class", "infoG");
     return infoG
       .append("text")
@@ -186,9 +191,11 @@ class SankeyDiagram extends Component {
     this.svg.selectAll("path.sankey").remove();
     this.svg.selectAll("path.sankeyInvis").remove();
 
+    //draw the arcs between parents
     this.drawHalfArcs(data1, data2, this.color1, -1);
     this.drawHalfArcs(data2, data1, this.color2, 1);
 
+    //draw circles. set mouseover to highlight all arcs originating from this parent
     this.svg.selectAll("circle.sankey").remove();
     this.svg
       .selectAll("circle.sankey")
@@ -218,6 +225,7 @@ class SankeyDiagram extends Component {
     this.svg.selectAll("g.textSankey1").remove();
     this.svg.selectAll("g.textSankey2").remove();
 
+    //text for start and end of parent on each circle
     this.svg
       .selectAll("g.textSankey1")
       .data(circleData)
@@ -257,7 +265,9 @@ class SankeyDiagram extends Component {
   }
 
   drawHalfArcs(d1, d2, color, direction) {
+    //iterate through originator blocks
     for (let i = 0; i < d1.blocks.length; i++) {
+      //iterate through destination blocks to check if connection exists
       for (let j = 0; j < d2.blocks.length; j++) {
         let numRules = d1["destCounts"][i][j + d2.startIndex];
         if (numRules > 0) {
@@ -323,16 +333,19 @@ class SankeyDiagram extends Component {
   }
 
   dimArcs() {
+    //make all arcs dim
     this.svg.selectAll("path.sankey").style("opacity", this.dimOpacity);
   }
 
   lightArc(originatorBlock, destinationBlock) {
+    //light specific arcs
     this.svg
       .selectAll("path.sankey[originatorBlock=" + originatorBlock + "][destinationBlock=" + destinationBlock + "]")
       .style("opacity", this.brightOpacity);
   }
 
   lightArcs() {
+    //make all arcs bright
     this.svg.selectAll("path.sankey").style("opacity", this.brightOpacity);
   }
 
@@ -342,6 +355,7 @@ class SankeyDiagram extends Component {
       .then(response => response.json())
       .then(parsedJson => {
         this.data = parsedJson;
+        //create organized data list for individual parents
         this.orgData = [];
         let parentName = "";
         let pIndex = -1;

@@ -72,6 +72,7 @@ class ChordDiagram extends Component {
 
     this.addInfoText();
 
+    //Create colorbar
     this.colours = d3
       .scaleLinear()
       .domain(d3.ticks(0, this.parentNames.length, 11))
@@ -88,63 +89,68 @@ class ChordDiagram extends Component {
         "#D53E4F",
         "#9E0142"
       ]);
+
     this.arcThickness = this.width / 1000;
-    this.numPSelections = this.parentSelections.reduce((a, b) => a + b, 0);
+
+    //numPselections is the number of parents selected in the check boxes
+    this.numParentSelections = this.parentSelections.reduce((a, b) => a + b, 0);
+
+    //selectedParents contains the indices of the parents selected
     this.selectedParents = [];
     for (let i = 0; i < this.parentSelections.length; i++) {
       if (this.parentSelections[i]) {
         this.selectedParents.push(i);
       }
     }
+
+    //determine number of bars to be drawn based on parent selections
     this.numBars = 0;
-    for (let i = 0; i < this.numPSelections; i++) {
+    //iterate through parent selections
+    for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
       const startIndex = this.pData[selectedParentIndex].startIndex;
       const endIndex = this.pData[selectedParentIndex].endIndex;
+      //add up elements within the parents
       for (let j = startIndex; j <= endIndex; j++) {
         this.numBars++;
       }
     }
-    if (this.numPSelections !== 0) {
+
+    //draw elements as long as at least one parent is selected
+    if (this.numParentSelections !== 0) {
       this.drawBars();
       this.drawSlider();
       this.generateCurves();
     }
 
     this.drawLegend();
-
-    // rectangle to make it so cursor isn't shown when hovering over ticks
-    this.svg
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", this.height * 0.95)
-      .attr("width", this.width)
-      .attr("height", this.height * 0.05)
-      .style("fill-opacity", 1e-6);
   }
 
   drawBars() {
-    //Determine max coded from selected chapters
-    this.maxCoded = 0;
-    for (let i = 0; i < this.numPSelections; i++) {
+    //Find maximum count for the bars. Normalize bar heights based on this max count later on
+    this.maxBarCount = 0;
+    for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
       const startIndex = this.pData[selectedParentIndex].startIndex;
       const endIndex = this.pData[selectedParentIndex].endIndex;
       for (let j = startIndex; j <= endIndex; j++) {
-        if (this.data[j].times_coded > this.maxCoded) {
-          this.maxCoded = this.data[j].times_coded;
+        if (this.data[j].times_coded > this.maxBarCount) {
+          this.maxBarCount = this.data[j].times_coded;
         }
       }
     }
 
+    //Calculate angles and heights for the bars
     this.barWidth = 2 * this.cRadius * Math.sin(Math.PI / this.numBars);
     this.bars = [];
     this.sliceAngle = 360 / this.numBars;
     let barCount = 0;
-    for (let i = 0; i < this.numPSelections; i++) {
+    //iterate through parent selections
+    for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
       const startIndex = this.pData[selectedParentIndex].startIndex;
       const endIndex = this.pData[selectedParentIndex].endIndex;
+      //create bar data for each element within the parent
       for (let j = startIndex; j <= endIndex; j++) {
         let angle = (((barCount * 360) / this.numBars - 90) * Math.PI) / 180;
         let nextAngle;
@@ -159,7 +165,7 @@ class ChordDiagram extends Component {
           nextX: this.cRadius * Math.cos(nextAngle) + this.centerX,
           nextY: this.cRadius * Math.sin(nextAngle) + this.centerX,
           block: this.data[j].block,
-          normTimes: this.data[j].times_coded / this.maxCoded,
+          normTimes: this.data[j].times_coded / this.maxBarCount,
           parent: this.data[j].parent,
           description: this.data[j].description,
           angle: angle
@@ -168,6 +174,7 @@ class ChordDiagram extends Component {
       }
     }
 
+    //draw bars
     this.svg
       .selectAll("rect.barRect")
       .data(this.bars)
@@ -186,6 +193,7 @@ class ChordDiagram extends Component {
         return "rotate(" + angle + "," + d.x + "," + d.y + ")";
       });
 
+    //draw invisible bars for mouseovers
     this.svg
       .selectAll("rect.invisibleRect")
       .data(this.bars)
@@ -219,18 +227,18 @@ class ChordDiagram extends Component {
   }
 
   generateCurves() {
-    this.svg.selectAll("path.curve").remove();
-
     //generate startpoints and endpoints for the rule curves
     //start points are a little offset from the endpoints
     this.startPoints = [];
     this.endPoints = [];
     this.curveData = [];
     let barCount = 0;
-    for (let i = 0; i < this.numPSelections; i++) {
+    //iterate through parent selections
+    for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
       const startIndex = this.pData[selectedParentIndex].startIndex;
       const endIndex = this.pData[selectedParentIndex].endIndex;
+      //for each data row associated to the parent, generate start and end points for the curves
       for (let j = startIndex; j <= endIndex; j++) {
         let angle = (((barCount * 360) / this.numBars - 90) * Math.PI) / 180;
         let offset = ((360 / this.numBars) * Math.PI) / 180 / 3;
@@ -250,18 +258,22 @@ class ChordDiagram extends Component {
         barCount++;
       }
     }
-    //draw rule curves
 
+    //draw the curves generated above
     for (let i = 0; i < this.curveData.length; i++) {
-      this.drawCurves(i, "", this.arcThickness);
+      this.drawCurves(i, this.arcThickness);
     }
   }
 
-  drawCurves(row, className, strokeWidth) {
+  drawCurves(row, strokeWidth, classNameSuffix = "") {
+    //Draws curve from a specific row in the pregenerated curveData.
+    //row: row in the curveData to draw curves from
+    //strokeWidth: thickness of the curve lines
+    //classNameSuffix: optional suffix to identify specific curves. used for temporary curves
     const cData = this.curveData[row];
     const destinationCounts = cData.destinationCounts;
     let col = 0;
-    for (let i = 0; i < this.numPSelections; i++) {
+    for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
       const startIndex = this.pData[selectedParentIndex].startIndex;
       const endIndex = this.pData[selectedParentIndex].endIndex;
@@ -282,7 +294,7 @@ class ChordDiagram extends Component {
             this.endPoints[col].y;
           this.svg
             .append("svg:path")
-            .attr("class", "curve" + className)
+            .attr("class", "curve" + classNameSuffix)
             .attr("d", bezierString)
             .style("stroke", this.calcColour(this.parentNames[cData.parentIndex]))
             .attr("stroke-width", strokeWidth)
@@ -294,7 +306,7 @@ class ChordDiagram extends Component {
   }
 
   drawSlider() {
-    //this is the cutoff for the minimum number of rules
+    //slider to set cutoff for minimum rules
     this.minRules = 1;
     var slider = sliderBottom()
       .min(this.sliderMin)
@@ -348,6 +360,7 @@ class ChordDiagram extends Component {
           this.infoText.text("");
         })
         .on("click", () => {
+          //parentSelections is a list of booleans
           this.parentSelections[i] = !this.parentSelections[i];
           this.drawChordDiagram();
         });
@@ -400,7 +413,7 @@ class ChordDiagram extends Component {
   }
 
   drawOverlayCurves(row) {
-    this.drawCurves(row, row, this.arcThickness * 6);
+    this.drawCurves(row, this.arcThickness * 6, row);
   }
 
   deleteOverlayCurves(row) {
@@ -412,6 +425,7 @@ class ChordDiagram extends Component {
   }
 
   getDataFromAPI = () => {
+    //in this context, parents are the ICD chapters
     const url = APIClass.getAPIURL("CODE_BLOCK_USAGE") + "?format=json";
     return fetch(url)
       .then(response => response.json())
@@ -434,16 +448,10 @@ class ChordDiagram extends Component {
             this.pData.push({
               pName: curElem.parent,
               pDesc: curElem.parent_description,
-              startIndex: i,
-              blocks: [],
-              descriptions: [],
-              destCounts: []
+              startIndex: i
             });
           }
           this.pData[pIndex]["endIndex"] = i;
-          this.pData[pIndex]["destCounts"].push(curElem.destination_counts.split(",").map(Number));
-          this.pData[pIndex]["blocks"].push(curElem.block);
-          this.pData[pIndex]["descriptions"].push(curElem.description);
         }
         this.pData.sort((a, b) => {
           return ("" + a.pName).localeCompare(b.pName);
