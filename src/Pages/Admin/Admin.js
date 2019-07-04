@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import MenuBar from "../../Components/MenuBar/MenuBar";
+import MenuBar from "../../Containers/MenuBar/MenuBar";
 import RuleCreator from "../../Containers/RuleCreator/RuleCreator";
 import RuleReviewer from "../../Containers/RuleReviewer/RuleReviewer";
 import RuleSearch from "../../Containers/RuleSearch/RuleSearch";

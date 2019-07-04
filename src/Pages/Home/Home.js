@@ -4,7 +4,7 @@ import SelectedCodes from "../../Containers/SelectedCodes/SelectedCodes";
 import RecommendedCodes from "../../Containers/RecommendedCodes/RecommendedCodes";
 import DaggerAsterisks from "../../Containers/DaggerAsterisks/DaggerAsterisks";
 import TreeViewer from "../../Containers/TreeViewer/TreeViewer";
-import MenuBar from "../../Components/MenuBar/MenuBar";
+import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
