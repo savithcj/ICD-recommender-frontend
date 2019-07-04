@@ -36,7 +36,6 @@ function Visualization(props) {
     SankeyDiagramDiv.current.handleResize();
   }
 
-  const shakeDiv = isLayoutModifiable ? "shake" : "";
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
   return (
@@ -53,30 +52,28 @@ function Visualization(props) {
           inModifyMode={isLayoutModifiable}
         />
       </div>
-      <div className={shakeDiv}>
-        <ResponsiveReactGridLayout
-          rowHeight={30}
-          layouts={layouts}
-          draggableCancel="input,textarea"
-          isDraggable={isLayoutModifiable}
-          isResizable={isLayoutModifiable}
-          onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
-        >
-          <div key="0" className={highlightEditDiv}>
-            <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
-          </div>
-          <div key="1" className={highlightEditDiv}>
-            <SankeyDiagram id="100" ref={SankeyDiagramDiv} />{" "}
-          </div>
+      <ResponsiveReactGridLayout
+        rowHeight={30}
+        layouts={layouts}
+        draggableCancel="input,textarea"
+        isDraggable={isLayoutModifiable}
+        isResizable={isLayoutModifiable}
+        onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
+      >
+        <div key="0" className={highlightEditDiv}>
+          <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
+        </div>
+        <div key="1" className={highlightEditDiv}>
+          <SankeyDiagram id="100" ref={SankeyDiagramDiv} />{" "}
+        </div>
 
-          <div key="2" id="barDiv" className={highlightEditDiv}>
-            <RulesTable />{" "}
-          </div>
-          <div key="3" id="barDiv" className={highlightEditDiv}>
-            <BarChart id="100" ref={barChartDiv} />{" "}
-          </div>
-        </ResponsiveReactGridLayout>
-      </div>
+        <div key="2" id="barDiv" className={highlightEditDiv}>
+          <RulesTable />{" "}
+        </div>
+        <div key="3" id="barDiv" className={highlightEditDiv}>
+          <BarChart id="100" ref={barChartDiv} />{" "}
+        </div>
+      </ResponsiveReactGridLayout>
     </div>
   );
 }

@@ -30,7 +30,6 @@ function Admin(props) {
     saveToLS("layouts", layouts);
   }
 
-  const shakeDiv = isLayoutModifiable ? "shake" : "";
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
   return (
@@ -47,37 +46,35 @@ function Admin(props) {
           inModifyMode={isLayoutModifiable}
         />
       </div>
-      <div className={shakeDiv}>
-        <ResponsiveReactGridLayout
-          rowHeight={30}
-          layouts={layouts}
-          draggableCancel="input,textarea"
-          isDraggable={isLayoutModifiable}
-          isResizable={isLayoutModifiable}
-          onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
-        >
-          <div key="0" className={highlightEditDiv}>
-            <div className="cardContainer">
-              <h3>Create Rules</h3>
-              <RuleCreator />
-            </div>
+      <ResponsiveReactGridLayout
+        rowHeight={30}
+        layouts={layouts}
+        draggableCancel="input,textarea"
+        isDraggable={isLayoutModifiable}
+        isResizable={isLayoutModifiable}
+        onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
+      >
+        <div key="0" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <h3>Create Rules</h3>
+            <RuleCreator />
           </div>
+        </div>
 
-          <div key="1" className={highlightEditDiv}>
-            <div className="cardContainer">
-              <h3>Review Flagged Rules</h3>
-              <RuleReviewer />
-            </div>
+        <div key="1" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <h3>Review Flagged Rules</h3>
+            <RuleReviewer />
           </div>
+        </div>
 
-          <div key="2" className={highlightEditDiv}>
-            <div className="cardContainer">
-              <h3>Search for Rule</h3>
-              <RuleSearch />
-            </div>
+        <div key="2" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <h3>Search for Rule</h3>
+            <RuleSearch />
           </div>
-        </ResponsiveReactGridLayout>
-      </div>
+        </div>
+      </ResponsiveReactGridLayout>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Home.css";
 import InputBoxes from "../../Containers/InputBoxes/InputBoxes";
 import SelectedCodes from "../../Containers/SelectedCodes/SelectedCodes";
 import RecommendedCodes from "../../Containers/RecommendedCodes/RecommendedCodes";
@@ -10,6 +9,9 @@ import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import { __esModule } from "d3-random"; //TODO: Verify why this import is needed
+import "./Home.css";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
@@ -21,21 +23,20 @@ const Home = () => {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
-  const handleLayoutModifierButton = () => {
-    const layoutModifiable = isLayoutModifiable;
-    setLayoutModifiable(!layoutModifiable);
-  };
-
   const resetLayout = () => {
-    setLayouts({ layouts: defaultLayouts });
+    setLayouts(defaultLayouts);
     saveToLS("layouts", defaultLayouts);
   };
 
-  const onLayoutChange = layouts => {
-    setLayouts({ layouts: layouts });
-    treeViewDiv.current.handleResize();
+  function handleLayoutModifierButton() {
+    const layoutModifiable = !isLayoutModifiable;
+    setLayoutModifiable(layoutModifiable);
+  }
+
+  function onLayoutChange(layouts) {
+    setLayouts(layouts);
     saveToLS("layouts", layouts);
-  };
+  }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
   return (
@@ -46,7 +47,7 @@ const Home = () => {
         firstLinkRoute="/admin"
         secondLinkName="Visualization"
         secondLinkRoute="/visualization"
-        handleLayoutConfirm={handleLayoutModifierButton}
+        handleLayoutConfirm={() => handleLayoutModifierButton()}
         handleResetLayout={resetLayout}
         inModifyMode={isLayoutModifiable}
       />
@@ -54,7 +55,7 @@ const Home = () => {
         className="layout"
         rowHeight={10}
         cols={{ lg: 48, md: 40, sm: 24, xs: 16, xxs: 8 }}
-        layouts={JSON.parse(JSON.stringify(originalLayouts))} //FIXME: error with the layouts in the state
+        layouts={layouts}
         draggableCancel="input,textarea"
         isDraggable={isLayoutModifiable} //used to dynamically allow editing
         isResizable={isLayoutModifiable} //if a button is pressed

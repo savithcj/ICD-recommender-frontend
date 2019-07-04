@@ -40,31 +40,3 @@
   box-sizing: border-box;
   border: 3px solid #61dafb;
 }
-
-.shake {
-  /* Start the shake animation and make the animation last for 0.5 seconds */
-  animation: shake 0.5s;
-  /* When the animation is finished, start again */
-  animation-iteration-count: infinite;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes shake {
-  0% {
-    transform: rotate(-0.2deg);
-  }
-  50% {
-    transform: rotate(0.25deg);
-  }
-  100% {
-    transform: rotate(-0.2deg);
-  }
-}
