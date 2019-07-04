@@ -23,7 +23,7 @@ const inputBoxes = props => {
       placeholder_gender="Gender"
       selectCode={handleCodeSelection}
       selectAge={handleAgeSelection}
-      // selectGender={handleGenderSelection}
+      // selectGender={handleGenderSelection} TODO:implement this
       codeCache={props.cachedCodeWithDescription}
       appendCodeToCache={props.appendCodeToCache}
       autoClearCode={true}

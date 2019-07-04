@@ -1,3 +1,4 @@
+// Contains all async actions dispatched using redux-thunk
 import { setSelectedCodes } from "./selected";
 import { setRecommendedCodes } from "./recommended";
 import { appendToCache } from "./cached";
@@ -5,7 +6,6 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "./utility";
 
-//Asysnc redux function using redux-thunk
 export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
   return dispatch => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
