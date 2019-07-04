@@ -18,6 +18,7 @@ const originalLayouts = getFromLS("layouts") || defaultLayouts;
 const treeViewDiv = React.createRef();
 const Home = () => {
   //Local state of the Home page
+
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
@@ -34,10 +35,16 @@ const Home = () => {
   function onLayoutChange(layouts) {
     setLayouts(layouts);
     saveToLS("layouts", layouts);
-    treeViewDiv.current.handleResize();
+  }
+
+  function handleTreeChange() {
+    if (treeViewDiv.current !== null) {
+      treeViewDiv.current.handleResize();
+    }
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
   return (
     <div className="Home">
       <MenuBar
@@ -61,7 +68,7 @@ const Home = () => {
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
         <div key="tree" className={highlightEditDiv}>
-          <TreeViewer ref={treeViewDiv} />
+          <TreeViewer ref={treeViewDiv} onChange={handleTreeChange()} />
         </div>
 
         <div key="selectedCodes" className={highlightEditDiv}>

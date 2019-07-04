@@ -57,9 +57,7 @@ class TreeViewer extends Component {
 
   // Handles resizing of the tree in the main page. Is called by App
   handleResize(e) {
-    if (this.recalculateSizes()) {
-      this.drawInitialTree();
-    }
+    this.redrawTree();
   }
 
   // Recalculates all sizes based upon the size of the window passed by App
@@ -134,11 +132,23 @@ class TreeViewer extends Component {
     this.infoText.text("");
   }
 
+  updateDimensions = () => {
+    this.redrawTree();
+  };
+
+  redrawTree() {
+    if (this.data !== undefined) {
+      const sizeChanged = this.recalculateSizes();
+      if (sizeChanged) {
+        this.drawInitialTree(); // Draw tree
+      }
+    }
+  }
+
   componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
     this.getDataFromAPI("Chapter 01").then(() => {
-      // Get data from API
-      this.recalculateSizes();
-      this.drawInitialTree(); // Draw tree
+      this.redrawTree();
     });
   }
 
