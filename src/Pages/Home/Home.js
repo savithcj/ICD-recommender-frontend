@@ -15,9 +15,7 @@ import "react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || defaultLayouts;
-
 const treeViewDiv = React.createRef();
-
 const Home = () => {
   //Local state of the Home page
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
@@ -36,6 +34,7 @@ const Home = () => {
   function onLayoutChange(layouts) {
     setLayouts(layouts);
     saveToLS("layouts", layouts);
+    treeViewDiv.current.handleResize();
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
