@@ -2,21 +2,27 @@ import React from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import { connect } from "react-redux";
 import * as APIUtility from "../../Util/API";
-
 import * as actions from "../../Store/Actions/index";
 
 const daggerAsterisksViewer = props => {
   const addSelectedDaggerAsterisk = newCodeObj => {
-    const selectedCodes = 0;
-    props.addSelectedCode(newCodeObj);
+    const selectedCodes = Array.from(props.selectedCodes);
+    selectedCodes.push(newCodeObj);
+    props.setSelectedCodes(selectedCodes);
+    props.getRecommendedCodes(selectedCodes);
+    props.getDaggerAsterisks(selectedCodes);
   };
 
-  const removeDaggerAsteriskCode = codeIndex => {};
+  const removeDaggerAsteriskCode = codeIndex => {
+    const daggerAsterisksCodes = Array.from(props.suggestedDaggerAsterisks);
+    daggerAsterisksCodes.splice(codeIndex, 1);
+    props.setDaggerAsterisk(daggerAsterisksCodes);
+  };
 
   const handleAcceptDaggerAsteriskCode = event => {
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
-    const acceptedCodeObject = this.state.suggestedDaggerAsterisks[acceptedCodeIndex];
-    const codes = Array.from(this.state.selectedCodes);
+    const acceptedCodeObject = props.suggestedDaggerAsterisks[acceptedCodeIndex];
+    const codes = Array.from(props.selectedCodes);
     let daggerObject = {};
     daggerObject.code = acceptedCodeObject.dagger;
     let asteriskObject = {};
@@ -35,19 +41,31 @@ const daggerAsterisksViewer = props => {
           })
           .then(() => {
             if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
-              this.addSelectedDaggerAsterisk(daggerObject);
+              addSelectedDaggerAsterisk(daggerObject);
             } else {
-              this.addSelectedDaggerAsterisk(asteriskObject);
+              addSelectedDaggerAsterisk(asteriskObject);
             }
-            this.removeDaggerAsteriskCode(acceptedCodeIndex);
+            removeDaggerAsteriskCode(acceptedCodeIndex);
           });
       });
   };
 
-  const handleRemoveDaggerAsteriskCode = event => {};
+  const handleRemoveDaggerAsteriskCode = event => {
+    const removedCodeIndex = parseInt(event.currentTarget.id, 10);
+    removeDaggerAsteriskCode(removedCodeIndex);
+  };
 
   const handleExploreDaggerAsterisk = event => {
-    props.addSelectedCode({ code: "test", description: "test" });
+    const codeIndex = parseInt(event.currentTarget.id, 10);
+    const dagAstObj = props.suggestedDaggerAsterisks[codeIndex];
+    const daggerCode = dagAstObj.dagger;
+    const asteriskCode = dagAstObj.asterisk;
+
+    if (props.selectedCodes.find(codeObj => codeObj.code === daggerCode) === undefined) {
+      props.treeRef.current.changeTree(daggerCode);
+    } else {
+      props.treeRef.current.changeTree(asteriskCode);
+    }
   };
 
   const componentMenuItems = [];
@@ -59,8 +77,8 @@ const daggerAsterisksViewer = props => {
       nullItemsMessage="Add codes to see dagger/asterisks"
       valueName="combo"
       descriptionName="description"
-      //   acceptItemButton={this.handleAcceptDaggerAsteriskCode}
-      //   removeItemButton={this.handleRemoveDaggerAsteriskCode}
+      acceptItemButton={handleAcceptDaggerAsteriskCode}
+      removeItemButton={handleRemoveDaggerAsteriskCode}
       exploreButton={handleExploreDaggerAsterisk}
       allowRearrage={false}
       menuOptions={componentMenuItems}
@@ -70,16 +88,15 @@ const daggerAsterisksViewer = props => {
 
 const mapStateToProps = state => {
   return {
-    suggestedDaggerAsterisks: state.daggerAsterisks.suggestedDaggerAsterisks
+    suggestedDaggerAsterisks: state.daggerAsterisks.suggestedDaggerAsterisks,
+    selectedCodes: state.selected.selectedCodes
   };
 };
 
-//TODO: map correct actions correspoding to the dagger asterisks viewer
 const mapDispatchToProps = dispatch => {
   return {
-    addSelectedCode: codeObj => dispatch(actions.addSelectedCodeAndUpdateRecommendations(codeObj)),
-    removeSelectedCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
+    setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
     getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))

@@ -2,6 +2,7 @@ export { addSelectedCode, removeSelectedCode, setSelectedCodes } from "./selecte
 export { removeRecommendedCode, setRecommendedCodes } from "./recommended";
 export { appendToCache } from "./cached";
 export { setAge, setGender } from "./ageGender";
+export { setDaggerAsterisk } from "./daggerAsterisks";
 export {
   addSelectedCodeAndUpdateRecommendations,
   fetchRecommendationsAndUpdateCache,
