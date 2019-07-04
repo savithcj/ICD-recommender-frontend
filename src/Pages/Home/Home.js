@@ -8,7 +8,6 @@ import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import { __esModule } from "d3-random"; //TODO: Verify why this import is needed
 import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
