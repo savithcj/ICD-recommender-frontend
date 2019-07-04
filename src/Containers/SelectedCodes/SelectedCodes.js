@@ -52,7 +52,7 @@ const selectedCodesViewer = props => {
       removeItemButton={handleRemoveSelectedCode}
       exploreButton={handleExploreSelectedCodeButton}
       onSortEndCallback={updatedListOfSelectedCodes => {
-        props.setCodes(updatedListOfSelectedCodes);
+        props.setSelectedCodes(updatedListOfSelectedCodes);
       }}
       allowRearrage={props.selectedCodes.length > 1}
       menuOptions={selectedCodesComponentMenuItems}
