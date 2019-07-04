@@ -65,7 +65,6 @@ function ButtonAppBar(props) {
   const menuId = "settings-menu";
 
   let renderMenu = props.inModifyMode ? null : (
-    //TODO: get rid of class menu item to which is a redirect to the sandbox page
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
@@ -84,9 +83,6 @@ function ButtonAppBar(props) {
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
-      <MenuItem component={Link} to="/sandbox">
-        Sandbox
-      </MenuItem>
     </Menu>
   );
 

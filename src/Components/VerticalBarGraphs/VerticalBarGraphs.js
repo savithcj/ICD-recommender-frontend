@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import ReactDOM from "react-dom";
 import "./VerticalBarGraphs.css";
 
-import APIClass from "../../Assets/Util/API";
+import * as APIUtility from "../../Util/API";
 
 const DIV = "verticalBarGraph";
 
@@ -20,7 +20,7 @@ class VerticalBarGraphs extends Component {
   }
 
   getDataFromAPI = () => {
-    const url = APIClass.getAPIURL("RULES") + "?format=json";
+    const url = APIUtility.getAPIURL(APIUtility.REQUEST_RULES) + "?format=json";
     return fetch(url)
       .then(response => response.json())
       .then(parsedJson => {
