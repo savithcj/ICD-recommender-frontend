@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
-import APIClass from "../../Assets/Util/API";
+import * as APIUtility from "../../Util/API";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -120,7 +120,7 @@ function RuleCreator(props) {
       body: JSON.stringify(data)
     };
 
-    const request = new Request(APIClass.getAPIURL("MODIFY_RULE"), options);
+    const request = new Request(APIUtility.API.getAPIURL(APIUtility.MODIFY_RULE), options);
     const response = await fetch(request);
     const status = await response.status;
 

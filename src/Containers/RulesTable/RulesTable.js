@@ -9,7 +9,7 @@ export default function SortableTable() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const url = APIUtility.getAPIURL(APIUtility.RULES) + "?format=json";
+    const url = APIUtility.API.getAPIURL(APIUtility.RULES) + "?format=json";
 
     fetch(url)
       .then(response => response.json())

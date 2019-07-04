@@ -3,12 +3,15 @@ import ReactDOM from "react-dom";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
 import "./index.css";
 import "typeface-roboto";
-import Home from "./Pages/Home/Home";
 import * as serviceWorker from "./Util/serviceWorker";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import reducer from "./Store/Reducers/index";
+
+import Home from "./Pages/Home/Home";
+import Admin from "./Pages/Admin/Admin";
+import Visualization from "./Pages/Visualization/Visualization";
 
 //enabling redux dev-tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -22,8 +25,8 @@ const routing = (
       <div>
         <Switch>
           <Route exact path="/" component={Home} />
-          {/* <Route path="/admin" component={Admin} /> */}
-          {/* <Route path="/visualization" component={Visualization} /> */}
+          <Route path="/admin" component={Admin} />
+          <Route path="/visualization" component={Visualization} />
           <Route>{notFound}</Route>
         </Switch>
       </div>
