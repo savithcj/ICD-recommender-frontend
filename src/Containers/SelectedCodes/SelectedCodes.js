@@ -8,7 +8,7 @@ const selectedCodesViewer = props => {
     const selectedCodes = Array.from(props.selectedCodes);
     const removeCodeIndex = parseInt(event.currentTarget.id, 10);
     selectedCodes.splice(removeCodeIndex, 1);
-    props.removeCode(removeCodeIndex);
+    props.removeSelectedCode(removeCodeIndex);
     props.getRecommendedCodes(selectedCodes);
     props.getDaggerAsterisks(selectedCodes);
   };
@@ -18,18 +18,29 @@ const selectedCodesViewer = props => {
     props.treeRef.current.changeTree(props.selectedCodes[exploreCodeIndex].code);
   };
 
-  //TODO:finish this
-  const resetSelectedCodes = () => {};
+  const resetSelectedCodes = () => {
+    props.setSelectedCodes([]);
+    props.setRecommendedCodes(null);
+    props.setDaggerAsterisk(null);
+  };
 
-  //TODO:finish this
-  const acceptSelectedCodes = () => {};
+  const acceptSelectedCodes = () => {
+    //TODO:Make API call to update code usage during a session
+    resetSelectedCodes();
+  };
 
   const selectedCodesComponentMenuItems = [
     {
-      menuItemOnClick: props.selectedCodes.length < 2 ? null : null, //this.resetSelectedCodes,
+      menuItemOnClick: props.selectedCodes.length < 2 ? null : resetSelectedCodes,
       menuItemText: "Remove All Items"
     }
   ];
+
+  const acceptSelectedCodesButton = {
+    text: "Accept",
+    onClick: acceptSelectedCodes,
+    title: "Accept all selected codes"
+  };
 
   return (
     <ListViewer
@@ -45,7 +56,7 @@ const selectedCodesViewer = props => {
       }}
       allowRearrage={props.selectedCodes.length > 1}
       menuOptions={selectedCodesComponentMenuItems}
-      //   button={props.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
+      button={props.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
       disableTitleGutters={false}
     />
   );
@@ -59,11 +70,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    removeCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
-    setCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
+    removeSelectedCode: removeCodeIndex => dispatch(actions.removeSelectedCode(removeCodeIndex)),
+    setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray)),
+    setRecommendedCodes: valueToSet => dispatch(actions.setRecommendedCodes(valueToSet)),
+    setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet))
   };
 };
 

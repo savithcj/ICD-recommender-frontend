@@ -4,7 +4,7 @@ import { setRecommendedCodes } from "./recommended";
 import { appendToCache } from "./cached";
 import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
-import { getStringFromListOfCodes } from "./utility";
+import { getStringFromListOfCodes } from "../../Util/utility";
 
 export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
   return dispatch => {
@@ -104,7 +104,7 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
       dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
       dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
     } else {
-      console.log("[addSelectedCodeAndUpdate action] Duplicate code entered", enteredCode);
+      console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCode);
     }
   };
 };

@@ -11,7 +11,7 @@ const reducer = (state = initialState, action) => {
     if (selectedCodes.find(codeObj => codeObj.code === action.codeObj.code) === undefined) {
       selectedCodes.push(action.codeObj);
     } else {
-      console.log("[Seleced Code Reducer] error: trying to add duplicate code");
+      console.log("[selected reducer] Error: trying to add duplicate code => ", action.codeObj.code);
     }
     return { selectedCodes };
   };

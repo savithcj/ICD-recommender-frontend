@@ -17,7 +17,6 @@ const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 const notFound = () => <h1>Not Found</h1>;
 
 const routing = (
-  //TODO: get rid of Sandbox route used for testing
   <Provider store={store}>
     <BrowserRouter>
       <div>

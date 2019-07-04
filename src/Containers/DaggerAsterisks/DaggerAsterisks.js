@@ -13,12 +13,6 @@ const daggerAsterisksViewer = props => {
     props.getDaggerAsterisks(selectedCodes);
   };
 
-  const removeDaggerAsteriskCode = codeIndex => {
-    const daggerAsterisksCodes = Array.from(props.suggestedDaggerAsterisks);
-    daggerAsterisksCodes.splice(codeIndex, 1);
-    props.setDaggerAsterisk(daggerAsterisksCodes);
-  };
-
   const handleAcceptDaggerAsteriskCode = event => {
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
     const acceptedCodeObject = props.suggestedDaggerAsterisks[acceptedCodeIndex];
@@ -45,14 +39,14 @@ const daggerAsterisksViewer = props => {
             } else {
               addSelectedDaggerAsterisk(asteriskObject);
             }
-            removeDaggerAsteriskCode(acceptedCodeIndex);
+            props.removeDaggerAsteriskCode(acceptedCodeIndex);
           });
       });
   };
 
   const handleRemoveDaggerAsteriskCode = event => {
     const removedCodeIndex = parseInt(event.currentTarget.id, 10);
-    removeDaggerAsteriskCode(removedCodeIndex);
+    props.removeDaggerAsteriskCode(removedCodeIndex);
   };
 
   const handleExploreDaggerAsterisk = event => {
@@ -97,6 +91,7 @@ const mapDispatchToProps = dispatch => {
   return {
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet)),
+    removeDaggerAsteriskCode: removeCodeIndex => dispatch(actions.removeDaggerAsterisk(removeCodeIndex)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
     getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))
