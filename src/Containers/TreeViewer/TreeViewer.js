@@ -19,6 +19,7 @@ class TreeViewer extends Component {
     this.linkColor = "#f0f0f0"; // Colour of links
     this.linkWidth = 7; // Width of links
     this.handlingClick = false; // Initializing handlingClick to false, used to prevent two clicks from happening at the same time
+    this.isMountedFlag = false;
   }
 
   // Function to add a code to the selected codes list from the tree
@@ -62,6 +63,9 @@ class TreeViewer extends Component {
 
   // Recalculates all sizes based upon the size of the window passed by App
   recalculateSizes() {
+    if (!this.isMountedFlag) {
+      return false;
+    }
     let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = elem.offsetWidth;
     this.height = elem.offsetHeight;
@@ -146,10 +150,15 @@ class TreeViewer extends Component {
   }
 
   componentDidMount() {
+    this.isMountedFlag = true;
     window.addEventListener("resize", this.updateDimensions);
     this.getDataFromAPI("Chapter 01").then(() => {
       this.redrawTree();
     });
+  }
+
+  componentWillUnmount() {
+    this.isMountedFlag = false;
   }
 
   // Changes the tree to the specified code.

@@ -33,6 +33,7 @@ const Home = () => {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
+    console.log("in onlayoutchange");
     saveToLS("homeLayouts", "layouts", layouts);
   }
 
