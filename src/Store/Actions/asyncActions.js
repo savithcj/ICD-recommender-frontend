@@ -17,36 +17,33 @@ import { getStringFromListOfCodes } from "../../Util/utility";
 const cleanResults = (ruleObjs, rhsExclusions) => {
   const cleanedResults = [];
 
-  for (let i=0;  i<ruleObjs.length; i++){
-    let cursor = ruleObjs[i]
+  for (let i = 0; i < ruleObjs.length; i++) {
+    let cursor = ruleObjs[i];
     let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
-    if (duplicateIndex < 0){  // if duplicate is found
-      if (cleanedResults[duplicateIndex].score < ruleObjs[i].score){  // keep the duplicate with higher score
-        cleanedResults[duplicateIndex] = ruleObjs[i]
+    if (duplicateIndex < 0) {
+      // if duplicate is found
+      if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
+        // keep the duplicate with higher score
+        cleanedResults[duplicateIndex] = ruleObjs[i];
       }
-      continue
+      continue;
     }
     //TODO: check if the rhs is in the rejected exclusion list
-
   }
 
   //TODO: Remove the following
   ruleObjs.forEach(rule => {
     let duplicate = cleanedResults.find(item => item.rhs === rule.rhs);
     if (duplicate !== undefined) {
-      continue
     }
-      if (!rhsExclusions.includes(rule.rhs)) {
-        // Check if rhs of the rule should be excluded
-        if (Math.random() < rule.score) {
-          // Check for random rolling score
-          cleanedResults.push(rule);
-        }
+    if (!rhsExclusions.includes(rule.rhs)) {
+      // Check if rhs of the rule should be excluded
+      if (Math.random() < rule.score) {
+        // Check for random rolling score
+        cleanedResults.push(rule);
       }
-    
+    }
   });
-
-  clea;
 
   return cleanedResults;
 };
