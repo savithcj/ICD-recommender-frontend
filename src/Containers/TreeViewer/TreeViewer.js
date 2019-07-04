@@ -9,7 +9,8 @@ class TreeViewer extends Component {
   constructor(props) {
     super(props);
     this.duration = 500; // Duration of all transitions
-
+    this.oldWidth = 0;
+    this.oldHeight = 0;
     this.fontType = "sans-serif"; // Font type
     this.treeClass = "treeVis" + this.props.id; // Class name
     this.selectedColor = "#3748ac"; // Colour of selected node
@@ -56,12 +57,7 @@ class TreeViewer extends Component {
 
   // Handles resizing of the tree in the main page. Is called by App
   handleResize(e) {
-    if (this.data === undefined) {
-      // variable is undefined
-    } else {
-      this.recalculateSizes(); // Caclulate sizes
-      this.drawInitialTree(); // Draw tree
-    }
+    this.redrawTree();
   }
 
   // Recalculates all sizes based upon the size of the window passed by App
@@ -78,6 +74,15 @@ class TreeViewer extends Component {
     this.middle = (this.width - this.leftPadding - this.rightPadding) / 2 + this.leftPadding; // Middle of the non-padded space
     this.buttonWidth = this.rightPadding / 2; // Width of "add code" button
     this.buttonHeight = this.vPadding / 2; // Height of "add code" button
+
+    //check if dimensions changed
+    if (this.width !== this.oldWidth || this.height !== this.oldHeight) {
+      this.oldHeight = this.height;
+      this.oldWidth = this.width;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // Adds the text element to the top left corner to display what is being hovered over
@@ -127,10 +132,23 @@ class TreeViewer extends Component {
     this.infoText.text("");
   }
 
+  updateDimensions = () => {
+    this.redrawTree();
+  };
+
+  redrawTree() {
+    if (this.data !== undefined) {
+      const sizeChanged = this.recalculateSizes();
+      if (sizeChanged) {
+        this.drawInitialTree(); // Draw tree
+      }
+    }
+  }
+
   componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
     this.getDataFromAPI("Chapter 01").then(() => {
-      // Get data from API
-      this.drawInitialTree(); // Draw tree
+      this.redrawTree();
     });
   }
 
@@ -155,8 +173,6 @@ class TreeViewer extends Component {
   }
 
   drawInitialTree() {
-    this.recalculateSizes(); // Calculates sizes to draw the tree
-
     // Remove any existing tree svg
     d3.select("div." + this.treeClass)
       .select("svg")

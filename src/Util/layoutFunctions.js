@@ -1,8 +1,8 @@
-export function getFromLS(key) {
+export function getFromLS(storageName, key) {
   let ls = {};
   if (global.localStorage) {
     try {
-      ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
+      ls = JSON.parse(global.localStorage.getItem(storageName)) || {};
     } catch (e) {
       /*Ignore*/
     }
@@ -10,10 +10,10 @@ export function getFromLS(key) {
   return ls[key];
 }
 
-export function saveToLS(key, value) {
+export function saveToLS(storageName, key, value) {
   if (global.localStorage) {
     global.localStorage.setItem(
-      "rgl-8",
+      storageName,
       JSON.stringify({
         [key]: value
       })

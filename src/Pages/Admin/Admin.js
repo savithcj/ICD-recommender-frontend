@@ -9,7 +9,7 @@ import { defaultLayouts } from "./layouts";
 import "./Admin.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || defaultLayouts;
+const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
 
 function Admin(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
@@ -17,7 +17,7 @@ function Admin(props) {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("layouts", defaultLayouts);
+    saveToLS("adminLayouts", "layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -27,7 +27,7 @@ function Admin(props) {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("layouts", layouts);
+    saveToLS("adminLayouts", "layouts", layouts);
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";

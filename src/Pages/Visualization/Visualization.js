@@ -9,7 +9,7 @@ import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || defaultLayouts;
+const originalLayouts = getFromLS("visualLayouts", "layouts") || defaultLayouts;
 const chordDiagramDiv = React.createRef();
 const barChartDiv = React.createRef();
 const SankeyDiagramDiv = React.createRef();
@@ -20,7 +20,7 @@ function Visualization(props) {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("layouts", defaultLayouts);
+    saveToLS("visualLayouts", "layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -30,7 +30,7 @@ function Visualization(props) {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("layouts", layouts);
+    saveToLS("visualLayouts", "layouts", layouts);
     chordDiagramDiv.current.handleResize();
     barChartDiv.current.handleResize();
     SankeyDiagramDiv.current.handleResize();
