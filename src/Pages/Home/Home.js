@@ -8,13 +8,12 @@ import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import { __esModule } from "d3-random"; //TODO: Verify why this import is needed
 import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || defaultLayouts;
+const originalLayouts = getFromLS("homeLayouts", "layouts") || defaultLayouts;
 const treeViewDiv = React.createRef();
 const Home = () => {
   //Local state of the Home page
@@ -24,7 +23,7 @@ const Home = () => {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("layouts", defaultLayouts);
+    saveToLS("homeLayouts", "layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -34,7 +33,7 @@ const Home = () => {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("layouts", layouts);
+    saveToLS("homeLayouts", "layouts", layouts);
   }
 
   function handleTreeChange() {
