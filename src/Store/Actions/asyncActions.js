@@ -6,12 +6,59 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 
+/**
+ * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
+ * If RHS codes has been rejected prior, remove and do not show again in recommendations.
+ * Secondly, using randomly rolling, check rule's recommendation score against a randomly rolled threshold,
+ * and only display the rule if the score is above the threshold.
+ * Thirdly, if the rhs has been shown after rolling, repeated rules with same RHS would not be rolled again.
+ * Finally returns a set of cleaned rules.
+ */
+const cleanResults = (ruleObjs, rhsExclusions) => {
+  const cleanedResults = [];
+
+  for (let i=0;  i<ruleObjs.length; i++){
+    let cursor = ruleObjs[i]
+    let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
+    if (duplicateIndex < 0){  // if duplicate is found
+      if (cleanedResults[duplicateIndex].score < ruleObjs[i].score){  // keep the duplicate with higher score
+        cleanedResults[duplicateIndex] = ruleObjs[i]
+      }
+      continue
+    }
+    //TODO: check if the rhs is in the rejected exclusion list
+
+  }
+
+  //TODO: Remove the following
+  ruleObjs.forEach(rule => {
+    let duplicate = cleanedResults.find(item => item.rhs === rule.rhs);
+    if (duplicate !== undefined) {
+      continue
+    }
+      if (!rhsExclusions.includes(rule.rhs)) {
+        // Check if rhs of the rule should be excluded
+        if (Math.random() < rule.score) {
+          // Check for random rolling score
+          cleanedResults.push(rule);
+        }
+      }
+    
+  });
+
+  clea;
+
+  return cleanedResults;
+};
+
 export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
-  return dispatch => {
+  return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
     const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;
+
+    const rhsExclusions = getState().session.rhsExclusions;
 
     if (stringOfCodes !== "") {
       const url =
@@ -34,6 +81,8 @@ export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) =>
             return { code: recommendedObj.rhs, description: recommendedObj.description };
           });
           dispatch(appendToCache(resultsToCache));
+          results = cleanResults(results, rhsExclusions);
+          console.log("cleaned results", results);
           dispatch(setRecommendedCodes(results));
         });
     } else {

@@ -8,3 +8,4 @@ export {
   fetchRecommendationsAndUpdateCache,
   fetchDaggerAsterisksAndUpdateCache
 } from "./asyncActions";
+export { addRHSToExclusion, addRuleToSession, setRHSExclusion, setRulesInSession } from "./session";
