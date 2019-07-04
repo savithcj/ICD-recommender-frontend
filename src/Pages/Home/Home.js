@@ -13,7 +13,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || defaultLayouts;
+const originalLayouts = getFromLS("homeLayouts", "layouts") || defaultLayouts;
 
 const treeViewDiv = React.createRef();
 
@@ -24,7 +24,7 @@ const Home = () => {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("layouts", defaultLayouts);
+    saveToLS("homeLayouts", "layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -34,7 +34,7 @@ const Home = () => {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("layouts", layouts);
+    saveToLS("homeLayouts", "layouts", layouts);
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
