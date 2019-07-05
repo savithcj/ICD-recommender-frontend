@@ -5,6 +5,9 @@ import * as actions from "../../Store/Actions/index";
 import * as APIUtility from "../../Util/API";
 
 const recommendedCodesViewer = props => {
+  /**
+   * Called upon when user accepts a recommended code
+   */
   const handleAcceptRecommendedCode = event => {
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
     const acceptedCodeObject = props.recommendedCodes[acceptedCodeIndex];
@@ -14,6 +17,9 @@ const recommendedCodesViewer = props => {
     props.addSelectedCode(newCode);
   };
 
+  /**
+   * Called upon when user rejects a recommended code
+   */
   const handleRemoveRecommendedCode = event => {
     const removedCodeIndex = parseInt(event.currentTarget.id, 10);
     props.removeRecommendedCode(removedCodeIndex);
@@ -65,14 +71,17 @@ const recommendedCodesViewer = props => {
 const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
-    recommendedCodes: state.recommended.recommendedCodes
+    recommendedCodes: state.recommended.recommendedCodes,
+    rules: state.session.rules
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     addSelectedCode: codeObjToAdd => dispatch(actions.addSelectedCodeAndUpdateRecommendations(codeObjToAdd)),
-    removeRecommendedCode: removeCodeIndex => dispatch(actions.removeRecommendedCode(removeCodeIndex))
+    removeRecommendedCode: removeCodeIndex => dispatch(actions.removeRecommendedCode(removeCodeIndex)),
+    setRulesInSession: listOfRules => dispatch(actions.setRulesInSession(listOfRules)),
+    addRHSToExclusion: rhsCode => dispatch(actions.addRHSToExclusion(rhsCode))
   };
 };
 

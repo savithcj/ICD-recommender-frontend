@@ -9,3 +9,4 @@ export {
   fetchDaggerAsterisksAndUpdateCache,
   resetState
 } from "./asyncActions";
+export { addRHSToExclusion, addRuleToSession, setRHSExclusion, setRulesInSession } from "./session";

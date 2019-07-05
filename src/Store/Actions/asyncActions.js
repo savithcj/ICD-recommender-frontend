@@ -7,7 +7,53 @@ import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
 
-export const fetchRecommendationsAndUpdateCache = codeObjArray => {
+/**
+ * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
+ * If RHS codes has been rejected prior, remove and do not show again in recommendations.
+ * Secondly, using randomly rolling, check rule's recommendation score against a randomly rolled threshold,
+ * and only display the rule if the score is above the threshold.
+ * Thirdly, if the rhs has been shown after rolling, repeated rules with same RHS would not be rolled again.
+ * Finally returns a set of cleaned rules.
+ */
+const cleanResults = (ruleObjs, rhsExclusions) => {
+  const cleanedResults = [];
+
+  for (let i = 0; i < ruleObjs.length; i++) {
+    let cursor = ruleObjs[i];
+
+    //////check if the rhs is in the rejected exclusion list
+    if (rhsExclusions.includes(cursor.rhs)) {
+      continue;
+    }
+
+    ////// Check for duplicate RHS
+    let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
+    console.log(cursor.rhs + ": duplicated RHS index=" + duplicateIndex);
+    if (duplicateIndex >= 0) {
+      // if duplicate is found
+      if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
+        // keep the duplicate with higher score
+        cleanedResults[duplicateIndex] = ruleObjs[i];
+      }
+      continue;
+    }
+
+    ////// Check rule score against ramdomly rolled score threshold
+    const threshold = Math.random();
+    if (threshold > cursor.score) {
+      console.log(
+        "Omitted rule: id=" + cursor.id + ", RHS=" + cursor.rhs + ", threshold=" + threshold + ", score=" + cursor.score
+      );
+      continue;
+    }
+
+    cleanedResults.push(cursor);
+  }
+
+  return cleanedResults;
+};
+
+export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
   return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
 
@@ -16,6 +62,8 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
     const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;
+
+    const rhsExclusions = getState().session.rhsExclusions;
 
     if (stringOfCodes !== "") {
       const url =
@@ -38,6 +86,8 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
             return { code: recommendedObj.rhs, description: recommendedObj.description };
           });
           dispatch(appendToCache(resultsToCache));
+          results = cleanResults(results, rhsExclusions);
+          console.log("cleaned results", results);
           dispatch(setRecommendedCodes(results));
         });
     } else {
