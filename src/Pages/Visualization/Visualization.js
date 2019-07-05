@@ -23,6 +23,18 @@ function Visualization(props) {
     saveToLS("visualLayouts", "layouts", defaultLayouts);
   };
 
+  function handleChordChange() {
+    if (chordDiagramDiv.current !== null) {
+      chordDiagramDiv.current.handleResize();
+    }
+  }
+
+  function handleSankeyChange() {
+    if (SankeyDiagramDiv.current !== null) {
+      SankeyDiagramDiv.current.handleResize();
+    }
+  }
+
   function handleLayoutModifierButton() {
     const layoutModifiable = !isLayoutModifiable;
     setLayoutModifiable(layoutModifiable);
@@ -31,9 +43,6 @@ function Visualization(props) {
   function onLayoutChange(layouts) {
     setLayouts(layouts);
     saveToLS("visualLayouts", "layouts", layouts);
-    chordDiagramDiv.current.handleResize();
-    barChartDiv.current.handleResize();
-    SankeyDiagramDiv.current.handleResize();
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
@@ -61,18 +70,18 @@ function Visualization(props) {
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
         <div key="0" className={highlightEditDiv}>
-          <ChordDiagram id="101" ref={chordDiagramDiv} />{" "}
+          <ChordDiagram id="101" ref={chordDiagramDiv} onChange={handleChordChange()} />{" "}
         </div>
         <div key="1" className={highlightEditDiv}>
-          <SankeyDiagram id="100" ref={SankeyDiagramDiv} />{" "}
+          <SankeyDiagram id="100" ref={SankeyDiagramDiv} onChange={handleSankeyChange()} />{" "}
         </div>
 
         <div key="2" id="barDiv" className={highlightEditDiv}>
           <RulesTable />{" "}
         </div>
-        <div key="3" id="barDiv" className={highlightEditDiv}>
+        {/* <div key="3" id="barDiv" className={highlightEditDiv}>
           <BarChart id="100" ref={barChartDiv} />{" "}
-        </div>
+        </div> */}
       </ResponsiveReactGridLayout>
     </div>
   );
