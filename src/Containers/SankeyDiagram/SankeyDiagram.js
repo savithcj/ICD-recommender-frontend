@@ -13,15 +13,24 @@ class SankeyDiagram extends Component {
     this.sankeyClass = "sankeyVis" + this.props.id;
     this.oldWidth = 0;
     this.oldHeight = 0;
+    this.isMountedFlag = false;
   }
 
   componentDidMount() {
+    this.isMountedFlag = true;
     this.getDataFromAPI().then(() => {
       this.drawDiagram();
     });
   }
 
+  componentWillUnmount() {
+    this.isMountedFlag = false;
+  }
+
   recalculateSizes() {
+    if (!this.isMountedFlag) {
+      return false;
+    }
     let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = elem.offsetWidth;
     this.height = elem.offsetHeight;
