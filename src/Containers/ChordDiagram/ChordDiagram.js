@@ -13,7 +13,7 @@ class ChordDiagram extends Component {
     this.numTicks = 10;
     this.fontType = "sans-serif";
     this.textColor = "black";
-    this.defaultSliderValue = this.sliderMax / 5;
+    this.minRules = this.sliderMax / 5;
     this.chordClass = "chordVis" + this.props.id;
     this.oldWidth = 0;
     this.oldHeight = 0;
@@ -327,15 +327,13 @@ class ChordDiagram extends Component {
   }
 
   drawSlider() {
-    //slider to set cutoff for minimum rules
-    this.minRules = this.defaultSliderValue;
     var slider = sliderBottom()
       .min(this.sliderMin)
       .max(this.sliderMax)
       .width(1.5 * this.cRadius)
       .ticks(this.numTicks)
-      .default(this.defaultSliderValue)
-      .step(this.sliderMax / this.numTicks)
+      .default(this.minRules)
+      .step(this.sliderMax / this.numTicks / 4)
       .on("onchange", val => {
         this.minRules = val;
         this.generateCurves();
