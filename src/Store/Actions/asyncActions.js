@@ -19,8 +19,16 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
 
   for (let i = 0; i < ruleObjs.length; i++) {
     let cursor = ruleObjs[i];
+
+    //////check if the rhs is in the rejected exclusion list
+    if (rhsExclusions.includes(cursor.rhs)) {
+      continue;
+    }
+
+    ////// Check for duplicate RHS
     let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
-    if (duplicateIndex < 0) {
+    console.log(cursor.rhs + ": duplicated RHS index=" + duplicateIndex);
+    if (duplicateIndex >= 0) {
       // if duplicate is found
       if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
         // keep the duplicate with higher score
@@ -28,22 +36,18 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
       }
       continue;
     }
-    //TODO: check if the rhs is in the rejected exclusion list
-  }
 
-  //TODO: Remove the following
-  ruleObjs.forEach(rule => {
-    let duplicate = cleanedResults.find(item => item.rhs === rule.rhs);
-    if (duplicate !== undefined) {
+    ////// Check rule score against ramdomly rolled score threshold
+    const threshold = Math.random();
+    if (threshold > cursor.score) {
+      console.log(
+        "Omitted rule: id=" + cursor.id + ", RHS=" + cursor.rhs + ", threshold=" + threshold + ", score=" + cursor.score
+      );
+      continue;
     }
-    if (!rhsExclusions.includes(rule.rhs)) {
-      // Check if rhs of the rule should be excluded
-      if (Math.random() < rule.score) {
-        // Check for random rolling score
-        cleanedResults.push(rule);
-      }
-    }
-  });
+
+    cleanedResults.push(cursor);
+  }
 
   return cleanedResults;
 };
