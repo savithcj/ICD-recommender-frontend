@@ -11,25 +11,47 @@ class SankeyDiagram extends Component {
     this.fontType = "sans-serif";
     this.textColor = "black";
     this.sankeyClass = "sankeyVis" + this.props.id;
+    this.oldWidth = 0;
+    this.oldHeight = 0;
+    this.isMountedFlag = false;
   }
 
   componentDidMount() {
+    this.isMountedFlag = true;
     this.getDataFromAPI().then(() => {
-      this.drawSankeyDiagram();
+      this.drawDiagram();
     });
   }
 
+  componentWillUnmount() {
+    this.isMountedFlag = false;
+  }
+
   recalculateSizes() {
+    if (!this.isMountedFlag) {
+      return false;
+    }
     let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = elem.offsetWidth;
     this.height = elem.offsetHeight;
     let minSize = Math.min(this.width, this.height);
     this.textSize = minSize / 45;
+    if (this.width !== this.oldWidth || this.height !== this.oldHeight) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   handleResize() {
-    if (this.data === undefined) {
-    } else {
+    if (this.data !== undefined) {
+      this.drawDiagram();
+    }
+  }
+
+  drawDiagram() {
+    //redraw if size changed
+    if (this.recalculateSizes()) {
       this.drawSankeyDiagram();
     }
   }
@@ -139,7 +161,8 @@ class SankeyDiagram extends Component {
     this.centerY = this.curHeight / 2;
     this.color1 = "#67a9cf";
     this.color2 = "#ef8a62";
-    this.arcThickness = this.width / 1500;
+    this.arcThickness = this.width / 15000;
+    this.minThickness = this.width / 1500;
 
     this.dimOpacity = 0.1;
     this.brightOpacity = 0.95;
@@ -275,7 +298,10 @@ class SankeyDiagram extends Component {
           let x2 = d2["xArr"][j];
           let centerPoint = (x1 + x2) / 2;
           let radius = Math.abs(x2 - x1) / 2;
-          let halfWidth = numRules * this.arcThickness;
+          let halfWidth = Math.min(numRules * this.arcThickness, this.minThickness * 10);
+          if (halfWidth < this.minThickness) {
+            halfWidth = this.minThickness;
+          }
           var arc = d3
             .arc()
             .innerRadius(radius - halfWidth)
@@ -296,8 +322,8 @@ class SankeyDiagram extends Component {
           //invisible arcs to mouseover easier
           var invisArc = d3
             .arc()
-            .innerRadius(radius - this.arcThickness * 4)
-            .outerRadius(radius + this.arcThickness * 4)
+            .innerRadius(radius - this.minThickness * 10)
+            .outerRadius(radius + this.minThickness * 10)
             .startAngle(0)
             .endAngle(Math.PI);
           this.svg

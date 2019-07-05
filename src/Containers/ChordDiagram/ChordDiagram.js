@@ -8,31 +8,46 @@ import * as APIUtility from "../../Util/API";
 class ChordDiagram extends Component {
   constructor(props) {
     super(props);
-    this.sliderMin = 1;
-    this.sliderMax = 35;
+    this.sliderMin = 0;
+    this.sliderMax = 200;
     this.numTicks = 10;
     this.fontType = "sans-serif";
     this.textColor = "black";
-    this.defaultSliderValue = 1;
+    this.minRules = this.sliderMax / 5;
     this.chordClass = "chordVis" + this.props.id;
+    this.oldWidth = 0;
+    this.oldHeight = 0;
+    this.isMountedFlag = false;
   }
 
   componentDidMount() {
+    this.isMountedFlag = true;
     this.getDataFromAPI().then(() => {
-      this.drawChordDiagram();
+      this.drawDiagram();
     });
   }
 
+  componentWillUnmount() {
+    this.isMountedFlag = false;
+  }
+
   handleResize() {
-    if (this.data === undefined) {
-      // console.log("No data");
-    } else {
-      this.recalculateSizes();
+    if (this.data !== undefined) {
+      this.drawDiagram();
+    }
+  }
+
+  drawDiagram() {
+    //redraw if size changed
+    if (this.recalculateSizes()) {
       this.drawChordDiagram();
     }
   }
 
   recalculateSizes() {
+    if (!this.isMountedFlag) {
+      return false;
+    }
     let elem = ReactDOM.findDOMNode(this).parentNode;
     this.width = elem.offsetWidth;
     this.height = elem.offsetHeight;
@@ -42,6 +57,11 @@ class ChordDiagram extends Component {
     this.barHeight = 0.08 * minSize;
     this.centerX = this.width * 0.4;
     this.centerY = this.height / 2;
+    if (this.width !== this.oldWidth || this.height !== this.oldHeight) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   addInfoText() {
@@ -227,6 +247,7 @@ class ChordDiagram extends Component {
   }
 
   generateCurves() {
+    this.svg.selectAll("path.curve").remove();
     //generate startpoints and endpoints for the rule curves
     //start points are a little offset from the endpoints
     this.startPoints = [];
@@ -306,15 +327,13 @@ class ChordDiagram extends Component {
   }
 
   drawSlider() {
-    //slider to set cutoff for minimum rules
-    this.minRules = 1;
     var slider = sliderBottom()
       .min(this.sliderMin)
       .max(this.sliderMax)
       .width(1.5 * this.cRadius)
       .ticks(this.numTicks)
-      .default(this.defaultSliderValue)
-      .step(1)
+      .default(this.minRules)
+      .step(this.sliderMax / this.numTicks / 4)
       .on("onchange", val => {
         this.minRules = val;
         this.generateCurves();
