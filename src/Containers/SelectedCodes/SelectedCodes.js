@@ -11,6 +11,10 @@ const selectedCodesViewer = props => {
     props.removeSelectedCode(removeCodeIndex);
     props.getRecommendedCodes(selectedCodes);
     props.getDaggerAsterisks(selectedCodes);
+
+    if (selectedCodes.length === 0) {
+      resetSelectedCodes();
+    }
   };
 
   const handleExploreSelectedCodeButton = event => {
@@ -22,6 +26,8 @@ const selectedCodesViewer = props => {
     props.setSelectedCodes([]);
     props.setRecommendedCodes(null);
     props.setDaggerAsterisk(null);
+    props.setAge(null);
+    props.setGender(null);
   };
 
   const acceptSelectedCodes = () => {
@@ -76,7 +82,9 @@ const mapDispatchToProps = dispatch => {
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
     getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray)),
     setRecommendedCodes: valueToSet => dispatch(actions.setRecommendedCodes(valueToSet)),
-    setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet))
+    setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet)),
+    setAge: valueToSet => dispatch(actions.setAge(valueToSet)),
+    setGender: valueToSet => dispatch(actions.setGender(valueToSet))
   };
 };
 

@@ -71,9 +71,12 @@ const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
   return rulesToSendBack;
 };
 
-export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
+export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
+
+    const age = getState().ageGender.selectedAge;
+    const gender = getState().ageGender.selectedGender;
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
     const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;

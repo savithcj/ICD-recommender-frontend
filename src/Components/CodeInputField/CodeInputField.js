@@ -71,7 +71,7 @@ class CodeInputField extends React.Component {
       if (this.props.autoClearCode == true) {
         this.setState({
           value: "",
-          age: "",
+          // age: "",
           gender: ""
         });
       }
