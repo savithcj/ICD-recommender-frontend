@@ -7,13 +7,6 @@ export const addRHSToExclusion = rhs => {
   };
 };
 
-export const addRuleToSession = ruleObj => {
-  return {
-    type: actionTypes.ADD_RULE_TO_SESSION,
-    ruleObj
-  };
-};
-
 export const setRHSExclusion = value => {
   return {
     type: actionTypes.SET_RHS_EXCLUSION,

@@ -9,22 +9,39 @@ const recommendedCodesViewer = props => {
    * Called upon when user accepts a recommended code
    */
   const handleAcceptRecommendedCode = event => {
-    const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
-    const acceptedCodeObject = props.recommendedCodes[acceptedCodeIndex];
-    const newCode = acceptedCodeObject.rhs;
+    const acceptedRuleIndex = parseInt(event.currentTarget.id, 10);
+    const acceptedRuleObj = props.recommendedCodes[acceptedRuleIndex];
+    const newCode = acceptedRuleObj.rhs;
 
-    props.removeRecommendedCode(acceptedCodeIndex);
+    const rulesToSendBack = props.rulesToSendBack;
+    const matchedRule = rulesToSendBack.find(obj => obj.id === acceptedRuleObj.id);
+    if (matchedRule !== undefined) {
+      matchedRule.action = "A";
+      props.setRulesInSession(rulesToSendBack);
+    }
+    props.removeRecommendedCode(acceptedRuleIndex);
     props.addSelectedCode(newCode);
   };
 
   /**
-   * Called upon when user rejects a recommended code
+   * Called upon when user rejects a recommended code.
    */
   const handleRemoveRecommendedCode = event => {
-    const removedCodeIndex = parseInt(event.currentTarget.id, 10);
-    props.removeRecommendedCode(removedCodeIndex);
+    const removedRuleIndex = parseInt(event.currentTarget.id, 10);
+    const removedRuleObj = props.recommendedCodes[removedRuleIndex];
+    const rulesToSendBack = props.rulesToSendBack;
+    const matchedRule = rulesToSendBack.find(obj => obj.id === removedRuleObj.id);
+    if (matchedRule !== undefined) {
+      matchedRule.action = "R";
+      props.addRHSToExclusion(matchedRule.rhs);
+      props.setRulesInSession(rulesToSendBack);
+    }
+    props.removeRecommendedCode(removedRuleIndex);
   };
 
+  /**
+   * Called upon when user flags a rule for admin review
+   */
   const userFlagRuleForReview = event => {
     const flaggedCodeIndex = parseInt(event.currentTarget.id, 10);
     const flaggedCode = props.recommendedCodes[flaggedCodeIndex];
@@ -36,7 +53,6 @@ const recommendedCodesViewer = props => {
       .then(results => {
         console.log("[RecommendedCodes Container] API response from FlagRuleForReview: ", results);
       });
-
     props.removeRecommendedCode(flaggedCodeIndex);
   };
 
@@ -72,7 +88,7 @@ const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
     recommendedCodes: state.recommended.recommendedCodes,
-    rules: state.session.rules
+    rulesToSendBack: state.session.rulesToSendBack
   };
 };
 

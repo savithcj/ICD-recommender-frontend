@@ -6,6 +6,7 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
+import { setRulesInSession } from "./session";
 
 /**
  * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
@@ -28,7 +29,7 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
 
     ////// Check for duplicate RHS
     let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
-    console.log(cursor.rhs + ": duplicated RHS index=" + duplicateIndex);
+    // console.log(cursor.rhs + ": duplicated RHS index=" + duplicateIndex);
     if (duplicateIndex >= 0) {
       // if duplicate is found
       if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
@@ -41,9 +42,9 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
     ////// Check rule score against ramdomly rolled score threshold
     const threshold = Math.random();
     if (threshold > cursor.score) {
-      console.log(
-        "Omitted rule: id=" + cursor.id + ", RHS=" + cursor.rhs + ", threshold=" + threshold + ", score=" + cursor.score
-      );
+      // console.log(
+      //   "Omitted rule: id=" + cursor.id + ", RHS=" + cursor.rhs + ", threshold=" + threshold + ", score=" + cursor.score
+      // );
       continue;
     }
 
@@ -51,6 +52,23 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
   }
 
   return cleanedResults;
+};
+
+/**
+ * Helper method that creates a list of rules with user feedback (action) to be sent back to server.
+ * Loops through every rule currently being recommended, append to list of rules to be sent back.
+ * Each rule will have "action" attribute set to default "I" (for ignored)
+ */
+const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
+  for (let i = 0; i < recommendedRules.length; i++) {
+    let cursor = recommendedRules[i];
+    let duplicatedRule = rulesToSendBack.find(rule => rule.id == cursor.id);
+    if (duplicatedRule === undefined) {
+      cursor.action = "I";
+      rulesToSendBack.push(cursor);
+    }
+  }
+  return rulesToSendBack;
 };
 
 export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
@@ -61,6 +79,7 @@ export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) =>
     const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;
 
     const rhsExclusions = getState().session.rhsExclusions;
+    const rulesToSendBack = getState().session.rulesToSendBack;
 
     if (stringOfCodes !== "") {
       const url =
@@ -84,7 +103,7 @@ export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) =>
           });
           dispatch(appendToCache(resultsToCache));
           results = cleanResults(results, rhsExclusions);
-          console.log("cleaned results", results);
+          dispatch(setRulesInSession(createRulesToSendBack(results, rulesToSendBack)));
           dispatch(setRecommendedCodes(results));
         });
     } else {
