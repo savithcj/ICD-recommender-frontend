@@ -8,18 +8,16 @@ import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
-import { __esModule } from "d3-random"; //TODO: Verify why this import is needed
 import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("homeLayouts", "layouts") || defaultLayouts;
-
 const treeViewDiv = React.createRef();
-
 const Home = () => {
   //Local state of the Home page
+
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
@@ -35,10 +33,18 @@ const Home = () => {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
+    console.log("in onlayoutchange");
     saveToLS("homeLayouts", "layouts", layouts);
   }
 
+  function handleTreeChange() {
+    if (treeViewDiv.current !== null) {
+      treeViewDiv.current.handleResize();
+    }
+  }
+
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
   return (
     <div className="Home">
       <MenuBar
@@ -62,7 +68,7 @@ const Home = () => {
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
         <div key="tree" className={highlightEditDiv}>
-          <TreeViewer ref={treeViewDiv} />
+          <TreeViewer ref={treeViewDiv} onChange={handleTreeChange()} />
         </div>
 
         <div key="selectedCodes" className={highlightEditDiv}>
