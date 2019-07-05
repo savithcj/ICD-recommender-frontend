@@ -5,6 +5,7 @@ import { appendToCache } from "./cached";
 import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
+import { setAge, setGender } from "./ageGender";
 
 export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
   return dispatch => {
@@ -106,5 +107,15 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
     } else {
       console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCode);
     }
+  };
+};
+
+export const resetState = () => {
+  return dispatch => {
+    dispatch(setAge(null));
+    dispatch(setGender(null));
+    dispatch(setSelectedCodes([]));
+    dispatch(setDaggerAsterisk(null));
+    dispatch(setRecommendedCodes(null));
   };
 };

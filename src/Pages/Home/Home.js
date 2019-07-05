@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputBoxes from "../../Containers/InputBoxes/InputBoxes";
 import SelectedCodes from "../../Containers/SelectedCodes/SelectedCodes";
 import RecommendedCodes from "../../Containers/RecommendedCodes/RecommendedCodes";
@@ -8,6 +8,8 @@ import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import { WidthProvider, Responsive } from "react-grid-layout";
+import * as actions from "../../Store/Actions/index";
+import { connect } from "react-redux";
 import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -15,11 +17,19 @@ import "react-resizable/css/styles.css";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("homeLayouts", "layouts") || defaultLayouts;
 const treeViewDiv = React.createRef();
-const Home = () => {
+const Home = props => {
   //Local state of the Home page
 
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
+
+  //this useEffect is equivalent to the componentWillUnmount lifecycle method
+  useEffect(() => {
+    return () => {
+      console.log("[Home Page] useEffect called");
+      props.resetState();
+    };
+  }, []);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
@@ -91,4 +101,13 @@ const Home = () => {
   );
 };
 
-export default Home;
+const mapDispatchToProps = dispatch => {
+  return {
+    resetState: () => dispatch(actions.resetState())
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Home);

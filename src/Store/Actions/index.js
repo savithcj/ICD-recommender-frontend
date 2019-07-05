@@ -6,5 +6,6 @@ export { setDaggerAsterisk, removeDaggerAsterisk } from "./daggerAsterisks";
 export {
   addSelectedCodeAndUpdateRecommendations,
   fetchRecommendationsAndUpdateCache,
-  fetchDaggerAsterisksAndUpdateCache
+  fetchDaggerAsterisksAndUpdateCache,
+  resetState
 } from "./asyncActions";
