@@ -17,6 +17,7 @@ import { setRulesInSession } from "./session";
  * Finally returns a set of cleaned rules.
  */
 const cleanResults = (ruleObjs, rhsExclusions) => {
+  //TODO: Added rolled flag, initialized to null, only roll if null
   const cleanedResults = [];
 
   for (let i = 0; i < ruleObjs.length; i++) {
