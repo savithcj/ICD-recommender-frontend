@@ -53,7 +53,7 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
   return cleanedResults;
 };
 
-export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
+export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
 
