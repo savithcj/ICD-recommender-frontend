@@ -7,9 +7,12 @@ import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
 
-export const fetchRecommendationsAndUpdateCache = (codeObjArray, age, gender) => {
-  return dispatch => {
+export const fetchRecommendationsAndUpdateCache = codeObjArray => {
+  return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
+
+    const age = getState().ageGender.selectedAge;
+    const gender = getState().ageGender.selectedGender;
 
     const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
     const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;

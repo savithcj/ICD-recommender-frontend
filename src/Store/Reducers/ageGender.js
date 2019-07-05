@@ -13,7 +13,7 @@ const reducer = (state = initialState, action) => {
     return { ...state, selectedGender: action.newGenderValue };
   };
 
-  switch (actionTypes) {
+  switch (action.type) {
     case actionTypes.SET_AGE:
       return setAge();
     case actionTypes.SET_GENDER:

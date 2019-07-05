@@ -10,7 +10,7 @@ const inputBoxes = props => {
 
   const handleAgeSelection = enteredAge => {
     props.setAge(enteredAge);
-    props.getRecommendedCodes(props.selectedCodes, enteredAge);
+    props.getRecommendedCodes(props.selectedCodes);
   };
 
   return (
