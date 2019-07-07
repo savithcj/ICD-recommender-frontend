@@ -14,22 +14,41 @@ import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
+import { useAlert } from "react-alert";
+
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("homeLayouts", "layouts") || defaultLayouts;
 const treeViewDiv = React.createRef();
+
 const Home = props => {
   //Local state of the Home page
 
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
+  const alert = useAlert();
+
   //this useEffect is equivalent to the componentWillUnmount lifecycle method
+  //It's used to clear the global state when navigating away from the home page
   useEffect(() => {
     return () => {
-      console.log("[Home Page] useEffect called");
       props.resetState();
     };
   }, []);
+
+  //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
+  //in the store and messages to the user
+  useEffect(() => {
+    if (props.alertMessage) {
+      alert.show(props.alertMessage, {
+        timeout: 2500,
+        type: "info",
+        onClose: () => {
+          props.setAlertMessage(null);
+        }
+      });
+    }
+  }, [props.alertMessage]);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
@@ -101,13 +120,20 @@ const Home = props => {
   );
 };
 
+const mapStateToProps = state => {
+  return {
+    alertMessage: state.alert.alertMessage
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
     resetState: () => dispatch(actions.resetState())
   };
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Home);

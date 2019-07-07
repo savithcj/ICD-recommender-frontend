@@ -7,6 +7,7 @@ import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
 import { setRulesInSession } from "./session";
+import { setAlertMessage } from "./alert";
 
 /**
  * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
@@ -40,7 +41,7 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
       continue;
     }
 
-    ////// Check rule score against ramdomly rolled score threshold
+    ////// Check rule score against randomly rolled score threshold
     const threshold = Math.random();
     if (threshold > cursor.score) {
       // console.log(
@@ -179,10 +180,41 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
       dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
     } else {
       console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCode);
+      dispatch(setAlertMessage(enteredCode + " already selected"));
     }
   };
 };
 
+//used to add a code from the tree
+export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject => {
+  return (dispatch, getState) => {
+    const selectedCodes = Array.from(getState().selected.selectedCodes);
+
+    // check if the code already exist in the selection
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCodeObject.code);
+
+    if (getDuplicate === undefined) {
+      const newCode = {
+        code: enteredCodeObject.code,
+        description: enteredCodeObject.description
+      };
+
+      selectedCodes.push(newCode);
+
+      dispatch(setSelectedCodes(selectedCodes));
+      dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
+      dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
+    } else {
+      console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCodeObject.code);
+      dispatch(setAlertMessage(enteredCodeObject.code + " already selected"));
+    }
+  };
+};
+
+/**
+ * Action used to reset the global store. Reverts all store variables except the cached
+ * codes back to their initial states
+ */
 export const resetState = () => {
   return dispatch => {
     dispatch(setAge(null));
