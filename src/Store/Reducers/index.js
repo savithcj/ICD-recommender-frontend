@@ -5,6 +5,7 @@ import cached from "./cached";
 import daggerAsterisks from "./daggerAsterisks";
 import ageGender from "./ageGender";
 import session from "./session";
+import alert from "./alert";
 
 export default combineReducers({
   cached,
@@ -12,5 +13,6 @@ export default combineReducers({
   recommended,
   selected,
   ageGender,
-  session
+  session,
+  alert
 });

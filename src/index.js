@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import reducer from "./Store/Reducers/index";
+import { Provider as AlertProvider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
 
 import Home from "./Pages/Home/Home";
 import Admin from "./Pages/Admin/Admin";
@@ -21,16 +23,18 @@ const notFound = () => <h1>Not Found</h1>;
 
 const routing = (
   <Provider store={store}>
-    <BrowserRouter>
-      <div>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/admin" component={Admin} />
-          <Route path="/visualization" component={Visualization} />
-          <Route>{notFound}</Route>
-        </Switch>
-      </div>
-    </BrowserRouter>
+    <AlertProvider template={AlertTemplate}>
+      <BrowserRouter>
+        <div>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/admin" component={Admin} />
+            <Route path="/visualization" component={Visualization} />
+            <Route>{notFound}</Route>
+          </Switch>
+        </div>
+      </BrowserRouter>
+    </AlertProvider>
   </Provider>
 );
 
