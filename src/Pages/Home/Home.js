@@ -14,7 +14,7 @@ import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import { useAlert } from "react-alert";
+import { useAlert, positions } from "react-alert";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("homeLayouts", "layouts") || defaultLayouts;
@@ -42,6 +42,7 @@ const Home = props => {
     if (props.alertMessage) {
       alert.show(props.alertMessage, {
         timeout: 2500,
+        position: positions.BOTTOM_CENTER,
         type: "info",
         onClose: () => {
           props.setAlertMessage(null);
