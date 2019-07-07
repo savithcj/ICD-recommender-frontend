@@ -37,13 +37,13 @@ const Home = props => {
   }, []);
 
   //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
-  //in the store and messages to the user
+  //in the store and displays messages to the user
   useEffect(() => {
     if (props.alertMessage) {
-      alert.show(props.alertMessage, {
+      alert.show(props.alertMessage.message, {
         timeout: 2500,
         position: positions.BOTTOM_CENTER,
-        type: "info",
+        type: props.alertMessage.messageType,
         onClose: () => {
           props.setAlertMessage(null);
         }

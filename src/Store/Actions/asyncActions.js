@@ -180,7 +180,7 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
       dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
     } else {
       console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCode);
-      dispatch(setAlertMessage(enteredCode + " already selected"));
+      dispatch(setAlertMessage({ message: enteredCode + " already selected", messageType: "error" }));
     }
   };
 };
@@ -206,7 +206,7 @@ export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject =
       dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
     } else {
       console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCodeObject.code);
-      dispatch(setAlertMessage(enteredCodeObject.code + " already selected"));
+      dispatch(setAlertMessage({ message: enteredCodeObject.code + " already selected", messageType: "error" }));
     }
   };
 };
