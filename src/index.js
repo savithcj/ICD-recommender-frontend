@@ -25,14 +25,12 @@ const routing = (
   <Provider store={store}>
     <AlertProvider template={AlertTemplate}>
       <BrowserRouter>
-        <div>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/admin" component={Admin} />
-            <Route path="/visualization" component={Visualization} />
-            <Route>{notFound}</Route>
-          </Switch>
-        </div>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/admin" component={Admin} />
+          <Route path="/visualization" component={Visualization} />
+          <Route>{notFound}</Route>
+        </Switch>
       </BrowserRouter>
     </AlertProvider>
   </Provider>

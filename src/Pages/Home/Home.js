@@ -29,7 +29,7 @@ const Home = props => {
   const alert = useAlert();
 
   //this useEffect is equivalent to the componentWillUnmount lifecycle method
-  //It's used to clear the global state when navigating away from the home page
+  //It's used to clear the store when navigating away from the home page
   useEffect(() => {
     return () => {
       props.resetState();
