@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import RuleCreator from "../../Containers/RuleCreator/RuleCreator";
@@ -7,6 +7,9 @@ import RuleSearch from "../../Containers/RuleSearch/RuleSearch";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import "./Admin.css";
+import * as actions from "../../Store/Actions/index";
+import { connect } from "react-redux";
+import { useAlert, positions } from "react-alert";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
@@ -14,6 +17,23 @@ const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
 function Admin(props) {
   const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
+
+  const alert = useAlert();
+
+  //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
+  //in the store and displays messages to the user
+  useEffect(() => {
+    if (props.alertMessage) {
+      alert.show(props.alertMessage.message, {
+        timeout: 2500,
+        position: positions.BOTTOM_CENTER,
+        type: props.alertMessage.messageType,
+        onClose: () => {
+          props.setAlertMessage(null);
+        }
+      });
+    }
+  }, [props.alertMessage]);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
@@ -79,4 +99,19 @@ function Admin(props) {
   );
 }
 
-export default Admin;
+const mapStateToProps = state => {
+  return {
+    alertMessage: state.alert.alertMessage
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Admin);
