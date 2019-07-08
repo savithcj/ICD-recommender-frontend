@@ -63,7 +63,7 @@ function RuleSearch(props) {
   };
 
   const resetSearchResults = () => {
-    setRHS([]);
+    setSearchResults([]);
   };
 
   const handleRemoveLHSCode = event => {
@@ -161,7 +161,7 @@ function RuleSearch(props) {
 
   const listComponentMenuItemsResults = [
     {
-      menuItemOnClick: RHS.length > 1 ? resetSearchResults : null,
+      menuItemOnClick: searchResults.length > 0 ? resetSearchResults : null,
       menuItemText: "Remove All Items"
     }
   ];

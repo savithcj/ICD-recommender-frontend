@@ -88,7 +88,11 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 
     if (stringOfCodes !== "") {
       const url =
-        APIUtility.API.getAPIURL(APIUtility.REQUEST_RULES) + stringOfCodes + "/?format=json" + ageParam + genderParam;
+        APIUtility.API.getAPIURL(APIUtility.REQUEST_ACTIVE_RULES) +
+        stringOfCodes +
+        "/?format=json" +
+        ageParam +
+        genderParam;
 
       dispatch(setRecommendedCodes("LOADING"));
 

@@ -7,6 +7,7 @@ export const CHILDREN = "CHILDREN";
 export const FAMILY = "FAMILY";
 export const CODE_DESCRIPTION = "CODE_DESCRIPTION";
 export const REQUEST_RULES = "REQUEST_RULES";
+export const REQUEST_ACTIVE_RULES = "REQUEST_ACTIVE_RULES";
 export const MATCH_DESCRIPTION = "MATCH_DESCRIPTION";
 export const ANCESTORS = "ANCESTORS";
 export const CODE_AUTO_SUGGESTIONS = "CODE_AUTO_SUGGESTIONS";
@@ -39,6 +40,8 @@ export class API {
         return this.urlBeginning + "codeDescription/";
       case REQUEST_RULES:
         return this.urlBeginning + "requestRules/";
+      case REQUEST_ACTIVE_RULES:
+        return this.urlBeginning + "requestRulesActive/";
       case MATCH_DESCRIPTION:
         return this.urlBeginning + "matchDescription/";
       case ANCESTORS:
