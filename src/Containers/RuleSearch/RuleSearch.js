@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import * as APIUtility from "../../Util/API";
+import { connect } from "react-redux";
+import * as actions from "../../Store/Actions/index";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -40,10 +42,9 @@ function RuleSearch(props) {
   };
 
   const addCodeRHS = newCodeObj => {
-    let selectedCodes = Array.from(RHS);
-    // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === newCodeObj);
-    if (getDuplicate === undefined) {
+    if (RHS.length > 0) {
+      props.setAlertMessage({ message: "RHS already entered", messageType: "error" });
+    } else {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(cachedCodeWithDescription);
       const cachedCode = codeDescriptions.find(codeObj => codeObj.code === newCodeObj);
@@ -52,7 +53,7 @@ function RuleSearch(props) {
         code: cachedCode.code,
         description: cachedCode.description
       };
-      selectedCodes.push(newCode);
+      let selectedCodes = [newCode];
       setRHS(selectedCodes);
     }
   };
@@ -61,7 +62,7 @@ function RuleSearch(props) {
     setLHS([]);
   };
 
-  const resetRHSCodes = () => {
+  const resetSearchResults = () => {
     setRHS([]);
   };
 
@@ -151,9 +152,16 @@ function RuleSearch(props) {
     setCachedCodes(codesWithDescript);
   };
 
-  const listComponentMenuItems = [
+  const listComponentMenuItemsLHS = [
     {
       menuItemOnClick: LHS.length > 1 ? resetLHSCodes : null,
+      menuItemText: "Remove All Items"
+    }
+  ];
+
+  const listComponentMenuItemsResults = [
+    {
+      menuItemOnClick: RHS.length > 1 ? resetSearchResults : null,
       menuItemText: "Remove All Items"
     }
   ];
@@ -185,7 +193,7 @@ function RuleSearch(props) {
               descriptionName="description"
               removeItemButton={handleRemoveLHSCode}
               allowRearrage={false}
-              menuOptions={listComponentMenuItems}
+              menuOptions={listComponentMenuItemsLHS}
               disableTitleGutters={true}
             />
           </div>
@@ -213,7 +221,7 @@ function RuleSearch(props) {
               descriptionName="description"
               removeItemButton={handleRemoveRHSCode}
               allowRearrage={false}
-              menuOptions={listComponentMenuItems}
+              menuOptions={[]}
               disableTitleGutters={true}
             />
           </div>
@@ -241,7 +249,7 @@ function RuleSearch(props) {
           acceptItemButton={adminSetRuleActive}
           removeItemButton={adminSetRuleInactive}
           allowRearrage={false}
-          menuOptions={listComponentMenuItems}
+          menuOptions={listComponentMenuItemsResults}
           disableTitleGutters={true}
         />
       </div>
@@ -249,4 +257,13 @@ function RuleSearch(props) {
   );
 }
 
-export default RuleSearch;
+const mapDispatchToProps = dispatch => {
+  return {
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(RuleSearch);
