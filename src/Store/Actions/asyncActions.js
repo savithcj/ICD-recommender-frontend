@@ -6,7 +6,7 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
-import { setRulesInSession, setRolledRules } from "./session";
+import { setRulesInSession, setRolledRules, setRHSExclusion } from "./session";
 import { setAlertMessage } from "./alert";
 import * as HelperFunctions from "../../Util/utility.js";
 
@@ -26,7 +26,11 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 
     if (stringOfCodes !== "") {
       const url =
-        APIUtility.API.getAPIURL(APIUtility.REQUEST_RULES) + stringOfCodes + "/?format=json" + ageParam + genderParam;
+        APIUtility.API.getAPIURL(APIUtility.REQUEST_ACTIVE_RULES) +
+        stringOfCodes +
+        "/?format=json" +
+        ageParam +
+        genderParam;
 
       dispatch(setRecommendedCodes("LOADING"));
 
@@ -165,5 +169,16 @@ export const resetState = () => {
     dispatch(setSelectedCodes([]));
     dispatch(setDaggerAsterisk(null));
     dispatch(setRecommendedCodes(null));
+  };
+};
+
+/**
+ * Action used to reset session states.
+ */
+export const resetSession = () => {
+  return dispatch => {
+    dispatch(setRolledRules([]));
+    dispatch(setRulesInSession([]));
+    dispatch(setRHSExclusion([]));
   };
 };

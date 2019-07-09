@@ -8,7 +8,8 @@ export {
   addSelectedCodeObjectAndUpdateRecommendations,
   fetchRecommendationsAndUpdateCache,
   fetchDaggerAsterisksAndUpdateCache,
-  resetState
+  resetState,
+  resetSession
 } from "./asyncActions";
 export { addRHSToExclusion, setRHSExclusion, setRulesInSession } from "./session";
 export { setAlertMessage } from "./alert";

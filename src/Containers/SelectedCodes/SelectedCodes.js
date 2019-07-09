@@ -15,6 +15,7 @@ const selectedCodesViewer = props => {
 
     if (selectedCodes.length === 0) {
       resetSelectedCodes();
+      props.resetSession();
     }
   };
 
@@ -41,6 +42,7 @@ const selectedCodesViewer = props => {
     //TODO:Make API call to update code usage during a session
     resetSelectedCodes();
     copyToClipboard();
+    props.resetSession();
   };
 
   const selectedCodesComponentMenuItems = [
@@ -93,7 +95,8 @@ const mapDispatchToProps = dispatch => {
     setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet)),
     setAge: valueToSet => dispatch(actions.setAge(valueToSet)),
     setGender: valueToSet => dispatch(actions.setGender(valueToSet)),
-    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
+    resetSession: () => dispatch(actions.resetSession())
   };
 };
 
