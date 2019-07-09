@@ -26,7 +26,7 @@ function Admin(props) {
     if (props.alertMessage) {
       alert.show(props.alertMessage.message, {
         timeout: 2500,
-        position: positions.BOTTOM_CENTER,
+        position: positions.MIDDLE,
         type: props.alertMessage.messageType,
         onClose: () => {
           props.setAlertMessage(null);
