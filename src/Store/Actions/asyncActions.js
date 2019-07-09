@@ -6,7 +6,7 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
-import { setRulesInSession, setRolledRules } from "./session";
+import { setRulesInSession, setRolledRules, setRHSExclusion } from "./session";
 import { setAlertMessage } from "./alert";
 import * as HelperFunctions from "../../Util/utility.js";
 
@@ -165,5 +165,16 @@ export const resetState = () => {
     dispatch(setSelectedCodes([]));
     dispatch(setDaggerAsterisk(null));
     dispatch(setRecommendedCodes(null));
+  };
+};
+
+/**
+ * Action used to reset session states.
+ */
+export const resetSession = () => {
+  return dispatch => {
+    dispatch(setRolledRules([]));
+    dispatch(setRulesInSession([]));
+    dispatch(setRHSExclusion([]));
   };
 };

@@ -16,8 +16,8 @@ const inputBoxes = props => {
   return (
     <CodeInputField
       id_code="input1"
-      id_age="input2"
-      id_gender="input3"
+      // id_age="input2"
+      // id_gender="input3"
       placeholder_code="Search for a code"
       placeholder_age="Age"
       placeholder_gender="Gender"
@@ -27,9 +27,9 @@ const inputBoxes = props => {
       codeCache={props.cachedCodeWithDescription}
       appendCodeToCache={props.appendCodeToCache}
       autoClearCode={true}
-      width_code="72%"
-      width_age="10%"
-      width_gender="15%"
+      width_code="100%"
+      // width_age="10%"
+      // width_gender="15%"
     />
   );
 };
