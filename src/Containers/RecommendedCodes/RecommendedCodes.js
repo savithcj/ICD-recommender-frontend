@@ -72,9 +72,9 @@ const recommendedCodesViewer = props => {
       nullItemsMessage="Select codes to get recommendations"
       valueName="rhs"
       descriptionName="descriptionWithScore"
-      acceptItemButton={handleAcceptRecommendedCode}
-      removeItemButton={handleRemoveRecommendedCode}
-      dislikeButton={userFlagRuleForReview}
+      acceptItemButton={{ title: "Accept recommendation", onClick: handleAcceptRecommendedCode }}
+      removeItemButton={{ title: "Reject recommendation", onClick: handleRemoveRecommendedCode }}
+      dislikeButton={{ title: "Flag recommendation for review", onClick: userFlagRuleForReview }}
       exploreButton={handleExploreButton}
       allowRearrage={false}
       menuOptions={componentMenuItems}
