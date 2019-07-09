@@ -20,3 +20,10 @@ export const setRulesInSession = value => {
     value
   };
 };
+
+export const setRolledRules = value => {
+  return {
+    type: actionTypes.SET_RULES_ROLLED,
+    value
+  };
+};

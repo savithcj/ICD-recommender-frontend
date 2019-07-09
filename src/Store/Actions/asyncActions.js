@@ -6,7 +6,7 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
-import { setRulesInSession } from "./session";
+import { setRulesInSession, setRolledRules } from "./session";
 import { setAlertMessage } from "./alert";
 
 /**
@@ -17,8 +17,8 @@ import { setAlertMessage } from "./alert";
  * Thirdly, if the rhs has been shown after rolling, repeated rules with same RHS would not be rolled again.
  * Finally returns a set of cleaned rules.
  */
-const cleanResults = (ruleObjs, rhsExclusions) => {
-  //TODO: Added rolled flag, initialized to null, only roll if null
+const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
+  //TODO: Rules have a gender attribute now, same rule would be shown twice when input has no gender
   const cleanedResults = [];
 
   for (let i = 0; i < ruleObjs.length; i++) {
@@ -35,25 +35,37 @@ const cleanResults = (ruleObjs, rhsExclusions) => {
     if (duplicateIndex >= 0) {
       // if duplicate is found
       if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
-        // keep the duplicate with higher score
+        // keep the duplicate with higher score by overwritting
         cleanedResults[duplicateIndex] = ruleObjs[i];
       }
       continue;
     }
 
     ////// Check rule score against randomly rolled score threshold
+    ////// Check to see if the rule has been previously rolled
     const threshold = Math.random();
-    if (threshold > cursor.score) {
-      // console.log(
-      //   "Omitted rule: id=" + cursor.id + ", RHS=" + cursor.rhs + ", threshold=" + threshold + ", score=" + cursor.score
-      // );
+    let previousRollIndex = rollResults.findIndex(item => item.id === cursor.id);
+    let previousRoll = rollResults[previousRollIndex];
+    if (previousRollIndex >= 0 && previousRoll.rollResult != null) {
+      // rule has previously been rolled
       continue;
+    } else if (previousRollIndex < 0) {
+      // rule has not been rolled before
+
+      if (cursor.score < threshold) {
+        cursor.rollResult = false;
+      } else {
+        cursor.rollResult = true;
+      }
+      rollResults.push(cursor);
     }
 
-    cleanedResults.push(cursor);
+    if (cursor.rollResult === true) {
+      cleanedResults.push(cursor);
+    }
   }
 
-  return cleanedResults;
+  return [cleanedResults, rollResults];
 };
 
 /**
@@ -66,7 +78,8 @@ const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
     let cursor = recommendedRules[i];
     let duplicatedRule = rulesToSendBack.find(rule => rule.id == cursor.id);
     if (duplicatedRule === undefined) {
-      cursor.action = "I";
+      cursor.action = "I"; // default action flag "I" (Ignore)
+      cursor.rollResult = null; // flag to keep track of the rule's rolled status
       rulesToSendBack.push(cursor);
     }
   }
@@ -85,6 +98,7 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 
     const rhsExclusions = getState().session.rhsExclusions;
     const rulesToSendBack = getState().session.rulesToSendBack;
+    const rollResults = getState().session.rulesRolled;
 
     if (stringOfCodes !== "") {
       const url =
@@ -107,9 +121,10 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
             return { code: recommendedObj.rhs, description: recommendedObj.description };
           });
           dispatch(appendToCache(resultsToCache));
-          results = cleanResults(results, rhsExclusions);
-          dispatch(setRulesInSession(createRulesToSendBack(results, rulesToSendBack)));
-          dispatch(setRecommendedCodes(results));
+          results = cleanResults(results, rhsExclusions, rollResults);
+          dispatch(setRulesInSession(createRulesToSendBack(results[0], rulesToSendBack)));
+          dispatch(setRolledRules(results[1]));
+          dispatch(setRecommendedCodes(results[0]));
         });
     } else {
       dispatch(setRecommendedCodes(null));
