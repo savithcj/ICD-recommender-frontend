@@ -46,21 +46,21 @@ const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
     const threshold = Math.random();
     let previousRollIndex = rollResults.findIndex(item => item.id === cursor.id);
     let previousRoll = rollResults[previousRollIndex];
-    if (previousRollIndex >= 0 && previousRoll.rollResult != null) {
+    if (previousRollIndex >= 0 && previousRoll.rollOutcome != null) {
       // rule has previously been rolled
       continue;
-    } else if (previousRollIndex < 0) {
+    } else {
       // rule has not been rolled before
 
       if (cursor.score < threshold) {
-        cursor.rollResult = false;
+        cursor.rollOutcome = false;
       } else {
-        cursor.rollResult = true;
+        cursor.rollOutcome = true;
       }
       rollResults.push(cursor);
     }
 
-    if (cursor.rollResult === true) {
+    if (cursor.rollOutcome === true) {
       cleanedResults.push(cursor);
     }
   }
@@ -79,7 +79,6 @@ const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
     let duplicatedRule = rulesToSendBack.find(rule => rule.id == cursor.id);
     if (duplicatedRule === undefined) {
       cursor.action = "I"; // default action flag "I" (Ignore)
-      cursor.rollResult = null; // flag to keep track of the rule's rolled status
       rulesToSendBack.push(cursor);
     }
   }
@@ -121,10 +120,14 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
             return { code: recommendedObj.rhs, description: recommendedObj.description };
           });
           dispatch(appendToCache(resultsToCache));
+
           results = cleanResults(results, rhsExclusions, rollResults);
-          dispatch(setRulesInSession(createRulesToSendBack(results[0], rulesToSendBack)));
-          dispatch(setRolledRules(results[1]));
-          dispatch(setRecommendedCodes(results[0]));
+          const cleanedResults = results[0];
+          const rolledRules = results[1];
+
+          dispatch(setRolledRules(rolledRules));
+          dispatch(setRulesInSession(createRulesToSendBack(cleanedResults, rulesToSendBack)));
+          dispatch(setRecommendedCodes(cleanedResults));
         });
     } else {
       dispatch(setRecommendedCodes(null));
