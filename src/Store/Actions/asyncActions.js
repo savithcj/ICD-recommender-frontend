@@ -8,82 +8,7 @@ import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
 import { setRulesInSession, setRolledRules } from "./session";
 import { setAlertMessage } from "./alert";
-
-/**
- * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
- * If RHS codes has been rejected prior, remove and do not show again in recommendations.
- * Secondly, using randomly rolling, check rule's recommendation score against a randomly rolled threshold,
- * and only display the rule if the score is above the threshold.
- * Thirdly, if the rhs has been shown after rolling, repeated rules with same RHS would not be rolled again.
- * Finally returns a set of cleaned rules.
- */
-const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
-  //TODO: Rules have a gender attribute now, same rule would be shown twice when input has no gender
-  const cleanedResults = [];
-
-  for (let i = 0; i < ruleObjs.length; i++) {
-    let cursor = ruleObjs[i];
-
-    //////check if the rhs is in the rejected exclusion list
-    if (rhsExclusions.includes(cursor.rhs)) {
-      continue;
-    }
-
-    ////// Check for duplicate RHS
-    let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
-    // console.log(cursor.rhs + ": duplicated RHS index=" + duplicateIndex);
-    if (duplicateIndex >= 0) {
-      // if duplicate is found
-      if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
-        // keep the duplicate with higher score by overwritting
-        cleanedResults[duplicateIndex] = ruleObjs[i];
-      }
-      continue;
-    }
-
-    ////// Check rule score against randomly rolled score threshold
-    ////// Check to see if the rule has been previously rolled
-    const threshold = Math.random();
-    let previousRollIndex = rollResults.findIndex(item => item.id === cursor.id);
-    let previousRoll = rollResults[previousRollIndex];
-    if (previousRollIndex >= 0 && previousRoll.rollOutcome != null) {
-      // rule has previously been rolled
-      continue;
-    } else {
-      // rule has not been rolled before
-
-      if (cursor.score < threshold) {
-        cursor.rollOutcome = false;
-      } else {
-        cursor.rollOutcome = true;
-      }
-      rollResults.push(cursor);
-    }
-
-    if (cursor.rollOutcome === true) {
-      cleanedResults.push(cursor);
-    }
-  }
-
-  return [cleanedResults, rollResults];
-};
-
-/**
- * Helper method that creates a list of rules with user feedback (action) to be sent back to server.
- * Loops through every rule currently being recommended, append to list of rules to be sent back.
- * Each rule will have "action" attribute set to default "I" (for ignored)
- */
-const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
-  for (let i = 0; i < recommendedRules.length; i++) {
-    let cursor = recommendedRules[i];
-    let duplicatedRule = rulesToSendBack.find(rule => rule.id == cursor.id);
-    if (duplicatedRule === undefined) {
-      cursor.action = "I"; // default action flag "I" (Ignore)
-      rulesToSendBack.push(cursor);
-    }
-  }
-  return rulesToSendBack;
-};
+import * as HelperFunctions from "../../Util/utility.js";
 
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
@@ -121,12 +46,12 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
           });
           dispatch(appendToCache(resultsToCache));
 
-          results = cleanResults(results, rhsExclusions, rollResults);
+          results = HelperFunctions.cleanResults(results, rhsExclusions, rollResults);
           const cleanedResults = results[0];
           const rolledRules = results[1];
 
           dispatch(setRolledRules(rolledRules));
-          dispatch(setRulesInSession(createRulesToSendBack(cleanedResults, rulesToSendBack)));
+          dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
           dispatch(setRecommendedCodes(cleanedResults));
         });
     } else {
