@@ -75,8 +75,8 @@ export default function RuleReviewer() {
         noItemsMessage="No flagged rules"
         valueName="rule"
         descriptionName="description"
-        acceptItemButton={handleAcceptRule}
-        removeItemButton={handleRejectRule}
+        acceptItemButton={{ title: "Accept Rule", onClick: handleAcceptRule }}
+        removeItemButton={{ title: "Reject Rule", onClick: handleRejectRule }}
         allowRearrage={false}
         menuOptions={[]}
         disableTitleGutters={true}

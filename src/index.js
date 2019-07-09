@@ -14,6 +14,8 @@ import AlertTemplate from "react-alert-template-basic";
 import Home from "./Pages/Home/Home";
 import Admin from "./Pages/Admin/Admin";
 import Visualization from "./Pages/Visualization/Visualization";
+import SignIn from "./Pages/SignIn/SignIn";
+import SignUp from "./Pages/SignUp/SignUp";
 
 //enabling redux dev-tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -27,6 +29,8 @@ const routing = (
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/sign-in" component={SignIn} />
+          <Route exact path="/sign-up" component={SignUp} />
           <Route path="/admin" component={Admin} />
           <Route path="/visualization" component={Visualization} />
           <Route>{notFound}</Route>

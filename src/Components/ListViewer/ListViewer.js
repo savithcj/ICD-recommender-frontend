@@ -110,10 +110,10 @@ export default React.memo(
         <IconButton
           id={id}
           edge="end"
-          aria-label="Accept"
-          title="Accept"
+          aria-label={props.acceptItemButton.title}
+          title={props.acceptItemButton.title}
           color="primary"
-          onClick={props.acceptItemButton}
+          onClick={props.acceptItemButton.onClick}
         >
           <CheckIcon />
         </IconButton>
@@ -123,10 +123,10 @@ export default React.memo(
         <IconButton
           id={id}
           edge="end"
-          aria-label="Reject"
-          title="Reject"
+          aria-label={props.removeItemButton.title}
+          title={props.removeItemButton.title}
           color="secondary"
-          onClick={props.removeItemButton}
+          onClick={props.removeItemButton.onClick}
         >
           <RejectIcon />
         </IconButton>
@@ -136,10 +136,10 @@ export default React.memo(
         <IconButton
           id={id}
           edge="end"
-          aria-label="Dislike"
-          title="Dislike"
+          aria-label={props.dislikeButton.title}
+          title={props.dislikeButton.title}
           color="secondary"
-          onClick={props.dislikeButton}
+          onClick={props.dislikeButton.onClick}
           disabled={shouldHideDislikeButton}
         >
           <ThumbDownIcon />
