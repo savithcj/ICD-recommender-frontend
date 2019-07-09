@@ -115,12 +115,12 @@ function RuleCreator(props) {
     const data = { LHSCodes, RHSCodes, ageStart, ageEnd, gender };
 
     const options = {
-      method: "PUT",
+      method: "POST",
       headers,
       body: JSON.stringify(data)
     };
 
-    const request = new Request(APIUtility.API.getAPIURL(APIUtility.MODIFY_RULE), options);
+    const request = new Request(APIUtility.API.getAPIURL(APIUtility.CREATE_RULE), options);
     const response = await fetch(request);
     const status = await response.status;
 

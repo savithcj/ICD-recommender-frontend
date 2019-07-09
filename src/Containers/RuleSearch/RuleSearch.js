@@ -166,8 +166,34 @@ function RuleSearch(props) {
     }
   ];
 
-  const adminSetRuleActive = () => {};
-  const adminSetRuleInactive = () => {};
+  const adminSetRuleActive = event => {
+    const indexToChange = parseInt(event.currentTarget.id, 10);
+    setRuleStatus(indexToChange, "True");
+  };
+
+  const adminSetRuleInactive = event => {
+    const indexToChange = parseInt(event.currentTarget.id, 10);
+    setRuleStatus(indexToChange, "False");
+  };
+
+  const setRuleStatus = (indexToChange, status) => {
+    const rule_id = searchResults[indexToChange].id;
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const data = { status, rule_id };
+    const options = {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data)
+    };
+
+    const request = new Request(APIUtility.API.getAPIURL(APIUtility.RULE_STATUS), options);
+    fetch(request).then(response => {
+      if (response.status !== 200) {
+        props.setAlertMessage({ message: "Error sending data to server", messageType: "error" });
+      }
+    });
+  };
 
   return (
     <div className="grid-block">
