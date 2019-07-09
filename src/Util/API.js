@@ -7,17 +7,19 @@ export const CHILDREN = "CHILDREN";
 export const FAMILY = "FAMILY";
 export const CODE_DESCRIPTION = "CODE_DESCRIPTION";
 export const REQUEST_RULES = "REQUEST_RULES";
+export const REQUEST_ACTIVE_RULES = "REQUEST_ACTIVE_RULES";
 export const MATCH_DESCRIPTION = "MATCH_DESCRIPTION";
 export const ANCESTORS = "ANCESTORS";
 export const CODE_AUTO_SUGGESTIONS = "CODE_AUTO_SUGGESTIONS";
 export const CODE_BLOCK_USAGE = "CODE_BLOCK_USAGE";
-export const MODIFY_RULE = "MODIFY_RULE";
+export const CREATE_RULE = "CREATE_RULE";
 export const RULE_SEARCH = "RULE_SEARCH";
 export const FLAG_RULE_FOR_REVIEW = "FLAG_RULE_FOR_REVIEW";
 export const FLAGGED_RULES = "FLAGGED_RULES";
 export const UPDATE_FLAGGED_RULE = "UPDATE_FLAGGED_RULE";
 export const DAGGER_ASTERISK = "DAGGER_ASTERISK";
 export const ENTER_LOG = "ENTER_LOG";
+export const RULE_STATUS = "RULE_STATUS";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -39,6 +41,8 @@ export class API {
         return this.urlBeginning + "codeDescription/";
       case REQUEST_RULES:
         return this.urlBeginning + "requestRules/";
+      case REQUEST_ACTIVE_RULES:
+        return this.urlBeginning + "requestRulesActive/";
       case MATCH_DESCRIPTION:
         return this.urlBeginning + "matchDescription/";
       case ANCESTORS:
@@ -47,8 +51,8 @@ export class API {
         return this.urlBeginning + "codeAutosuggestions/";
       case CODE_BLOCK_USAGE:
         return this.urlBeginning + "codeBlockUsage/";
-      case MODIFY_RULE:
-        return this.urlBeginning + "modifyRule/";
+      case CREATE_RULE:
+        return this.urlBeginning + "createRule/";
       case RULE_SEARCH:
         return this.urlBeginning + "ruleSearch/";
       case FLAG_RULE_FOR_REVIEW:
@@ -61,6 +65,8 @@ export class API {
         return this.urlBeginning + "daggerAsterisk/";
       case ENTER_LOG:
         return this.urlBeginning + "enterLog/";
+      case RULE_STATUS:
+        return this.urlBeginning + "changeRuleStatus/";
       default:
         return null;
     }

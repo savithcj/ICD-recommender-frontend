@@ -114,6 +114,7 @@ export default React.memo(
           title={props.acceptItemButton.title}
           color="primary"
           onClick={props.acceptItemButton.onClick}
+          disabled={props.shouldHideAcceptButton ? props.shouldHideAcceptButton(id) : false}
         >
           <CheckIcon />
         </IconButton>
@@ -127,6 +128,7 @@ export default React.memo(
           title={props.removeItemButton.title}
           color="secondary"
           onClick={props.removeItemButton.onClick}
+          disabled={props.shouldHideRemoveButton ? props.shouldHideRemoveButton(id) : false}
         >
           <RejectIcon />
         </IconButton>
