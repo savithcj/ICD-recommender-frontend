@@ -63,7 +63,7 @@ const selectedCodesViewer = props => {
       noItemsMessage="No codes selected"
       valueName="code"
       descriptionName="description"
-      removeItemButton={handleRemoveSelectedCode}
+      removeItemButton={{ title: "Remove code", onClick: handleRemoveSelectedCode }}
       exploreButton={handleExploreSelectedCodeButton}
       onSortEndCallback={updatedListOfSelectedCodes => {
         props.setSelectedCodes(updatedListOfSelectedCodes);
