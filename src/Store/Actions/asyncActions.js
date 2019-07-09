@@ -6,72 +6,9 @@ import { setDaggerAsterisk } from "./daggerAsterisks";
 import * as APIUtility from "../../Util/API";
 import { getStringFromListOfCodes } from "../../Util/utility";
 import { setAge, setGender } from "./ageGender";
-import { setRulesInSession } from "./session";
+import { setRulesInSession, setRolledRules } from "./session";
 import { setAlertMessage } from "./alert";
-
-/**
- * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
- * If RHS codes has been rejected prior, remove and do not show again in recommendations.
- * Secondly, using randomly rolling, check rule's recommendation score against a randomly rolled threshold,
- * and only display the rule if the score is above the threshold.
- * Thirdly, if the rhs has been shown after rolling, repeated rules with same RHS would not be rolled again.
- * Finally returns a set of cleaned rules.
- */
-const cleanResults = (ruleObjs, rhsExclusions) => {
-  //TODO: Added rolled flag, initialized to null, only roll if null
-  const cleanedResults = [];
-
-  for (let i = 0; i < ruleObjs.length; i++) {
-    let cursor = ruleObjs[i];
-
-    //////check if the rhs is in the rejected exclusion list
-    if (rhsExclusions.includes(cursor.rhs)) {
-      continue;
-    }
-
-    ////// Check for duplicate RHS
-    let duplicateIndex = cleanedResults.findIndex(item => item.rhs === cursor.rhs);
-    // console.log(cursor.rhs + ": duplicated RHS index=" + duplicateIndex);
-    if (duplicateIndex >= 0) {
-      // if duplicate is found
-      if (cleanedResults[duplicateIndex].score < ruleObjs[i].score) {
-        // keep the duplicate with higher score
-        cleanedResults[duplicateIndex] = ruleObjs[i];
-      }
-      continue;
-    }
-
-    ////// Check rule score against randomly rolled score threshold
-    const threshold = Math.random();
-    if (threshold > cursor.score) {
-      // console.log(
-      //   "Omitted rule: id=" + cursor.id + ", RHS=" + cursor.rhs + ", threshold=" + threshold + ", score=" + cursor.score
-      // );
-      continue;
-    }
-
-    cleanedResults.push(cursor);
-  }
-
-  return cleanedResults;
-};
-
-/**
- * Helper method that creates a list of rules with user feedback (action) to be sent back to server.
- * Loops through every rule currently being recommended, append to list of rules to be sent back.
- * Each rule will have "action" attribute set to default "I" (for ignored)
- */
-const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
-  for (let i = 0; i < recommendedRules.length; i++) {
-    let cursor = recommendedRules[i];
-    let duplicatedRule = rulesToSendBack.find(rule => rule.id == cursor.id);
-    if (duplicatedRule === undefined) {
-      cursor.action = "I";
-      rulesToSendBack.push(cursor);
-    }
-  }
-  return rulesToSendBack;
-};
+import * as HelperFunctions from "../../Util/utility.js";
 
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
@@ -85,6 +22,7 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 
     const rhsExclusions = getState().session.rhsExclusions;
     const rulesToSendBack = getState().session.rulesToSendBack;
+    const rollResults = getState().session.rulesRolled;
 
     if (stringOfCodes !== "") {
       const url =
@@ -107,9 +45,14 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
             return { code: recommendedObj.rhs, description: recommendedObj.description };
           });
           dispatch(appendToCache(resultsToCache));
-          results = cleanResults(results, rhsExclusions);
-          dispatch(setRulesInSession(createRulesToSendBack(results, rulesToSendBack)));
-          dispatch(setRecommendedCodes(results));
+
+          results = HelperFunctions.cleanResults(results, rhsExclusions, rollResults);
+          const cleanedResults = results[0];
+          const rolledRules = results[1];
+
+          dispatch(setRolledRules(rolledRules));
+          dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
+          dispatch(setRecommendedCodes(cleanedResults));
         });
     } else {
       dispatch(setRecommendedCodes(null));
