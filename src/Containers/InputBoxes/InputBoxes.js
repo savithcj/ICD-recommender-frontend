@@ -14,23 +14,26 @@ const inputBoxes = props => {
   };
 
   return (
-    <CodeInputField
-      id_code="input1"
-      // id_age="input2"
-      // id_gender="input3"
-      placeholder_code="Search for a code"
-      placeholder_age="Age"
-      placeholder_gender="Gender"
-      selectCode={handleCodeSelection}
-      selectAge={handleAgeSelection}
-      // selectGender={handleGenderSelection} TODO:implement this
-      codeCache={props.cachedCodeWithDescription}
-      appendCodeToCache={props.appendCodeToCache}
-      autoClearCode={true}
-      width_code="100%"
-      // width_age="10%"
-      // width_gender="15%"
-    />
+    <div className="home_input_fields">
+      <div className="home_code_input">
+        <CodeInputField
+          id_code="input1"
+          placeholder_code="Search for a code"
+          placeholder_age="Age"
+          placeholder_gender="Gender"
+          selectCode={handleCodeSelection}
+          codeCache={props.cachedCodeWithDescription}
+          appendCodeToCache={props.appendCodeToCache}
+          autoClearCode={true}
+        />
+      </div>
+      <div className="home_age_input_div">
+        <input type="text" name="Age" placeholder="age" id="home_age_input" />
+      </div>
+      <div className="home_gender_input_div">
+        <input type="text" name="Gender" placeholder="gender" id="home_gender_input" />
+      </div>
+    </div>
   );
 };
 

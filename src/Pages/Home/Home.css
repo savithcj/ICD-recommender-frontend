@@ -40,3 +40,46 @@
   box-sizing: border-box;
   border: 3px solid #61dafb;
 }
+
+.home_input_fields {
+  display: table;
+  width: 100%;
+}
+
+.home_code_input {
+  width: auto;
+}
+.home_age_input_div {
+  display: table-cell;
+  width: 80px;
+}
+
+#home_age_input {
+  width: 70%;
+  left: 5%;
+  height: 30px;
+  padding: 10px 10px 10px 10px;
+  font-family: "Roboto", sans-serif;
+  border: 1px solid #aaa;
+  font-weight: 300;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.home_gender_input_div {
+  display: table-cell;
+  width: 80px;
+  padding-right: 10px;
+}
+
+#home_gender_input {
+  width: 70%;
+  left: 5%;
+  height: 30px;
+  padding: 10px 10px 10px 10px;
+  font-family: "Roboto", sans-serif;
+  border: 1px solid #aaa;
+  font-weight: 300;
+  font-size: 16px;
+  border-radius: 4px;
+}
