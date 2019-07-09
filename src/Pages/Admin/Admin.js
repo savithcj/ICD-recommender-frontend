@@ -90,7 +90,7 @@ function Admin(props) {
 
         <div key="2" className={highlightEditDiv}>
           <div className="cardContainer">
-            <h3>Search for Rule</h3>
+            <h3>Search for Rules</h3>
             <RuleSearch />
           </div>
         </div>

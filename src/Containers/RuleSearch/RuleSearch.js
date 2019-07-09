@@ -208,6 +208,13 @@ function RuleSearch(props) {
     return searchResults[index].active ? true : false;
   };
 
+  const displayInactiveRules = () => {
+    const request = new Request(APIUtility.API.getAPIURL(APIUtility.INACTIVE_RULES));
+    fetch(request)
+      .then(response => response.json())
+      .then(data => parseSearchResults(data));
+  };
+
   return (
     <div className="grid-block">
       <div className="ruleSideBySideContainer">
@@ -276,6 +283,15 @@ function RuleSearch(props) {
           size="large"
         >
           Search
+        </Button>
+        <Button
+          variant="contained"
+          color="default"
+          className={classes.searchButton}
+          onClick={displayInactiveRules}
+          size="large"
+        >
+          Display Inactive Rules
         </Button>
       </div>
       <div>
