@@ -169,7 +169,7 @@ function RuleCreator(props) {
               noItemsMessage="No codes selected"
               valueName="code"
               descriptionName="description"
-              removeItemButton={handleRemoveLHSCode}
+              removeItemButton={{ title: "Remove code", onClick: handleRemoveLHSCode }}
               onSortEndCallback={updatedListOfSelectedCodes => {
                 setLHS({ updatedListOfSelectedCodes });
               }}
@@ -199,7 +199,7 @@ function RuleCreator(props) {
               noItemsMessage="No codes selected"
               valueName="code"
               descriptionName="description"
-              removeItemButton={handleRemoveRHSCode}
+              removeItemButton={{ title: "Remove code", onClick: handleRemoveRHSCode }}
               onSortEndCallback={updatedListOfSelectedCodes => {
                 setRHS({ updatedListOfSelectedCodes });
               }}

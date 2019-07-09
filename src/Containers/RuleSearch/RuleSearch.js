@@ -108,11 +108,9 @@ function RuleSearch(props) {
    * @param {*} data
    */
   const parseSearchResults = data => {
-    console.log(data);
     let formattedResults = [];
     if (data.length > 0) {
       data.forEach(item => {
-        // console.log(item);
         formattedResults.push({
           id: item.id,
           code: item.lhs + " -> " + item.rhs,
@@ -131,7 +129,8 @@ function RuleSearch(props) {
             item.min_age +
             "-" +
             item.max_age +
-            ")"
+            ")",
+          active: item.active
         });
       });
     }
@@ -169,11 +168,17 @@ function RuleSearch(props) {
   const adminSetRuleActive = event => {
     const indexToChange = parseInt(event.currentTarget.id, 10);
     setRuleStatus(indexToChange, "True");
+    let searchResultsNew = Array.from(searchResults);
+    searchResultsNew[indexToChange].active = true;
+    setSearchResults(searchResultsNew);
   };
 
   const adminSetRuleInactive = event => {
     const indexToChange = parseInt(event.currentTarget.id, 10);
     setRuleStatus(indexToChange, "False");
+    let searchResultsNew = Array.from(searchResults);
+    searchResultsNew[indexToChange].active = false;
+    setSearchResults(searchResultsNew);
   };
 
   const setRuleStatus = (indexToChange, status) => {
@@ -193,6 +198,14 @@ function RuleSearch(props) {
         props.setAlertMessage({ message: "Error sending data to server", messageType: "error" });
       }
     });
+  };
+
+  const shouldHideRemoveButton = index => {
+    return searchResults[index].active ? false : true;
+  };
+
+  const shouldHideAcceptButton = index => {
+    return searchResults[index].active ? true : false;
   };
 
   return (
@@ -217,7 +230,7 @@ function RuleSearch(props) {
               noItemsMessage="No codes selected"
               valueName="code"
               descriptionName="description"
-              removeItemButton={handleRemoveLHSCode}
+              removeItemButton={{ title: "Remove code", onClick: handleRemoveLHSCode }}
               allowRearrage={false}
               menuOptions={listComponentMenuItemsLHS}
               disableTitleGutters={true}
@@ -245,7 +258,7 @@ function RuleSearch(props) {
               noItemsMessage="No codes selected"
               valueName="code"
               descriptionName="description"
-              removeItemButton={handleRemoveRHSCode}
+              removeItemButton={{ title: "Remove code", onClick: handleRemoveRHSCode }}
               allowRearrage={false}
               menuOptions={[]}
               disableTitleGutters={true}
@@ -272,8 +285,10 @@ function RuleSearch(props) {
           noItemsMessage="No results"
           valueName="code"
           descriptionName="description"
-          acceptItemButton={adminSetRuleActive}
-          removeItemButton={adminSetRuleInactive}
+          acceptItemButton={{ title: "Set status to active", onClick: adminSetRuleActive }}
+          removeItemButton={{ title: "Set status to inactive", onClick: adminSetRuleInactive }}
+          shouldHideRemoveButton={shouldHideRemoveButton}
+          shouldHideAcceptButton={shouldHideAcceptButton}
           allowRearrage={false}
           menuOptions={listComponentMenuItemsResults}
           disableTitleGutters={true}
