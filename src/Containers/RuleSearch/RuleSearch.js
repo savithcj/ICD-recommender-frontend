@@ -277,6 +277,15 @@ function RuleSearch(props) {
         >
           Search
         </Button>
+        <Button
+          variant="contained"
+          color="default"
+          className={classes.searchButton}
+          onClick={searchForRule}
+          size="large"
+        >
+          Display Inactive Rules
+        </Button>
       </div>
       <div>
         <ListViewer
