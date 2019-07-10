@@ -8,9 +8,24 @@ const inputBoxes = props => {
     props.addSelectedCode(enteredCode);
   };
 
-  const handleAgeSelection = enteredAge => {
-    props.setAge(enteredAge);
+  const handleAgeSelection = () => {
+    const age = document.getElementById("home_age_input").value;
+    props.setAge(age);
     props.getRecommendedCodes(props.selectedCodes);
+  };
+
+  const cleanAgeInput = str => {
+    //TODO: Implement input error checking
+  };
+
+  const handleGenderSelection = () => {
+    const gender = document.getElementById("home_gender_input").value;
+
+    if (gender == "Female" || gender == "Male" || gender == "Other") {
+      props.setGender(gender);
+    } else {
+      // invalid gender selection
+    }
   };
 
   return (
@@ -28,10 +43,29 @@ const inputBoxes = props => {
         />
       </div>
       <div className="home_age_input_div">
-        <input type="text" name="Age" placeholder="age" id="home_age_input" />
+        <input
+          type="text"
+          name="Age"
+          placeholder="age"
+          id="home_age_input"
+          onChange={handleAgeSelection}
+          value={props.age ? props.age : ""}
+        />
       </div>
       <div className="home_gender_input_div">
-        <input type="text" name="Gender" placeholder="gender" id="home_gender_input" />
+        <select
+          id="home_gender_input"
+          onChange={handleGenderSelection}
+          defaultValue={"NA"}
+          value={props.gender ? props.gender : "NA"}
+        >
+          <option disabled value="NA">
+            Gender
+          </option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
     </div>
   );
@@ -40,7 +74,9 @@ const inputBoxes = props => {
 const mapStateToProps = state => {
   return {
     selectedCodes: state.selected.selectedCodes,
-    cachedCodeWithDescription: state.cached.cachedCodeWithDescription
+    cachedCodeWithDescription: state.cached.cachedCodeWithDescription,
+    gender: state.ageGender.selectedGender,
+    age: state.ageGender.selectedAge
   };
 };
 
@@ -50,7 +86,8 @@ const mapDispatchToProps = dispatch => {
     addSelectedCode: codeToAdd => dispatch(actions.addSelectedCodeAndUpdateRecommendations(codeToAdd)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
-    setAge: ageValue => dispatch(actions.setAge(ageValue))
+    setAge: ageValue => dispatch(actions.setAge(ageValue)),
+    setGender: genderValue => dispatch(actions.setGender(genderValue))
   };
 };
 

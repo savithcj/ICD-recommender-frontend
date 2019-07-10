@@ -180,5 +180,7 @@ export const resetSession = () => {
     dispatch(setRolledRules([]));
     dispatch(setRulesInSession([]));
     dispatch(setRHSExclusion([]));
+    dispatch(setAge(null));
+    dispatch(setGender(null));
   };
 };
