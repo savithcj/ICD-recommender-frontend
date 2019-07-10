@@ -71,9 +71,9 @@ const daggerAsterisksViewer = props => {
       nullItemsMessage="Add codes to see dagger/asterisks"
       valueName="combo"
       descriptionName="description"
+      exploreButton={{ title: "Explore on tree", onClick: handleExploreDaggerAsterisk }}
       acceptItemButton={{ title: "Accept dagger/asterisk", onClick: handleAcceptDaggerAsteriskCode }}
       removeItemButton={{ title: "Reject dagger/asterisk", onClick: handleRemoveDaggerAsteriskCode }}
-      exploreButton={handleExploreDaggerAsterisk}
       allowRearrage={false}
       menuOptions={componentMenuItems}
     />

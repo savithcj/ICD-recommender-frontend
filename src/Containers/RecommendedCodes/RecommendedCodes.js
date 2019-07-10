@@ -72,11 +72,15 @@ const recommendedCodesViewer = props => {
       nullItemsMessage="Select codes to get recommendations"
       valueName="rhs"
       descriptionName="descriptionWithScore"
+      exploreButton={{ title: "Explore on tree", onClick: handleExploreButton }}
       acceptItemButton={{ title: "Accept recommendation", onClick: handleAcceptRecommendedCode }}
       removeItemButton={{ title: "Reject recommendation", onClick: handleRemoveRecommendedCode }}
-      dislikeButton={{ title: "Flag recommendation for review", onClick: userFlagRuleForReview }}
-      exploreButton={handleExploreButton}
-      allowRearrage={false}
+      dislikeButton={{
+        title: "Flag recommendation for review",
+        onClick: userFlagRuleForReview,
+        // the dislike button should be hidden if the admin has reviewed and accepted a rule
+        shouldDisable: index => props.recommendedCodes[index].review_status === 2
+      }}
       menuOptions={componentMenuItems}
       disableDislikeButtonField="shouldDisableDislikeButton"
       disableTitleGutters={false}

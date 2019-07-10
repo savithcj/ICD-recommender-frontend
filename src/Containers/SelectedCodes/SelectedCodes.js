@@ -65,15 +65,14 @@ const selectedCodesViewer = props => {
       noItemsMessage="No codes selected"
       valueName="code"
       descriptionName="description"
+      exploreButton={{ title: "Explore on tree", onClick: handleExploreSelectedCodeButton }}
       removeItemButton={{ title: "Remove code", onClick: handleRemoveSelectedCode }}
-      exploreButton={handleExploreSelectedCodeButton}
       onSortEndCallback={updatedListOfSelectedCodes => {
         props.setSelectedCodes(updatedListOfSelectedCodes);
       }}
       allowRearrage={props.selectedCodes.length > 1}
       menuOptions={selectedCodesComponentMenuItems}
       button={props.selectedCodes.length > 0 ? acceptSelectedCodesButton : null}
-      disableTitleGutters={false}
     />
   );
 };
