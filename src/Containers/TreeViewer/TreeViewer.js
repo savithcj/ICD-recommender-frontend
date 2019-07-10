@@ -139,21 +139,24 @@ class TreeViewer extends Component {
 
   // Changes the tree to the specified code.
   // Used by App when a user clicks on the explore button from a code in a ListViewer
-  async changeTree(code) {
+  changeTree(code) {
     // Transitions the current tree out
-    d3.select("div." + this.treeClass)
-      .transition()
-      .duration(0.5 * this.duration)
-      .style("opacity", 1e-6);
+    this.getDataFromAPI(code).then(async () => {
+      if (this.data.self) {
+        d3.select("div." + this.treeClass)
+          .transition()
+          .duration(0.5 * this.duration)
+          .style("opacity", 1e-6);
 
-    await this.sleep(0.5 * this.duration); // Wait for current to disappear
-    // Transition new tree in
-    this.getDataFromAPI(code).then(() => {
-      this.drawInitialTree();
-      d3.select("div." + this.treeClass)
-        .transition()
-        .duration(0.5 * this.duration)
-        .style("opacity", 1);
+        await this.sleep(0.5 * this.duration); // Wait for current to disappear
+        // Transition new tree in
+
+        this.drawInitialTree();
+        d3.select("div." + this.treeClass)
+          .transition()
+          .duration(0.5 * this.duration)
+          .style("opacity", 1);
+      }
     });
   }
 

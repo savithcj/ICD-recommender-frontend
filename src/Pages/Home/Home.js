@@ -68,6 +68,7 @@ const Home = props => {
   }
 
   function handleTreeChange() {
+    console.log("in handle tree change");
     if (treeViewDiv.current !== null) {
       treeViewDiv.current.handleResize();
     }
