@@ -63,12 +63,10 @@ const Home = props => {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    console.log("in onlayoutchange");
     saveToLS("homeLayouts", "layouts", layouts);
   }
 
   function handleTreeChange() {
-    console.log("in handle tree change");
     if (treeViewDiv.current !== null) {
       treeViewDiv.current.handleResize();
     }

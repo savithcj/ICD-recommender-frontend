@@ -79,11 +79,22 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
           let promiseList = [];
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
+            if (result.combo.includes("-")) {
+              result.combo += " -- Select a sub-code";
+            }
             let url2 = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION);
             if (codeObjArray.find(codeObject => codeObject.code === result.dagger) === undefined) {
-              url2 += result.dagger + "/?format=json";
+              if (result.dagger.indexOf("-") >= 0) {
+                url2 += result.dagger.slice(0, -1) + "/?format=json";
+              } else {
+                url2 += result.dagger + "/?format=json";
+              }
             } else {
-              url2 += result.asterisk + "/?format=json";
+              if (result.asterisk.indexOf("-") >= 0) {
+                url2 += result.asterisk.slice(0, -1) + "/?format=json";
+              } else {
+                url2 += result.asterisk + "/?format=json";
+              }
             }
             promiseList.push(
               fetch(url2)
