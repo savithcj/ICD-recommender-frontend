@@ -41,6 +41,7 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
             ruleObj.descriptionWithScore = ruleObj.description + " ~ Score: " + (ruleObj.score * 100).toFixed(1);
             ruleObj.rule = ruleObj.lhs + " -> " + ruleObj.rhs;
             //dislike button should be disabled if an admin has reviewed and accepted a rule
+            //TODO:remove this
             ruleObj.shouldDisableDislikeButton = ruleObj["review_status"] === 2;
           });
           //sort the remaining results in descending order of score

@@ -154,7 +154,7 @@ function ListViewer(props) {
     </span>
   ));
 
-  //When SortableItem component gets within the SortableContainer, it first creates a component as described
+  //When SortableItem component gets used within the SortableContainer, it first creates a component as described
   //within the arrow function passed to the sortableElement function below. Once this component is created,
   //the sortable functionality is added and returned as a new sortable component by the HOC .
   const SortableItem = sortableElement(({ id, value, description }) => {
