@@ -32,7 +32,7 @@ export default function RuleReviewer() {
     const rules = [...flaggedRules];
 
     //ListViewer will display a loading indicator while the API promise is being fullfilled
-    setFlaggedRules("LOADING");
+    setFlaggedRules(true);
 
     fetch(url, { method: "PUT" }).then(response => {
       console.log(response.status);
@@ -53,7 +53,7 @@ export default function RuleReviewer() {
 
     const rules = [...flaggedRules];
 
-    setFlaggedRules("LOADING");
+    setFlaggedRules(true);
 
     fetch(url, { method: "PUT" }).then(response => {
       console.log(response.status);
