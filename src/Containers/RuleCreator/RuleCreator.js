@@ -3,6 +3,8 @@ import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import * as APIUtility from "../../Util/API";
 import Button from "@material-ui/core/Button";
+import { connect } from "react-redux";
+import * as actions from "../../Store/Actions/index";
 import { makeStyles } from "@material-ui/core/styles";
 
 import "./RuleCreator.css";
@@ -112,24 +114,34 @@ function RuleCreator(props) {
     const LHSCodes = LHS.map(codeObj => codeObj.code);
     const RHSCodes = RHS.map(codeObj => codeObj.code);
 
-    const data = { LHSCodes, RHSCodes, ageStart, ageEnd, gender };
+    if (LHSCodes.length < 1) {
+      props.setAlertMessage({ message: "There must be at least one code in the LHS", messageType: "error" });
+    } else if (RHSCodes.length !== 1) {
+      props.setAlertMessage({ message: "There must be exactly one code in the RHS", messageType: "error" });
+    } else if (LHSCodes.indexOf(RHSCodes[0]) >= 0) {
+      console.log("rhs in lhs");
+      props.setAlertMessage({ message: "The rule can't have the same code in the LHS and RHS", messageType: "error" });
+    } else {
+      const data = { LHSCodes, RHSCodes, ageStart, ageEnd, gender };
 
-    const options = {
-      method: "POST",
-      headers,
-      body: JSON.stringify(data)
-    };
+      const options = {
+        method: "POST",
+        headers,
+        body: JSON.stringify(data)
+      };
 
-    const request = new Request(APIUtility.API.getAPIURL(APIUtility.CREATE_RULE), options);
-    const response = await fetch(request);
-    const status = await response.status;
+      const request = new Request(APIUtility.API.getAPIURL(APIUtility.CREATE_RULE), options);
+      const response = await fetch(request);
+      const status = await response.status;
 
-    if (status === 200 || status === 201) {
-      setLHS([]);
-      setRHS([]);
-      setAgeStart(0);
-      setAgeEnd(150);
-      setGender();
+      if (status === 200 || status === 201) {
+        props.setAlertMessage({ message: "Rule successfully created", messageType: "success" });
+        setLHS([]);
+        setRHS([]);
+        setAgeStart(0);
+        setAgeEnd(150);
+        setGender();
+      }
     }
   };
 
@@ -230,4 +242,13 @@ function RuleCreator(props) {
   );
 }
 
-export default RuleCreator;
+const mapDispatchToProps = dispatch => {
+  return {
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(RuleCreator);
