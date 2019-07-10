@@ -75,22 +75,65 @@ const useStyles = makeStyles(() => ({
 }));
 
 /**
- * Component used to display the contents of a array of objects.
+ * Component used to display the contents of an array of objects.
  * Displays the objects as a sortable list of cards
  */
-// Component Documentation
+// ListViewer Documentation
+//--------------------------------------------------------------------------------------------------------------------
+//
 // This component utilizes the React HOC concept multiple times; https://reactjs.org/docs/higher-order-components.html
 // HOC is a function that takes a component and returns a new component.
 //
 // Main 3rd party components used:
+//--------------------------------
+//
 // -> https://github.com/clauderic/react-sortable-hoc
-//  * -> https://material-ui.com/components/lists/
-//  * -> https://material-ui.com/components/cards/
-//  *
-//  * Props:
-//  * -> title: use to specify a title to be displayed on the top left of the component
-//  * -> disableTitleGutters: passed down to the MaterialUI List component composed in this component.
-//  *    Removes additional padding around the title; refer to the MaterialUI List API docs for a detailed explanation
+// -> https://material-ui.com/components/lists/
+// -> https://material-ui.com/components/cards/
+//
+// Props:
+//-------
+//
+// -> title || string : used to specify a title to be displayed on the top left of the component.
+// -> disableTitleGutters || boolean : passed down to the MaterialUI List component composed in this component.
+//                                     Removes additional padding around the title; refer to the MaterialUI List
+//                                     API docs for a detailed explanation.
+// -> nullItemsMessage || string : message to display if the items prop is null.
+// -> noItemsMessage || string : message to display if the items prop is an array of length 0
+// -> items || multiple values : the component accepts any of the following values
+//                               -> undefined: displays the following message: "No items to display"
+//                               -> null: displays the nullItemsMessage
+//                               -> array of length 0: displays the noItemsMessage
+//                               -> array of objects: display a list of sortable cards with each card representing an object in the array
+// -> valueName || string : the property of the item object that contains the name to be displayed on the card
+// -> descriptionName || string : the property of the item object that contains the description displayed on the card
+// -> exploreButton || object : if this prop is defined, adds a button to the card which when clicked performs an
+//                              action specified within the passed object. Has a explore icon
+//                              The passed object should have the following properties:
+//                              -> title || string: html title of the button
+//                              -> onClick || function: action to perform when the button is pressed
+//                              -> shouldDisable || function: a function that returns true or false; used to
+//                                                            grey out the button
+// -> acceptButton || object : if this prop is defined, adds a button to the card which when clicked performs an
+//                              action specified within the passed object. Has a check icon
+//                              The passed object has the same properties as the explore button
+// -> rejectButton || object : if this prop is defined, adds a button to the card which when clicked performs an
+//                              action specified within the passed object. Has a X icon
+//                              The passed object has the same properties as the explore and accept buttons
+// -> button || object : Adds a button to the top right of the component with the text specified by the passed object.
+//                       The passed object should have the following properties:
+//                       -> menuItemOnClick: action to perform when the button is clicked
+//                       -> menuItemText: text to display on button
+// -> menuOptions || array : this prop is passed down to the the Menu component composed within this component.
+//                           Needs to be an array of objects with each object containing two properties:
+//                           -> menuItemOnClick: action to perform when the menu item is clicked
+//                           -> menuItemText: text to display for the menu
+// -> allowRearrage || boolean : if true, adds an item to the menuOptions prop to allow enabling sortable mode
+// -> onSortEndCallback || function : this prop is required if allowRearrage is true. This function is called
+//                                    the SortableContainer when a user has finished rearranging items in the
+//                                    container
+//
+//--------------------------------------------------------------------------------------------------------------------
 function ListViewer(props) {
   //Binding the styles defined earlier
   const classes = useStyles();
@@ -277,7 +320,7 @@ function ListViewer(props) {
       //were created by the createItems function. Otherwise, this will be a list with a single
       //item corresponding to a message determined by the value of the items prop
       <List dense={true} className={classes.root}>
-        <ListSubheader className={classes.listTitle} disableSticky={false} disableGutters={props.disableTitleGutters}>
+        <ListSubheader className={classes.listTitle} disableGutters={props.disableTitleGutters}>
           {props.title}
           {showRearrangeConfirmationOrMenu}
           {showButton}
