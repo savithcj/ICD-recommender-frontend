@@ -16,32 +16,36 @@ const daggerAsterisksViewer = props => {
   const handleAcceptDaggerAsteriskCode = event => {
     const acceptedCodeIndex = parseInt(event.currentTarget.id, 10);
     const acceptedCodeObject = props.suggestedDaggerAsterisks[acceptedCodeIndex];
-    const codes = Array.from(props.selectedCodes);
-    let daggerObject = {};
-    daggerObject.code = acceptedCodeObject.dagger;
-    let asteriskObject = {};
-    asteriskObject.code = acceptedCodeObject.asterisk;
-    const urlDagger = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + daggerObject.code + "/?format=json";
-    fetch(urlDagger)
-      .then(response => response.json())
-      .then(result => {
-        daggerObject.description = result.description;
-        const urlAsterisk =
-          APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + asteriskObject.code + "/?format=json";
-        fetch(urlAsterisk)
-          .then(response => response.json())
-          .then(result => {
-            asteriskObject.description = result.description;
-          })
-          .then(() => {
-            props.removeDaggerAsteriskCode(acceptedCodeIndex);
-            if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
-              addSelectedDaggerAsterisk(daggerObject);
-            } else {
-              addSelectedDaggerAsterisk(asteriskObject);
-            }
-          });
-      });
+    if (acceptedCodeObject.combo.indexOf("-") >= 0) {
+      props.setAlertMessage({ message: "Select a sub-code", messageType: "error" });
+    } else {
+      const codes = Array.from(props.selectedCodes);
+      let daggerObject = {};
+      daggerObject.code = acceptedCodeObject.dagger;
+      let asteriskObject = {};
+      asteriskObject.code = acceptedCodeObject.asterisk;
+      const urlDagger = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + daggerObject.code + "/?format=json";
+      fetch(urlDagger)
+        .then(response => response.json())
+        .then(result => {
+          daggerObject.description = result.description;
+          const urlAsterisk =
+            APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + asteriskObject.code + "/?format=json";
+          fetch(urlAsterisk)
+            .then(response => response.json())
+            .then(result => {
+              asteriskObject.description = result.description;
+            })
+            .then(() => {
+              props.removeDaggerAsteriskCode(acceptedCodeIndex);
+              if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
+                addSelectedDaggerAsterisk(daggerObject);
+              } else {
+                addSelectedDaggerAsterisk(asteriskObject);
+              }
+            });
+        });
+    }
   };
 
   const handleRemoveDaggerAsteriskCode = event => {
@@ -89,6 +93,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
     setSelectedCodes: valueToSet => dispatch(actions.setSelectedCodes(valueToSet)),
     setDaggerAsterisk: valueToSet => dispatch(actions.setDaggerAsterisk(valueToSet)),
     removeDaggerAsteriskCode: removeCodeIndex => dispatch(actions.removeDaggerAsterisk(removeCodeIndex)),
