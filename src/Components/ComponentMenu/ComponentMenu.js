@@ -15,7 +15,7 @@ export default function ComponentMenu(props) {
   }
 
   function handleClose(functionToComplete) {
-    if (functionToComplete != null || functionToComplete != undefined) {
+    if (functionToComplete !== null || functionToComplete !== undefined) {
       functionToComplete();
     }
     setAnchorEl(null);

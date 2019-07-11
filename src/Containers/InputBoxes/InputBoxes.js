@@ -10,18 +10,19 @@ const inputBoxes = props => {
 
   const handleAgeSelection = () => {
     const age = document.getElementById("home_age_input").value;
-    props.setAge(age);
+    props.setAge(cleanAgeInput(age));
     props.getRecommendedCodes(props.selectedCodes);
   };
 
   const cleanAgeInput = str => {
     //TODO: Implement input error checking
+    return str;
   };
 
   const handleGenderSelection = () => {
     const gender = document.getElementById("home_gender_input").value;
 
-    if (gender == "Female" || gender == "Male" || gender == "Other") {
+    if (gender === "Female" || gender === "Male" || gender === "Other") {
       props.setGender(gender);
     } else {
       // invalid gender selection
@@ -53,12 +54,7 @@ const inputBoxes = props => {
         />
       </div>
       <div className="home_gender_input_div">
-        <select
-          id="home_gender_input"
-          onChange={handleGenderSelection}
-          defaultValue={"NA"}
-          value={props.gender ? props.gender : "NA"}
-        >
+        <select id="home_gender_input" onChange={handleGenderSelection} value={props.gender ? props.gender : "NA"}>
           <option disabled value="NA">
             Gender
           </option>

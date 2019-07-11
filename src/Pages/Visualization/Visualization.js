@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import ChordDiagram from "../../Containers/ChordDiagram/ChordDiagram";
-import BarChart from "../../Containers/BarChart/BarChart";
+// import BarChart from "../../Containers/BarChart/BarChart";
 import SankeyDiagram from "../../Containers/SankeyDiagram/SankeyDiagram";
 import RulesTable from "../../Containers/RulesTable/RulesTable";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
@@ -11,7 +11,7 @@ import { defaultLayouts } from "./layouts";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("visualLayouts", "layouts") || defaultLayouts;
 const chordDiagramDiv = React.createRef();
-const barChartDiv = React.createRef();
+// const barChartDiv = React.createRef();
 const SankeyDiagramDiv = React.createRef();
 
 function Visualization(props) {
