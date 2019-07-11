@@ -29,6 +29,10 @@ export default function SortableTable() {
       accessor: "rule"
     },
     {
+      Header: "Gender",
+      accessor: "gender"
+    },
+    {
       Header: "Suggested",
       accessor: "num_suggested"
     },
