@@ -34,12 +34,12 @@ const daggerAsterisksViewer = props => {
             asteriskObject.description = result.description;
           })
           .then(() => {
+            props.removeDaggerAsteriskCode(acceptedCodeIndex);
             if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
               addSelectedDaggerAsterisk(daggerObject);
             } else {
               addSelectedDaggerAsterisk(asteriskObject);
             }
-            props.removeDaggerAsteriskCode(acceptedCodeIndex);
           });
       });
   };
