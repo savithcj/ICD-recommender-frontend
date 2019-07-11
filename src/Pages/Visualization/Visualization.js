@@ -69,18 +69,18 @@ function Visualization(props) {
         isResizable={isLayoutModifiable}
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
-        <div key="0" className={highlightEditDiv}>
+        <div key="chord" className={highlightEditDiv}>
           <ChordDiagram id="101" ref={chordDiagramDiv} onChange={handleChordChange()} />{" "}
         </div>
-        <div key="1" className={highlightEditDiv}>
+        <div key="sankey" className={highlightEditDiv}>
           <SankeyDiagram id="100" ref={SankeyDiagramDiv} onChange={handleSankeyChange()} />{" "}
         </div>
 
-        <div key="2" id="barDiv" className={highlightEditDiv}>
+        <div key="rules" className={highlightEditDiv}>
           <RulesTable />{" "}
         </div>
-        <div key="3" id="barDiv" className={highlightEditDiv}>
-          <DADStats id="100" />{" "}
+        <div key="dad" className={highlightEditDiv}>
+          <DADStats />{" "}
         </div>
       </ResponsiveReactGridLayout>
     </div>
