@@ -21,6 +21,7 @@ export const DAGGER_ASTERISK = "DAGGER_ASTERISK";
 export const ENTER_LOG = "ENTER_LOG";
 export const RULE_STATUS = "RULE_STATUS";
 export const INACTIVE_RULES = "INACTIVE_RULES";
+export const STATS = "STATS";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -70,6 +71,8 @@ export class API {
         return this.urlBeginning + "changeRuleStatus/";
       case INACTIVE_RULES:
         return this.urlBeginning + "inactiveRules/";
+      case STATS:
+        return this.urlBeginning + "stats/";
       default:
         return null;
     }
