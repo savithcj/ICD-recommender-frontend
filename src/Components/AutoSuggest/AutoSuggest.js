@@ -237,6 +237,9 @@ class AutoSuggest extends Autosuggest {
 
             break;
           }
+
+          default:
+            break;
         }
 
         onKeyDown && onKeyDown(event);

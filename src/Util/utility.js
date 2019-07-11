@@ -90,7 +90,7 @@ export const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
 export const createRulesToSendBack = (recommendedRules, rulesToSendBack) => {
   for (let i = 0; i < recommendedRules.length; i++) {
     let cursor = recommendedRules[i];
-    let duplicatedRule = rulesToSendBack.find(rule => rule.id == cursor.id);
+    let duplicatedRule = rulesToSendBack.find(rule => rule.id === cursor.id);
     if (duplicatedRule === undefined) {
       cursor.action = "I"; // default action flag "I" (Ignore)
       rulesToSendBack.push(cursor);

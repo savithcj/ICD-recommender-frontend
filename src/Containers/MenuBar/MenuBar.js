@@ -50,12 +50,6 @@ function ButtonAppBar(props) {
     setAnchorEl(null);
   }
 
-  function handleAdminButton(event) {
-    //TODO: Implementation
-    console.log("Admin button pressed in menu");
-    setAnchorEl(null);
-  }
-
   function handleAboutButton(event) {
     //TODO: Implementation
     console.log("About button pressed in menu");

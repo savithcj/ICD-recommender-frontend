@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function RuleCreator(props) {
-  const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
+  // const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
   const [cachedCodeWithDescription, setCachedCodes] = useState([]);
   const [LHS, setLHS] = useState([]);
   const [RHS, setRHS] = useState([]);

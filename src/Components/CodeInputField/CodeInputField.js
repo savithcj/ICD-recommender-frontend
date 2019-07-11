@@ -68,7 +68,7 @@ class CodeInputField extends React.Component {
       this.props.selectCode(suggestion.code);
     }
     if (this.props.autoClearCode !== undefined) {
-      if (this.props.autoClearCode == true) {
+      if (this.props.autoClearCode === true) {
         this.setState({
           value: "",
           // age: "",
@@ -294,7 +294,6 @@ class CodeInputField extends React.Component {
           getSuggestionValue={this.getAgeSuggestionValue}
           onSuggestionSelected={this.onAgeSuggestionSelected}
           renderSuggestion={this.renderAgeSuggestion}
-          onSuggestionSelected={this.onAgeSuggestionSelected}
           inputProps={ageInputProps}
           highlightFirstSuggestion={true}
         />
@@ -314,7 +313,6 @@ class CodeInputField extends React.Component {
           getSuggestionValue={this.getGenderSuggestionValue}
           onSuggestionSelected={this.onGenderSuggestionSelected}
           renderSuggestion={this.renderGenderSuggestion}
-          onSuggestionSelected={this.onGenderSuggestionSelected}
           inputProps={genderInputProps}
           highlightFirstSuggestion={true}
         />
