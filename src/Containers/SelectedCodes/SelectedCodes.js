@@ -66,8 +66,8 @@ const selectedCodesViewer = props => {
 
   const acceptSelectedCodes = () => {
     //TODO:Make API call to update code usage during a session
-    resetSelectedCodes();
     copyToClipboard();
+    resetSelectedCodes();
     sendSessionInfoToDB();
     props.resetSession();
   };
