@@ -35,7 +35,11 @@ export default function Orders() {
 
         let topRows = [];
         topTen.forEach(element => {
-          topRows.push({ code: element.code, times_coded: numberWithCommas(element.times_coded) });
+          topRows.push({
+            code: element.code,
+            description: element.description,
+            times_coded: numberWithCommas(element.times_coded)
+          });
         });
 
         setTopRows(topRows);
@@ -74,7 +78,7 @@ export default function Orders() {
           {topRows.map(row => (
             <TableRow key={row.code}>
               <TableCell>{row.code}</TableCell>
-              <TableCell>Code Description</TableCell>
+              <TableCell>{row.description}</TableCell>
               <TableCell>{row.times_coded}</TableCell>
             </TableRow>
           ))}
