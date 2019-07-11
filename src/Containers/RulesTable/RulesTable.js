@@ -33,6 +33,14 @@ export default function SortableTable() {
       accessor: "gender"
     },
     {
+      Header: "Minimum Age",
+      accessor: "min_age"
+    },
+    {
+      Header: "Maximum Age",
+      accessor: "max_age"
+    },
+    {
       Header: "Suggested",
       accessor: "num_suggested"
     },
