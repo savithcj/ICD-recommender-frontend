@@ -49,7 +49,7 @@ const Home = props => {
         }
       });
     }
-  }, [props.setAlertMessage]);
+  }, [props.alertMessage]);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
