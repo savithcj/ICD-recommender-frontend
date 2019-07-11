@@ -1,8 +1,8 @@
 const defaultLayoutLg = [
   { w: 7, h: 16, x: 0, y: 0, i: "chord" },
   { w: 5, h: 16, x: 7, y: 0, i: "sankey" },
-  { w: 7, h: 13, x: 0, y: 16, i: "rules" },
-  { w: 5, h: 13, x: 7, y: 16, i: "dad" }
+  { w: 7, h: 16, x: 0, y: 16, i: "rules" },
+  { w: 5, h: 16, x: 7, y: 16, i: "dad" }
 ];
 const defaultLayoutMd = [
   { w: 5, h: 15, x: 0, y: 0, i: "chord" },
