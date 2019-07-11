@@ -1,7 +1,6 @@
 /* eslint-disable no-script-url */
 
-import React, { useEffect } from "react";
-import Link from "@material-ui/core/Link";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -11,34 +10,35 @@ import TableRow from "@material-ui/core/TableRow";
 import Title from "./Title";
 import * as APIUtility from "../../Util/API";
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const rows = [
-  createData(0, "16 Mar, 2019", "Elvis Presley", "Tupelo, MS", "VISA ⠀•••• 3719", 312.44),
-  createData(1, "16 Mar, 2019", "Paul McCartney", "London, UK", "VISA ⠀•••• 2574", 866.99),
-  createData(2, "16 Mar, 2019", "Tom Scholz", "Boston, MA", "MC ⠀•••• 1253", 100.81),
-  createData(3, "16 Mar, 2019", "Michael Jackson", "Gary, IN", "AMEX ⠀•••• 2000", 654.39),
-  createData(4, "15 Mar, 2019", "Bruce Springsteen", "Long Branch, NJ", "VISA ⠀•••• 5919", 212.79)
-];
-
-const statistics = null;
-const topTenCodes = null;
-
 export default function Orders() {
+  const [statRows, setStatRows] = useState([]);
+  const [topRows, setTopRows] = useState([]);
+
   useEffect(() => {
-    const url = APIUtility.API.getAPIURL(APIUtility.RULES) + "?format=json";
+    const url = APIUtility.API.getAPIURL(APIUtility.STATS) + "?format=json";
 
     fetch(url)
       .then(response => response.json())
       .then(results => {
-        results.forEach(ruleObject => {
-          ruleObject.rule = ruleObject.lhs + " \u2192 " + ruleObject.rhs;
-          ruleObject.confidence = ruleObject.confidence.toFixed(4);
-          ruleObject.support = ruleObject.support.toFixed(4);
+        const numUnique = results.numUnique;
+        const totalNum = results.totalNumber;
+        const topTen = results.Top10;
+
+        setStatRows([
+          { id: 1, statistic: "Total number of codes entered", value: numberWithCommas(totalNum) },
+          { id: 0, statistic: "Number of unique codes", value: numberWithCommas(numUnique) }
+        ]);
+
+        let topRows = [];
+        topTen.forEach(element => {
+          topRows.push({ code: element.code, times_coded: numberWithCommas(element.times_coded) });
         });
+
+        setTopRows(topRows);
       });
   }, []);
 
@@ -53,10 +53,10 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
+          {statRows.map(row => (
             <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.statistic}</TableCell>
+              <TableCell>{row.value}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -66,14 +66,16 @@ export default function Orders() {
         <TableHead>
           <TableRow>
             <TableCell>Top 10 Codes</TableCell>
+            <TableCell>Code Description</TableCell>
             <TableCell>Times coded</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
+          {topRows.map(row => (
+            <TableRow key={row.code}>
+              <TableCell>{row.code}</TableCell>
+              <TableCell>Code Description</TableCell>
+              <TableCell>{row.times_coded}</TableCell>
             </TableRow>
           ))}
         </TableBody>
