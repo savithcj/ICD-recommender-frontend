@@ -103,9 +103,10 @@ const useStyles = makeStyles(() => ({
 // -> items || multiple values : the component accepts any of the following values
 //                               -> undefined: displays the following message: "No items to display"
 //                               -> null: displays the nullItemsMessage
-//                               -> true: shows a loading indicator
+//                               -> "LOADING": shows a loading indicator
 //                               -> array of length 0: displays the noItemsMessage
-//                               -> array of objects: display a list of sortable cards with each card representing an object in the array
+//                               -> array of objects: display a list of sortable cards with each card representing an
+//                                  object in the array
 // -> valueName || string : the property of the item object that contains the name to be displayed on the card
 // -> descriptionName || string : the property of the item object that contains the description displayed on the card
 // -> exploreButton || object : if this prop is defined, adds a button to the card which when clicked performs an
@@ -275,7 +276,7 @@ function ListViewer(props) {
       displayItems = <Typography variant="body2">No items to display</Typography>;
     } else if (props.items === null) {
       displayItems = <Typography variant="body2">{props.nullItemsMessage}</Typography>;
-    } else if (props.items === true) {
+    } else if (props.items === "LOADING") {
       displayItems = <LoadingIndicator />;
     } else if (props.items.length === 0) {
       displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;

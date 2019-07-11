@@ -32,7 +32,7 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
         ageParam +
         genderParam;
 
-      dispatch(setRecommendedCodes(true));
+      dispatch(setRecommendedCodes("LOADING"));
 
       fetch(url)
         .then(response => response.json())
@@ -72,7 +72,7 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
     if (stringOfCodes !== "") {
       const url = APIUtility.API.getAPIURL(APIUtility.DAGGER_ASTERISK) + stringOfCodes + "/?format=json";
 
-      dispatch(setDaggerAsterisk(true));
+      dispatch(setDaggerAsterisk("LOADING"));
 
       fetch(url)
         .then(response => response.json())
