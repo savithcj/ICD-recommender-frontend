@@ -3,6 +3,7 @@ import ListViewer from "../../Components/ListViewer/ListViewer";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import { getStringFromListOfCodes } from "../../Util/utility";
+import * as APIUtility from "../../Util/API";
 
 const selectedCodesViewer = props => {
   const handleRemoveSelectedCode = event => {
@@ -32,6 +33,31 @@ const selectedCodesViewer = props => {
     props.setGender(null);
   };
 
+  const sendSessionInfoToDB = () => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const url = APIUtility.API.getAPIURL(APIUtility.ENTER_LOG);
+
+    //extracting the used codes from the code objects
+    const selectedCodesToSendBack = props.selectedCodes.map(ruleObj => ruleObj.code);
+
+    const dataToSend = { rule_actions: props.rulesToSendBack, entered: selectedCodesToSendBack };
+
+    console.log(dataToSend);
+
+    const options = {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(dataToSend)
+    };
+
+    const request = new Request(url, options);
+
+    fetch(request).then(response => {
+      console.log("[sendSessionInfoToDB function] response from backend", response.status);
+    });
+  };
+
   const copyToClipboard = () => {
     const codeSelection = getStringFromListOfCodes(props.selectedCodes);
     navigator.clipboard.writeText(codeSelection);
@@ -42,6 +68,7 @@ const selectedCodesViewer = props => {
     //TODO:Make API call to update code usage during a session
     resetSelectedCodes();
     copyToClipboard();
+    sendSessionInfoToDB();
     props.resetSession();
   };
 
@@ -79,7 +106,8 @@ const selectedCodesViewer = props => {
 
 const mapStateToProps = state => {
   return {
-    selectedCodes: state.selected.selectedCodes
+    selectedCodes: state.selected.selectedCodes,
+    rulesToSendBack: state.session.rulesToSendBack
   };
 };
 
