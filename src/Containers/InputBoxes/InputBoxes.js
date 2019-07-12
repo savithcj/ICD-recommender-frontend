@@ -24,6 +24,7 @@ const inputBoxes = props => {
 
     if (gender === "Female" || gender === "Male" || gender === "Other") {
       props.setGender(gender);
+      props.getRecommendedCodes(props.selectedCodes);
     } else {
       // invalid gender selection
     }

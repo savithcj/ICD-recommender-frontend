@@ -43,7 +43,7 @@ const useStyles = makeStyles(() => ({
   },
   listSection: {
     backgroundColor: "inherit",
-    paddding: 0
+    padding: 0
   },
   ul: {
     backgroundColor: "inherit",
