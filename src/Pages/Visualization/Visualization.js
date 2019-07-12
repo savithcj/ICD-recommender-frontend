@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import ChordDiagram from "../../Containers/ChordDiagram/ChordDiagram";
-// import BarChart from "../../Containers/BarChart/BarChart";
 import SankeyDiagram from "../../Containers/SankeyDiagram/SankeyDiagram";
 import RulesTable from "../../Containers/RulesTable/RulesTable";
 import DADStats from "../../Containers/DADStats/DADStats";

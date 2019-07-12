@@ -10,11 +10,25 @@ import TableRow from "@material-ui/core/TableRow";
 import Title from "./Title";
 import * as APIUtility from "../../Util/API";
 
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const useStyles = makeStyles(() => ({
+  table: {
+    alignItems: "center"
+  },
+  stats: {
+    height: "96%",
+    width: "96%",
+    backgroundColor: "inherit",
+    padding: "2%",
+    overflow: "auto"
+  }
+}));
+
+function numberWithCommas(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export default function Orders() {
+export default function DADStats() {
+  const styles = useStyles();
   const [statRows, setStatRows] = useState([]);
   const [topRows, setTopRows] = useState([]);
 
@@ -47,9 +61,9 @@ export default function Orders() {
   }, []);
 
   return (
-    <React.Fragment>
+    <div className={styles.stats}>
       <Title>2004-2015 DAD Statistics</Title>
-      <Table size="small">
+      <Table size="small" className={styles.table}>
         <TableHead>
           <TableRow>
             <TableCell>Statistic</TableCell>
@@ -84,6 +98,6 @@ export default function Orders() {
           ))}
         </TableBody>
       </Table>
-    </React.Fragment>
+    </div>
   );
 }
