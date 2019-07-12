@@ -78,8 +78,11 @@ const recommendedCodesViewer = props => {
       dislikeButton={{
         title: "Flag recommendation for review",
         onClick: userFlagRuleForReview,
-        // the dislike button should be hidden if the admin has reviewed and accepted a rule
-        shouldDisable: index => props.recommendedCodes[index].review_status === 2
+        // the dislike button should be hidden if the admin has reviewed and accepted a rule or
+        // if an admin has manually reactivated a previously rejected rule
+        //TODO: possibly change the API to change review_status of a manually reactivated rule
+        shouldDisable: index =>
+          props.recommendedCodes[index].review_status === 2 || props.recommendedCodes[index].review_status === 3
       }}
       menuOptions={componentMenuItems}
       disableDislikeButtonField="shouldDisableDislikeButton"
