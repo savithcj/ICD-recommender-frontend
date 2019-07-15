@@ -7,10 +7,10 @@ import * as actions from "../../Store/Actions/index";
 const daggerAsterisksViewer = props => {
   const addSelectedDaggerAsterisk = (newCodeObj, codeObjToAlter) => {
     let selectedCodes = Array.from(props.selectedCodes);
-    newCodeObj.paired = true;
+    newCodeObj.paired = codeObjToAlter.code;
     selectedCodes.forEach(codeObj => {
       if (codeObj.code === codeObjToAlter.code) {
-        codeObj.paired = true;
+        codeObj.paired = newCodeObj.code;
       }
     });
     selectedCodes.push(newCodeObj);

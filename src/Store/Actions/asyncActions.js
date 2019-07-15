@@ -74,8 +74,6 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
   });
   return dispatch => {
     const stringOfCodes = getStringFromListOfCodes(getDaggerAsteriskFor);
-    console.log(stringOfCodes);
-
     if (stringOfCodes !== "") {
       const url = APIUtility.API.getAPIURL(APIUtility.DAGGER_ASTERISK) + stringOfCodes + "/?format=json";
 
