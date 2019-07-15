@@ -66,8 +66,15 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 };
 
 export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
+  let getDaggerAsteriskFor = [];
+  codeObjArray.forEach(codeObj => {
+    if (!codeObj.paired) {
+      getDaggerAsteriskFor.push(codeObj);
+    }
+  });
   return dispatch => {
-    const stringOfCodes = getStringFromListOfCodes(codeObjArray);
+    const stringOfCodes = getStringFromListOfCodes(getDaggerAsteriskFor);
+    console.log(stringOfCodes);
 
     if (stringOfCodes !== "") {
       const url = APIUtility.API.getAPIURL(APIUtility.DAGGER_ASTERISK) + stringOfCodes + "/?format=json";
@@ -126,6 +133,7 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
       // get code description from auto-suggest cache
       const codeDescriptions = Array.from(getState().cached.cachedCodeWithDescription);
       const cachedCode = codeDescriptions.find(codeObj => codeObj.code === enteredCode);
+
       // construct new code object
       const newCode = {
         code: cachedCode.code,

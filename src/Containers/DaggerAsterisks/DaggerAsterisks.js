@@ -5,8 +5,14 @@ import * as APIUtility from "../../Util/API";
 import * as actions from "../../Store/Actions/index";
 
 const daggerAsterisksViewer = props => {
-  const addSelectedDaggerAsterisk = newCodeObj => {
-    const selectedCodes = Array.from(props.selectedCodes);
+  const addSelectedDaggerAsterisk = (newCodeObj, codeObjToAlter) => {
+    let selectedCodes = Array.from(props.selectedCodes);
+    newCodeObj.paired = true;
+    selectedCodes.forEach(codeObj => {
+      if (codeObj.code === codeObjToAlter.code) {
+        codeObj.paired = true;
+      }
+    });
     selectedCodes.push(newCodeObj);
     props.setSelectedCodes(selectedCodes);
     props.getRecommendedCodes(selectedCodes);
@@ -39,9 +45,9 @@ const daggerAsterisksViewer = props => {
             .then(() => {
               props.removeDaggerAsteriskCode(acceptedCodeIndex);
               if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
-                addSelectedDaggerAsterisk(daggerObject);
+                addSelectedDaggerAsterisk(daggerObject, asteriskObject);
               } else {
-                addSelectedDaggerAsterisk(asteriskObject);
+                addSelectedDaggerAsterisk(asteriskObject, daggerObject);
               }
             });
         });
