@@ -55,6 +55,12 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
           const cleanedResults = results[0];
           const rolledRules = results[1];
 
+          //TODO: get rid of roll results output
+          const passedRules = rolledRules.filter(rule => rule.rollOutcome);
+
+          console.log("Number of rules rolled: ", rolledRules.length);
+          console.log("Number of rules passed: ", passedRules.length);
+
           dispatch(setRolledRules(rolledRules));
           dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
           dispatch(setRecommendedCodes(cleanedResults));
