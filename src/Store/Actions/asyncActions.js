@@ -55,6 +55,8 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
           const cleanedResults = results[0];
           const rolledRules = results[1];
 
+          console.log(results);
+
           dispatch(setRolledRules(rolledRules));
           dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
           dispatch(setRecommendedCodes(cleanedResults));

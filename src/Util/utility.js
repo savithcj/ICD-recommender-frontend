@@ -17,7 +17,7 @@ export const getStringFromListOfCodes = codeObjArray => {
 /**
  * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
  * If RHS codes has been rejected prior, remove and do not show again in recommendations.
- * Secondly, using randomly rolling, check rule's recommendation score against a randomly rolled threshold,
+ * Secondly, using random rolling, check rule's recommendation score against a randomly rolled threshold,
  * and only display the rule if the score is above the threshold.
  * Thirdly, if the rhs has been shown after rolling, repeated rules with same RHS would not be rolled again.
  * Finally returns a set of cleaned rules.
@@ -77,6 +77,14 @@ export const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
     if (cursor.rollOutcome === true) {
       cleanedResults.push(cursor);
     }
+  }
+
+  let i = 0;
+  while (cleanedResults.length < Math.min(ruleObjs.length, 5)) {
+    if (ruleObjs[i].rollOutcome === false) {
+      cleanedResults.push(ruleObjs[i]);
+    }
+    i++;
   }
 
   return [cleanedResults, rollResults];
