@@ -205,13 +205,12 @@ class CodeInputField extends React.Component {
    */
   populateAutoCompleteList(suggestionsFromAPI, enteredCode) {
     let autoCompleteList = [];
+    if (suggestionsFromAPI["description matches"].length > 0) {
+      autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
+    }
 
     if (suggestionsFromAPI["keyword matches"].length > 0) {
       autoCompleteList.push({ title: "Keyword Matches", codes: suggestionsFromAPI["keyword matches"] });
-    }
-
-    if (suggestionsFromAPI["description matches"].length > 0) {
-      autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
     }
 
     const codeAndDescription =
