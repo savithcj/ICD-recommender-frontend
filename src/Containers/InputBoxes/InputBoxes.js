@@ -5,7 +5,9 @@ import * as actions from "../../Store/Actions/index";
 
 const inputBoxes = props => {
   const handleCodeSelection = enteredCode => {
-    props.addSelectedCode(enteredCode);
+    // props.addSelectedCode(enteredCode);
+    props.setCodeInTree(enteredCode);
+    // console.log(enteredCode);
   };
 
   const handleAgeSelection = () => {
@@ -84,7 +86,8 @@ const mapDispatchToProps = dispatch => {
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
     setAge: ageValue => dispatch(actions.setAge(ageValue)),
-    setGender: genderValue => dispatch(actions.setGender(genderValue))
+    setGender: genderValue => dispatch(actions.setGender(genderValue)),
+    setCodeInTree: code => dispatch(actions.setCodeInTree(code))
   };
 };
 
