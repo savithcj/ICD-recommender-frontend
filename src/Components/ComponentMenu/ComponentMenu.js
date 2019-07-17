@@ -15,10 +15,13 @@ export default function ComponentMenu(props) {
   }
 
   function handleClose(functionToComplete) {
-    if (functionToComplete !== null || functionToComplete !== undefined) {
+    if (functionToComplete === null) {
+      setAnchorEl(null);
+      return;
+    } else {
       functionToComplete();
+      setAnchorEl(null);
     }
-    setAnchorEl(null);
   }
 
   //self-executing arrow function!
