@@ -13,12 +13,6 @@ const daggerAsterisksViewer = props => {
         codeObj.paired = newCodeObj.code;
       }
     });
-    for (let i = 0; i < selectedCodes.length; i++) {
-      if (selectedCodes[i].code === newCodeObj.code) {
-        // display error
-        return;
-      }
-    }
     selectedCodes.push(newCodeObj);
     props.setSelectedCodes(selectedCodes);
     props.getRecommendedCodes(selectedCodes);
@@ -49,7 +43,6 @@ const daggerAsterisksViewer = props => {
               asteriskObject.description = result.description;
             })
             .then(() => {
-              //props.removeDaggerAsteriskCode(acceptedCodeIndex);
               if (codes.find(codeObj => codeObj.code === daggerObject.code) === undefined) {
                 addSelectedDaggerAsterisk(daggerObject, asteriskObject);
               } else {
