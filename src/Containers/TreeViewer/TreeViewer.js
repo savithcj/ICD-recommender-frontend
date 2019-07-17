@@ -137,8 +137,17 @@ class TreeViewer extends Component {
     this.isMountedFlag = false;
   }
 
-  // Changes the tree to the specified code.
-  // Used by App when a user clicks on the explore button from a code in a ListViewer
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.codeToDisplay !== this.props.codeToDisplay) {
+      this.changeTree(this.props.codeToDisplay);
+    }
+  }
+
+  /**
+   * Changes the tree to the specified code.
+   * Used by App when a user clicks on the explore button from a code in a ListViewer
+   * @param {*} code string ie 'A000'
+   */
   async changeTree(code) {
     if (code[code.length - 1] === "-") {
       code = code.slice(0, -1);
@@ -1910,8 +1919,14 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
+const mapStateToProps = state => {
+  return {
+    codeToDisplay: state.tree.selectedCodeInTree
+  };
+};
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
   null,
   { forwardRef: true }

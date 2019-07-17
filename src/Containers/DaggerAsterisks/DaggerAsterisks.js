@@ -66,9 +66,9 @@ const daggerAsterisksViewer = props => {
     const asteriskCode = dagAstObj.asterisk;
 
     if (props.selectedCodes.find(codeObj => codeObj.code === daggerCode) === undefined) {
-      props.treeRef.current.changeTree(daggerCode);
+      props.setCodeInTree(daggerCode);
     } else {
-      props.treeRef.current.changeTree(asteriskCode);
+      props.setCodeInTree(asteriskCode);
     }
   };
 
@@ -105,7 +105,8 @@ const mapDispatchToProps = dispatch => {
     removeDaggerAsteriskCode: removeCodeIndex => dispatch(actions.removeDaggerAsterisk(removeCodeIndex)),
     getRecommendedCodes: (codeObjArray, age, gender) =>
       dispatch(actions.fetchRecommendationsAndUpdateCache(codeObjArray, age, gender)),
-    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray))
+    getDaggerAsterisks: codeObjArray => dispatch(actions.fetchDaggerAsterisksAndUpdateCache(codeObjArray)),
+    setCodeInTree: code => dispatch(actions.setCodeInTree(code))
   };
 };
 

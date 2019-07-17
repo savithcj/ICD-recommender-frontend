@@ -6,6 +6,7 @@ import daggerAsterisks from "./daggerAsterisks";
 import ageGender from "./ageGender";
 import session from "./session";
 import alert from "./alert";
+import tree from "./tree";
 
 export default combineReducers({
   cached,
@@ -14,5 +15,6 @@ export default combineReducers({
   selected,
   ageGender,
   session,
-  alert
+  alert,
+  tree
 });

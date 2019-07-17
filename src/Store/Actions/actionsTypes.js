@@ -27,3 +27,6 @@ export const SET_RULES_ROLLED = "SET_RULES_ROLLED";
 
 // Alert action types
 export const SET_ALERT_MESSAGE = "SET_ALERT_MESSAGE";
+
+// Tree action types
+export const SET_CODE_SELECTED_IN_TREE = "SET_CODE_SELECTED_IN_TREE";
