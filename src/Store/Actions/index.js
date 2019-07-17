@@ -13,3 +13,4 @@ export {
 } from "./asyncActions";
 export { addRHSToExclusion, setRHSExclusion, setRulesInSession } from "./session";
 export { setAlertMessage } from "./alert";
+export { setCodeInTree } from "./tree";

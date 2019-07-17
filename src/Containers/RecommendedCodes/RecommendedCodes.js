@@ -58,7 +58,8 @@ const recommendedCodesViewer = props => {
 
   const handleExploreButton = event => {
     const exploreCodeIndex = parseInt(event.currentTarget.id, 10);
-    props.treeRef.current.changeTree(props.recommendedCodes[exploreCodeIndex].rhs);
+    props.setCodeInTree(props.recommendedCodes[exploreCodeIndex].rhs);
+    // props.treeRef.current.changeTree(props.recommendedCodes[exploreCodeIndex].rhs);
   };
 
   const componentMenuItems = [];
@@ -104,7 +105,8 @@ const mapDispatchToProps = dispatch => {
     addSelectedCode: codeObjToAdd => dispatch(actions.addSelectedCodeAndUpdateRecommendations(codeObjToAdd)),
     removeRecommendedCode: removeCodeIndex => dispatch(actions.removeRecommendedCode(removeCodeIndex)),
     setRulesInSession: listOfRules => dispatch(actions.setRulesInSession(listOfRules)),
-    addRHSToExclusion: rhsCode => dispatch(actions.addRHSToExclusion(rhsCode))
+    addRHSToExclusion: rhsCode => dispatch(actions.addRHSToExclusion(rhsCode)),
+    setCodeInTree: code => dispatch(actions.setCodeInTree(code))
   };
 };
 

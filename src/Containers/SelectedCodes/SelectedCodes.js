@@ -28,7 +28,7 @@ const selectedCodesViewer = props => {
 
   const handleExploreSelectedCodeButton = event => {
     const exploreCodeIndex = parseInt(event.currentTarget.id, 10);
-    props.treeRef.current.changeTree(props.selectedCodes[exploreCodeIndex].code);
+    props.setCodeInTree(props.selectedCodes[exploreCodeIndex].code);
   };
 
   const resetSelectedCodes = () => {
@@ -130,7 +130,8 @@ const mapDispatchToProps = dispatch => {
     setAge: valueToSet => dispatch(actions.setAge(valueToSet)),
     setGender: valueToSet => dispatch(actions.setGender(valueToSet)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
-    resetSession: () => dispatch(actions.resetSession())
+    resetSession: () => dispatch(actions.resetSession()),
+    setCodeInTree: code => dispatch(actions.setCodeInTree(code))
   };
 };
 

@@ -79,7 +79,6 @@ export const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
     }
   }
 
-  console.log("RULE OBJS", ruleObjs);
   let i = 0;
   while (cleanedResults.length < Math.min(ruleObjs.length, 5) && i < ruleObjs.length) {
     if (ruleObjs[i].rollOutcome !== true && !rhsExclusions.includes(ruleObjs[i].rhs)) {

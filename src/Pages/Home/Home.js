@@ -101,15 +101,15 @@ const Home = props => {
         </div>
 
         <div key="selectedCodes" className={highlightEditDiv}>
-          <SelectedCodes treeRef={treeViewDiv} />
+          <SelectedCodes />
         </div>
 
         <div key="recommendedCodes" className={highlightEditDiv}>
-          <RecommendedCodes treeRef={treeViewDiv} />
+          <RecommendedCodes />
         </div>
 
         <div key="daggerCodes" className={highlightEditDiv}>
-          <DaggerAsterisks treeRef={treeViewDiv} />
+          <DaggerAsterisks />
         </div>
 
         <div key="inputBoxes" className={highlightEditDiv}>
