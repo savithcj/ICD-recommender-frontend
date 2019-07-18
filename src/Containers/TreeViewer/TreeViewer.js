@@ -14,12 +14,14 @@ class TreeViewer extends Component {
     this.fontType = "sans-serif"; // Font type
     this.treeClass = "treeVis" + this.props.id; // Class name
     this.selectedColor = "#3748ac"; // Colour of selected node
+    this.indicatorColor = "green"; // Colour of the indicator for whether the node has children
     this.otherColor = "pink"; // Colour of other nodes
     this.textColor = "#0019a8"; // Colour of text
     this.linkColor = "#f0f0f0"; // Colour of links
     this.linkWidth = 7; // Width of links
     this.handlingClick = false; // Initializing handlingClick to false, used to prevent two clicks from happening at the same time
     this.isMountedFlag = false;
+    this.dblclick_timer = false;
   }
 
   // Function to create links
@@ -211,6 +213,23 @@ class TreeViewer extends Component {
           // Clear info text
           this.clearInfoText();
         })
+        .on("click", (d, i) => {
+          // if double click timer is active, this click is the double click
+          if (this.dblclick_timer) {
+            clearTimeout(this.dblclick_timer);
+            this.dblclick_timer = false;
+            this.props.addSelectedCode(this.data.parent);
+          }
+          // otherwise, what to do after single click (double click has timed out)
+          else {
+            this.dblclick_timer = setTimeout(() => {
+              this.dblclick_timer = false;
+              this.handleParentClick(d, i); // Handles the parent click
+            }, 300);
+          }
+        });
+
+      parentg
         .append("text")
         .text(this.codeFormat(this.data.parent, 1))
         .attr("font-family", this.fontType)
@@ -226,10 +245,7 @@ class TreeViewer extends Component {
         .append("circle")
         .attr("r", this.cRadius)
         .attr("fill", this.otherColor)
-        .attr("class", "parentCircle")
-        .on("click", (d, i) => {
-          this.handleParentClick(d, i); // Handles the parent click
-        });
+        .attr("class", "parentCircle");
     }
     ////////////////////////////////////////
     ////////////////////////////////////////
@@ -256,6 +272,21 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + this.middle + "," + d + ")";
       })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.siblings[i]);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleSiblingClick(d, i);
+          }, 300);
+        }
+      })
       .attr("class", "siblingG");
 
     // Attach the text for each sibling
@@ -279,10 +310,25 @@ class TreeViewer extends Component {
       .attr("fill", d => {
         return d;
       })
-      .attr("class", "siblingCircle")
-      .on("click", (d, i) => {
-        this.handleSiblingClick(d, i); // Handle sibling click
-      });
+      .attr("class", "siblingCircle");
+
+    // Adds the indicator circles
+    this.findIndex();
+    siblingGs
+      .data(this.data.siblings)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.siblings[i].hasChildren) {
+          if (i !== this.selfIndex) {
+            return this.cRadius / 3;
+          }
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
+
     ////////////////////////////////////////
     ////////////////////////////////////////
 
@@ -305,6 +351,21 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
       })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.children[i]);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleChildrenClick(d, i);
+          }, 300);
+        }
+      })
       .attr("class", "childrenG");
 
     // Attach the text for each child
@@ -325,10 +386,22 @@ class TreeViewer extends Component {
       .append("circle")
       .attr("r", this.cRadius)
       .attr("fill", this.otherColor)
-      .attr("class", "childrenCircle")
-      .on("click", (d, i) => {
-        this.handleChildrenClick(d, i);
-      });
+      .attr("class", "childrenCircle");
+
+    // Adds the indicator circles
+    childrenGs
+      .data(this.data.children)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.children[i].hasChildren) {
+          return this.cRadius / 3;
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
+
     ////////////////////////////////////////
     ////////////////////////////////////////
 
@@ -390,6 +463,7 @@ class TreeViewer extends Component {
           this.parentChain(); // Handles the chain
           await this.sleep(this.duration);
           this.spawnParentAndSiblings(); // Spawns parents and siblings from the new self (previously parent) node
+          this.changeChildrenIndicators(); // Adds indicator to old self
           // Removes old g's
           this.svg.selectAll("g.oldChainG").remove();
           this.svg.selectAll("g.oldChildren").remove();
@@ -435,6 +509,7 @@ class TreeViewer extends Component {
               .attr("class", "siblingText")
               .style("text-anchor", "right");
             this.changeSelfAncestor(); // Changes the self node on the ancestor chain
+            this.changeSiblingIndicators();
             await this.sleep(this.duration);
             this.spawnChildren(); // Creates children for the new self
           }
@@ -466,6 +541,7 @@ class TreeViewer extends Component {
           this.transitionChildrenLinks(); // Transition the links
           this.childrenChain(); // Handles the chain
           await this.sleep(this.duration);
+          this.changeSiblingIndicators(); // Removes indicator from new self
           this.spawnChildren(); // Spawns children for the new selected node
         })
         .then(() => {
@@ -544,6 +620,38 @@ class TreeViewer extends Component {
       .attr("ry", this.cRadius);
   }
 
+  changeSiblingIndicators() {
+    this.svg
+      .selectAll("g.siblingG")
+      .data(this.data.siblings)
+      .transition()
+      .select("circle.indicatorCircle")
+      .duration(this.duration)
+      .attr("r", (d, i) => {
+        if (d.hasChildren) {
+          if (this.selfIndex !== i) {
+            return this.cRadius / 3;
+          }
+        }
+        return 0;
+      });
+  }
+
+  changeChildrenIndicators() {
+    this.svg
+      .selectAll("g.childrenG")
+      .data(this.data.children)
+      .transition()
+      .select("circle.indicatorCircle")
+      .duration(this.duration)
+      .attr("r", (d, i) => {
+        if (d.hasChildren) {
+          return this.cRadius / 3;
+        }
+        return 0;
+      });
+  }
+
   // Transitions chain when a parent is clicked
   async parentChain() {
     // Removing old elements
@@ -564,7 +672,16 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       })
-      .attr("class", "chainG");
+      .attr("class", "chainG")
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      })
+      .on("mouseover", (d, i) => {
+        this.setInfoTextChain(i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      });
 
     // Adding text to the g's
     chainGs
@@ -594,16 +711,7 @@ class TreeViewer extends Component {
         }
       })
       .attr("fill", d => d)
-      .attr("class", "chainCircle")
-      .on("click", (d, i) => {
-        this.handleChainClick(d, i);
-      })
-      .on("mouseover", (d, i) => {
-        this.setInfoTextChain(i);
-      })
-      .on("mouseout", () => {
-        this.clearInfoText();
-      });
+      .attr("class", "chainCircle");
 
     this.calcChainSpacing(); // Calculating spacing
     this.addChainLinks(); // Adds the links
@@ -788,6 +896,15 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       })
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      })
+      .on("mouseover", (d, i) => {
+        this.setInfoTextChain(i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("class", "chainG");
     // Adding text
     chainGs
@@ -821,16 +938,7 @@ class TreeViewer extends Component {
         }
       })
       .attr("fill", d => d)
-      .attr("class", "chainCircle")
-      .on("click", (d, i) => {
-        this.handleChainClick(d, i);
-      })
-      .on("mouseover", (d, i) => {
-        this.setInfoTextChain(i);
-      })
-      .on("mouseout", () => {
-        this.clearInfoText();
-      });
+      .attr("class", "chainCircle");
 
     // Remove old (no transition necessary)
     this.svg.selectAll("g.oldChainG").remove();
@@ -923,6 +1031,15 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       })
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      })
+      .on("mouseover", (d, i) => {
+        this.setInfoTextChain(i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("class", "chainG");
 
     // Adding text
@@ -958,16 +1075,7 @@ class TreeViewer extends Component {
       .attr("fill", d => {
         return d;
       })
-      .attr("class", "chainCircle")
-      .on("click", (d, i) => {
-        this.handleChainClick(d, i);
-      })
-      .on("mouseover", (d, i) => {
-        this.setInfoTextChain(i);
-      })
-      .on("mouseout", () => {
-        this.clearInfoText();
-      });
+      .attr("class", "chainCircle");
 
     // Fading out old text
     this.svg
@@ -1057,6 +1165,15 @@ class TreeViewer extends Component {
       .attr("transform", d => {
         return "translate(" + d + "," + (this.height - this.vPadding / 2) + ")";
       })
+      .on("click", (d, i) => {
+        this.handleChainClick(d, i);
+      })
+      .on("mouseover", (d, i) => {
+        this.setInfoTextChain(i);
+      })
+      .on("mouseout", () => {
+        this.clearInfoText();
+      })
       .attr("class", "chainG");
 
     // Adds text
@@ -1080,16 +1197,7 @@ class TreeViewer extends Component {
       .attr("fill", d => {
         return d;
       })
-      .attr("class", "chainCircle")
-      .on("click", (d, i) => {
-        this.handleChainClick(d, i);
-      })
-      .on("mouseover", (d, i) => {
-        this.setInfoTextChain(i);
-      })
-      .on("mouseout", () => {
-        this.clearInfoText();
-      });
+      .attr("class", "chainCircle");
   }
 
   // Calculates the colour of the ancestor chain
@@ -1132,6 +1240,21 @@ class TreeViewer extends Component {
       .on("mouseout", () => {
         this.clearInfoText();
       })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.parent);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleParentClick(d, i);
+          }, 300);
+        }
+      })
       .attr("class", "parentG");
     // Adding text
     parentg
@@ -1149,10 +1272,7 @@ class TreeViewer extends Component {
       .append("circle")
       .attr("r", this.cRadius)
       .attr("fill", this.selectedColor)
-      .attr("class", "parentCircle")
-      .on("click", (d, i) => {
-        this.handleParentClick(d, i);
-      });
+      .attr("class", "parentCircle");
   }
 
   // Transitions the parent and siblings to self node and removes them
@@ -1246,6 +1366,21 @@ class TreeViewer extends Component {
       .on("mouseout", () => {
         this.clearInfoText();
       })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.siblings[i]);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleSiblingClick(d, i);
+          }, 300);
+        }
+      })
       .data(this.childrenHeights)
       .transition()
       .duration(this.duration)
@@ -1261,9 +1396,6 @@ class TreeViewer extends Component {
       .selectAll("circle.childrenCircle")
       .data(this.siblingColours)
       .attr("class", "siblingCircle")
-      .on("click", (d, i) => {
-        this.handleSiblingClick(d, i);
-      })
       .transition()
       .duration(this.duration)
       .attr("fill", d => {
@@ -1328,6 +1460,21 @@ class TreeViewer extends Component {
       .attr("class", "childrenG")
       .attr("transform", d => {
         return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
+      })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.children[i]);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleChildrenClick(d, i);
+          }, 300);
+        }
       });
 
     // Adding invisible text, to transition in later
@@ -1350,10 +1497,7 @@ class TreeViewer extends Component {
       .append("circle")
       .attr("r", 1e-6)
       .attr("fill", this.otherColor)
-      .attr("class", "childrenCircle")
-      .on("click", (d, i) => {
-        this.handleChildrenClick(d, i);
-      });
+      .attr("class", "childrenCircle");
 
     // Transition g to the current positions
     this.svg
@@ -1376,6 +1520,19 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("r", this.cRadius);
+
+    childrenGs
+      .data(this.data.children)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.children[i].hasChildren) {
+          return this.cRadius / 3;
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
 
     // Creating new children links
     this.childrenLinks = [];
@@ -1425,6 +1582,21 @@ class TreeViewer extends Component {
       .on("mouseout", () => {
         this.clearInfoText();
       })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.children[i]);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleChildrenClick(d, i);
+          }, 300);
+        }
+      })
       .data(this.siblingHeights)
       .transition()
       .delay(this.duration)
@@ -1438,9 +1610,6 @@ class TreeViewer extends Component {
     this.svg
       .selectAll("circle.siblingCircle")
       .attr("class", "childrenCircle")
-      .on("click", (d, i) => {
-        this.handleChildrenClick(d, i);
-      })
       .transition()
       .duration(this.duration)
       .attr("fill", this.otherColor);
@@ -1485,7 +1654,19 @@ class TreeViewer extends Component {
       .attr("fill", this.selectedColor);
 
     this.svg.selectAll("circle.siblingCircle").on("click", (d, i) => {
-      this.handleSiblingClick(d, i);
+      // if double click timer is active, this click is the double click
+      if (this.dblclick_timer) {
+        clearTimeout(this.dblclick_timer);
+        this.dblclick_timer = false;
+        this.props.addSelectedCode(this.data.siblings[i]);
+      }
+      // otherwise, what to do after single click (double click has timed out)
+      else {
+        this.dblclick_timer = setTimeout(() => {
+          this.dblclick_timer = false;
+          this.handleSiblingClick(d, i);
+        }, 300);
+      }
     });
     this.svg.selectAll("g.oldParentG").remove(); // Removes old parent g because sibling g is created
   }
@@ -1503,10 +1684,26 @@ class TreeViewer extends Component {
         .on("mouseout", () => {
           this.clearInfoText();
         })
+        .on("click", (d, i) => {
+          // if double click timer is active, this click is the double click
+          if (this.dblclick_timer) {
+            clearTimeout(this.dblclick_timer);
+            this.dblclick_timer = false;
+            this.props.addSelectedCode(this.data.parent);
+          }
+          // otherwise, what to do after single click (double click has timed out)
+          else {
+            this.dblclick_timer = setTimeout(() => {
+              this.dblclick_timer = false;
+              this.handleParentClick(d, i);
+            }, 300);
+          }
+        })
         .attr("class", "parentG")
         .attr("transform", d => {
           return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
         });
+
       // Adding invisible text
       parentG
         .append("text")
@@ -1524,10 +1721,7 @@ class TreeViewer extends Component {
         .append("circle")
         .attr("r", 1e-6)
         .attr("fill", this.otherColor)
-        .attr("class", "parentCircle")
-        .on("click", (d, i) => {
-          this.handleParentClick(d, i);
-        });
+        .attr("class", "parentCircle");
 
       // Transition new parent
       parentG
@@ -1597,6 +1791,21 @@ class TreeViewer extends Component {
       .on("mouseout", () => {
         this.clearInfoText();
       })
+      .on("click", (d, i) => {
+        // if double click timer is active, this click is the double click
+        if (this.dblclick_timer) {
+          clearTimeout(this.dblclick_timer);
+          this.dblclick_timer = false;
+          this.props.addSelectedCode(this.data.siblings[i]);
+        }
+        // otherwise, what to do after single click (double click has timed out)
+        else {
+          this.dblclick_timer = setTimeout(() => {
+            this.dblclick_timer = false;
+            this.handleSiblingClick(d, i);
+          }, 300);
+        }
+      })
       .attr("class", "siblingG")
       .attr("transform", d => {
         return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
@@ -1624,10 +1833,7 @@ class TreeViewer extends Component {
       .attr("fill", d => {
         return d;
       })
-      .attr("class", "siblingCircle")
-      .on("click", (d, i) => {
-        this.handleSiblingClick(d, i);
-      });
+      .attr("class", "siblingCircle");
 
     // Transition new siblings
     this.svg
@@ -1648,6 +1854,23 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("r", this.cRadius);
+
+    this.findIndex();
+    this.svg
+      .selectAll("g.siblingG")
+      .data(this.data.siblings)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.siblings[i].hasChildren) {
+          if (i !== this.selfIndex) {
+            return this.cRadius / 3;
+          }
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
   }
 
   // Removes children nodes by transitioning them to self and invisible
