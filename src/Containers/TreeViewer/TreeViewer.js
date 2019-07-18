@@ -14,6 +14,7 @@ class TreeViewer extends Component {
     this.fontType = "sans-serif"; // Font type
     this.treeClass = "treeVis" + this.props.id; // Class name
     this.selectedColor = "#3748ac"; // Colour of selected node
+    this.indicatorColor = "green"; // Colour of the indicator for whether the node has children
     this.otherColor = "pink"; // Colour of other nodes
     this.textColor = "#0019a8"; // Colour of text
     this.linkColor = "#f0f0f0"; // Colour of links
@@ -311,6 +312,23 @@ class TreeViewer extends Component {
       })
       .attr("class", "siblingCircle");
 
+    // Adds the indicator circles
+    this.findIndex();
+    siblingGs
+      .data(this.data.siblings)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.siblings[i].hasChildren) {
+          if (i !== this.selfIndex) {
+            return this.cRadius / 3;
+          }
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
+
     ////////////////////////////////////////
     ////////////////////////////////////////
 
@@ -370,6 +388,20 @@ class TreeViewer extends Component {
       .attr("fill", this.otherColor)
       .attr("class", "childrenCircle");
 
+    // Adds the indicator circles
+    childrenGs
+      .data(this.data.children)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.children[i].hasChildren) {
+          return this.cRadius / 3;
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
+
     ////////////////////////////////////////
     ////////////////////////////////////////
 
@@ -407,8 +439,6 @@ class TreeViewer extends Component {
     ////////////////////////////////////////
 
     this.createButton(); // Creates the "Add Code" button
-
-    console.log(this.data);
   }
   // END OF DRAW INITIAL TREE /////////////////
   /////////////////////////////////////////////
@@ -433,6 +463,7 @@ class TreeViewer extends Component {
           this.parentChain(); // Handles the chain
           await this.sleep(this.duration);
           this.spawnParentAndSiblings(); // Spawns parents and siblings from the new self (previously parent) node
+          this.changeChildrenIndicators(); // Adds indicator to old self
           // Removes old g's
           this.svg.selectAll("g.oldChainG").remove();
           this.svg.selectAll("g.oldChildren").remove();
@@ -478,6 +509,7 @@ class TreeViewer extends Component {
               .attr("class", "siblingText")
               .style("text-anchor", "right");
             this.changeSelfAncestor(); // Changes the self node on the ancestor chain
+            this.changeSiblingIndicators();
             await this.sleep(this.duration);
             this.spawnChildren(); // Creates children for the new self
           }
@@ -509,6 +541,7 @@ class TreeViewer extends Component {
           this.transitionChildrenLinks(); // Transition the links
           this.childrenChain(); // Handles the chain
           await this.sleep(this.duration);
+          this.changeSiblingIndicators(); // Removes indicator from new self
           this.spawnChildren(); // Spawns children for the new selected node
         })
         .then(() => {
@@ -585,6 +618,38 @@ class TreeViewer extends Component {
       })
       .attr("rx", this.cRadius)
       .attr("ry", this.cRadius);
+  }
+
+  changeSiblingIndicators() {
+    this.svg
+      .selectAll("g.siblingG")
+      .data(this.data.siblings)
+      .transition()
+      .select("circle.indicatorCircle")
+      .duration(this.duration)
+      .attr("r", (d, i) => {
+        if (d.hasChildren) {
+          if (this.selfIndex !== i) {
+            return this.cRadius / 3;
+          }
+        }
+        return 0;
+      });
+  }
+
+  changeChildrenIndicators() {
+    this.svg
+      .selectAll("g.childrenG")
+      .data(this.data.children)
+      .transition()
+      .select("circle.indicatorCircle")
+      .duration(this.duration)
+      .attr("r", (d, i) => {
+        if (d.hasChildren) {
+          return this.cRadius / 3;
+        }
+        return 0;
+      });
   }
 
   // Transitions chain when a parent is clicked
@@ -1456,6 +1521,19 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .attr("r", this.cRadius);
 
+    childrenGs
+      .data(this.data.children)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.children[i].hasChildren) {
+          return this.cRadius / 3;
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
+
     // Creating new children links
     this.childrenLinks = [];
     for (let i = 0; i < this.data.children.length; i++) {
@@ -1776,6 +1854,23 @@ class TreeViewer extends Component {
       .transition()
       .duration(this.duration)
       .attr("r", this.cRadius);
+
+    this.findIndex();
+    this.svg
+      .selectAll("g.siblingG")
+      .data(this.data.siblings)
+      .append("circle")
+      .attr("r", (d, i) => {
+        if (this.data.siblings[i].hasChildren) {
+          if (i !== this.selfIndex) {
+            return this.cRadius / 3;
+          }
+        }
+        return 0;
+      })
+      .attr("cx", this.cRadius)
+      .attr("fill", this.indicatorColor)
+      .attr("class", "indicatorCircle");
   }
 
   // Removes children nodes by transitioning them to self and invisible
