@@ -84,7 +84,6 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
       const url = APIUtility.API.getAPIURL(APIUtility.DAGGER_ASTERISK) + stringOfCodes + "/?format=json";
 
       dispatch(setDaggerAsterisk("LOADING"));
-      //let selectedCodes = Array.from(getState().selected.selectedCodes);
       let indicesToRemove = [];
       fetch(url)
         .then(response => response.json())
@@ -92,14 +91,8 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
           let promiseList = [];
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
-            // if (result.combo.includes("-")) {
-            //   result.combo += " -- Select a sub-code";
-            // }
             let url2 = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION);
             if (codeObjArray.find(codeObject => codeObject.code === result.dagger) === undefined) {
-              // if (result.dagger.indexOf("-") >= 0) {
-              //   url2 += result.dagger.slice(0, -1) + "/?format=json";
-              // } else {
               url2 += result.dagger + "/?format=json";
               promiseList.push(
                 fetch(url2)
@@ -108,11 +101,7 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
                     result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
-              // }
             } else if (codeObjArray.find(codeObject => codeObject.code === result.asterisk) === undefined) {
-              // if (result.asterisk.indexOf("-") >= 0) {
-              //   url2 += result.asterisk.slice(0, -1) + "/?format=json";
-              // } else {
               url2 += result.asterisk + "/?format=json";
               promiseList.push(
                 fetch(url2)
@@ -121,17 +110,9 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
                     result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
-              // }
             } else {
               indicesToRemove.push(results.indexOf(result));
             }
-            // promiseList.push(
-            //   fetch(url2)
-            //     .then(response => response.json())
-            //     .then(codeObject => {
-            //       result.description = codeObject.code + ": " + codeObject.description;
-            //     })
-            // );
           });
           Promise.all(promiseList).then(() => {
             let resultsToSend = [];
@@ -182,26 +163,35 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
 //used to add a code from the tree
 export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject => {
   return (dispatch, getState) => {
-    const selectedCodes = Array.from(getState().selected.selectedCodes);
+    const url = APIUtility.API.getAPIURL(APIUtility.CHECK_CODE) + enteredCodeObject.code + "/?format=json";
 
-    // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCodeObject.code);
+    fetch(url)
+      .then(response => response.json())
+      .then(result => {
+        if (result.exists !== true) {
+          dispatch(setAlertMessage({ message: enteredCodeObject.code + " is an invalid code!", messageType: "error" }));
+        } else {
+          const selectedCodes = Array.from(getState().selected.selectedCodes);
 
-    if (getDuplicate === undefined) {
-      const newCode = {
-        code: enteredCodeObject.code,
-        description: enteredCodeObject.description
-      };
+          // check if the code already exist in the selection
+          const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCodeObject.code);
 
-      selectedCodes.push(newCode);
+          if (getDuplicate === undefined) {
+            const newCode = {
+              code: enteredCodeObject.code,
+              description: enteredCodeObject.description
+            };
 
-      dispatch(setSelectedCodes(selectedCodes));
-      dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
-      dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
-    } else {
-      console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCodeObject.code);
-      dispatch(setAlertMessage({ message: enteredCodeObject.code + " already selected", messageType: "error" }));
-    }
+            selectedCodes.push(newCode);
+
+            dispatch(setSelectedCodes(selectedCodes));
+            dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
+            dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
+          } else {
+            dispatch(setAlertMessage({ message: enteredCodeObject.code + " already selected", messageType: "error" }));
+          }
+        }
+      });
   };
 };
 

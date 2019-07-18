@@ -24,6 +24,8 @@ export const addDotToCode = code => {
   }
   if (checkIfDagAst(code)) {
     return addDotToDagAst(code);
+  } else if (code.includes("-") || code.includes("Chapter")) {
+    return code;
   } else {
     return addDotToRegularCode(code);
   }

@@ -22,6 +22,7 @@ export const ENTER_LOG = "ENTER_LOG";
 export const RULE_STATUS = "RULE_STATUS";
 export const INACTIVE_RULES = "INACTIVE_RULES";
 export const STATS = "STATS";
+export const CHECK_CODE = "CHECK_CODE";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -73,6 +74,8 @@ export class API {
         return this.urlBeginning + "inactiveRules/";
       case STATS:
         return this.urlBeginning + "stats/";
+      case CHECK_CODE:
+        return this.urlBeginning + "checkCode/";
       default:
         return null;
     }
