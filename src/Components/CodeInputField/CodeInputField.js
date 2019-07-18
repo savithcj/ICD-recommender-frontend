@@ -205,13 +205,6 @@ class CodeInputField extends React.Component {
    */
   populateAutoCompleteList(suggestionsFromAPI, enteredCode) {
     let autoCompleteList = [];
-    if (suggestionsFromAPI["description matches"].length > 0) {
-      autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
-    }
-
-    if (suggestionsFromAPI["keyword matches"].length > 0) {
-      autoCompleteList.push({ title: "Keyword Matches", codes: suggestionsFromAPI["keyword matches"] });
-    }
 
     const codeAndDescription =
       this.props.codeCache !== undefined ? Array.from(this.props.codeCache) : Array.from(suggestionsFromAPI);
@@ -220,6 +213,14 @@ class CodeInputField extends React.Component {
 
     if (codeMatches.length > 0) {
       autoCompleteList.push({ title: "Code Matches", codes: codeMatches });
+    }
+
+    if (suggestionsFromAPI["description matches"].length > 0) {
+      autoCompleteList.push({ title: "Description Matches", codes: suggestionsFromAPI["description matches"] });
+    }
+
+    if (suggestionsFromAPI["keyword matches"].length > 0) {
+      autoCompleteList.push({ title: "Keyword Matches", codes: suggestionsFromAPI["keyword matches"] });
     }
 
     this.setState({ codeAutoCompleteDisplayed: autoCompleteList });
