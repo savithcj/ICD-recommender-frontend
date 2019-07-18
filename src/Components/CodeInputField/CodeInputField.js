@@ -3,6 +3,7 @@ import AutoSuggest from "../AutoSuggest/AutoSuggest.js";
 import AutosuggestHighlightMatch from "../AutoSuggest/match";
 import AutosuggestHighlightParse from "../AutoSuggest/parse";
 import "./CodeInputField.css";
+import { addDotToCode } from "../../Util/utility";
 
 import * as APIUtility from "../../Util/API";
 
@@ -65,7 +66,7 @@ class CodeInputField extends React.Component {
    */
   onSuggestionSelected = (_, { suggestion }) => {
     if (this.props.selectCode !== undefined) {
-      this.props.selectCode(suggestion.code);
+      this.props.selectCode(suggestion.code.replace(".", ""));
     }
     if (this.props.autoClearCode !== undefined) {
       if (this.props.autoClearCode === true) {
@@ -187,6 +188,9 @@ class CodeInputField extends React.Component {
       fetch(url)
         .then(response => response.json())
         .then(results => {
+          results["code matches"].forEach(codeObj => {
+            codeObj.code = addDotToCode(codeObj.code);
+          });
           if (appendCodeToCache !== undefined) {
             appendCodeToCache(
               results["code matches"].concat(results["description matches"]).concat(results["keyword matches"])
@@ -206,12 +210,17 @@ class CodeInputField extends React.Component {
   populateAutoCompleteList(suggestionsFromAPI, enteredCode) {
     let autoCompleteList = [];
 
+    console.log("[populateAutoComplete]", enteredCode);
+
     const codeAndDescription =
       this.props.codeCache !== undefined ? Array.from(this.props.codeCache) : Array.from(suggestionsFromAPI);
     const regex = new RegExp("^" + enteredCode, "i");
     const codeMatches = codeAndDescription.filter(item => regex.test(item.code));
 
     if (codeMatches.length > 0) {
+      codeMatches.forEach(codeObj => {
+        codeObj.code = addDotToCode(codeObj.code);
+      });
       autoCompleteList.push({ title: "Code Matches", codes: codeMatches });
     }
 

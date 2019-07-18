@@ -19,6 +19,9 @@ export const getStringFromListOfCodes = codeObjArray => {
  * @param {*} code string version of an ICD code
  */
 export const addDotToCode = code => {
+  if (code.includes(".")) {
+    return code;
+  }
   if (checkIfDagAst(code)) {
     return addDotToDagAst(code);
   } else {
