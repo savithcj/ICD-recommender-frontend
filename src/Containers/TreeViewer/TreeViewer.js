@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import * as APIUtility from "../../Util/API";
+import { addDotToCode } from "../../Util/utility";
 
 class TreeViewer extends Component {
   constructor(props) {
@@ -1953,9 +1954,9 @@ class TreeViewer extends Component {
     // Appending description to the code
     let codeDesc;
     if (d.description) {
-      codeDesc = d.code + ": " + d.description;
+      codeDesc = addDotToCode(d.code) + ": " + d.description;
     } else {
-      codeDesc = d.code;
+      codeDesc = addDotToCode(d.code);
     }
 
     // Truncation flag === 1, truncate code if not enough room
