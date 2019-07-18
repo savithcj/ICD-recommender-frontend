@@ -1299,21 +1299,6 @@ class TreeViewer extends Component {
       .on("mouseout", () => {
         this.clearInfoText();
       })
-      .data(this.childrenHeights)
-      .transition()
-      .duration(this.duration)
-      .attr("transform", d => {
-        return "translate(" + this.middle + "," + d + ")";
-      })
-      .attr("class", "siblingG");
-
-    // Calculating colours to colour new self node
-    this.calcSiblingColours();
-    // Transitioning circles to sibling spots and giving new class
-    this.svg
-      .selectAll("circle.childrenCircle")
-      .data(this.siblingColours)
-      .attr("class", "siblingCircle")
       .on("click", (d, i) => {
         // if double click timer is active, this click is the double click
         if (this.dblclick_timer) {
@@ -1329,6 +1314,21 @@ class TreeViewer extends Component {
           }, 300);
         }
       })
+      .data(this.childrenHeights)
+      .transition()
+      .duration(this.duration)
+      .attr("transform", d => {
+        return "translate(" + this.middle + "," + d + ")";
+      })
+      .attr("class", "siblingG");
+
+    // Calculating colours to colour new self node
+    this.calcSiblingColours();
+    // Transitioning circles to sibling spots and giving new class
+    this.svg
+      .selectAll("circle.childrenCircle")
+      .data(this.siblingColours)
+      .attr("class", "siblingCircle")
       .transition()
       .duration(this.duration)
       .attr("fill", d => {
