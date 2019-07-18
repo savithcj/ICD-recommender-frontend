@@ -163,26 +163,35 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
 //used to add a code from the tree
 export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject => {
   return (dispatch, getState) => {
-    const selectedCodes = Array.from(getState().selected.selectedCodes);
+    const url = APIUtility.API.getAPIURL(APIUtility.CHECK_CODE) + enteredCodeObject.code + "/?format=json";
 
-    // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCodeObject.code);
+    fetch(url)
+      .then(response => response.json())
+      .then(result => {
+        if (result.exists !== true) {
+          dispatch(setAlertMessage({ message: enteredCodeObject.code + " is an invalid code!", messageType: "error" }));
+        } else {
+          const selectedCodes = Array.from(getState().selected.selectedCodes);
 
-    if (getDuplicate === undefined) {
-      const newCode = {
-        code: enteredCodeObject.code,
-        description: enteredCodeObject.description
-      };
+          // check if the code already exist in the selection
+          const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCodeObject.code);
 
-      selectedCodes.push(newCode);
+          if (getDuplicate === undefined) {
+            const newCode = {
+              code: enteredCodeObject.code,
+              description: enteredCodeObject.description
+            };
 
-      dispatch(setSelectedCodes(selectedCodes));
-      dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
-      dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
-    } else {
-      console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCodeObject.code);
-      dispatch(setAlertMessage({ message: enteredCodeObject.code + " already selected", messageType: "error" }));
-    }
+            selectedCodes.push(newCode);
+
+            dispatch(setSelectedCodes(selectedCodes));
+            dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
+            dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
+          } else {
+            dispatch(setAlertMessage({ message: enteredCodeObject.code + " already selected", messageType: "error" }));
+          }
+        }
+      });
   };
 };
 

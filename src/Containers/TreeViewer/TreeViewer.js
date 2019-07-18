@@ -8,7 +8,7 @@ import * as APIUtility from "../../Util/API";
 class TreeViewer extends Component {
   constructor(props) {
     super(props);
-    this.duration = 500; // Duration of all transitions
+    this.duration = 450; // Duration of all transitions
     this.oldWidth = 0;
     this.oldHeight = 0;
     this.fontType = "sans-serif"; // Font type
