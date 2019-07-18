@@ -105,7 +105,7 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
                 fetch(url2)
                   .then(response => response.json())
                   .then(codeObject => {
-                    result.description = codeObject.code + ": " + codeObject.description;
+                    result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
               // }
@@ -118,7 +118,7 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
                 fetch(url2)
                   .then(response => response.json())
                   .then(codeObject => {
-                    result.description = codeObject.code + ": " + codeObject.description;
+                    result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
               // }
