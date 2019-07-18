@@ -407,6 +407,8 @@ class TreeViewer extends Component {
     ////////////////////////////////////////
 
     this.createButton(); // Creates the "Add Code" button
+
+    console.log(this.data);
   }
   // END OF DRAW INITIAL TREE /////////////////
   /////////////////////////////////////////////
@@ -1502,19 +1504,6 @@ class TreeViewer extends Component {
       .on("mouseout", () => {
         this.clearInfoText();
       })
-      .data(this.siblingHeights)
-      .transition()
-      .delay(this.duration)
-      .duration(this.duration)
-      .attr("transform", d => {
-        return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
-      })
-      .attr("class", "childrenG");
-
-    // Adds children class and colours self as the non-selected colour
-    this.svg
-      .selectAll("circle.siblingCircle")
-      .attr("class", "childrenCircle")
       .on("click", (d, i) => {
         // if double click timer is active, this click is the double click
         if (this.dblclick_timer) {
@@ -1530,6 +1519,19 @@ class TreeViewer extends Component {
           }, 300);
         }
       })
+      .data(this.siblingHeights)
+      .transition()
+      .delay(this.duration)
+      .duration(this.duration)
+      .attr("transform", d => {
+        return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
+      })
+      .attr("class", "childrenG");
+
+    // Adds children class and colours self as the non-selected colour
+    this.svg
+      .selectAll("circle.siblingCircle")
+      .attr("class", "childrenCircle")
       .transition()
       .duration(this.duration)
       .attr("fill", this.otherColor);
