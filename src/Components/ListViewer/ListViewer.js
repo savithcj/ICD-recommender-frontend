@@ -21,6 +21,7 @@ import { sortableContainer, sortableElement, sortableHandle } from "react-sortab
 import arrayMove from "array-move";
 import Menu from "../ComponentMenu/ComponentMenu";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import { addDotToCode } from "../../Util/utility";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -255,7 +256,7 @@ function ListViewer(props) {
           key={`item-${index}`}
           index={index}
           id={index}
-          value={value[props.valueName]}
+          value={addDotToCode(value[props.valueName])}
           description={value[props.descriptionName]}
           disabled={!areItemsSortable}
         />

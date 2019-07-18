@@ -15,6 +15,36 @@ export const getStringFromListOfCodes = codeObjArray => {
 };
 
 /**
+ * add a dot after the third digit of an ICD code
+ * @param {*} code string version of an ICD code
+ */
+export const addDotToCode = code => {
+  if (checkIfDagAst(code)) {
+    return addDotToDagAst(code);
+  } else {
+    return addDotToRegularCode(code);
+  }
+};
+
+function checkIfDagAst(code) {
+  return code.includes("\u271D");
+}
+
+function addDotToRegularCode(code) {
+  if (code.length > 3) {
+    return code.slice(0, 3) + "." + code.slice(3);
+  }
+  return code;
+}
+
+function addDotToDagAst(code) {
+  const [dagger, asterisk] = code.split("\u271D");
+  const dagWithDot = addDotToRegularCode(dagger.trim());
+  const astWithDot = addDotToRegularCode(asterisk.trim().slice(0, -1));
+  return dagWithDot + "\u271D " + astWithDot + "*";
+}
+
+/**
  * Helper function to check recommended codes and rules against the rejected RHS codes in current session.
  * If RHS codes has been rejected prior, remove and do not show again in recommendations.
  * Secondly, using random rolling, check rule's recommendation score against a randomly rolled threshold,
