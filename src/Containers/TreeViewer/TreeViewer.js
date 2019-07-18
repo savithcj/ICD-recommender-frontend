@@ -688,7 +688,7 @@ class TreeViewer extends Component {
     chainGs
       .data(this.ancestors)
       .append("text")
-      .text(d => d.code)
+      .text(d => addDotToCode(d.code))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -911,7 +911,7 @@ class TreeViewer extends Component {
     chainGs
       .data(this.ancestors)
       .append("text")
-      .text(d => d.code)
+      .text(d => addDotToCode(d.code))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
@@ -1049,9 +1049,9 @@ class TreeViewer extends Component {
       .append("text")
       .text((d, i) => {
         if (i === 0) {
-          return this.data.self.code;
+          return addDotToCode(this.data.self.code);
         } else {
-          return d.code;
+          return addDotToCode(d.code);
         }
       })
       .attr("font-family", this.fontType)
@@ -1181,7 +1181,7 @@ class TreeViewer extends Component {
     chainGs
       .data(this.ancestors)
       .append("text")
-      .text(d => d.code)
+      .text(d => addDotToCode(d.code))
       .attr("font-family", this.fontType)
       .attr("font-size", this.textSize)
       .attr("fill", this.textColor)
