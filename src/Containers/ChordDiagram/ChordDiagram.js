@@ -112,38 +112,29 @@ class ChordDiagram extends Component {
 
     this.arcThickness = this.width / 1000;
 
-    //numPselections is the number of parents selected in the check boxes
-    this.numParentSelections = this.parentSelections.reduce((a, b) => a + b, 0);
-
-    //selectedParents contains the indices of the parents selected
-    this.selectedParents = [];
-    for (let i = 0; i < this.parentSelections.length; i++) {
-      if (this.parentSelections[i]) {
-        this.selectedParents.push(i);
-      }
+    this.drawLegend();
+    //draw elements as long as at least one parent is selected
+    if (this.numParentSelections !== 0) {
+      this.calculateBars();
+      this.drawBars();
+      this.drawSlider();
+      this.generateCurves();
     }
+  }
 
+  calculateBars() {
     //determine number of bars to be drawn based on parent selections
     this.numBars = 0;
     //iterate through parent selections
     for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
-      const startIndex = this.pData[selectedParentIndex].startIndex;
-      const endIndex = this.pData[selectedParentIndex].endIndex;
+      const startIndex = this.parentDataIndices[selectedParentIndex].startIndex;
+      const endIndex = this.parentDataIndices[selectedParentIndex].endIndex;
       //add up elements within the parents
       for (let j = startIndex; j <= endIndex; j++) {
         this.numBars++;
       }
     }
-
-    //draw elements as long as at least one parent is selected
-    if (this.numParentSelections !== 0) {
-      this.drawBars();
-      this.drawSlider();
-      this.generateCurves();
-    }
-
-    this.drawLegend();
   }
 
   drawBars() {
@@ -151,8 +142,8 @@ class ChordDiagram extends Component {
     this.maxBarCount = 0;
     for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
-      const startIndex = this.pData[selectedParentIndex].startIndex;
-      const endIndex = this.pData[selectedParentIndex].endIndex;
+      const startIndex = this.parentDataIndices[selectedParentIndex].startIndex;
+      const endIndex = this.parentDataIndices[selectedParentIndex].endIndex;
       for (let j = startIndex; j <= endIndex; j++) {
         if (this.data[j].times_coded > this.maxBarCount) {
           this.maxBarCount = this.data[j].times_coded;
@@ -168,8 +159,8 @@ class ChordDiagram extends Component {
     //iterate through parent selections
     for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
-      const startIndex = this.pData[selectedParentIndex].startIndex;
-      const endIndex = this.pData[selectedParentIndex].endIndex;
+      const startIndex = this.parentDataIndices[selectedParentIndex].startIndex;
+      const endIndex = this.parentDataIndices[selectedParentIndex].endIndex;
       //create bar data for each element within the parent
       for (let j = startIndex; j <= endIndex; j++) {
         let angle = (((barCount * 360) / this.numBars - 90) * Math.PI) / 180;
@@ -253,14 +244,21 @@ class ChordDiagram extends Component {
     this.startPoints = [];
     this.endPoints = [];
     this.curveData = [];
+
+    //rows associated to each parent. initialize to empty lists
+    this.parentRows = [];
+    for (let i = 0; i < this.numParents; i++) {
+      this.parentRows.push([]);
+    }
     let barCount = 0;
     //iterate through parent selections
     for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
-      const startIndex = this.pData[selectedParentIndex].startIndex;
-      const endIndex = this.pData[selectedParentIndex].endIndex;
+      const startIndex = this.parentDataIndices[selectedParentIndex].startIndex;
+      const endIndex = this.parentDataIndices[selectedParentIndex].endIndex;
       //for each data row associated to the parent, generate start and end points for the curves
       for (let j = startIndex; j <= endIndex; j++) {
+        this.parentRows[selectedParentIndex].push(barCount);
         let angle = (((barCount * 360) / this.numBars - 90) * Math.PI) / 180;
         let offset = ((360 / this.numBars) * Math.PI) / 180 / 3;
         this.startPoints.push({
@@ -296,8 +294,8 @@ class ChordDiagram extends Component {
     let col = 0;
     for (let i = 0; i < this.numParentSelections; i++) {
       const selectedParentIndex = this.selectedParents[i];
-      const startIndex = this.pData[selectedParentIndex].startIndex;
-      const endIndex = this.pData[selectedParentIndex].endIndex;
+      const startIndex = this.parentDataIndices[selectedParentIndex].startIndex;
+      const endIndex = this.parentDataIndices[selectedParentIndex].endIndex;
       for (let j = startIndex; j <= endIndex; j++) {
         if (destinationCounts[j] > this.minRules) {
           let bezierString =
@@ -364,19 +362,40 @@ class ChordDiagram extends Component {
   }
 
   drawLegend() {
+    //sorted because some chapters are out of order with respect to their code blocks
     let sortedPNames = [...this.parentNames];
     let sortedPDescriptions = [...this.parentDescriptions];
     sortedPNames.sort();
     sortedPDescriptions.sort();
+
+    //numPselections is the number of parents selected in the check boxes
+    this.numParentSelections = this.parentSelections.reduce((a, b) => a + b, 0);
+
+    //selectedParents contains the true indices of the parents selected
+    //this is different from the legend index because ICD chapters are out of order
+    this.selectedParents = [];
+    for (let i = 0; i < this.parentSelections.length; i++) {
+      if (this.parentSelections[i]) {
+        this.selectedParents.push(this.parentNames.indexOf(sortedPNames[i]));
+      }
+    }
 
     for (let i = 0; i < sortedPNames.length; i++) {
       let g = this.svg
         .append("g")
         .on("mouseover", () => {
           this.infoText.text(sortedPDescriptions[i]);
+          const parentIndex = this.parentNames.indexOf(sortedPNames[i]);
+          this.parentRows[parentIndex].forEach(element => {
+            this.drawOverlayCurves(element);
+          });
         })
         .on("mouseout", () => {
           this.infoText.text("");
+          const parentIndex = this.parentNames.indexOf(sortedPNames[i]);
+          this.parentRows[parentIndex].forEach(element => {
+            this.deleteOverlayCurves(element);
+          });
         })
         .on("click", () => {
           //parentSelections is a list of booleans
@@ -450,7 +469,7 @@ class ChordDiagram extends Component {
       .then(response => response.json())
       .then(parsedJson => {
         this.data = parsedJson;
-        this.pData = [];
+        this.parentDataIndices = [];
         this.parentNames = [];
         this.parentDescriptions = [];
         this.parentSelections = [];
@@ -464,18 +483,20 @@ class ChordDiagram extends Component {
             this.parentNames.push(parentName);
             this.parentDescriptions.push(parentName + ": " + curElem.parent_description);
             this.parentSelections.push(true);
-            this.pData.push({
+            this.parentDataIndices.push({
               pName: curElem.parent,
               pDesc: curElem.parent_description,
               startIndex: i
             });
           }
-          this.pData[pIndex]["endIndex"] = i;
+          this.parentDataIndices[pIndex]["endIndex"] = i;
         }
-        this.pData.sort((a, b) => {
-          return ("" + a.pName).localeCompare(b.pName);
-        });
-        this.numParents = this.pData.length;
+        // console.log("PDATA UNSORTED", this.pData);
+        // this.pData.sort((a, b) => {
+        //   return ("" + a.pName).localeCompare(b.pName);
+        // });
+        // console.log("PDATA SORTED", this.pData);
+        this.numParents = this.parentDataIndices.length;
       });
   };
 
