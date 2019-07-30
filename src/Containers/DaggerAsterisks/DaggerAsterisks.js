@@ -30,14 +30,11 @@ const daggerAsterisksViewer = props => {
       daggerObject.code = acceptedCodeObject.dagger;
       let asteriskObject = {};
       asteriskObject.code = acceptedCodeObject.asterisk;
-      const urlDagger = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + daggerObject.code + "/?format=json";
-      fetch(urlDagger)
+      APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, daggerObject.code)
         .then(response => response.json())
         .then(result => {
           daggerObject.description = result.description;
-          const urlAsterisk =
-            APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION) + asteriskObject.code + "/?format=json";
-          fetch(urlAsterisk)
+          APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, asteriskObject.code)
             .then(response => response.json())
             .then(result => {
               asteriskObject.description = result.description;

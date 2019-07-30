@@ -464,8 +464,7 @@ class ChordDiagram extends Component {
 
   getDataFromAPI = () => {
     //in this context, parents are the ICD chapters
-    const url = APIUtility.API.getAPIURL(APIUtility.CODE_BLOCK_USAGE) + "?format=json";
-    return fetch(url)
+    return APIUtility.API.makeAPICall(APIUtility.CODE_BLOCK_USAGE, null)
       .then(response => response.json())
       .then(parsedJson => {
         this.data = parsedJson;

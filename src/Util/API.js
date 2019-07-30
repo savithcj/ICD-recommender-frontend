@@ -31,51 +31,57 @@ export class API {
   static serverAdress = window.location.hostname; //Only if API on same server as React
   static portAdress = ":8000";
   static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
+  static json = "/?format=json";
 
-  static getAPIURL(endpoint) {
+  static makeAPICall(endpoint, input) {
+    let request = null;
     switch (endpoint) {
       case RULES:
-        return this.urlBeginning + "rules/";
-      case CHILDREN:
-        return this.urlBeginning + "children/";
+        return fetch(this.urlBeginning + "rules" + this.json);
+      // case CHILDREN:
+      //   return this.urlBeginning + "children/";
       case FAMILY:
-        return this.urlBeginning + "family/";
+        return fetch(this.urlBeginning + "family/" + input + this.json);
       case CODE_DESCRIPTION:
-        return this.urlBeginning + "codeDescription/";
-      case REQUEST_RULES:
-        return this.urlBeginning + "requestRules/";
+        return fetch(this.urlBeginning + "codeDescription/" + input + this.json);
+      // case REQUEST_RULES:
+      //   return this.urlBeginning + "requestRules/";
       case REQUEST_ACTIVE_RULES:
-        return this.urlBeginning + "requestRulesActive/";
-      case MATCH_DESCRIPTION:
-        return this.urlBeginning + "matchDescription/";
+        return fetch(this.urlBeginning + "requestRulesActive/" + input.codes + this.json + input.age + input.gender);
+      // case MATCH_DESCRIPTION:
+      //   return this.urlBeginning + "matchDescription/";
       case ANCESTORS:
-        return this.urlBeginning + "ancestors/";
+        return fetch(this.urlBeginning + "ancestors/" + input + this.json);
       case CODE_AUTO_SUGGESTIONS:
-        return this.urlBeginning + "codeAutosuggestions/";
+        return fetch(this.urlBeginning + "codeAutosuggestions/" + input + this.json);
       case CODE_BLOCK_USAGE:
-        return this.urlBeginning + "codeBlockUsage/";
+        return fetch(this.urlBeginning + "codeBlockUsage" + this.json);
       case CREATE_RULE:
-        return this.urlBeginning + "createRule/";
+        request = new Request(this.urlBeginning + "createRule/", input);
+        return fetch(request);
       case RULE_SEARCH:
-        return this.urlBeginning + "ruleSearch/";
+        request = new Request(this.urlBeginning + "ruleSearch/", input);
+        return fetch(request);
       case FLAG_RULE_FOR_REVIEW:
-        return this.urlBeginning + "flagRuleForReview/";
+        return fetch(this.urlBeginning + "flagRuleForReview/" + input + this.json, { method: "PUT" });
       case FLAGGED_RULES:
-        return this.urlBeginning + "flaggedRules/";
+        return fetch(this.urlBeginning + "flaggedRules" + this.json);
       case UPDATE_FLAGGED_RULE:
-        return this.urlBeginning + "updateFlaggedRule/";
+        return fetch(this.urlBeginning + "updateFlaggedRule/" + input.id + input.action, { method: "PUT" });
       case DAGGER_ASTERISK:
-        return this.urlBeginning + "daggerAsterisk/";
+        return fetch(this.urlBeginning + "daggerAsterisk/" + input + this.json);
       case ENTER_LOG:
-        return this.urlBeginning + "enterLog/";
+        request = new Request(this.urlBeginning + "enterLog/", input);
+        return fetch(request);
       case RULE_STATUS:
-        return this.urlBeginning + "changeRuleStatus/";
+        request = new Request(this.urlBeginning + "changeRuleStatus/", input);
+        return fetch(request);
       case INACTIVE_RULES:
-        return this.urlBeginning + "inactiveRules/";
+        return fetch(this.urlBeginning + "inactiveRules" + this.json);
       case STATS:
-        return this.urlBeginning + "stats/";
+        return fetch(this.urlBeginning + "stats" + this.json);
       case CHECK_CODE:
-        return this.urlBeginning + "checkCode/";
+        return fetch(this.urlBeginning + "checkCode/" + input + this.json);
       default:
         return null;
     }
