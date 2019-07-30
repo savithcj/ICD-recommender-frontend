@@ -114,22 +114,9 @@ function RuleSearch(props) {
         formattedResults.push({
           id: item.id,
           code: item.lhs + " -> " + item.rhs,
-          description:
-            "Conf=" +
-            item.confidence +
-            ", Supp=" +
-            item.support +
-            ", #Accepted=" +
-            item.num_accepted +
-            ", #Rejected=" +
-            item.num_rejected +
-            ", #Suggested=" +
-            item.num_suggested +
-            ", Ages(" +
-            item.min_age +
-            "-" +
-            item.max_age +
-            ")",
+          description: `Conf=${item.confidence}, Supp=${item.support}, #Accepted=${item.num_accepted}, #Rejected=${
+            item.num_rejected
+          }, #Suggested=${item.num_suggested}, Ages(${item.min_age}-${item.max_age}), Gender=${item.gender} `,
           active: item.active
         });
       });
