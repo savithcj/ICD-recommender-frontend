@@ -226,8 +226,7 @@ class BarChart extends Component {
 
   // Retrieves data from Django via API call
   getDataFromAPI = () => {
-    const url = APIUtility.API.getAPIURL(APIUtility.RULES) + "?format=json";
-    return fetch(url)
+    return APIUtility.API.makeAPICall(APIUtility.RULES)
       .then(response => response.json())
       .then(parsedJson => {
         this.data = parsedJson;

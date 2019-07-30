@@ -95,8 +95,7 @@ function RuleSearch(props) {
       body: JSON.stringify(data)
     };
 
-    const request = new Request(APIUtility.API.getAPIURL(APIUtility.RULE_SEARCH), options);
-    fetch(request)
+    APIUtility.API.makeAPICall(APIUtility.RULE_SEARCH, options)
       .then(response => response.json())
       .then(data => parseSearchResults(data));
   };
@@ -192,8 +191,7 @@ function RuleSearch(props) {
       body: JSON.stringify(data)
     };
 
-    const request = new Request(APIUtility.API.getAPIURL(APIUtility.RULE_STATUS), options);
-    fetch(request).then(response => {
+    APIUtility.API.makeAPICall(APIUtility.RULE_STATUS, options).then(response => {
       if (response.status !== 200) {
         props.setAlertMessage({ message: "Error sending data to server", messageType: "error" });
       }
@@ -209,8 +207,7 @@ function RuleSearch(props) {
   };
 
   const displayInactiveRules = () => {
-    const request = new Request(APIUtility.API.getAPIURL(APIUtility.INACTIVE_RULES));
-    fetch(request)
+    APIUtility.API.makeAPICall(APIUtility.INACTIVE_RULES, null)
       .then(response => response.json())
       .then(data => parseSearchResults(data));
   };

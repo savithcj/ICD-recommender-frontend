@@ -130,8 +130,7 @@ function RuleCreator(props) {
         body: JSON.stringify(data)
       };
 
-      const request = new Request(APIUtility.API.getAPIURL(APIUtility.CREATE_RULE), options);
-      const response = await fetch(request);
+      const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, options);
       const status = await response.status;
 
       if (status === 200 || status === 201) {
@@ -141,6 +140,8 @@ function RuleCreator(props) {
         setAgeStart(0);
         setAgeEnd(150);
         setGender();
+      } else {
+        props.setAlertMessage({ message: "Rule not created", messageType: "error" });
       }
     }
   };

@@ -9,9 +9,7 @@ export default function SortableTable() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const url = APIUtility.API.getAPIURL(APIUtility.RULES) + "?format=json";
-
-    fetch(url)
+    APIUtility.API.makeAPICall(APIUtility.RULES)
       .then(response => response.json())
       .then(results => {
         results.forEach(ruleObject => {

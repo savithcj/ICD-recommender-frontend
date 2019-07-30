@@ -376,8 +376,7 @@ class SankeyDiagram extends Component {
   }
 
   getDataFromAPI = () => {
-    const url = APIUtility.API.getAPIURL(APIUtility.CODE_BLOCK_USAGE) + "?format=json";
-    return fetch(url)
+    return APIUtility.API.makeAPICall(APIUtility.CODE_BLOCK_USAGE, null)
       .then(response => response.json())
       .then(parsedJson => {
         this.data = parsedJson;
