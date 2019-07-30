@@ -9,6 +9,7 @@ import { setAge, setGender } from "./ageGender";
 import { setRulesInSession, setRolledRules, setRHSExclusion } from "./session";
 import { setAlertMessage } from "./alert";
 import * as HelperFunctions from "../../Util/utility.js";
+import { setCodeInTree } from "./tree";
 
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
@@ -206,6 +207,7 @@ export const resetState = () => {
     dispatch(setSelectedCodes([]));
     dispatch(setDaggerAsterisk(null));
     dispatch(setRecommendedCodes(null));
+    dispatch(setCodeInTree(""));
   };
 };
 
