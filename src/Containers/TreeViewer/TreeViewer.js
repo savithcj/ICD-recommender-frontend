@@ -215,19 +215,7 @@ class TreeViewer extends Component {
           this.clearInfoText();
         })
         .on("click", (d, i) => {
-          // if double click timer is active, this click is the double click
-          if (this.dblclick_timer) {
-            clearTimeout(this.dblclick_timer);
-            this.dblclick_timer = false;
-            this.props.addSelectedCode(this.data.parent);
-          }
-          // otherwise, what to do after single click (double click has timed out)
-          else {
-            this.dblclick_timer = setTimeout(() => {
-              this.dblclick_timer = false;
-              this.handleParentClick(d, i); // Handles the parent click
-            }, 300);
-          }
+          this.singleDoubleClick(d, i, "parent");
         });
 
       parentg
@@ -274,19 +262,7 @@ class TreeViewer extends Component {
         return "translate(" + this.middle + "," + d + ")";
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.siblings[i]);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleSiblingClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "sibling");
       })
       .attr("class", "siblingG");
 
@@ -353,19 +329,7 @@ class TreeViewer extends Component {
         return "translate(" + (this.width - this.rightPadding) + "," + d + ")";
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.children[i]);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleChildrenClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "child");
       })
       .attr("class", "childrenG");
 
@@ -1242,19 +1206,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.parent);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleParentClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "parent");
       })
       .attr("class", "parentG");
     // Adding text
@@ -1368,19 +1320,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.siblings[i]);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleSiblingClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "sibling");
       })
       .data(this.childrenHeights)
       .transition()
@@ -1463,19 +1403,7 @@ class TreeViewer extends Component {
         return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.children[i]);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleChildrenClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "child");
       });
 
     // Adding invisible text, to transition in later
@@ -1584,19 +1512,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.children[i]);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleChildrenClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "child");
       })
       .data(this.siblingHeights)
       .transition()
@@ -1655,19 +1571,7 @@ class TreeViewer extends Component {
       .attr("fill", this.selectedColor);
 
     this.svg.selectAll("circle.siblingCircle").on("click", (d, i) => {
-      // if double click timer is active, this click is the double click
-      if (this.dblclick_timer) {
-        clearTimeout(this.dblclick_timer);
-        this.dblclick_timer = false;
-        this.props.addSelectedCode(this.data.siblings[i]);
-      }
-      // otherwise, what to do after single click (double click has timed out)
-      else {
-        this.dblclick_timer = setTimeout(() => {
-          this.dblclick_timer = false;
-          this.handleSiblingClick(d, i);
-        }, 300);
-      }
+      this.singleDoubleClick(d, i, "sibling");
     });
     this.svg.selectAll("g.oldParentG").remove(); // Removes old parent g because sibling g is created
   }
@@ -1686,19 +1590,7 @@ class TreeViewer extends Component {
           this.clearInfoText();
         })
         .on("click", (d, i) => {
-          // if double click timer is active, this click is the double click
-          if (this.dblclick_timer) {
-            clearTimeout(this.dblclick_timer);
-            this.dblclick_timer = false;
-            this.props.addSelectedCode(this.data.parent);
-          }
-          // otherwise, what to do after single click (double click has timed out)
-          else {
-            this.dblclick_timer = setTimeout(() => {
-              this.dblclick_timer = false;
-              this.handleParentClick(d, i);
-            }, 300);
-          }
+          this.singleDoubleClick(d, i, "parent");
         })
         .attr("class", "parentG")
         .attr("transform", d => {
@@ -1793,19 +1685,7 @@ class TreeViewer extends Component {
         this.clearInfoText();
       })
       .on("click", (d, i) => {
-        // if double click timer is active, this click is the double click
-        if (this.dblclick_timer) {
-          clearTimeout(this.dblclick_timer);
-          this.dblclick_timer = false;
-          this.props.addSelectedCode(this.data.siblings[i]);
-        }
-        // otherwise, what to do after single click (double click has timed out)
-        else {
-          this.dblclick_timer = setTimeout(() => {
-            this.dblclick_timer = false;
-            this.handleSiblingClick(d, i);
-          }, 300);
-        }
+        this.singleDoubleClick(d, i, "sibling");
       })
       .attr("class", "siblingG")
       .attr("transform", d => {
@@ -2078,6 +1958,35 @@ class TreeViewer extends Component {
       if (this.data.self.code === this.data.siblings[i].code) {
         this.selfIndex = i;
       }
+    }
+  }
+
+  // Determines whether to handle single or double click
+  singleDoubleClick(d, i, level) {
+    // if double click timer is active, this click is the double click
+    if (this.dblclick_timer) {
+      clearTimeout(this.dblclick_timer);
+      this.dblclick_timer = false;
+      if (level === "parent") {
+        this.props.addSelectedCode(this.data.parent);
+      } else if (level === "sibling") {
+        this.props.addSelectedCode(this.data.siblings[i]);
+      } else if (level === "child") {
+        this.props.addSelectedCode(this.data.children[i]);
+      }
+    }
+    // otherwise, what to do after single click (double click has timed out)
+    else {
+      this.dblclick_timer = setTimeout(() => {
+        this.dblclick_timer = false;
+        if (level === "parent") {
+          this.handleParentClick(d, i);
+        } else if (level === "sibling") {
+          this.handleSiblingClick(d, i);
+        } else if (level === "child") {
+          this.handleChildrenClick(d, i);
+        }
+      }, 300);
     }
   }
 
