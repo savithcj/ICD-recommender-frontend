@@ -40,8 +40,6 @@ const selectedCodesViewer = props => {
   };
 
   const sendSessionInfoToDB = () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
 
     //extracting the used codes from the code objects
     const selectedCodesToSendBack = props.selectedCodes.map(ruleObj => ruleObj.code);
@@ -52,11 +50,10 @@ const selectedCodesViewer = props => {
 
     const options = {
       method: "PUT",
-      headers,
       body: JSON.stringify(dataToSend)
     };
 
-    APIUtility.API.makeAPICall(APIUtility.ENTER_LOG, options).then(response => {
+    APIUtility.API.makeAPICall(APIUtility.ENTER_LOG, null, options).then(response => {
       console.log("[sendSessionInfoToDB function] response from backend", response.status);
     });
   };
