@@ -33,8 +33,8 @@ export class API {
   static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
   static json = "/?format=json";
 
-  static addAuthorization(request, options = {}) {
-    let bearer_token = "raP6LMwsoZ4byvHhPbHJVmhEbBZRAR";
+  static addAuthorization(url, options = {}) {
+    let bearer_token = "API TOKEN HERE";
     let bearer = "Bearer " + bearer_token;
 
     // Append token to header. Create header if it does not exist
@@ -43,12 +43,11 @@ export class API {
     }
     options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
-    console.log("REQUEST", request, options);
-    return fetch(request, options);
+    console.log("REQUEST", url, options);
+    return fetch(url, options);
   }
 
   static makeAPICall(endpoint, input, options = {}) {
-    let request = null;
     switch (endpoint) {
       case RULES:
         return this.addAuthorization(this.urlBeginning + "rules" + this.json);
@@ -77,11 +76,13 @@ export class API {
       case RULE_SEARCH:
         return this.addAuthorization(this.urlBeginning + "ruleSearch/", options);
       case FLAG_RULE_FOR_REVIEW:
-        return this.addAuthorization(this.urlBeginning + "flagRuleForReview/" + input + this.json, "PUT");
+        return this.addAuthorization(this.urlBeginning + "flagRuleForReview/" + input + this.json, { method: "PUT" });
       case FLAGGED_RULES:
         return this.addAuthorization(this.urlBeginning + "flaggedRules" + this.json);
       case UPDATE_FLAGGED_RULE:
-        return this.addAuthorization(this.urlBeginning + "updateFlaggedRule/" + input.id + input.action, "PUT");
+        return this.addAuthorization(this.urlBeginning + "updateFlaggedRule/" + input.id + input.action, {
+          method: "PUT"
+        });
       case DAGGER_ASTERISK:
         return this.addAuthorization(this.urlBeginning + "daggerAsterisk/" + input + this.json);
       case ENTER_LOG:
