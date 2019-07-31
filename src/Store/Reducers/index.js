@@ -7,6 +7,7 @@ import ageGender from "./ageGender";
 import session from "./session";
 import alert from "./alert";
 import tree from "./tree";
+import authentication from "./authentication";
 
 export default combineReducers({
   cached,
@@ -16,5 +17,6 @@ export default combineReducers({
   ageGender,
   session,
   alert,
-  tree
+  tree,
+  authentication
 });
