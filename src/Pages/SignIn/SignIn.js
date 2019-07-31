@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,6 +11,10 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import * as APIUtility from "../../Util/API";
+import { Redirect } from "react-router";
+import * as actions from "../../Store/Actions/index";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -37,8 +41,58 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignIn() {
+function SignIn(props) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [redirectBool, setRedirectBool] = useState(false);
+
   const classes = useStyles();
+
+  const handleUsernameChange = event => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = event => {
+    setPassword(event.target.value);
+  };
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  const getToken = () => {
+    const body = {
+      username: username,
+      password: password,
+      grant_type: "password",
+      client_id: "hHR0XLBuqPSapYTv1H8OvMCq7F7JG1b0JOFdJPKy"
+    };
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    // headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(body)
+    };
+
+    console.log(options);
+
+    APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
+      .then(response => response.json())
+      .then(async response => {
+        console.log(response);
+        props.setToken(response.access_token);
+
+        await sleep(2000);
+        setRedirectBool(true);
+      });
+  };
+
+  if (redirectBool === true) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -56,10 +110,11 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            onChange={handleUsernameChange}
             autoFocus
           />
           <TextField
@@ -72,9 +127,10 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={handlePasswordChange}
           />
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-          <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+          <Button onClick={getToken} fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign In
           </Button>
           <Grid container>
@@ -94,3 +150,14 @@ export default function SignIn() {
     </Container>
   );
 }
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setToken: token => dispatch(actions.setToken(token))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(SignIn);

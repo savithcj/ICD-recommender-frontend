@@ -1,3 +1,4 @@
+import store from "../index";
 /**
  * Endpoints---------------------------------------------------------------------------
  * Defined as constants here mainly to avoid possible bugs as a result of misspellings
@@ -23,6 +24,7 @@ export const RULE_STATUS = "RULE_STATUS";
 export const INACTIVE_RULES = "INACTIVE_RULES";
 export const STATS = "STATS";
 export const CHECK_CODE = "CHECK_CODE";
+export const GET_TOKEN = "GET_TOKEN";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -31,11 +33,16 @@ export class API {
   static serverAdress = window.location.hostname; //Only if API on same server as React
   static portAdress = ":8000";
   static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
+  static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
   static addAuthorization(url, options = {}) {
-    let bearer_token = "API TOKEN HERE";
-    let bearer = "Bearer " + bearer_token;
+    console.log("STORE: ", store.getState());
+    const oAuthToken = store.getState().authentication.oAuthToken;
+    console.log("TOKEN", oAuthToken);
+    // let bearer_token = "API TOKEN HERE";
+    // let bearer_token = "dAPt5viF6Hzbrobi5B99tCtaG3cQPu";
+    let bearer = "Bearer " + oAuthToken;
 
     // Append token to header. Create header if it does not exist
     if (options.headers === undefined) {
@@ -95,6 +102,9 @@ export class API {
         return this.addAuthorization(this.urlBeginning + "stats" + this.json);
       case CHECK_CODE:
         return this.addAuthorization(this.urlBeginning + "checkCode/" + input + this.json);
+      case GET_TOKEN:
+        console.log("OPTIONS", options);
+        return fetch(this.authUrlBeginning + "token/", options);
       default:
         return null;
     }

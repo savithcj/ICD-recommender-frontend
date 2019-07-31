@@ -14,3 +14,4 @@ export {
 export { addRHSToExclusion, setRHSExclusion, setRulesInSession } from "./session";
 export { setAlertMessage } from "./alert";
 export { setCodeInTree } from "./tree";
+export { setToken } from "./authentication";
