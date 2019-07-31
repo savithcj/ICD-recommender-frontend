@@ -9,6 +9,7 @@ import { setAge, setGender } from "./ageGender";
 import { setRulesInSession, setRolledRules, setRHSExclusion } from "./session";
 import { setAlertMessage } from "./alert";
 import * as HelperFunctions from "../../Util/utility.js";
+import { setCodeInTree } from "./tree";
 
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
@@ -25,16 +26,15 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
     const rollResults = getState().session.rulesRolled;
 
     if (stringOfCodes !== "") {
-      const url =
-        APIUtility.API.getAPIURL(APIUtility.REQUEST_ACTIVE_RULES) +
-        stringOfCodes +
-        "/?format=json" +
-        ageParam +
-        genderParam;
+      const param = {
+        codes: stringOfCodes,
+        age: ageParam,
+        gender: genderParam
+      };
 
       dispatch(setRecommendedCodes("LOADING"));
 
-      fetch(url)
+      APIUtility.API.makeAPICall(APIUtility.REQUEST_ACTIVE_RULES, param)
         .then(response => response.json())
         .then(results => {
           results.forEach(ruleObj => {
@@ -81,30 +81,25 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(getDaggerAsteriskFor);
     if (stringOfCodes !== "") {
-      const url = APIUtility.API.getAPIURL(APIUtility.DAGGER_ASTERISK) + stringOfCodes + "/?format=json";
-
       dispatch(setDaggerAsterisk("LOADING"));
       let indicesToRemove = [];
-      fetch(url)
+      APIUtility.API.makeAPICall(APIUtility.DAGGER_ASTERISK, stringOfCodes)
         .then(response => response.json())
         .then(results => {
           let promiseList = [];
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
-            let url2 = APIUtility.API.getAPIURL(APIUtility.CODE_DESCRIPTION);
             if (codeObjArray.find(codeObject => codeObject.code === result.dagger) === undefined) {
-              url2 += result.dagger + "/?format=json";
               promiseList.push(
-                fetch(url2)
+                APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, result.dagger)
                   .then(response => response.json())
                   .then(codeObject => {
                     result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
             } else if (codeObjArray.find(codeObject => codeObject.code === result.asterisk) === undefined) {
-              url2 += result.asterisk + "/?format=json";
               promiseList.push(
-                fetch(url2)
+                APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, result.asterisk)
                   .then(response => response.json())
                   .then(codeObject => {
                     result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
@@ -163,9 +158,7 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
 //used to add a code from the tree
 export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject => {
   return (dispatch, getState) => {
-    const url = APIUtility.API.getAPIURL(APIUtility.CHECK_CODE) + enteredCodeObject.code + "/?format=json";
-
-    fetch(url)
+    APIUtility.API.makeAPICall(APIUtility.CHECK_CODE, enteredCodeObject.code)
       .then(response => response.json())
       .then(result => {
         if (result.exists !== true) {
@@ -206,6 +199,7 @@ export const resetState = () => {
     dispatch(setSelectedCodes([]));
     dispatch(setDaggerAsterisk(null));
     dispatch(setRecommendedCodes(null));
+    dispatch(setCodeInTree(""));
   };
 };
 

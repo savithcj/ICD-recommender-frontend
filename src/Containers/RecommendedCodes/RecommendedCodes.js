@@ -47,11 +47,10 @@ const recommendedCodesViewer = props => {
     const flaggedCode = props.recommendedCodes[flaggedCodeIndex];
     const ruleId = flaggedCode.id;
 
-    const url = APIUtility.API.getAPIURL(APIUtility.FLAG_RULE_FOR_REVIEW) + ruleId + "/?format=json";
-    fetch(url, { method: "PUT" })
+    APIUtility.API.makeAPICall(APIUtility.FLAG_RULE_FOR_REVIEW, ruleId)
       .then(response => response.json())
       .then(results => {
-        console.log("[RecommendedCodes Container] API response from FlagRuleForReview: ", results);
+        // console.log("[RecommendedCodes Container] API response from FlagRuleForReview: ", results);
       });
     props.removeRecommendedCode(flaggedCodeIndex);
   };

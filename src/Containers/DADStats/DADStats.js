@@ -33,9 +33,7 @@ export default function DADStats() {
   const [topRows, setTopRows] = useState([]);
 
   useEffect(() => {
-    const url = APIUtility.API.getAPIURL(APIUtility.STATS) + "?format=json";
-
-    fetch(url)
+    APIUtility.API.makeAPICall(APIUtility.STATS, null)
       .then(response => response.json())
       .then(results => {
         const numUnique = results.numUnique;

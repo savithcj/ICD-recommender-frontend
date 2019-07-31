@@ -183,9 +183,7 @@ class CodeInputField extends React.Component {
     const { appendCodeToCache } = this.props;
 
     if (inputValue !== "") {
-      const url = APIUtility.API.getAPIURL(APIUtility.CODE_AUTO_SUGGESTIONS) + inputValue + "/?format=json";
-
-      fetch(url)
+      APIUtility.API.makeAPICall(APIUtility.CODE_AUTO_SUGGESTIONS, inputValue)
         .then(response => response.json())
         .then(results => {
           results["code matches"].forEach(codeObj => {

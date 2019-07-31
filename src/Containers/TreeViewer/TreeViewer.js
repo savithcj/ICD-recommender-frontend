@@ -1179,8 +1179,7 @@ class TreeViewer extends Component {
   // Parameter: code to get ancestors for
   // Puts the array of ancestors into a member variable
   getAncestorsFromAPI = code => {
-    const url = APIUtility.API.getAPIURL(APIUtility.ANCESTORS) + code + "/?format=json";
-    return fetch(url)
+    return APIUtility.API.makeAPICall(APIUtility.ANCESTORS, code)
       .then(response => response.json())
       .then(parsedJson => {
         this.ancestors = parsedJson;
@@ -2032,8 +2031,7 @@ class TreeViewer extends Component {
 
   // Gets the data from API for the specified code and stores it in a member variable
   getDataFromAPI = code => {
-    const url = APIUtility.API.getAPIURL(APIUtility.FAMILY) + code + "/?format=json";
-    return fetch(url)
+    return APIUtility.API.makeAPICall(APIUtility.FAMILY, code)
       .then(response => response.json())
       .then(parsedJson => {
         this.data = parsedJson;

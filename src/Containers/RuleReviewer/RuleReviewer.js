@@ -11,9 +11,7 @@ export default function RuleReviewer() {
   }, []);
 
   const getFlaggedRulesFromAPI = () => {
-    const url = APIUtility.API.getAPIURL(APIUtility.FLAGGED_RULES) + "?format=json";
-
-    fetch(url)
+    APIUtility.API.makeAPICall(APIUtility.FLAGGED_RULES, null)
       .then(response => response.json())
       .then(results => {
         results.forEach(ruleObject => {
@@ -26,15 +24,17 @@ export default function RuleReviewer() {
   const handleAcceptRule = event => {
     const acceptRuleIndex = parseInt(event.currentTarget.id, 10);
 
-    const url =
-      APIUtility.API.getAPIURL(APIUtility.UPDATE_FLAGGED_RULE) + flaggedRules[acceptRuleIndex].id + ",ACCEPT/";
+    const param = {
+      id: flaggedRules[acceptRuleIndex].id,
+      action: ",ACCEPT/"
+    };
 
     const rules = [...flaggedRules];
 
     //ListViewer will display a loading indicator while the API promise is being fullfilled
     setFlaggedRules("LOADING");
 
-    fetch(url, { method: "PUT" }).then(response => {
+    APIUtility.API.makeAPICall(APIUtility.UPDATE_FLAGGED_RULE, param).then(response => {
       console.log(response.status);
       //Only removes a rule from the list viewer if the put request was successful
       //TODO: show a message to the user if the request failed
@@ -48,14 +48,16 @@ export default function RuleReviewer() {
   const handleRejectRule = event => {
     const rejectRuleIndex = parseInt(event.currentTarget.id, 10);
 
-    const url =
-      APIUtility.API.getAPIURL(APIUtility.UPDATE_FLAGGED_RULE) + flaggedRules[rejectRuleIndex].id + ",REJECT/";
+    const param = {
+      id: flaggedRules[rejectRuleIndex].id,
+      action: ",REJECT/"
+    };
 
     const rules = [...flaggedRules];
 
     setFlaggedRules("LOADING");
 
-    fetch(url, { method: "PUT" }).then(response => {
+    APIUtility.API.makeAPICall(APIUtility.UPDATE_FLAGGED_RULE, param).then(response => {
       console.log(response.status);
       //Only removes a rule from the list viewer if the put request was successful
       //TODO: show a message to the user if the request failed
