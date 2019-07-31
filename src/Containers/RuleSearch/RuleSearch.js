@@ -81,9 +81,6 @@ function RuleSearch(props) {
   };
 
   const searchForRule = async () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-
     const LHSCodes = LHS.map(codeObj => codeObj.code);
     const RHSCodes = RHS.map(codeObj => codeObj.code);
 
@@ -91,11 +88,10 @@ function RuleSearch(props) {
 
     const options = {
       method: "POST",
-      headers,
       body: JSON.stringify(data)
     };
 
-    APIUtility.API.makeAPICall(APIUtility.RULE_SEARCH, options)
+    APIUtility.API.makeAPICall(APIUtility.RULE_SEARCH, null, options)
       .then(response => response.json())
       .then(data => parseSearchResults(data));
   };
@@ -182,16 +178,16 @@ function RuleSearch(props) {
 
   const setRuleStatus = (indexToChange, status) => {
     const rule_id = searchResults[indexToChange].id;
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
+    // const headers = new Headers();
+    // headers.append("Content-Type", "application/json");
     const data = { status, rule_id };
     const options = {
       method: "PATCH",
-      headers,
+      // headers,
       body: JSON.stringify(data)
     };
 
-    APIUtility.API.makeAPICall(APIUtility.RULE_STATUS, options).then(response => {
+    APIUtility.API.makeAPICall(APIUtility.RULE_STATUS, null, options).then(response => {
       if (response.status !== 200) {
         props.setAlertMessage({ message: "Error sending data to server", messageType: "error" });
       }

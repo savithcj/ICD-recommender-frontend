@@ -109,7 +109,6 @@ function RuleCreator(props) {
 
   const createRule = async () => {
     const headers = new Headers();
-    headers.append("Content-Type", "application/json");
 
     const LHSCodes = LHS.map(codeObj => codeObj.code);
     const RHSCodes = RHS.map(codeObj => codeObj.code);
@@ -126,11 +125,10 @@ function RuleCreator(props) {
 
       const options = {
         method: "POST",
-        headers,
         body: JSON.stringify(data)
       };
 
-      const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, options);
+      const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, null, options);
       const status = await response.status;
 
       if (status === 200 || status === 201) {
