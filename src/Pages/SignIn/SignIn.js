@@ -15,6 +15,7 @@ import * as APIUtility from "../../Util/API";
 import { Redirect } from "react-router";
 import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
+import secret from "../../secret/secrets.json";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -60,7 +61,7 @@ function SignIn(props) {
       username: username,
       password: password,
       grant_type: "password",
-      client_id: "M1f9wfIEvs9RFGfPA5Hu5PBrfdA2Wi9Bb4UEF0xp"
+      client_id: secret.client_id
     };
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
