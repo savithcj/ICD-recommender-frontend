@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -11,6 +11,10 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import * as APIUtility from "../../Util/API";
+import * as actions from "../../Store/Actions/index";
+import { connect } from "react-redux";
+import { useAlert, positions } from "react-alert";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -37,8 +41,47 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignUp() {
+function SignUp(props) {
+  const alert = useAlert();
   const classes = useStyles();
+
+  //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
+  //in the store and displays messages to the user
+  useEffect(() => {
+    if (props.alertMessage) {
+      alert.show(props.alertMessage.message, {
+        timeout: 2500,
+        position: positions.MIDDLE,
+        type: props.alertMessage.messageType,
+        onClose: () => {
+          props.setAlertMessage(null);
+        }
+      });
+    }
+  }, [props.alertMessage]);
+
+  function createUser() {
+    const fname = document.getElementById("firstName").value;
+    const lname = document.getElementById("lastName").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if (fname === "" || lname === "" || username === "" || password === "") {
+      props.setAlertMessage({ message: "Please fill in the missing fields", messageType: "error" });
+    } else {
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+
+      const body = { fname: fname, lname: lname, username: username, password: password };
+      const options = {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body)
+      };
+
+      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options);
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -80,10 +123,10 @@ export default function SignUp() {
                 variant="outlined"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
               />
             </Grid>
             <Grid item xs={12}>
@@ -105,12 +148,12 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
-          <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+          <Button onClick={createUser} fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign Up
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/sign-in" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
@@ -120,3 +163,18 @@ export default function SignUp() {
     </Container>
   );
 }
+
+const mapStateToProps = state => {
+  return { alertMessage: state.alert.alertMessage };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SignUp);
