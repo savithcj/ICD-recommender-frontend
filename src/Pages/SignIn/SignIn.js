@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -15,6 +15,7 @@ import * as APIUtility from "../../Util/API";
 import { Redirect } from "react-router";
 import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
+import { useAlert, positions } from "react-alert";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -42,6 +43,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SignIn(props) {
+  const alert = useAlert();
+
+  //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
+  //in the store and displays messages to the user
+  useEffect(() => {
+    if (props.alertMessage) {
+      alert.show(props.alertMessage.message, {
+        timeout: 2500,
+        position: positions.MIDDLE,
+        type: props.alertMessage.messageType,
+        onClose: () => {
+          props.setAlertMessage(null);
+        }
+      });
+    }
+  }, [props.alertMessage]);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -70,13 +88,18 @@ function SignIn(props) {
       body: body
     };
 
-    console.log(options);
-
     APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
       .then(response => response.json())
       .then(async response => {
-        console.log(response);
-        props.setToken(response.access_token);
+        console.log("[Sign in API response]", response);
+        if (response.access_token !== undefined) {
+          props.setToken(response.access_token);
+        } else {
+          props.setAlertMessage({ message: "Invalid username or password", messageType: "error" });
+        }
+      })
+      .catch(error => {
+        console.log("ERROR: ", error);
       });
   };
 
@@ -142,12 +165,13 @@ function SignIn(props) {
 }
 
 const mapStateToProps = state => {
-  return { oAuthToken: state.authentication.oAuthToken };
+  return { oAuthToken: state.authentication.oAuthToken, alertMessage: state.alert.alertMessage };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setToken: token => dispatch(actions.setToken(token))
+    setToken: token => dispatch(actions.setToken(token)),
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
   };
 };
 

@@ -38,8 +38,6 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
-  static checkToken(token) {}
-
   static addAuthorization(url, options = {}) {
     console.log("STORE: ", store.getState());
     const oAuthToken = store.getState().authentication.oAuthToken;
