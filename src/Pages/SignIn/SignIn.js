@@ -83,6 +83,12 @@ function SignIn(props) {
       });
   };
 
+  const onKeyPress = e => {
+    if (e.which === 13) {
+      getToken();
+    }
+  };
+
   if (props.oAuthToken !== null) {
     return <Redirect to="/" />;
   }
@@ -108,6 +114,7 @@ function SignIn(props) {
             name="username"
             autoComplete="username"
             onChange={handleUsernameChange}
+            onKeyPress={onKeyPress}
             autoFocus
           />
           <TextField
@@ -121,6 +128,7 @@ function SignIn(props) {
             id="password"
             autoComplete="current-password"
             onChange={handlePasswordChange}
+            onKeyPress={onKeyPress}
           />
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
           <Button onClick={getToken} fullWidth variant="contained" color="primary" className={classes.submit}>
