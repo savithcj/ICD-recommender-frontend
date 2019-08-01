@@ -15,10 +15,14 @@ class BarChart extends Component {
   }
 
   componentDidMount() {
-    this.getDataFromAPI().then(() => {
-      this.drawBarChart(); // Draws bar chart
-      this.forceUpdate(); // Forces re-render so that it takes up the appropriate space
-    });
+    this.getDataFromAPI()
+      .then(() => {
+        this.drawBarChart(); // Draws bar chart
+        this.forceUpdate(); // Forces re-render so that it takes up the appropriate space
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   }
 
   // Recalculates svg and element sizes when the chart is resized

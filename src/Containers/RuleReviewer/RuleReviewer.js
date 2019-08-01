@@ -18,6 +18,9 @@ export default function RuleReviewer() {
           ruleObject.rule = ruleObject.lhs + " \u2192 " + ruleObject.rhs;
         });
         setFlaggedRules(results);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
       });
   };
 
@@ -34,15 +37,19 @@ export default function RuleReviewer() {
     //ListViewer will display a loading indicator while the API promise is being fullfilled
     setFlaggedRules("LOADING");
 
-    APIUtility.API.makeAPICall(APIUtility.UPDATE_FLAGGED_RULE, param).then(response => {
-      console.log(response.status);
-      //Only removes a rule from the list viewer if the put request was successful
-      //TODO: show a message to the user if the request failed
-      if (response.status === 200) {
-        rules.splice(acceptRuleIndex, 1);
-      }
-      setFlaggedRules(rules);
-    });
+    APIUtility.API.makeAPICall(APIUtility.UPDATE_FLAGGED_RULE, param)
+      .then(response => {
+        console.log(response.status);
+        //Only removes a rule from the list viewer if the put request was successful
+        //TODO: show a message to the user if the request failed
+        if (response.status === 200) {
+          rules.splice(acceptRuleIndex, 1);
+        }
+        setFlaggedRules(rules);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   };
 
   const handleRejectRule = event => {
@@ -57,15 +64,19 @@ export default function RuleReviewer() {
 
     setFlaggedRules("LOADING");
 
-    APIUtility.API.makeAPICall(APIUtility.UPDATE_FLAGGED_RULE, param).then(response => {
-      console.log(response.status);
-      //Only removes a rule from the list viewer if the put request was successful
-      //TODO: show a message to the user if the request failed
-      if (response.status === 200) {
-        rules.splice(rejectRuleIndex, 1);
-      }
-      setFlaggedRules(rules);
-    });
+    APIUtility.API.makeAPICall(APIUtility.UPDATE_FLAGGED_RULE, param)
+      .then(response => {
+        console.log(response.status);
+        //Only removes a rule from the list viewer if the put request was successful
+        //TODO: show a message to the user if the request failed
+        if (response.status === 200) {
+          rules.splice(rejectRuleIndex, 1);
+        }
+        setFlaggedRules(rules);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   };
 
   return (

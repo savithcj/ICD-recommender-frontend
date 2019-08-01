@@ -64,6 +64,9 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
           dispatch(setRolledRules(rolledRules));
           dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
           dispatch(setRecommendedCodes(cleanedResults));
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     } else {
       dispatch(setRecommendedCodes(null));
@@ -118,6 +121,9 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
             }
             dispatch(setDaggerAsterisk(resultsToSend));
           });
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     } else {
       dispatch(setDaggerAsterisk(null));
@@ -184,6 +190,9 @@ export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject =
             dispatch(setAlertMessage({ message: enteredCodeObject.code + " already selected", messageType: "error" }));
           }
         }
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
       });
   };
 };

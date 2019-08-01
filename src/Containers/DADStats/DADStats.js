@@ -55,6 +55,9 @@ export default function DADStats() {
         });
 
         setTopRows(topRows);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
       });
   }, []);
 

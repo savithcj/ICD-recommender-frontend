@@ -40,7 +40,6 @@ const selectedCodesViewer = props => {
   };
 
   const sendSessionInfoToDB = () => {
-
     //extracting the used codes from the code objects
     const selectedCodesToSendBack = props.selectedCodes.map(ruleObj => ruleObj.code);
 
@@ -53,9 +52,13 @@ const selectedCodesViewer = props => {
       body: JSON.stringify(dataToSend)
     };
 
-    APIUtility.API.makeAPICall(APIUtility.ENTER_LOG, null, options).then(response => {
-      console.log("[sendSessionInfoToDB function] response from backend", response.status);
-    });
+    APIUtility.API.makeAPICall(APIUtility.ENTER_LOG, null, options)
+      .then(response => {
+        console.log("[sendSessionInfoToDB function] response from backend", response.status);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   };
 
   const copyToClipboard = () => {

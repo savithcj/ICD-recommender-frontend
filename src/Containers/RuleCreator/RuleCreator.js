@@ -128,7 +128,9 @@ function RuleCreator(props) {
         body: JSON.stringify(data)
       };
 
-      const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, null, options);
+      const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, null, options).catch(error => {
+        console.log("ERROR:", error);
+      });
       const status = await response.status;
 
       if (status === 200 || status === 201) {

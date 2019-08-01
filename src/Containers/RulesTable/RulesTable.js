@@ -18,6 +18,9 @@ export default function SortableTable() {
           ruleObject.support = ruleObject.support.toFixed(4);
         });
         setData(results);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
       });
   }, []);
 
