@@ -77,6 +77,9 @@ function SignIn(props) {
       .then(async response => {
         console.log(response);
         props.setToken(response.access_token);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
       });
   };
 

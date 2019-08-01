@@ -93,7 +93,10 @@ function RuleSearch(props) {
 
     APIUtility.API.makeAPICall(APIUtility.RULE_SEARCH, null, options)
       .then(response => response.json())
-      .then(data => parseSearchResults(data));
+      .then(data => parseSearchResults(data))
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   };
 
   /**
@@ -174,11 +177,15 @@ function RuleSearch(props) {
       body: JSON.stringify(data)
     };
 
-    APIUtility.API.makeAPICall(APIUtility.RULE_STATUS, null, options).then(response => {
-      if (response.status !== 200) {
-        props.setAlertMessage({ message: "Error sending data to server", messageType: "error" });
-      }
-    });
+    APIUtility.API.makeAPICall(APIUtility.RULE_STATUS, null, options)
+      .then(response => {
+        if (response.status !== 200) {
+          props.setAlertMessage({ message: "Error sending data to server", messageType: "error" });
+        }
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   };
 
   const shouldHideRemoveButton = index => {
@@ -192,7 +199,10 @@ function RuleSearch(props) {
   const displayInactiveRules = () => {
     APIUtility.API.makeAPICall(APIUtility.INACTIVE_RULES, null)
       .then(response => response.json())
-      .then(data => parseSearchResults(data));
+      .then(data => parseSearchResults(data))
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   };
 
   return (
