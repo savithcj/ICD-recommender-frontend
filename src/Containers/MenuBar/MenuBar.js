@@ -85,7 +85,7 @@ function ButtonAppBar(props) {
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
-      <MenuItem onClick={handleSignOutButton} component={Link} to="/sign-in">
+      <MenuItem onClick={handleSignOutButton} component={Link} to="/signed-out">
         Sign Out
       </MenuItem>
     </Menu>
