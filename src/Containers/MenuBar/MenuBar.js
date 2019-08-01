@@ -10,6 +10,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Menu } from "@material-ui/core";
 import { ReactComponent as CheckIcon } from "../../Assets/Icons/round-done-24px.svg";
+import { connect } from "react-redux";
+import * as actions from "../../Store/Actions/index";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,6 +58,12 @@ function ButtonAppBar(props) {
     setAnchorEl(null);
   }
 
+  function handleSignOutButton(event) {
+    //TODO: Implementation
+    props.setToken(null);
+    setAnchorEl(null);
+  }
+
   const menuId = "settings-menu";
 
   let renderMenu = props.inModifyMode ? null : (
@@ -77,6 +85,9 @@ function ButtonAppBar(props) {
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
       <MenuItem onClick={handleAboutButton}>About</MenuItem>
+      <MenuItem onClick={handleSignOutButton} component={Link} to="/sign-in">
+        Sign Out
+      </MenuItem>
     </Menu>
   );
 
@@ -123,4 +134,13 @@ function ButtonAppBar(props) {
   );
 }
 
-export default ButtonAppBar;
+const mapDispatchToProps = dispatch => {
+  return {
+    setToken: token => dispatch(actions.setToken(token))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(ButtonAppBar);
