@@ -1,4 +1,5 @@
 import store from "../index";
+import * as actions from "../Store/Actions/index";
 /**
  * Endpoints---------------------------------------------------------------------------
  * Defined as constants here mainly to avoid possible bugs as a result of misspellings
@@ -36,6 +37,8 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
+  static checkToken(token) {}
+
   static addAuthorization(url, options = {}) {
     console.log("STORE: ", store.getState());
     const oAuthToken = store.getState().authentication.oAuthToken;
@@ -51,7 +54,14 @@ export class API {
     options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
     console.log("REQUEST", url, options);
-    return fetch(url, options);
+    return fetch(url, options).then(response => {
+      console.log(response.status);
+      if (response.status !== 200) {
+        store.dispatch(actions.setToken(null));
+      } else {
+        return response;
+      }
+    });
   }
 
   static makeAPICall(endpoint, input, options = {}) {
