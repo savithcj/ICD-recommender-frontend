@@ -195,6 +195,9 @@ class CodeInputField extends React.Component {
             );
           }
           this.populateAutoCompleteList(results, inputValue);
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     }
   }

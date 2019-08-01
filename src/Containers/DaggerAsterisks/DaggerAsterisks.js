@@ -46,6 +46,9 @@ const daggerAsterisksViewer = props => {
                 addSelectedDaggerAsterisk(asteriskObject, daggerObject);
               }
             });
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     }
   };

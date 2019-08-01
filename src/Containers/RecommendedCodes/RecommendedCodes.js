@@ -51,6 +51,9 @@ const recommendedCodesViewer = props => {
       .then(response => response.json())
       .then(results => {
         // console.log("[RecommendedCodes Container] API response from FlagRuleForReview: ", results);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
       });
     props.removeRecommendedCode(flaggedCodeIndex);
   };
