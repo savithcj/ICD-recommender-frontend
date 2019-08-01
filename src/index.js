@@ -17,6 +17,8 @@ import Visualization from "./Pages/Visualization/Visualization";
 import SignIn from "./Pages/SignIn/SignIn";
 import SignUp from "./Pages/SignUp/SignUp";
 import Sandbox from "./Pages/Sandbox/Sandbox";
+import Expired from "./Pages/Expired/Expired";
+import SignedOut from "./Pages/SignedOut/SignedOut";
 
 //enabling redux dev-tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -35,6 +37,8 @@ const routing = (
           <Route path="/admin" component={Admin} />
           <Route path="/visualization" component={Visualization} />
           <Route path="/sandbox" component={Sandbox} />
+          <Route path="/expired" component={Expired} />
+          <Route path="/signed-out" component={SignedOut} />
           <Route>{notFound}</Route>
         </Switch>
       </BrowserRouter>
