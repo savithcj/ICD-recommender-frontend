@@ -131,9 +131,13 @@ class TreeViewer extends Component {
   componentDidMount() {
     this.isMountedFlag = true;
     window.addEventListener("resize", this.updateDimensions);
-    this.getDataFromAPI("Chapter 01").then(() => {
-      this.redrawTree();
-    });
+    this.getDataFromAPI("Chapter 01")
+      .then(() => {
+        this.redrawTree();
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   }
 
   componentWillUnmount() {
@@ -164,13 +168,17 @@ class TreeViewer extends Component {
 
     await this.sleep(0.5 * this.duration); // Wait for current to disappear
     // Transition new tree in
-    this.getDataFromAPI(code).then(() => {
-      this.drawInitialTree();
-      d3.select("div." + this.treeClass)
-        .transition()
-        .duration(0.5 * this.duration)
-        .style("opacity", 1);
-    });
+    this.getDataFromAPI(code)
+      .then(() => {
+        this.drawInitialTree();
+        d3.select("div." + this.treeClass)
+          .transition()
+          .duration(0.5 * this.duration)
+          .style("opacity", 1);
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   }
 
   drawInitialTree() {
@@ -417,8 +425,9 @@ class TreeViewer extends Component {
     if (!this.handlingClick) {
       this.handlingClick = true; // Sets handling click to true
       this.prevAncestors = this.ancestors; // Saves current ancestors in another variable
-      this.getDataFromAPI(this.data.parent.code) // Gets data for parent node
-        .then(() => this.getAncestorsFromAPI(this.data.self.code)) // Gets new ancestors
+      this.getDataFromAPI(this.data.parent.code)
+        .then(() => this.getAncestorsFromAPI(this.data.self.code))
+        // Gets new ancestors
         .then(async () => {
           this.removeChildren(); // Removes children
           this.moveSiblingsToChildren(); // Transitions the siblings to children spots
@@ -438,6 +447,9 @@ class TreeViewer extends Component {
         })
         .then(() => {
           this.handlingClick = false; // Sets handling click to false to enable clicking on a node again
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     }
   }
@@ -447,7 +459,8 @@ class TreeViewer extends Component {
     // Checks to ensure that it isn't already handling a click
     if (!this.handlingClick) {
       this.handlingClick = true; // Sets handling click to true
-      this.getDataFromAPI(this.data.siblings[i].code) // Gets data from API for clicked sibling
+      this.getDataFromAPI(this.data.siblings[i].code)
+        // Gets data from API for clicked sibling
         .then(async () => {
           // No need to do anything if they clicked on the already selected circle
           if (i !== this.selfIndex) {
@@ -481,6 +494,9 @@ class TreeViewer extends Component {
         })
         .then(() => {
           this.handlingClick = false; // Sets handling click to false to enable clicking on a node again
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     }
   }
@@ -491,8 +507,10 @@ class TreeViewer extends Component {
     if (!this.handlingClick) {
       this.handlingClick = true; // Sets handling click to true
       this.prevAncestors = this.ancestors; // Saves current ancestors in another variable
-      this.getDataFromAPI(this.data.children[i].code) // Gets data for the clicked child
-        .then(() => this.getAncestorsFromAPI(this.data.self.code)) // Gets ancestor data
+      this.getDataFromAPI(this.data.children[i].code)
+        // Gets data for the clicked child
+        .then(() => this.getAncestorsFromAPI(this.data.self.code))
+        // Gets ancestor data
         .then(async () => {
           this.createNewParent(); // Creates new parent
           this.removeParentAndSiblings(); // Transitions parent and siblings to the current self
@@ -511,6 +529,9 @@ class TreeViewer extends Component {
         })
         .then(() => {
           this.handlingClick = false; // Sets handling click to false to enable clicking on a node again
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
         });
     }
   }
@@ -1062,13 +1083,17 @@ class TreeViewer extends Component {
 
   // Adds the ancestry chain at the bottom
   addChain() {
-    this.getAncestorsFromAPI(this.data.self.code).then(() => {
-      // Gets ancestors from API
-      this.numCircles = this.ancestors.length; // Determines the number of circles
-      this.calcChainSpacing(); // Caclulates circle spacing
-      this.addChainGs(); // Adds "g" elements and circles for the chain
-      this.addChainLinks(); // Adds the chain links
-    });
+    this.getAncestorsFromAPI(this.data.self.code)
+      .then(() => {
+        // Gets ancestors from API
+        this.numCircles = this.ancestors.length; // Determines the number of circles
+        this.calcChainSpacing(); // Caclulates circle spacing
+        this.addChainGs(); // Adds "g" elements and circles for the chain
+        this.addChainLinks(); // Adds the chain links
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   }
 
   // Adds chain links

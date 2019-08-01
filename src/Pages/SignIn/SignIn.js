@@ -15,7 +15,6 @@ import * as APIUtility from "../../Util/API";
 import { Redirect } from "react-router";
 import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
-import secret from "../../secret/secrets.json";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -60,17 +59,15 @@ function SignIn(props) {
     const body = {
       username: username,
       password: password,
-      grant_type: "password",
-      client_id: secret.client_id
+      grant_type: "password"
     };
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    // headers.append("Content-Type", "application/x-www-form-urlencoded");
 
     const options = {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(body)
+      body: body
     };
 
     console.log(options);

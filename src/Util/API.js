@@ -1,5 +1,6 @@
 import store from "../index";
 import * as actions from "../Store/Actions/index";
+import secret from "../secret/secrets.json";
 /**
  * Endpoints---------------------------------------------------------------------------
  * Defined as constants here mainly to avoid possible bugs as a result of misspellings
@@ -113,7 +114,11 @@ export class API {
       case CHECK_CODE:
         return this.addAuthorization(this.urlBeginning + "checkCode/" + input + this.json);
       case GET_TOKEN:
-        console.log("OPTIONS", options);
+        if (options.body === undefined) {
+          options.body = {};
+        }
+        options.body.client_id = secret.client_id;
+        options.body = JSON.stringify(options.body);
         return fetch(this.authUrlBeginning + "token/", options);
       default:
         return null;
