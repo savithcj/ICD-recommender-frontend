@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import { Redirect } from "react-router";
 
 import { useAlert, positions } from "react-alert";
 
@@ -74,6 +75,10 @@ const Home = props => {
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
+  if (props.oAuthToken === null) {
+    return <Redirect to="/sign-in" />;
+  }
+
   return (
     <div className="Home">
       <MenuBar
@@ -122,7 +127,8 @@ const Home = props => {
 
 const mapStateToProps = state => {
   return {
-    alertMessage: state.alert.alertMessage
+    alertMessage: state.alert.alertMessage,
+    oAuthToken: state.authentication.oAuthToken
   };
 };
 

@@ -10,6 +10,7 @@ import "./Admin.css";
 import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
 import { useAlert, positions } from "react-alert";
+import { Redirect } from "react-router";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
@@ -51,6 +52,10 @@ function Admin(props) {
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
+  if (props.oAuthToken === null) {
+    return <Redirect to="/sign-in" />;
+  }
 
   return (
     <div>
@@ -101,7 +106,8 @@ function Admin(props) {
 
 const mapStateToProps = state => {
   return {
-    alertMessage: state.alert.alertMessage
+    alertMessage: state.alert.alertMessage,
+    oAuthToken: state.authentication.oAuthToken
   };
 };
 

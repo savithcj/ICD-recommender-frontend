@@ -44,7 +44,6 @@ const useStyles = makeStyles(theme => ({
 function SignIn(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [redirectBool, setRedirectBool] = useState(false);
 
   const classes = useStyles();
 
@@ -56,16 +55,12 @@ function SignIn(props) {
     setPassword(event.target.value);
   };
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   const getToken = () => {
     const body = {
       username: username,
       password: password,
       grant_type: "password",
-      client_id: "hHR0XLBuqPSapYTv1H8OvMCq7F7JG1b0JOFdJPKy"
+      client_id: "M1f9wfIEvs9RFGfPA5Hu5PBrfdA2Wi9Bb4UEF0xp"
     };
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
@@ -84,13 +79,10 @@ function SignIn(props) {
       .then(async response => {
         console.log(response);
         props.setToken(response.access_token);
-
-        await sleep(2000);
-        setRedirectBool(true);
       });
   };
 
-  if (redirectBool === true) {
+  if (props.oAuthToken !== null) {
     return <Redirect to="/" />;
   }
 
@@ -102,7 +94,7 @@ function SignIn(props) {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          ICD-10 Recommender System
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -151,6 +143,10 @@ function SignIn(props) {
   );
 }
 
+const mapStateToProps = state => {
+  return { oAuthToken: state.authentication.oAuthToken };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     setToken: token => dispatch(actions.setToken(token))
@@ -158,6 +154,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(SignIn);

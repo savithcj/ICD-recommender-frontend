@@ -7,6 +7,8 @@ import RulesTable from "../../Containers/RulesTable/RulesTable";
 import DADStats from "../../Containers/DADStats/DADStats";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
+import { connect } from "react-redux";
+import { Redirect } from "react-router";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("visualLayouts", "layouts") || defaultLayouts;
@@ -45,6 +47,10 @@ function Visualization(props) {
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
+  if (props.oAuthToken === null) {
+    return <Redirect to="/sign-in" />;
+  }
 
   return (
     <div>
@@ -86,4 +92,13 @@ function Visualization(props) {
   );
 }
 
-export default Visualization;
+const mapStateToProps = state => {
+  return {
+    oAuthToken: state.authentication.oAuthToken
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  null
+)(Visualization);
