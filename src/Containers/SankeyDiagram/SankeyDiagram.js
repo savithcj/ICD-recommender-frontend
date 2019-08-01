@@ -18,9 +18,13 @@ class SankeyDiagram extends Component {
 
   componentDidMount() {
     this.isMountedFlag = true;
-    this.getDataFromAPI().then(() => {
-      this.drawDiagram();
-    });
+    this.getDataFromAPI()
+      .then(() => {
+        this.drawDiagram();
+      })
+      .catch(error => {
+        console.log("ERROR:", error);
+      });
   }
 
   componentWillUnmount() {
