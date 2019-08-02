@@ -24,7 +24,7 @@ const treeViewDiv = React.createRef();
 const Home = props => {
   //Local state of the Home page
 
-  const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
+  const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
   const alert = useAlert();
