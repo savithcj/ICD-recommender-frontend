@@ -82,13 +82,15 @@ function SignUp(props) {
         body: JSON.stringify(body)
       };
 
-      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options).then(response => {
-        console.log("[USER SIGN UP RESPONSE]", response.status);
-
-        if (response.status === 200) {
-          setSignUpSuccessful(true);
-        }
-      });
+      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options)
+        .then(response => {
+          if (response.status === 200) {
+            setSignUpSuccessful(true);
+          }
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
+        });
     }
   }
 
