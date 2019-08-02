@@ -91,7 +91,6 @@ function SignIn(props) {
     APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
       .then(response => response.json())
       .then(async response => {
-        console.log("[Sign in API response]", response);
         if (response.access_token !== undefined) {
           props.setToken(response.access_token);
         } else {

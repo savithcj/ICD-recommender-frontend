@@ -39,9 +39,7 @@ export class API {
   static json = "/?format=json";
 
   static addAuthorization(url, options = {}) {
-    console.log("STORE: ", store.getState());
     const oAuthToken = store.getState().authentication.oAuthToken;
-    console.log("TOKEN", oAuthToken);
     // let bearer_token = "API TOKEN HERE";
     // let bearer_token = "dAPt5viF6Hzbrobi5B99tCtaG3cQPu";
     let bearer = "Bearer " + oAuthToken;
@@ -52,9 +50,7 @@ export class API {
     }
     options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
-    console.log("REQUEST", url, options);
     return fetch(url, options).then(response => {
-      console.log(response.status);
       if (response.status !== 200) {
         store.dispatch(actions.setToken(null));
       } else {
