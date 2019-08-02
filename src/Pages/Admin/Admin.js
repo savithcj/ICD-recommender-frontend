@@ -66,6 +66,8 @@ function Admin(props) {
           firstLinkRoute="/"
           secondLinkName="Visualization"
           secondLinkRoute="/visualization"
+          thirdLinkName="Manage Accounts"
+          thirdLinkRoute="/manage-accounts"
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
