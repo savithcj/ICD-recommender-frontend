@@ -19,6 +19,7 @@ import SignUp from "./Pages/SignUp/SignUp";
 import Sandbox from "./Pages/Sandbox/Sandbox";
 import Expired from "./Pages/Expired/Expired";
 import SignedOut from "./Pages/SignedOut/SignedOut";
+import SignUpSuccess from "./Pages/SignUpSuccess/SignUpSuccess";
 
 //enabling redux dev-tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -39,6 +40,7 @@ const routing = (
           <Route path="/sandbox" component={Sandbox} />
           <Route path="/expired" component={Expired} />
           <Route path="/signed-out" component={SignedOut} />
+          <Route path="/sign-up-success" component={SignUpSuccess} />
           <Route>{notFound}</Route>
         </Switch>
       </BrowserRouter>

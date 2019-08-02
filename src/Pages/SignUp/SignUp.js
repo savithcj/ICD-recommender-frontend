@@ -63,34 +63,6 @@ function SignUp(props) {
     }
   }, [props.alertMessage]);
 
-  const getToken = (username, password) => {
-    const body = {
-      username: username,
-      password: password,
-      grant_type: "password"
-    };
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-
-    const options = {
-      method: "POST",
-      headers: headers,
-      body: body
-    };
-
-    APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
-      .then(response => response.json())
-      .then(async response => {
-        if (response.access_token !== undefined) {
-          props.setToken(response.access_token);
-          setSignUpSuccessful(true);
-        }
-      })
-      .catch(error => {
-        console.log("ERROR: ", error);
-      });
-  };
-
   function createUser() {
     const fname = document.getElementById("firstName").value;
     const lname = document.getElementById("lastName").value;
@@ -114,10 +86,8 @@ function SignUp(props) {
         console.log("[USER SIGN UP RESPONSE]", response.status);
 
         if (response.status === 200) {
-          getToken(username, password);
+          setSignUpSuccessful(true);
         }
-        //TODO: remove line below once API fixed
-        getToken(username, password);
       });
     }
   }
@@ -129,7 +99,7 @@ function SignUp(props) {
   };
 
   if (signUpSuccessful) {
-    return <Redirect to="/" />;
+    return <Redirect to="/sign-up-success" />;
   }
 
   return (
@@ -223,7 +193,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setToken: token => dispatch(actions.setToken(token)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
   };
 };
