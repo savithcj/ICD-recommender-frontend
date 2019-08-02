@@ -50,7 +50,7 @@ export default function DADStats() {
           topRows.push({
             code: element.code,
             description: element.description,
-            times_coded: numberWithCommas(element.times_coded)
+            times_coded: numberWithCommas(element.times_coded_dad)
           });
         });
 
