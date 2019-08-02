@@ -59,12 +59,13 @@ export class API {
       if (response.status !== 200) {
         store.dispatch(actions.setToken(null));
         console.log("RESPONSE ERROR, STATUS", response.status);
-        response.json().then(response => {
-          console.log("RESPONSE", response);
-        });
-      } else {
-        return response;
+        // TODO: log the response error.
+        // Two functions can't call response.json() at the same time.
+        // response.json().then(response => {
+        //   console.log("RESPONSE", response);
+        // });
       }
+      return response;
     });
   }
 
