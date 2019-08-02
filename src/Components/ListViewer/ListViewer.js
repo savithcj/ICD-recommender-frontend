@@ -251,12 +251,18 @@ function ListViewer(props) {
   //array of objects to be displayed
   function createItems(arrayOfItems) {
     return arrayOfItems.map((value, index) => {
+      let displayValue;
+      if (props.dontAddDotBoolean) {
+        displayValue = value[props.valueName];
+      } else {
+        displayValue = addDotToCode(value[props.valueName]);
+      }
       return (
         <SortableItem
           key={`item-${index}`}
           index={index}
           id={index}
-          value={addDotToCode(value[props.valueName])}
+          value={displayValue}
           description={value[props.descriptionName]}
           disabled={!areItemsSortable}
         />

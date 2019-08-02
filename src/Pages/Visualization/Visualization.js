@@ -16,7 +16,7 @@ const chordDiagramDiv = React.createRef();
 const SankeyDiagramDiv = React.createRef();
 
 function Visualization(props) {
-  const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
+  const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
   const resetLayout = () => {

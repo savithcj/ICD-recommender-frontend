@@ -28,6 +28,9 @@ export const STATS = "STATS";
 export const CHECK_CODE = "CHECK_CODE";
 export const GET_TOKEN = "GET_TOKEN";
 export const CREATE_USER = "CREATE_USER";
+export const LIST_UNVERIFIED_ACCOUNTS = "LIST_UNVERIFIED_ACCOUNTS";
+export const APPROVE_USER = "APPROVE_USER";
+export const REJECT_USER = "REJECT_USER";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -121,6 +124,14 @@ export class API {
         return fetch(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
         return fetch(this.urlBeginning + "createUser/", options);
+      case LIST_UNVERIFIED_ACCOUNTS:
+        // change to add authorization later
+        return fetch(this.urlBeginning + "unverifiedAccounts" + this.json);
+      case APPROVE_USER:
+        console.log(options);
+        return fetch(this.urlBeginning + "approveUser/", options);
+      case REJECT_USER:
+        return fetch(this.urlBeginning + "rejectUser/" + input, options);
       default:
         return null;
     }
