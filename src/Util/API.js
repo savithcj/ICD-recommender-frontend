@@ -27,6 +27,7 @@ export const INACTIVE_RULES = "INACTIVE_RULES";
 export const STATS = "STATS";
 export const CHECK_CODE = "CHECK_CODE";
 export const GET_TOKEN = "GET_TOKEN";
+export const CREATE_USER = "CREATE_USER";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -114,6 +115,8 @@ export class API {
         options.body.client_id = secret.client_id;
         options.body = JSON.stringify(options.body);
         return fetch(this.authUrlBeginning + "token/", options);
+      case CREATE_USER:
+        return fetch(this.urlBeginning + "createUser/", options);
       default:
         return null;
     }
