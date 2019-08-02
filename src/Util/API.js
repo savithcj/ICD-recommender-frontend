@@ -1,4 +1,4 @@
-import store from "../index";
+import store from "../Store/configureStore";
 import * as actions from "../Store/Actions/index";
 import secret from "../secret/secrets.json";
 /**
