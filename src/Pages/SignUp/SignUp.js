@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -15,6 +15,7 @@ import * as APIUtility from "../../Util/API";
 import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
 import { useAlert, positions } from "react-alert";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -45,6 +46,8 @@ function SignUp(props) {
   const alert = useAlert();
   const classes = useStyles();
 
+  const [signUpSuccessful, setSignUpSuccessful] = useState(false);
+
   //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
   //in the store and displays messages to the user
   useEffect(() => {
@@ -59,6 +62,34 @@ function SignUp(props) {
       });
     }
   }, [props.alertMessage]);
+
+  const getToken = (username, password) => {
+    const body = {
+      username: username,
+      password: password,
+      grant_type: "password"
+    };
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: body
+    };
+
+    APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
+      .then(response => response.json())
+      .then(async response => {
+        if (response.access_token !== undefined) {
+          props.setToken(response.access_token);
+          setSignUpSuccessful(true);
+        }
+      })
+      .catch(error => {
+        console.log("ERROR: ", error);
+      });
+  };
 
   function createUser() {
     const fname = document.getElementById("firstName").value;
@@ -79,8 +110,26 @@ function SignUp(props) {
         body: JSON.stringify(body)
       };
 
-      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options);
+      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options).then(response => {
+        console.log("[USER SIGN UP RESPONSE]", response.status);
+
+        if (response.status === 200) {
+          getToken(username, password);
+        }
+        //TODO: remove line below once API fixed
+        getToken(username, password);
+      });
     }
+  }
+
+  const onKeyPress = e => {
+    if (e.which === 13) {
+      createUser();
+    }
+  };
+
+  if (signUpSuccessful) {
+    return <Redirect to="/" />;
   }
 
   return (
@@ -104,6 +153,7 @@ function SignUp(props) {
                 fullWidth
                 id="firstName"
                 label="First Name"
+                onKeyPress={onKeyPress}
                 autoFocus
               />
             </Grid>
@@ -116,6 +166,7 @@ function SignUp(props) {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                onKeyPress={onKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -127,6 +178,7 @@ function SignUp(props) {
                 label="Username"
                 name="username"
                 autoComplete="username"
+                onKeyPress={onKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -139,6 +191,7 @@ function SignUp(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                onKeyPress={onKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -170,6 +223,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    setToken: token => dispatch(actions.setToken(token)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
   };
 };
