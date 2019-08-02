@@ -12,6 +12,7 @@ import { Menu } from "@material-ui/core";
 import { ReactComponent as CheckIcon } from "../../Assets/Icons/round-done-24px.svg";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,9 +54,7 @@ function ButtonAppBar(props) {
   }
 
   function handleAboutButton(event) {
-    //TODO: Implementation
-    console.log("About button pressed in menu");
-    setAnchorEl(null);
+    return <Redirect to="/about" />;
   }
 
   function handleSignOutButton(event) {
@@ -87,7 +86,9 @@ function ButtonAppBar(props) {
       </MenuItem>
       <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
       <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
-      <MenuItem onClick={handleAboutButton}>About</MenuItem>
+      <MenuItem component={Link} to="/about">
+        About
+      </MenuItem>
       <MenuItem onClick={handleSignOutButton} component={Link} to="/signed-out">
         Sign Out
       </MenuItem>

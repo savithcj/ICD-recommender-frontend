@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
-import { Redirect } from "react-router";
 import { connect } from "react-redux";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
-import VerifyAccounts from "../../Containers/VerifyAccounts/VerifyAccounts";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
 
-function ManageAccounts(props) {
+function About(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
@@ -31,15 +29,11 @@ function ManageAccounts(props) {
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-  if (props.oAuthToken === null) {
-    return <Redirect to="/sign-in" />;
-  }
-
   return (
     <div>
       <div>
         <MenuBar
-          title="Manage Accounts"
+          title="About"
           firstLinkName="Home"
           firstLinkRoute="/"
           secondLinkName="Visualization"
@@ -61,7 +55,7 @@ function ManageAccounts(props) {
       >
         <div key="0" className={highlightEditDiv}>
           <div className="cardContainer">
-            <VerifyAccounts />
+            <p>hi there, this is the about page</p>
           </div>
         </div>
       </ResponsiveReactGridLayout>
@@ -69,13 +63,7 @@ function ManageAccounts(props) {
   );
 }
 
-const mapStateToProps = state => {
-  return {
-    oAuthToken: state.authentication.oAuthToken
-  };
-};
-
 export default connect(
-  mapStateToProps,
+  null,
   null
-)(ManageAccounts);
+)(About);
