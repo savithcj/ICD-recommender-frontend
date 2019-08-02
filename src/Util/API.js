@@ -61,15 +61,18 @@ export class API {
       options.headers = {};
     }
     options.headers["Content-Type"] = "application/json";
+    if (options.body !== undefined) {
+      options.body = JSON.stringify(options.body);
+    }
     return fetch(url, options).then(response => {
       if (response.status !== 200) {
         store.dispatch(actions.setToken(null));
         console.log("RESPONSE ERROR, STATUS", response.status);
         // TODO: log the response error.
         // Two functions can't call response.json() at the same time.
-        response.json().then(response => {
-          console.log("RESPONSE", response);
-        });
+        // response.json().then(response => {
+        //   console.log("RESPONSE", response);
+        // });
       }
       return response;
     });
@@ -128,7 +131,6 @@ export class API {
           options.body = {};
         }
         options.body.client_id = secret.client_id;
-        options.body = JSON.stringify(options.body);
         return this.fetchFromAPI(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
         return this.fetchFromAPI(this.urlBeginning + "createUser/", options);

@@ -88,7 +88,7 @@ function RuleSearch(props) {
 
     const options = {
       method: "POST",
-      body: JSON.stringify(data)
+      body: data
     };
 
     APIUtility.API.makeAPICall(APIUtility.RULE_SEARCH, null, options)
@@ -174,7 +174,7 @@ function RuleSearch(props) {
     const options = {
       method: "PATCH",
       // headers,
-      body: JSON.stringify(data)
+      body: data
     };
 
     APIUtility.API.makeAPICall(APIUtility.RULE_STATUS, null, options)

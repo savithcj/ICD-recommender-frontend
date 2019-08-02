@@ -79,7 +79,7 @@ function SignUp(props) {
       const options = {
         method: "POST",
         headers: headers,
-        body: JSON.stringify(body)
+        body: body
       };
 
       APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options)

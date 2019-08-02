@@ -21,7 +21,7 @@ function VerifyAccounts(props) {
     const data = { idToApprove };
     const options = {
       method: "PATCH",
-      body: JSON.stringify(data)
+      body: data
     };
     APIUtility.API.makeAPICall(APIUtility.APPROVE_USER, null, options);
   };
