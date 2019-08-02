@@ -52,21 +52,24 @@ export class API {
     if (options.headers === undefined) {
       options.headers = {};
     }
-    options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
     return this.fetchFromAPI(url, options);
   }
 
-  static fetchFromAPI(url, options) {
+  static fetchFromAPI(url, options = {}) {
+    if (options.headers === undefined) {
+      options.headers = {};
+    }
+    options.headers["Content-Type"] = "application/json";
     return fetch(url, options).then(response => {
       if (response.status !== 200) {
         store.dispatch(actions.setToken(null));
         console.log("RESPONSE ERROR, STATUS", response.status);
         // TODO: log the response error.
         // Two functions can't call response.json() at the same time.
-        // response.json().then(response => {
-        //   console.log("RESPONSE", response);
-        // });
+        response.json().then(response => {
+          console.log("RESPONSE", response);
+        });
       }
       return response;
     });
@@ -130,13 +133,12 @@ export class API {
       case CREATE_USER:
         return this.fetchFromAPI(this.urlBeginning + "createUser/", options);
       case LIST_UNVERIFIED_ACCOUNTS:
-        // change to add authorization later
-        return fetch(this.urlBeginning + "unverifiedAccounts" + this.json);
+        return this.addAuthorization(this.urlBeginning + "unverifiedAccounts" + this.json);
       case APPROVE_USER:
         console.log(options);
-        return fetch(this.urlBeginning + "approveUser/", options);
+        return this.addAuthorization(this.urlBeginning + "approveUser/", options);
       case REJECT_USER:
-        return fetch(this.urlBeginning + "rejectUser/" + input, options);
+        return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       default:
         return null;
     }

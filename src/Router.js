@@ -15,6 +15,7 @@ import Sandbox from "./Pages/Sandbox/Sandbox";
 import Expired from "./Pages/Expired/Expired";
 import SignedOut from "./Pages/SignedOut/SignedOut";
 import SignUpSuccess from "./Pages/SignUpSuccess/SignUpSuccess";
+import ManageAccounts from "./Pages/ManageAccounts/ManageAccounts";
 import NotFound from "./Pages/NotFound/NotFound";
 
 const router = (
@@ -31,6 +32,7 @@ const router = (
           <Route path="/expired" component={Expired} />
           <Route path="/signed-out" component={SignedOut} />
           <Route path="/sign-up-success" component={SignUpSuccess} />
+          <Route path="/manage-accounts" component={ManageAccounts} />
           <Route>{NotFound}</Route>
         </Switch>
       </BrowserRouter>

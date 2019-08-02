@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { Redirect } from "react-router";
+import { connect } from "react-redux";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import VerifyAccounts from "../../Containers/VerifyAccounts/VerifyAccounts";
@@ -31,7 +32,9 @@ function ManageAccounts(props) {
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
+  console.log("props before", props);
   if (props.oAuthToken === null) {
+    console.log("props inside", props);
     return <Redirect to="/sign-in" />;
   }
 
@@ -44,6 +47,8 @@ function ManageAccounts(props) {
           firstLinkRoute="/"
           secondLinkName="Visualization"
           secondLinkRoute="/visualization"
+          thirdLinkName="Admin"
+          thirdLinkRoute="/admin"
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
@@ -67,4 +72,14 @@ function ManageAccounts(props) {
   );
 }
 
-export default ManageAccounts;
+const mapStateToProps = state => {
+  return {
+    alertMessage: state.alert.alertMessage,
+    oAuthToken: state.authentication.oAuthToken
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  null
+)(ManageAccounts);
