@@ -51,9 +51,17 @@ export class API {
     }
     options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
+    return this.fetchFromAPI(url, options);
+  }
+
+  static fetchFromAPI(url, options) {
     return fetch(url, options).then(response => {
       if (response.status !== 200) {
         store.dispatch(actions.setToken(null));
+        console.log("RESPONSE ERROR, STATUS", response.status);
+        response.json().then(response => {
+          console.log("RESPONSE", response);
+        });
       } else {
         return response;
       }
@@ -114,9 +122,9 @@ export class API {
         }
         options.body.client_id = secret.client_id;
         options.body = JSON.stringify(options.body);
-        return fetch(this.authUrlBeginning + "token/", options);
+        return this.fetchFromAPI(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
-        return fetch(this.urlBeginning + "createUser/", options);
+        return this.fetchFromAPI(this.urlBeginning + "createUser/", options);
       default:
         return null;
     }
