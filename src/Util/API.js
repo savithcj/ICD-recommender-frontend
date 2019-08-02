@@ -1,4 +1,4 @@
-import store from "../index";
+import store from "../Store/configureStore";
 import * as actions from "../Store/Actions/index";
 import secret from "../secret/secrets.json";
 /**
@@ -43,9 +43,7 @@ export class API {
   static json = "/?format=json";
 
   static addAuthorization(url, options = {}) {
-    console.log("STORE: ", store.getState());
     const oAuthToken = store.getState().authentication.oAuthToken;
-    console.log("TOKEN", oAuthToken);
     // let bearer_token = "API TOKEN HERE";
     // let bearer_token = "dAPt5viF6Hzbrobi5B99tCtaG3cQPu";
     let bearer = "Bearer " + oAuthToken;
@@ -56,14 +54,21 @@ export class API {
     }
     options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
-    console.log("REQUEST", url, options);
+    return this.fetchFromAPI(url, options);
+  }
+
+  static fetchFromAPI(url, options) {
     return fetch(url, options).then(response => {
-      console.log(response.status);
       if (response.status !== 200) {
         store.dispatch(actions.setToken(null));
-      } else {
-        return response;
+        console.log("RESPONSE ERROR, STATUS", response.status);
+        // TODO: log the response error.
+        // Two functions can't call response.json() at the same time.
+        // response.json().then(response => {
+        //   console.log("RESPONSE", response);
+        // });
       }
+      return response;
     });
   }
 
@@ -121,9 +126,9 @@ export class API {
         }
         options.body.client_id = secret.client_id;
         options.body = JSON.stringify(options.body);
-        return fetch(this.authUrlBeginning + "token/", options);
+        return this.fetchFromAPI(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
-        return fetch(this.urlBeginning + "createUser/", options);
+        return this.fetchFromAPI(this.urlBeginning + "createUser/", options);
       case LIST_UNVERIFIED_ACCOUNTS:
         // change to add authorization later
         return fetch(this.urlBeginning + "unverifiedAccounts" + this.json);

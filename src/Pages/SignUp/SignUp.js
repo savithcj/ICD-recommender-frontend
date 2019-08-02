@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -15,6 +15,7 @@ import * as APIUtility from "../../Util/API";
 import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
 import { useAlert, positions } from "react-alert";
+import { Redirect } from "react-router";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -44,6 +45,8 @@ const useStyles = makeStyles(theme => ({
 function SignUp(props) {
   const alert = useAlert();
   const classes = useStyles();
+
+  const [signUpSuccessful, setSignUpSuccessful] = useState(false);
 
   //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
   //in the store and displays messages to the user
@@ -79,8 +82,26 @@ function SignUp(props) {
         body: JSON.stringify(body)
       };
 
-      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options);
+      APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options)
+        .then(response => {
+          if (response.status === 200) {
+            setSignUpSuccessful(true);
+          }
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
+        });
     }
+  }
+
+  const onKeyPress = e => {
+    if (e.which === 13) {
+      createUser();
+    }
+  };
+
+  if (signUpSuccessful) {
+    return <Redirect to="/sign-up-success" />;
   }
 
   return (
@@ -104,6 +125,7 @@ function SignUp(props) {
                 fullWidth
                 id="firstName"
                 label="First Name"
+                onKeyPress={onKeyPress}
                 autoFocus
               />
             </Grid>
@@ -116,6 +138,7 @@ function SignUp(props) {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                onKeyPress={onKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -127,6 +150,7 @@ function SignUp(props) {
                 label="Username"
                 name="username"
                 autoComplete="username"
+                onKeyPress={onKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -139,12 +163,7 @@ function SignUp(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
+                onKeyPress={onKeyPress}
               />
             </Grid>
           </Grid>

@@ -60,20 +60,11 @@ function SignIn(props) {
     }
   }, [props.alertMessage]);
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
   const classes = useStyles();
 
-  const handleUsernameChange = event => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordChange = event => {
-    setPassword(event.target.value);
-  };
-
   const getToken = () => {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
     const body = {
       username: username,
       password: password,
@@ -91,7 +82,6 @@ function SignIn(props) {
     APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
       .then(response => response.json())
       .then(async response => {
-        console.log("[Sign in API response]", response);
         if (response.access_token !== undefined) {
           props.setToken(response.access_token);
         } else {
@@ -133,7 +123,6 @@ function SignIn(props) {
             label="Username"
             name="username"
             autoComplete="username"
-            onChange={handleUsernameChange}
             onKeyPress={onKeyPress}
             autoFocus
           />
@@ -147,7 +136,6 @@ function SignIn(props) {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={handlePasswordChange}
             onKeyPress={onKeyPress}
           />
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
