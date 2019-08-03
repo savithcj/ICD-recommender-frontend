@@ -14,6 +14,7 @@ import "./Home.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { Redirect } from "react-router";
+import * as APIUtility from "../../Util/API";
 
 import { useAlert, positions } from "react-alert";
 
@@ -35,6 +36,14 @@ const Home = props => {
     return () => {
       props.resetState();
     };
+  }, []);
+
+  useEffect(() => {
+    APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, "I100").then(response => {
+      if (response.status === 200) {
+        props.setIsAuthorized(true);
+      }
+    });
   }, []);
 
   //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
@@ -75,7 +84,7 @@ const Home = props => {
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-  if (props.oAuthToken === null) {
+  if (!props.isAuthorized) {
     return <Redirect to="/sign-in" />;
   }
 
@@ -128,12 +137,13 @@ const Home = props => {
 const mapStateToProps = state => {
   return {
     alertMessage: state.alert.alertMessage,
-    oAuthToken: state.authentication.oAuthToken
+    isAuthorized: state.authentication.isAuthorized
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
     resetState: () => dispatch(actions.resetState())
   };

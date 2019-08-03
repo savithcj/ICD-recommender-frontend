@@ -60,7 +60,7 @@ function ButtonAppBar(props) {
 
   function handleSignOutButton(event) {
     //TODO: Implementation
-    props.setToken(null);
+    props.setIsAuthorized(false);
     setAnchorEl(null);
   }
 
@@ -136,7 +136,7 @@ function ButtonAppBar(props) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setToken: token => dispatch(actions.setToken(token))
+    setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool))
   };
 };
 

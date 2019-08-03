@@ -32,4 +32,5 @@ export const SET_ALERT_MESSAGE = "SET_ALERT_MESSAGE";
 export const SET_CODE_SELECTED_IN_TREE = "SET_CODE_SELECTED_IN_TREE";
 
 // Authentication action types
-export const SET_TOKEN = "SET_TOKEN";
+export const SET_IS_AUTHORIZED = "SET_IS_AUTHORIZED";
+export const SET_USER_ROLE = "SET_USER_ROLE";

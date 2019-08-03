@@ -81,9 +81,10 @@ function SignIn(props) {
 
     APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
       .then(response => response.json())
-      .then(async response => {
+      .then(response => {
         if (response.access_token !== undefined) {
-          props.setToken(response.access_token);
+          localStorage.setItem("tokenObject", JSON.stringify(response));
+          props.setIsAuthorized(true);
         } else {
           props.setAlertMessage({ message: "Invalid username or password", messageType: "error" });
         }
@@ -99,7 +100,7 @@ function SignIn(props) {
     }
   };
 
-  if (props.oAuthToken !== null) {
+  if (props.isAuthorized) {
     return <Redirect to="/" />;
   }
 
@@ -161,12 +162,12 @@ function SignIn(props) {
 }
 
 const mapStateToProps = state => {
-  return { oAuthToken: state.authentication.oAuthToken, alertMessage: state.alert.alertMessage };
+  return { isAuthorized: state.authentication.isAuthorized, alertMessage: state.alert.alertMessage };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setToken: token => dispatch(actions.setToken(token)),
+    setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
   };
 };

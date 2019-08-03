@@ -39,8 +39,21 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
+  static isTokenValid(token) {}
+
+  static getTokenFromLS() {
+    const localStorageToken = localStorage.getItem("tokenObject");
+
+    if (localStorageToken !== null) {
+      return JSON.parse(localStorageToken).access_token;
+    } else {
+      return 1;
+    }
+  }
+
   static addAuthorization(url, options = {}) {
-    const oAuthToken = store.getState().authentication.oAuthToken;
+    const oAuthToken = this.getTokenFromLS();
+
     // let bearer_token = "API TOKEN HERE";
     // let bearer_token = "dAPt5viF6Hzbrobi5B99tCtaG3cQPu";
     let bearer = "Bearer " + oAuthToken;
@@ -57,7 +70,7 @@ export class API {
   static fetchFromAPI(url, options) {
     return fetch(url, options).then(response => {
       if (response.status !== 200) {
-        store.dispatch(actions.setToken(null));
+        store.dispatch(actions.setIsAuthorized(false));
         console.log("RESPONSE ERROR, STATUS", response.status);
         // TODO: log the response error.
         // Two functions can't call response.json() at the same time.
