@@ -8,7 +8,7 @@ import { defaultLayouts } from "./layouts";
 import VerifyAccounts from "../../Containers/VerifyAccounts/VerifyAccounts";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
+const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
 
 function ManageAccounts(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
@@ -16,7 +16,7 @@ function ManageAccounts(props) {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("adminLayouts", "layouts", defaultLayouts);
+    saveToLS("manageLayouts", "layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -26,7 +26,7 @@ function ManageAccounts(props) {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("adminLayouts", "layouts", layouts);
+    saveToLS("manageLayouts", "layouts", layouts);
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
