@@ -48,7 +48,7 @@ export class API {
 
   static getTokenFromLS() {
     const localStorageToken = localStorage.getItem("tokenObject");
-    if (localStorageToken !== "") {
+    if (localStorageToken !== "" && localStorageToken !== null) {
       return JSON.parse(localStorageToken).access_token;
     } else {
       return 1;
