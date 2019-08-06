@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import { addDotToCode } from "../../Util/utility";
 
 import "./RuleSearch.css";
 const useStyles = makeStyles(theme => ({
@@ -111,7 +112,7 @@ function RuleSearch(props) {
       data.forEach(item => {
         formattedResults.push({
           id: item.id,
-          code: item.lhs + " -> " + item.rhs,
+          code: addDotToCode(item.lhs) + " \u2192 " + addDotToCode(item.rhs),
           description: `Conf=${item.confidence}, Supp=${item.support}, #Accepted=${item.num_accepted}, #Rejected=${
             item.num_rejected
           }, #Suggested=${item.num_suggested}, Ages(${item.min_age}-${item.max_age}), Gender=${item.gender} `,
@@ -290,6 +291,7 @@ function RuleSearch(props) {
           items={searchResults}
           noItemsMessage="No results"
           valueName="code"
+          dontAddDotBoolean={true}
           descriptionName="description"
           acceptItemButton={{ title: "Set status to active", onClick: adminSetRuleActive }}
           removeItemButton={{ title: "Set status to inactive", onClick: adminSetRuleInactive }}

@@ -9,6 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Title from "./Title";
 import * as APIUtility from "../../Util/API";
+import { addDotToCode } from "../../Util/utility";
 
 const useStyles = makeStyles(() => ({
   table: {
@@ -48,7 +49,7 @@ export default function DADStats() {
         let topRows = [];
         topTen.forEach(element => {
           topRows.push({
-            code: element.code,
+            code: addDotToCode(element.code),
             description: element.description,
             times_coded: numberWithCommas(element.times_coded_dad)
           });
