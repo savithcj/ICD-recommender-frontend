@@ -53,6 +53,9 @@ function Admin(props) {
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
+  if (props.userRole !== "admin") {
+    return <Redirect to="/forbidden" />;
+  }
   if (props.oAuthToken === null) {
     return <Redirect to="/sign-in" />;
   }
@@ -109,7 +112,8 @@ function Admin(props) {
 const mapStateToProps = state => {
   return {
     alertMessage: state.alert.alertMessage,
-    oAuthToken: state.authentication.oAuthToken
+    oAuthToken: state.authentication.oAuthToken,
+    userRole: state.authentication.userRole
   };
 };
 

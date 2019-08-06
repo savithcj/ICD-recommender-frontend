@@ -47,6 +47,7 @@ function SignIn(props) {
 
   //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
   //in the store and displays messages to the user
+  // Used to display messages
   useEffect(() => {
     if (props.alertMessage) {
       alert.show(props.alertMessage.message, {

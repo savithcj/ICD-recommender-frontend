@@ -18,6 +18,7 @@ import SignUpSuccess from "./Pages/SignUpSuccess/SignUpSuccess";
 import ManageAccounts from "./Pages/ManageAccounts/ManageAccounts";
 import About from "./Pages/About/About";
 import NotFound from "./Pages/NotFound/NotFound";
+import Forbidden from "./Pages/Forbidden/Forbidden";
 
 const router = (
   <Provider store={store}>
@@ -35,6 +36,7 @@ const router = (
           <Route path="/sign-up-success" component={SignUpSuccess} />
           <Route path="/manage-accounts" component={ManageAccounts} />
           <Route path="/about" component={About} />
+          <Route path="/forbidden" component={Forbidden} />
           <Route>{NotFound}</Route>
         </Switch>
       </BrowserRouter>

@@ -60,6 +60,8 @@ function ButtonAppBar(props) {
   function handleSignOutButton(event) {
     //TODO: Implementation
     props.setIsAuthorized(false);
+    localStorage.setItem("tokenObject", "");
+
     setAnchorEl(null);
   }
 

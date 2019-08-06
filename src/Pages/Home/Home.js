@@ -15,6 +15,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { Redirect } from "react-router";
 import * as APIUtility from "../../Util/API";
+import Loading from "../Loading/Loading";
 
 import { useAlert, positions } from "react-alert";
 
@@ -27,6 +28,7 @@ const Home = props => {
 
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const alert = useAlert();
 
@@ -43,6 +45,7 @@ const Home = props => {
       if (response.status === 200) {
         props.setIsAuthorized(true);
       }
+      setIsLoading(false);
     });
   }, []);
 
@@ -83,6 +86,10 @@ const Home = props => {
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (!props.isAuthorized) {
     return <Redirect to="/sign-in" />;
