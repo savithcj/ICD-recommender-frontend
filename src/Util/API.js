@@ -32,7 +32,6 @@ export const LIST_UNVERIFIED_ACCOUNTS = "LIST_UNVERIFIED_ACCOUNTS";
 export const APPROVE_USER = "APPROVE_USER";
 export const REJECT_USER = "REJECT_USER";
 export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
-export const REVOKE_TOKEN = "REVOKE_TOKEN";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -44,8 +43,6 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
-  static isTokenValid(token) {}
-
   static getTokenFromLS() {
     const localStorageToken = localStorage.getItem("tokenObject");
     if (localStorageToken !== "" && localStorageToken !== null) {
@@ -53,6 +50,27 @@ export class API {
     } else {
       return 1;
     }
+  }
+
+  static revokeToken() {
+    const url = this.authUrlBeginning + "revoke_token/";
+
+    const tokenFromLS = this.getTokenFromLS();
+    localStorage.setItem("tokenObject", "");
+
+    const data = JSON.stringify({ token: tokenFromLS, client_id: secret.client_id });
+
+    const options = {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: data
+    };
+
+    fetch(url, options).then(response => {
+      console.log("[TOKEN REVOKE STATUS]", response.status);
+    });
   }
 
   static addAuthorization(url, options = {}) {
@@ -157,8 +175,6 @@ export class API {
         return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       case VALIDATE_TOKEN:
         return this.addAuthorization(this.urlBeginning + "validateToken/");
-      case REVOKE_TOKEN:
-        return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       default:
         return null;
     }

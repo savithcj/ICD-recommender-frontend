@@ -13,6 +13,7 @@ import { ReactComponent as CheckIcon } from "../../Assets/Icons/round-done-24px.
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import { Redirect } from "react-router";
+import * as APIUtility from "../../Util/API";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,10 +59,9 @@ function ButtonAppBar(props) {
   }
 
   function handleSignOutButton(event) {
-    //TODO: Implementation
     props.setIsAuthorized(false);
     props.setUserRole(null);
-    localStorage.setItem("tokenObject", "");
+    APIUtility.API.revokeToken();
 
     setAnchorEl(null);
   }
