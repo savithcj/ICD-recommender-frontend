@@ -236,7 +236,7 @@ export const verifyLSToken = callBackFunction => {
         dispatch(setIsAuthorized(true));
         dispatch(setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
       }
+      callBackFunction();
     });
-    callBackFunction();
   };
 };
