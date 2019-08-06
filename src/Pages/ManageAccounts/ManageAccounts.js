@@ -1,40 +1,23 @@
 import React, { useState } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
-import ChordDiagram from "../../Containers/ChordDiagram/ChordDiagram";
-import SankeyDiagram from "../../Containers/SankeyDiagram/SankeyDiagram";
-import RulesTable from "../../Containers/RulesTable/RulesTable";
-import DADStats from "../../Containers/DADStats/DADStats";
+import { Redirect } from "react-router";
+import { connect } from "react-redux";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
-import { connect } from "react-redux";
-import { Redirect } from "react-router";
+import VerifyAccounts from "../../Containers/VerifyAccounts/VerifyAccounts";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("visualLayouts", "layouts") || defaultLayouts;
-const chordDiagramDiv = React.createRef();
-const SankeyDiagramDiv = React.createRef();
+const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
 
-function Visualization(props) {
+function ManageAccounts(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("visualLayouts", "layouts", defaultLayouts);
+    saveToLS("manageLayouts", "layouts", defaultLayouts);
   };
-
-  function handleChordChange() {
-    if (chordDiagramDiv.current !== null) {
-      chordDiagramDiv.current.handleResize();
-    }
-  }
-
-  function handleSankeyChange() {
-    if (SankeyDiagramDiv.current !== null) {
-      SankeyDiagramDiv.current.handleResize();
-    }
-  }
 
   function handleLayoutModifierButton() {
     const layoutModifiable = !isLayoutModifiable;
@@ -43,7 +26,7 @@ function Visualization(props) {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("visualLayouts", "layouts", layouts);
+    saveToLS("manageLayouts", "layouts", layouts);
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
@@ -56,13 +39,13 @@ function Visualization(props) {
     <div>
       <div>
         <MenuBar
-          title="Visualization Page"
+          title="Manage Accounts"
           firstLinkName="Home"
           firstLinkRoute="/"
-          secondLinkName="Admin"
-          secondLinkRoute="/admin"
-          thirdLinkName="Manage Accounts"
-          thirdLinkRoute="/manage-accounts"
+          secondLinkName="Visualization"
+          secondLinkRoute="/visualization"
+          thirdLinkName="Admin"
+          thirdLinkRoute="/admin"
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
@@ -76,18 +59,10 @@ function Visualization(props) {
         isResizable={isLayoutModifiable}
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
-        <div key="chord" className={highlightEditDiv}>
-          <ChordDiagram id="101" ref={chordDiagramDiv} onChange={handleChordChange()} />{" "}
-        </div>
-        <div key="sankey" className={highlightEditDiv}>
-          <SankeyDiagram id="100" ref={SankeyDiagramDiv} onChange={handleSankeyChange()} />{" "}
-        </div>
-
-        <div key="rules" className={highlightEditDiv}>
-          <RulesTable />{" "}
-        </div>
-        <div key="dad" className={highlightEditDiv}>
-          <DADStats />{" "}
+        <div key="0" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <VerifyAccounts />
+          </div>
         </div>
       </ResponsiveReactGridLayout>
     </div>
@@ -103,4 +78,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   null
-)(Visualization);
+)(ManageAccounts);

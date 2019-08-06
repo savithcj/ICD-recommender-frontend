@@ -125,7 +125,7 @@ function RuleCreator(props) {
 
       const options = {
         method: "POST",
-        body: JSON.stringify(data)
+        body: data
       };
 
       const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, null, options).catch(error => {

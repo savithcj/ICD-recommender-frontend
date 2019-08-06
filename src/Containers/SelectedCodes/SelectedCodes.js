@@ -49,7 +49,7 @@ const selectedCodesViewer = props => {
 
     const options = {
       method: "PUT",
-      body: JSON.stringify(dataToSend)
+      body: dataToSend
     };
 
     APIUtility.API.makeAPICall(APIUtility.ENTER_LOG, null, options)

@@ -189,8 +189,8 @@ class SankeyDiagram extends Component {
   drawSankey() {
     let circleRadius = this.width / 100;
     //deep copy for same block
-    let data1 = JSON.parse(JSON.stringify(this.orgData[this.pIndex1]));
-    let data2 = JSON.parse(JSON.stringify(this.orgData[this.pIndex2]));
+    let data1 = this.orgData[this.pIndex1];
+    let data2 = this.orgData[this.pIndex2];
     data1["xArr"] = [];
     data2["xArr"] = [];
 

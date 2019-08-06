@@ -28,6 +28,9 @@ export const STATS = "STATS";
 export const CHECK_CODE = "CHECK_CODE";
 export const GET_TOKEN = "GET_TOKEN";
 export const CREATE_USER = "CREATE_USER";
+export const LIST_UNVERIFIED_ACCOUNTS = "LIST_UNVERIFIED_ACCOUNTS";
+export const APPROVE_USER = "APPROVE_USER";
+export const REJECT_USER = "REJECT_USER";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -62,12 +65,18 @@ export class API {
     if (options.headers === undefined) {
       options.headers = {};
     }
-    options.headers["Content-Type"] = "application/json";
     options.headers["Authorization"] = bearer;
     return this.fetchFromAPI(url, options);
   }
 
-  static fetchFromAPI(url, options) {
+  static fetchFromAPI(url, options = {}) {
+    if (options.headers === undefined) {
+      options.headers = {};
+    }
+    options.headers["Content-Type"] = "application/json";
+    if (options.body !== undefined) {
+      options.body = JSON.stringify(options.body);
+    }
     return fetch(url, options).then(response => {
       if (response.status !== 200) {
         store.dispatch(actions.setIsAuthorized(false));
@@ -135,10 +144,16 @@ export class API {
           options.body = {};
         }
         options.body.client_id = secret.client_id;
-        options.body = JSON.stringify(options.body);
         return this.fetchFromAPI(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
         return this.fetchFromAPI(this.urlBeginning + "createUser/", options);
+      case LIST_UNVERIFIED_ACCOUNTS:
+        return this.addAuthorization(this.urlBeginning + "unverifiedAccounts" + this.json);
+      case APPROVE_USER:
+        console.log(options);
+        return this.addAuthorization(this.urlBeginning + "approveUser/", options);
+      case REJECT_USER:
+        return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       default:
         return null;
     }

@@ -557,6 +557,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "buttonG")
       .on("click", () => {
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.self.code));
         this.props.addSelectedCode(this.data.self);
       });
 
@@ -1992,10 +1993,13 @@ class TreeViewer extends Component {
       clearTimeout(this.dblclick_timer);
       this.dblclick_timer = false;
       if (level === "parent") {
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.parent.code));
         this.props.addSelectedCode(this.data.parent);
       } else if (level === "sibling") {
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.siblings[i].code));
         this.props.addSelectedCode(this.data.siblings[i]);
       } else if (level === "child") {
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.children[i].code));
         this.props.addSelectedCode(this.data.children[i]);
       }
     }
@@ -2054,6 +2058,37 @@ class TreeViewer extends Component {
     }
   }
 
+  // Creates the list of ancestors for a code.
+  // Used for checkRecommendationsAccepted
+  createAncestorList = code => {
+    let codeList = [];
+    codeList.push(code);
+    while (code.length > 3) {
+      code = code.slice(0, -1);
+      codeList.push(code);
+    }
+    return codeList;
+  };
+
+  // Used to mark rules as recommended if an ancestor of the added code is in the recommended list
+  checkRecommendationsAccepted = codeList => {
+    if (this.props.recommendedCodes) {
+      for (let i = 0; i < codeList.length; i++) {
+        for (let j = 0; j < this.props.recommendedCodes.length; j++) {
+          if (codeList[i] === this.props.recommendedCodes[j].rhs) {
+            const acceptedRuleObj = this.props.recommendedCodes[j];
+            const rulesToSendBack = this.props.rulesToSendBack;
+            const matchedRule = rulesToSendBack.find(obj => obj.id === acceptedRuleObj.id);
+            if (matchedRule !== undefined) {
+              matchedRule.action = "A";
+              this.props.setRulesInSession(rulesToSendBack);
+            }
+          }
+        }
+      }
+    }
+  };
+
   // Gets the data from API for the specified code and stores it in a member variable
   getDataFromAPI = code => {
     return APIUtility.API.makeAPICall(APIUtility.FAMILY, code)
@@ -2071,13 +2106,16 @@ class TreeViewer extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
+    setRulesInSession: listOfRules => dispatch(actions.setRulesInSession(listOfRules)),
     addSelectedCode: codeObjectToAdd => dispatch(actions.addSelectedCodeObjectAndUpdateRecommendations(codeObjectToAdd))
   };
 };
 
 const mapStateToProps = state => {
   return {
-    codeToDisplay: state.tree.selectedCodeInTree
+    codeToDisplay: state.tree.selectedCodeInTree,
+    recommendedCodes: state.recommended.recommendedCodes, // this is rule objects
+    rulesToSendBack: state.session.rulesToSendBack
   };
 };
 

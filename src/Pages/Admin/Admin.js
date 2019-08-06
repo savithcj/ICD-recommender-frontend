@@ -16,7 +16,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
 
 function Admin(props) {
-  const [layouts, setLayouts] = useState(JSON.parse(JSON.stringify(originalLayouts)));
+  const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
 
   const alert = useAlert();
@@ -66,6 +66,8 @@ function Admin(props) {
           firstLinkRoute="/"
           secondLinkName="Visualization"
           secondLinkRoute="/visualization"
+          thirdLinkName="Manage Accounts"
+          thirdLinkRoute="/manage-accounts"
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
