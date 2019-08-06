@@ -36,10 +36,16 @@ function checkIfDagAst(code) {
 }
 
 function addDotToRegularCode(code) {
-  if (code.length > 3) {
-    return code.slice(0, 3) + "." + code.slice(3);
+  let codeToReturn = "";
+  let codes = code.split(",");
+  for (let i = 0; i < codes.length; i++) {
+    if (codes[i].length > 3) {
+      codes[i] = codes[i].slice(0, 3) + "." + codes[i].slice(3);
+    }
+    codeToReturn += codes[i] + ",";
   }
-  return code;
+  codeToReturn = codeToReturn.slice(0, -1);
+  return codeToReturn;
 }
 
 function addDotToDagAst(code) {

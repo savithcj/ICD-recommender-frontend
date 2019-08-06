@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import "./CustomStyle.css";
+import { addDotToCode } from "../../Util/utility";
 
 import * as APIUtility from "../../Util/API";
 
@@ -13,7 +14,7 @@ export default function SortableTable() {
       .then(response => response.json())
       .then(results => {
         results.forEach(ruleObject => {
-          ruleObject.rule = ruleObject.lhs + " \u2192 " + ruleObject.rhs;
+          ruleObject.rule = addDotToCode(ruleObject.lhs) + " \u2192 " + addDotToCode(ruleObject.rhs);
           ruleObject.confidence = ruleObject.confidence.toFixed(4);
           ruleObject.support = ruleObject.support.toFixed(4);
         });

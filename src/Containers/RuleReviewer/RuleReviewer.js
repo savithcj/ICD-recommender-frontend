@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
-
+import { addDotToCode } from "../../Util/utility";
 import * as APIUtility from "../../Util/API";
 
 export default function RuleReviewer() {
@@ -15,7 +15,7 @@ export default function RuleReviewer() {
       .then(response => response.json())
       .then(results => {
         results.forEach(ruleObject => {
-          ruleObject.rule = ruleObject.lhs + " \u2192 " + ruleObject.rhs;
+          ruleObject.rule = addDotToCode(ruleObject.lhs) + " \u2192 " + addDotToCode(ruleObject.rhs);
         });
         setFlaggedRules(results);
       })
@@ -84,6 +84,7 @@ export default function RuleReviewer() {
       <ListViewer
         className="ruleReviwer"
         title="List of flagged rules"
+        dontAddDotBoolean={true}
         items={flaggedRules}
         noItemsMessage="No flagged rules"
         valueName="rule"
