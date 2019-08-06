@@ -31,6 +31,8 @@ export const CREATE_USER = "CREATE_USER";
 export const LIST_UNVERIFIED_ACCOUNTS = "LIST_UNVERIFIED_ACCOUNTS";
 export const APPROVE_USER = "APPROVE_USER";
 export const REJECT_USER = "REJECT_USER";
+export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
+export const REVOKE_TOKEN = "REVOKE_TOKEN";
 
 /**
  * API class used to connect to the backend--------------------------------------------
@@ -46,7 +48,6 @@ export class API {
 
   static getTokenFromLS() {
     const localStorageToken = localStorage.getItem("tokenObject");
-    console.log("[TOKEN FROM LS]", localStorageToken);
     if (localStorageToken !== "") {
       return JSON.parse(localStorageToken).access_token;
     } else {
@@ -153,6 +154,10 @@ export class API {
         console.log(options);
         return this.addAuthorization(this.urlBeginning + "approveUser/", options);
       case REJECT_USER:
+        return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
+      case VALIDATE_TOKEN:
+        return this.addAuthorization(this.urlBeginning + "validateToken/");
+      case REVOKE_TOKEN:
         return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       default:
         return null;

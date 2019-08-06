@@ -60,6 +60,7 @@ function ButtonAppBar(props) {
   function handleSignOutButton(event) {
     //TODO: Implementation
     props.setIsAuthorized(false);
+    props.setUserRole(null);
     localStorage.setItem("tokenObject", "");
 
     setAnchorEl(null);
@@ -142,7 +143,8 @@ function ButtonAppBar(props) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool))
+    setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
+    setUserRole: role => dispatch(actions.setUserRole(null))
   };
 };
 

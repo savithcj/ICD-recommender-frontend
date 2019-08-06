@@ -9,7 +9,8 @@ export {
   fetchRecommendationsAndUpdateCache,
   fetchDaggerAsterisksAndUpdateCache,
   resetState,
-  resetSession
+  resetSession,
+  verifyLSToken
 } from "./asyncActions";
 export { addRHSToExclusion, setRHSExclusion, setRulesInSession } from "./session";
 export { setAlertMessage } from "./alert";

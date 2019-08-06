@@ -40,11 +40,10 @@ const Home = props => {
     };
   }, []);
 
+  // equivalent to componentDidUpdate. used to verify that the token is valid
   useEffect(() => {
-    APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, "I100").then(response => {
-      if (response.status === 200) {
-        props.setIsAuthorized(true);
-      }
+    // if token is valid set isLoading to false
+    props.verifyLSToken(() => {
       setIsLoading(false);
     });
   }, []);
@@ -154,7 +153,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
-    resetState: () => dispatch(actions.resetState())
+    resetState: () => dispatch(actions.resetState()),
+    verifyLSToken: callBackFunction => dispatch(actions.verifyLSToken(callBackFunction))
   };
 };
 

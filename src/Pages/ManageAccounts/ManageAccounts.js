@@ -31,8 +31,12 @@ function ManageAccounts(props) {
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
-  if (props.oAuthToken === null) {
+  if (!props.isAuthorized) {
     return <Redirect to="/sign-in" />;
+  }
+
+  if (props.userRole !== "admin") {
+    return <Redirect to="/forbidden" />;
   }
 
   return (
@@ -71,7 +75,8 @@ function ManageAccounts(props) {
 
 const mapStateToProps = state => {
   return {
-    oAuthToken: state.authentication.oAuthToken
+    isAuthorized: state.authentication.isAuthorized,
+    userRole: state.authentication.userRole
   };
 };
 

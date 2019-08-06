@@ -85,6 +85,7 @@ function SignIn(props) {
       .then(response => {
         if (response.access_token !== undefined) {
           localStorage.setItem("tokenObject", JSON.stringify(response));
+          props.setUserRole(response.user.role);
           props.setIsAuthorized(true);
         } else {
           props.setAlertMessage({ message: "Invalid username or password", messageType: "error" });
@@ -169,6 +170,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
+    setUserRole: role => dispatch(actions.setUserRole(role)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
   };
 };

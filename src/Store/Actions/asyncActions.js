@@ -10,6 +10,7 @@ import { setRulesInSession, setRolledRules, setRHSExclusion } from "./session";
 import { setAlertMessage } from "./alert";
 import * as HelperFunctions from "../../Util/utility.js";
 import { setCodeInTree } from "./tree";
+import { setIsAuthorized, setUserRole } from "./authentication";
 
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
@@ -222,5 +223,20 @@ export const resetSession = () => {
     dispatch(setRHSExclusion([]));
     dispatch(setAge(null));
     dispatch(setGender(null));
+  };
+};
+
+/**
+ * used to verify the token in the local storage
+ */
+export const verifyLSToken = callBackFunction => {
+  return dispatch => {
+    APIUtility.API.makeAPICall(APIUtility.VALIDATE_TOKEN).then(response => {
+      if (response.status === 200) {
+        dispatch(setIsAuthorized(true));
+        dispatch(setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
+        callBackFunction();
+      }
+    });
   };
 };
