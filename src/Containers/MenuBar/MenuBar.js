@@ -54,15 +54,8 @@ function ButtonAppBar(props) {
     setAnchorEl(null);
   }
 
-  function handleAboutButton(event) {
-    return <Redirect to="/about" />;
-  }
-
   function handleSignOutButton(event) {
-    props.setIsAuthorized(false);
-    props.setUserRole(null);
     APIUtility.API.revokeToken();
-
     setAnchorEl(null);
   }
 
@@ -78,20 +71,34 @@ function ButtonAppBar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem component={Link} to={props.firstLinkRoute}>
-        {props.firstLinkName}
-      </MenuItem>
-      <MenuItem component={Link} to={props.secondLinkRoute}>
-        {props.secondLinkName}
-      </MenuItem>
-      <MenuItem component={Link} to={props.thirdLinkRoute}>
-        {props.thirdLinkName}
-      </MenuItem>
-      <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
-      <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
-      <MenuItem component={Link} to="/about">
-        About
-      </MenuItem>
+      {props.homeLink ? (
+        <MenuItem component={Link} to="/home">
+          Home
+        </MenuItem>
+      ) : null}
+      {props.adminLink ? (
+        <MenuItem component={Link} to="/admin">
+          Admin
+        </MenuItem>
+      ) : null}
+      {props.visualizationLink ? (
+        <MenuItem component={Link} to="/visualization">
+          Visualization
+        </MenuItem>
+      ) : null}
+      {props.manageAccountsLink ? (
+        <MenuItem component={Link} to="/manage-accounts">
+          Manage Accounts
+        </MenuItem>
+      ) : null}
+      {props.aboutLink ? (
+        <MenuItem component={Link} to="/about">
+          About
+        </MenuItem>
+      ) : null}
+      {props.handleToggleLayout ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
+      {props.handleResetLayout ? <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem> : null}
+
       <MenuItem onClick={handleSignOutButton} component={Link} to="/signed-out">
         Sign Out
       </MenuItem>
@@ -136,7 +143,7 @@ function ButtonAppBar(props) {
           {iconButton}
         </Toolbar>
       </AppBar>
-      {renderMenu}
+      {props.hideDropDown ? null : renderMenu}
     </div>
   );
 }
@@ -144,7 +151,7 @@ function ButtonAppBar(props) {
 const mapDispatchToProps = dispatch => {
   return {
     setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
-    setUserRole: role => dispatch(actions.setUserRole(null))
+    setUserRole: role => dispatch(actions.setUserRole(role))
   };
 };
 

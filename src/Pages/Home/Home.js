@@ -99,12 +99,10 @@ const Home = props => {
     <div className="Home">
       <MenuBar
         title="ICD-10 Code Suggestion and Usage Insight"
-        firstLinkName="Visualization"
-        firstLinkRoute="/visualization"
-        secondLinkName="Admin"
-        secondLinkRoute="/admin"
-        thirdLinkName="Manage Accounts"
-        thirdLinkRoute="/manage-accounts"
+        adminLink={props.userRole === "admin"}
+        manageAccountsLink={props.userRole === "admin"}
+        visualizationLink
+        aboutLink
         handleLayoutConfirm={() => handleLayoutModifierButton()}
         handleResetLayout={resetLayout}
         inModifyMode={isLayoutModifiable}
