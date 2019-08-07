@@ -1,10 +1,9 @@
 import store from "../Store/configureStore";
 import * as actions from "../Store/Actions/index";
 import secret from "../secret/secrets.json";
-/**
- * Endpoints---------------------------------------------------------------------------
- * Defined as constants here mainly to avoid possible bugs as a result of misspellings
- */
+
+// ENDPOINTS----------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
 export const RULES = "RULES";
 export const CHILDREN = "CHILDREN";
 export const FAMILY = "FAMILY";
@@ -44,8 +43,34 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
+  // MISCELLANEOUS HELPER METHODS--------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  /**
+   * Method used to remove the user related store values from the store
+   */
+  static _revokeUserAuthorizationFromStore() {
+    store.dispatch(actions.setIsAuthorized(false));
+    store.dispatch(actions.setUserRole(null));
+  }
+
   // METHODS DEALING WITH TOKENS---------------------------------------------------------
   //-------------------------------------------------------------------------------------
+
+  /**
+   * Helper method used to make the get token API call
+   */
+  static _makeGetTokenAPICall() {}
+
+  /**
+   * Helper method used to handle the response after making the get token API call
+   */
+  static _handleAPIToken() {}
+
+  /**
+   * Used to request a token from the backend server and handle the response
+   */
+  static getTokenFromAPI(username, password) {}
+
   /**
    * Retrieves the saved token from the local storage. If the local storage does not
    * contain the token, returns -1
@@ -60,16 +85,36 @@ export class API {
   }
 
   /**
+   * Used to verify the validity of the token stored in local storage
+   */
+  static verifyLSToken = callBackFunction => {
+    this.makeAPICall(VALIDATE_TOKEN)
+      .then(response => {
+        if (response.status === 200) {
+          store.dispatch(actions.setIsAuthorized(true));
+          store.dispatch(actions.setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
+        }
+        callBackFunction();
+      })
+      .catch(err => {
+        callBackFunction();
+      });
+  };
+
+  /**
    * Used to revoke the existing token in the local storage
+   * Removes the token from the local storage and makes an API
+   * call to revoke the token from the backend server.
    */
   static revokeToken() {
-    const url = this.authUrlBeginning + "revoke_token/";
+    this._revokeUserAuthorizationFromStore();
 
+    const url = this.authUrlBeginning + "revoke_token/";
     const tokenFromLS = this.getTokenFromLS();
+
     localStorage.setItem("tokenObject", "");
 
-    const data = JSON.stringify({ token: tokenFromLS, client_id: secret.client_id });
-
+    const data = { token: tokenFromLS, client_id: secret.client_id };
     const options = {
       headers: {
         "Content-Type": "application/json"
@@ -78,10 +123,10 @@ export class API {
       body: data
     };
 
-    fetch(url, options);
+    this.fetchFromAPI(url, options);
   }
 
-  // METHODS DEALING WITH API CALLS------------------------------------------------------
+  // HELPER METHODS DEALING WITH API CALLS-----------------------------------------------
   //-------------------------------------------------------------------------------------
   /**
    * Method used to add the authorization token from the local storage before making
@@ -118,19 +163,22 @@ export class API {
     return fetch(url, options)
       .then(response => {
         if (response.status === 401) {
-          store.dispatch(actions.setIsAuthorized(false));
-          store.dispatch(actions.setUserRole(null));
-          console.log("RESPONSE ERROR, STATUS", response.status);
+          this._revokeUserAuthorizationFromStore();
+
           // TODO: log the response error.
           // Two functions can't call response.json() at the same time.
           // response.json().then(response => {
           //   console.log("RESPONSE", response);
           // });
         }
+        if (response.status !== 200) {
+          console.log("RESPONSE ERROR", url, response);
+        }
         return response;
       })
       .catch(error => {
         console.log(error);
+        store.dispatch(actions.setIsServerDown(true));
       });
   }
 
