@@ -44,12 +44,10 @@ function ManageAccounts(props) {
       <div>
         <MenuBar
           title="Manage Accounts"
-          firstLinkName="Home"
-          firstLinkRoute="/"
-          secondLinkName="Visualization"
-          secondLinkRoute="/visualization"
-          thirdLinkName="Admin"
-          thirdLinkRoute="/admin"
+          homeLink
+          adminLink
+          visualizationLink
+          aboutLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}

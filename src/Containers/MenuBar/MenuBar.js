@@ -72,7 +72,7 @@ function ButtonAppBar(props) {
       onClose={handleMenuClose}
     >
       {props.homeLink ? (
-        <MenuItem component={Link} to="/home">
+        <MenuItem component={Link} to="/">
           Home
         </MenuItem>
       ) : null}
@@ -81,14 +81,14 @@ function ButtonAppBar(props) {
           Admin
         </MenuItem>
       ) : null}
-      {props.visualizationLink ? (
-        <MenuItem component={Link} to="/visualization">
-          Visualization
-        </MenuItem>
-      ) : null}
       {props.manageAccountsLink ? (
         <MenuItem component={Link} to="/manage-accounts">
           Manage Accounts
+        </MenuItem>
+      ) : null}
+      {props.visualizationLink ? (
+        <MenuItem component={Link} to="/visualization">
+          Visualization
         </MenuItem>
       ) : null}
       {props.aboutLink ? (
@@ -96,7 +96,7 @@ function ButtonAppBar(props) {
           About
         </MenuItem>
       ) : null}
-      {props.handleToggleLayout ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
+      {props.handleLayoutConfirm ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
       {props.handleResetLayout ? <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem> : null}
 
       <MenuItem onClick={handleSignOutButton} component={Link} to="/signed-out">

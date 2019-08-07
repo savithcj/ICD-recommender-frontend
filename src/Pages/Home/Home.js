@@ -145,6 +145,7 @@ const mapStateToProps = state => {
   return {
     alertMessage: state.alert.alertMessage,
     isAuthorized: state.authentication.isAuthorized,
+    userRole: state.authentication.userRole,
     isServerDown: state.authentication.isServerDown
   };
 };

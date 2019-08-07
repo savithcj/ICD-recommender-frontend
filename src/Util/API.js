@@ -120,6 +120,7 @@ export class API {
           store.dispatch(actions.setIsAuthorized(true));
           store.dispatch(actions.setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
         }
+        store.dispatch(actions.setIsServerDown(false));
         callBackFunction();
       })
       .catch(err => {
