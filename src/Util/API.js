@@ -68,9 +68,7 @@ export class API {
       body: data
     };
 
-    fetch(url, options).then(response => {
-      console.log("[TOKEN REVOKE STATUS]", response.status);
-    });
+    fetch(url, options);
   }
 
   static addAuthorization(url, options = {}) {

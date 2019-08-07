@@ -29,6 +29,7 @@ const Home = props => {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isServerDown, setIsServerDown] = useState(false);
 
   const alert = useAlert();
 
@@ -43,9 +44,16 @@ const Home = props => {
   // equivalent to componentDidUpdate. used to verify that the token is valid
   useEffect(() => {
     // if token is valid set isLoading to false
-    props.verifyLSToken(() => {
-      setIsLoading(false);
-    });
+    // if validation fails, set state to re route to "server error" page
+    props.verifyLSToken(
+      () => {
+        setIsLoading(false);
+      },
+      () => {
+        setIsServerDown(true);
+        setIsLoading(false);
+      }
+    );
   }, []);
 
   //equivalent to componentDidUpdate. Listens to changes to the alertMessage state
@@ -88,6 +96,10 @@ const Home = props => {
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (isServerDown) {
+    return <Redirect to="/server-down" />;
   }
 
   if (!props.isAuthorized) {
@@ -154,7 +166,7 @@ const mapDispatchToProps = dispatch => {
     setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
     resetState: () => dispatch(actions.resetState()),
-    verifyLSToken: callBackFunction => dispatch(actions.verifyLSToken(callBackFunction))
+    verifyLSToken: (callBackSuccess, callBackFailed) => dispatch(actions.verifyLSToken(callBackSuccess, callBackFailed))
   };
 };
 

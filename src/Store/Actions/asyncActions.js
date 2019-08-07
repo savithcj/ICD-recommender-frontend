@@ -229,14 +229,20 @@ export const resetSession = () => {
 /**
  * used to verify the token in the local storage
  */
-export const verifyLSToken = callBackFunction => {
+export const verifyLSToken = (callBackSuccess, callBackFailed) => {
   return dispatch => {
-    APIUtility.API.makeAPICall(APIUtility.VALIDATE_TOKEN).then(response => {
-      if (response.status === 200) {
-        dispatch(setIsAuthorized(true));
-        dispatch(setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
-      }
-      callBackFunction();
-    });
+    APIUtility.API.makeAPICall(APIUtility.VALIDATE_TOKEN)
+      .then(response => {
+        console.log(response);
+        if (response.status === 200) {
+          dispatch(setIsAuthorized(true));
+          dispatch(setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
+          callBackSuccess();
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        callBackFailed();
+      });
   };
 };
