@@ -91,13 +91,13 @@ function ButtonAppBar(props) {
           Visualization
         </MenuItem>
       ) : null}
+      {props.handleLayoutConfirm ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
+      {props.handleResetLayout ? <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem> : null}
       {props.aboutLink ? (
         <MenuItem component={Link} to="/about">
           About
         </MenuItem>
       ) : null}
-      {props.handleLayoutConfirm ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
-      {props.handleResetLayout ? <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem> : null}
 
       <MenuItem onClick={handleSignOutButton} component={Link} to="/signed-out">
         Sign Out
