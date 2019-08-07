@@ -59,17 +59,43 @@ export class API {
   /**
    * Helper method used to make the get token API call
    */
-  static _makeGetTokenAPICall() {}
-
-  /**
-   * Helper method used to handle the response after making the get token API call
-   */
-  static _handleAPIToken() {}
+  static _handleGetTokenAPICall(options) {
+    this.makeAPICall(GET_TOKEN, null, options)
+      .then(response => response.json())
+      .then(response => {
+        if (response.access_token !== undefined) {
+          localStorage.setItem("tokenObject", JSON.stringify(response));
+          store.dispatch(actions.setUserRole(response.user.role));
+          store.dispatch(actions.setIsAuthorized(true));
+        } else {
+          store.dispatch(actions.setAlertMessage({ message: "Invalid username or password", messageType: "error" }));
+        }
+      })
+      .catch(error => {
+        console.log("[ERROR GETTING TOKEN]", error);
+      });
+  }
 
   /**
    * Used to request a token from the backend server and handle the response
    */
-  static getTokenFromAPI(username, password) {}
+  static getTokenFromAPI(username, password) {
+    const body = {
+      username: username,
+      password: password,
+      grant_type: "password"
+    };
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const options = {
+      method: "POST",
+      headers: headers,
+      body: body
+    };
+
+    this._handleGetTokenAPICall(options);
+  }
 
   /**
    * Retrieves the saved token from the local storage. If the local storage does not

@@ -66,34 +66,7 @@ function SignIn(props) {
   const getToken = () => {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-    const body = {
-      username: username,
-      password: password,
-      grant_type: "password"
-    };
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-
-    const options = {
-      method: "POST",
-      headers: headers,
-      body: body
-    };
-
-    APIUtility.API.makeAPICall(APIUtility.GET_TOKEN, null, options)
-      .then(response => response.json())
-      .then(response => {
-        if (response.access_token !== undefined) {
-          localStorage.setItem("tokenObject", JSON.stringify(response));
-          props.setUserRole(response.user.role);
-          props.setIsAuthorized(true);
-        } else {
-          props.setAlertMessage({ message: "Invalid username or password", messageType: "error" });
-        }
-      })
-      .catch(error => {
-        console.log("ERROR: ", error);
-      });
+    APIUtility.API.getTokenFromAPI(username, password);
   };
 
   const onKeyPress = e => {
