@@ -6,7 +6,13 @@ function About(props) {
   return (
     <div>
       <div>
-        <MenuBar title="About" homeLink visualizationLink />
+        <MenuBar
+          title="About"
+          homeLink
+          visualizationLink
+          adminLink={props.userRole === "admin"}
+          manageAccountsLink={props.userRole === "admin"}
+        />
       </div>
 
       <div className="cardContainer">
