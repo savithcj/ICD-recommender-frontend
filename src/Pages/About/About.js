@@ -240,80 +240,71 @@ function About(props) {
             </p>
           </div>
         </div>
-
-        {props.userRole === "admin" ? (
-          <>
-            <div key="4" className={highlightEditDiv}>
-              <div className="cardContainer">
-                <h3>Admin</h3>
-                <p>
-                  The admin page is where all of the admin functions related to the functionality of the application
-                  are. This page allows admins to review rules that have been flagged by users, create new rules, or
-                  search for rules.
-                </p>
-                <br />
-                <h4>Review Flagged Rules</h4>
-                <p>
-                  When a coder flags a rule for review (red thumbs down), it will show up in this section. The left and
-                  right hand sides of the rule are displayed, along with the number of times it has been suggested,
-                  accepted, and rejected. If the rule makes sense, and it should stay in the system, click on the green
-                  checkmark. This will keep the rule and it will disallow other users to flag it, as it has already been
-                  reviewed. The red x will disable the rule and prevent it from being recommended. It is possible to
-                  reverse this later.
-                </p>
-                <br />
-                <h4>Create Rules</h4>
-                <p>
-                  This is where a custom rule can be created and added to the system. Multiple codes can be added to the
-                  left hand side (LHS) of the rule, but only one code can be added to the right hand side (RHS). If the
-                  LHS has multiple codes, the RHS will only be recommended if all of the LHS codes are added to the
-                  selected codes box.
-                </p>
-                <p>
-                  There is also the option to add an age range and specific gender to the rule. If the age boxes are
-                  left empty, the rule will be applicable for all age ranges. If the start is entered, but not the end,
-                  it will be applicable from the start age and every age after. If only the end is entered, it will be
-                  from 0 to the end age. The rule will be applicable for the gender entered, or both, if the box is left
-                  empty.
-                </p>
-                <p>Rules created with this tool will have a starting score of 90.</p>
-                <br />
-                <h4>Search for Rules</h4>
-                <p>
-                  This allows admins to search for specific rules by entering codes into the LHS and/or RHS and
-                  selecting search. It will return a list of rules with their confidence, support, (confidence and
-                  support are from rule mining) number of times suggested, accepted, and rejected, as well as the
-                  applicable age range and gender.
-                </p>
-                <p>
-                  The rules have checkmark and x buttons. Only one will be available at a time, depending on the current
-                  status of the rule. If the rule is currently active, the red x will be available, which makes the rule
-                  inactive. If the rule is inactive, the green checkmark will be available, and this makes the rule
-                  active again.
-                </p>
-                <p>
-                  There is also a "Display Inactive Rules" button, which will show all of the rules that have are
-                  inactive.
-                </p>
-              </div>
-            </div>
-            <div key="5" className={highlightEditDiv}>
-              <div className="cardContainer">
-                <h3>Manage Accounts</h3>
-                <p>This page is where an admin can manage the accounts of the users registered on the site.</p>
-                <br />
-                <h4>Unverified Accounts</h4>
-                <p>
-                  When a user creates an account, the status of the account will be unverified. This component displays
-                  all of the currently unverified accounts. Admins can click the green checkmark to verify the account,
-                  or the red x to delete the account permanently.
-                </p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <></>
-        )}
+        <div key="4" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <h3>Admin</h3>
+            <p>
+              The admin page is where all of the admin functions related to the functionality of the application are.
+              This page allows admins to review rules that have been flagged by users, create new rules, or search for
+              rules.
+            </p>
+            <br />
+            <h4>Review Flagged Rules</h4>
+            <p>
+              When a coder flags a rule for review (red thumbs down), it will show up in this section. The left and
+              right hand sides of the rule are displayed, along with the number of times it has been suggested,
+              accepted, and rejected. If the rule makes sense, and it should stay in the system, click on the green
+              checkmark. This will keep the rule and it will disallow other users to flag it, as it has already been
+              reviewed. The red x will disable the rule and prevent it from being recommended. It is possible to reverse
+              this later.
+            </p>
+            <br />
+            <h4>Create Rules</h4>
+            <p>
+              This is where a custom rule can be created and added to the system. Multiple codes can be added to the
+              left hand side (LHS) of the rule, but only one code can be added to the right hand side (RHS). If the LHS
+              has multiple codes, the RHS will only be recommended if all of the LHS codes are added to the selected
+              codes box.
+            </p>
+            <p>
+              There is also the option to add an age range and specific gender to the rule. If the age boxes are left
+              empty, the rule will be applicable for all age ranges. If the start is entered, but not the end, it will
+              be applicable from the start age and every age after. If only the end is entered, it will be from 0 to the
+              end age. The rule will be applicable for the gender entered, or both, if the box is left empty.
+            </p>
+            <p>Rules created with this tool will have a starting score of 90.</p>
+            <br />
+            <h4>Search for Rules</h4>
+            <p>
+              This allows admins to search for specific rules by entering codes into the LHS and/or RHS and selecting
+              search. It will return a list of rules with their confidence, support, (confidence and support are from
+              rule mining) number of times suggested, accepted, and rejected, as well as the applicable age range and
+              gender.
+            </p>
+            <p>
+              The rules have checkmark and x buttons. Only one will be available at a time, depending on the current
+              status of the rule. If the rule is currently active, the red x will be available, which makes the rule
+              inactive. If the rule is inactive, the green checkmark will be available, and this makes the rule active
+              again.
+            </p>
+            <p>
+              There is also a "Display Inactive Rules" button, which will show all of the rules that have are inactive.
+            </p>
+          </div>
+        </div>
+        <div key="5" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <h3>Manage Accounts</h3>
+            <p>This page is where an admin can manage the accounts of the users registered on the site.</p>
+            <br />
+            <h4>Unverified Accounts</h4>
+            <p>
+              When a user creates an account, the status of the account will be unverified. This component displays all
+              of the currently unverified accounts. Admins can click the green checkmark to verify the account, or the
+              red x to delete the account permanently.
+            </p>
+          </div>
+        </div>
       </ResponsiveReactGridLayout>
     </div>
   );
