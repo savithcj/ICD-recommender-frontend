@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://airoscar.github.io/ICDcoderecommendation/",
+  "homepage": "https://airoscar.github.io/ICDcoderecommendation",
   "dependencies": {
     "@material-ui/core": "^4.0.1",
     "@material-ui/icons": "^4.0.1",
