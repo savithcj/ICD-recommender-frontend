@@ -44,7 +44,7 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
-  // Method dealing with tokens----------------------------------------------------------
+  // METHODS DEALING WITH TOKENS---------------------------------------------------------
   //-------------------------------------------------------------------------------------
   /**
    * Retrieves the saved token from the local storage. If the local storage does not
@@ -81,7 +81,7 @@ export class API {
     fetch(url, options);
   }
 
-  // Methods dealing this API calls------------------------------------------------------
+  // METHODS DEALING WITH API CALLS------------------------------------------------------
   //-------------------------------------------------------------------------------------
   /**
    * Method used to add the authorization token from the local storage before making
@@ -134,6 +134,9 @@ export class API {
       });
   }
 
+  /**
+   * This method returns the response from various API calls as a promise
+   */
   static makeAPICall(endpoint, input, options = {}) {
     switch (endpoint) {
       case RULES:
