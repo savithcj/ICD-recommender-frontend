@@ -34,7 +34,8 @@ export const REJECT_USER = "REJECT_USER";
 export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
 
 /**
- * API class used to connect to the backend--------------------------------------------
+ * API class used to connect to the backend
+ * Deals with token authorization and all other API calls
  */
 export class API {
   static serverAdress = window.location.hostname; //Only if API on same server as React
@@ -43,15 +44,24 @@ export class API {
   static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
   static json = "/?format=json";
 
+  // Method dealing with tokens----------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  /**
+   * Retrieves the saved token from the local storage. If the local storage does not
+   * contain the token, returns -1
+   */
   static getTokenFromLS() {
     const localStorageToken = localStorage.getItem("tokenObject");
     if (localStorageToken !== "" && localStorageToken !== null) {
       return JSON.parse(localStorageToken).access_token;
     } else {
-      return 1;
+      return -1;
     }
   }
 
+  /**
+   * Used to revoke the existing token in the local storage
+   */
   static revokeToken() {
     const url = this.authUrlBeginning + "revoke_token/";
 
@@ -71,6 +81,12 @@ export class API {
     fetch(url, options);
   }
 
+  // Methods dealing this API calls------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  /**
+   * Method used to add the authorization token from the local storage before making
+   * the API call.
+   */
   static addAuthorization(url, options = {}) {
     const oAuthToken = this.getTokenFromLS();
 
@@ -86,6 +102,11 @@ export class API {
     return this.fetchFromAPI(url, options);
   }
 
+  /**
+   * This method makes the API call and returns the API response as promise
+   * If the token is expired, updates the corresponding flag in the store
+   * If the server is not responding, updates the corresponding flag in the store
+   */
   static fetchFromAPI(url, options = {}) {
     if (options.headers === undefined) {
       options.headers = {};
@@ -94,18 +115,23 @@ export class API {
     if (options.body !== undefined) {
       options.body = JSON.stringify(options.body);
     }
-    return fetch(url, options).then(response => {
-      if (response.status !== 200) {
-        store.dispatch(actions.setIsAuthorized(false));
-        console.log("RESPONSE ERROR, STATUS", response.status);
-        // TODO: log the response error.
-        // Two functions can't call response.json() at the same time.
-        // response.json().then(response => {
-        //   console.log("RESPONSE", response);
-        // });
-      }
-      return response;
-    });
+    return fetch(url, options)
+      .then(response => {
+        if (response.status === 401) {
+          store.dispatch(actions.setIsAuthorized(false));
+          store.dispatch(actions.setUserRole(null));
+          console.log("RESPONSE ERROR, STATUS", response.status);
+          // TODO: log the response error.
+          // Two functions can't call response.json() at the same time.
+          // response.json().then(response => {
+          //   console.log("RESPONSE", response);
+          // });
+        }
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   static makeAPICall(endpoint, input, options = {}) {

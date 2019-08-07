@@ -166,7 +166,7 @@ const mapDispatchToProps = dispatch => {
     setIsAuthorized: authBool => dispatch(actions.setIsAuthorized(authBool)),
     setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue)),
     resetState: () => dispatch(actions.resetState()),
-    verifyLSToken: (callBackSuccess, callBackFailed) => dispatch(actions.verifyLSToken(callBackSuccess, callBackFailed))
+    verifyLSToken: callBackFunction => dispatch(actions.verifyLSToken(callBackFunction))
   };
 };
 

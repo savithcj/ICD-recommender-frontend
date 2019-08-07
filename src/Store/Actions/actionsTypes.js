@@ -34,3 +34,4 @@ export const SET_CODE_SELECTED_IN_TREE = "SET_CODE_SELECTED_IN_TREE";
 // Authentication action types
 export const SET_IS_AUTHORIZED = "SET_IS_AUTHORIZED";
 export const SET_USER_ROLE = "SET_USER_ROLE";
+export const SET_IS_SERVER_DOWN = "SET_IS_SERVER_DOWN";
