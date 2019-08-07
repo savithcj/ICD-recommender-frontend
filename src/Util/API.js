@@ -57,7 +57,7 @@ export class API {
   //-------------------------------------------------------------------------------------
 
   /**
-   * Helper method used to make the get token API call
+   * Helper method used to make the get token API call and handle the response
    */
   static _handleGetTokenAPICall(options) {
     this.makeAPICall(GET_TOKEN, null, options)
@@ -149,7 +149,7 @@ export class API {
       body: data
     };
 
-    this.fetchFromAPI(url, options);
+    this._fetchFromAPI(url, options);
   }
 
   // HELPER METHODS DEALING WITH API CALLS-----------------------------------------------
@@ -158,11 +158,9 @@ export class API {
    * Method used to add the authorization token from the local storage before making
    * the API call.
    */
-  static addAuthorization(url, options = {}) {
+  static _addAuthorization(url, options = {}) {
     const oAuthToken = this.getTokenFromLS();
 
-    // let bearer_token = "API TOKEN HERE";
-    // let bearer_token = "dAPt5viF6Hzbrobi5B99tCtaG3cQPu";
     let bearer = "Bearer " + oAuthToken;
 
     // Append token to header. Create header if it does not exist
@@ -170,7 +168,7 @@ export class API {
       options.headers = {};
     }
     options.headers["Authorization"] = bearer;
-    return this.fetchFromAPI(url, options);
+    return this._fetchFromAPI(url, options);
   }
 
   /**
@@ -178,7 +176,7 @@ export class API {
    * If the token is expired, updates the corresponding flag in the store
    * If the server is not responding, updates the corresponding flag in the store
    */
-  static fetchFromAPI(url, options = {}) {
+  static _fetchFromAPI(url, options = {}) {
     if (options.headers === undefined) {
       options.headers = {};
     }
@@ -214,68 +212,68 @@ export class API {
   static makeAPICall(endpoint, input, options = {}) {
     switch (endpoint) {
       case RULES:
-        return this.addAuthorization(this.urlBeginning + "rules" + this.json);
+        return this._addAuthorization(this.urlBeginning + "rules" + this.json);
       // case CHILDREN:
       //   return this.urlBeginning + "children/";
       case FAMILY:
-        return this.addAuthorization(this.urlBeginning + "family/" + input + this.json);
+        return this._addAuthorization(this.urlBeginning + "family/" + input + this.json);
       case CODE_DESCRIPTION:
-        return this.addAuthorization(this.urlBeginning + "codeDescription/" + input + this.json);
+        return this._addAuthorization(this.urlBeginning + "codeDescription/" + input + this.json);
       // case REQUEST_RULES:
       //   return this.urlBeginning + "requestRules/";
       case REQUEST_ACTIVE_RULES:
-        return this.addAuthorization(
+        return this._addAuthorization(
           this.urlBeginning + "requestRulesActive/" + input.codes + this.json + input.age + input.gender
         );
       // case MATCH_DESCRIPTION:
       //   return this.urlBeginning + "matchDescription/";
       case ANCESTORS:
-        return this.addAuthorization(this.urlBeginning + "ancestors/" + input + this.json);
+        return this._addAuthorization(this.urlBeginning + "ancestors/" + input + this.json);
       case CODE_AUTO_SUGGESTIONS:
-        return this.addAuthorization(this.urlBeginning + "codeAutosuggestions/" + input + this.json);
+        return this._addAuthorization(this.urlBeginning + "codeAutosuggestions/" + input + this.json);
       case CODE_BLOCK_USAGE:
-        return this.addAuthorization(this.urlBeginning + "codeBlockUsage" + this.json);
+        return this._addAuthorization(this.urlBeginning + "codeBlockUsage" + this.json);
       case CREATE_RULE:
-        return this.addAuthorization(this.urlBeginning + "createRule/", options);
+        return this._addAuthorization(this.urlBeginning + "createRule/", options);
       case RULE_SEARCH:
-        return this.addAuthorization(this.urlBeginning + "ruleSearch/", options);
+        return this._addAuthorization(this.urlBeginning + "ruleSearch/", options);
       case FLAG_RULE_FOR_REVIEW:
-        return this.addAuthorization(this.urlBeginning + "flagRuleForReview/" + input + this.json, { method: "PUT" });
+        return this._addAuthorization(this.urlBeginning + "flagRuleForReview/" + input + this.json, { method: "PUT" });
       case FLAGGED_RULES:
-        return this.addAuthorization(this.urlBeginning + "flaggedRules" + this.json);
+        return this._addAuthorization(this.urlBeginning + "flaggedRules" + this.json);
       case UPDATE_FLAGGED_RULE:
-        return this.addAuthorization(this.urlBeginning + "updateFlaggedRule/" + input.id + input.action, {
+        return this._addAuthorization(this.urlBeginning + "updateFlaggedRule/" + input.id + input.action, {
           method: "PUT"
         });
       case DAGGER_ASTERISK:
-        return this.addAuthorization(this.urlBeginning + "daggerAsterisk/" + input + this.json);
+        return this._addAuthorization(this.urlBeginning + "daggerAsterisk/" + input + this.json);
       case ENTER_LOG:
-        return this.addAuthorization(this.urlBeginning + "enterLog/", options);
+        return this._addAuthorization(this.urlBeginning + "enterLog/", options);
       case RULE_STATUS:
-        return this.addAuthorization(this.urlBeginning + "changeRuleStatus/", options);
+        return this._addAuthorization(this.urlBeginning + "changeRuleStatus/", options);
       case INACTIVE_RULES:
-        return this.addAuthorization(this.urlBeginning + "inactiveRules" + this.json);
+        return this._addAuthorization(this.urlBeginning + "inactiveRules" + this.json);
       case STATS:
-        return this.addAuthorization(this.urlBeginning + "stats" + this.json);
+        return this._addAuthorization(this.urlBeginning + "stats" + this.json);
       case CHECK_CODE:
-        return this.addAuthorization(this.urlBeginning + "checkCode/" + input + this.json);
+        return this._addAuthorization(this.urlBeginning + "checkCode/" + input + this.json);
       case GET_TOKEN:
         if (options.body === undefined) {
           options.body = {};
         }
         options.body.client_id = secret.client_id;
-        return this.fetchFromAPI(this.authUrlBeginning + "token/", options);
+        return this._fetchFromAPI(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
-        return this.fetchFromAPI(this.urlBeginning + "createUser/", options);
+        return this._fetchFromAPI(this.urlBeginning + "createUser/", options);
       case LIST_UNVERIFIED_ACCOUNTS:
-        return this.addAuthorization(this.urlBeginning + "unverifiedAccounts" + this.json);
+        return this._addAuthorization(this.urlBeginning + "unverifiedAccounts" + this.json);
       case APPROVE_USER:
         console.log(options);
-        return this.addAuthorization(this.urlBeginning + "approveUser/", options);
+        return this._addAuthorization(this.urlBeginning + "approveUser/", options);
       case REJECT_USER:
-        return this.addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
+        return this._addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       case VALIDATE_TOKEN:
-        return this.addAuthorization(this.urlBeginning + "validateToken/");
+        return this._addAuthorization(this.urlBeginning + "validateToken/");
       default:
         return null;
     }
