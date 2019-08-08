@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 import { sliderBottom } from "d3-simple-slider";
 import ReactDOM from "react-dom";
-
+import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
 import * as APIUtility from "../../Util/API";
 
 class SankeyDiagram extends Component {
@@ -14,16 +14,20 @@ class SankeyDiagram extends Component {
     this.oldWidth = 0;
     this.oldHeight = 0;
     this.isMountedFlag = false;
+    this.state = {
+      isLoading: true
+    };
   }
 
   componentDidMount() {
     this.isMountedFlag = true;
     this.getDataFromAPI()
       .then(() => {
-        this.drawDiagram();
+        this.setState({ isLoading: false }, this.drawDiagram);
       })
       .catch(error => {
         console.log("ERROR:", error);
+        this.setState({ isLoading: false });
       });
   }
 
@@ -53,12 +57,12 @@ class SankeyDiagram extends Component {
     }
   }
 
-  drawDiagram() {
+  drawDiagram = () => {
     //redraw if size changed
     if (this.recalculateSizes()) {
       this.drawSankeyDiagram();
     }
-  }
+  };
 
   drawSankeyDiagram() {
     this.recalculateSizes();
@@ -414,6 +418,9 @@ class SankeyDiagram extends Component {
       });
   };
   render() {
+    if (this.state.isLoading) {
+      return <LoadingIndicator />;
+    }
     return <div id={"sankey" + this.props.id} className={this.sankeyClass} />;
   }
 }

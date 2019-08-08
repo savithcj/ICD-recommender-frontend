@@ -3,11 +3,13 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import "./CustomStyle.css";
 import { addDotToCode } from "../../Util/utility";
+import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
 
 import * as APIUtility from "../../Util/API";
 
 export default function SortableTable() {
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     APIUtility.API.makeAPICall(APIUtility.RULES)
@@ -19,9 +21,11 @@ export default function SortableTable() {
           ruleObject.support = ruleObject.support.toFixed(4);
         });
         setData(results);
+        setIsLoading(false);
       })
       .catch(error => {
         console.log("ERROR:", error);
+        setIsLoading(false);
       });
   }, []);
 
@@ -63,6 +67,10 @@ export default function SortableTable() {
       accessor: "support"
     }
   ];
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <ReactTable
