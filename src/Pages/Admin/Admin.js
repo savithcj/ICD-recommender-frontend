@@ -11,6 +11,8 @@ import * as actions from "../../Store/Actions/index";
 import { connect } from "react-redux";
 import { useAlert, positions } from "react-alert";
 import { Redirect } from "react-router";
+import * as APIUtility from "../../Util/API";
+import Loading from "../Loading/Loading";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
@@ -18,6 +20,7 @@ const originalLayouts = getFromLS("adminLayouts", "layouts") || defaultLayouts;
 function Admin(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const alert = useAlert();
 
@@ -36,6 +39,11 @@ function Admin(props) {
     }
   }, [props.alertMessage]);
 
+  // equivalent to componentDidUpdate. used to verify that the token is valid
+  useEffect(() => {
+    APIUtility.API.verifyLSToken(() => setIsLoading(false));
+  }, []);
+
   const resetLayout = () => {
     setLayouts(defaultLayouts);
     saveToLS("adminLayouts", "layouts", defaultLayouts);
@@ -52,6 +60,10 @@ function Admin(props) {
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (!props.isAuthorized) {
     return <Redirect to="/sign-in" />;
