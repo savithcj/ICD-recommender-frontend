@@ -15,15 +15,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function RuleCreator(props) {
-  // const [codeAutoCompleteDisplayed, setCodeAutoCompleteDisplayed] = useState([]);
   const [cachedCodeWithDescription, setCachedCodes] = useState([]);
   const [LHS, setLHS] = useState([]);
   const [RHS, setRHS] = useState([]);
-  const [ageStart, setAgeStart] = useState(0);
-  const [ageEnd, setAgeEnd] = useState(150);
-  const [gender, setGender] = useState();
+
+  let ageStart = 0;
+  let ageEnd = 150;
+  let gender = undefined;
 
   const classes = useStyles();
+
+  const resetInputs = () => {
+    setLHS([]);
+    setRHS([]);
+    ageStart = 0;
+    ageEnd = 150;
+    gender = undefined;
+    document.getElementById("admin_age_input_start").value = "";
+    document.getElementById("admin_age_input_end").value = "";
+    document.getElementById("admin_gender_input").value = "";
+  };
 
   const addCodeLHS = newCodeObj => {
     let selectedCodes = Array.from(LHS);
@@ -61,14 +72,18 @@ function RuleCreator(props) {
     }
   };
 
-  const addAgeStart = value => {
-    setAgeStart(value);
+  const addAgeStart = () => {
+    // setAgeStart(value);
+    ageStart = document.getElementById("admin_age_input_start").value;
+    console.log(ageStart);
   };
-  const addAgeEnd = value => {
-    setAgeEnd(value);
+  const addAgeEnd = () => {
+    // setAgeEnd(value);
+    ageEnd = document.getElementById("admin_age_input_end").value;
   };
-  const addGender = value => {
-    setGender(value);
+  const addGender = () => {
+    // setGender(value);
+    gender = document.getElementById("admin_gender_input").value;
   };
 
   const appendCodeToCache = results => {
@@ -120,6 +135,12 @@ function RuleCreator(props) {
     } else if (LHSCodes.indexOf(RHSCodes[0]) >= 0) {
       console.log("rhs in lhs");
       props.setAlertMessage({ message: "The rule can't have the same code in the LHS and RHS", messageType: "error" });
+    } else if (isNaN(ageStart) || ageStart < 0 || ageStart > 150) {
+      props.setAlertMessage({ message: "The start age must be a number between 0 and 150.", messageType: "error" });
+    } else if (isNaN(ageEnd) || ageEnd < 0 || ageEnd > 150) {
+      props.setAlertMessage({ message: "The end age must be a number between 0 and 150.", messageType: "error" });
+    } else if (ageStart > ageEnd) {
+      props.setAlertMessage({ message: "The end age must be greater than start age", messageType: "error" });
     } else {
       const data = { LHSCodes, RHSCodes, ageStart, ageEnd, gender };
 
@@ -128,6 +149,8 @@ function RuleCreator(props) {
         body: data
       };
 
+      console.log(options);
+
       const response = await APIUtility.API.makeAPICall(APIUtility.CREATE_RULE, null, options).catch(error => {
         console.log("ERROR:", error);
       });
@@ -135,11 +158,7 @@ function RuleCreator(props) {
 
       if (status === 200 || status === 201) {
         props.setAlertMessage({ message: "Rule successfully created", messageType: "success" });
-        setLHS([]);
-        setRHS([]);
-        setAgeStart(0);
-        setAgeEnd(150);
-        setGender();
+        resetInputs();
       } else {
         props.setAlertMessage({ message: "Rule not created", messageType: "error" });
       }
@@ -197,7 +216,6 @@ function RuleCreator(props) {
             <CodeInputField
               id_code="inputCodeRHS"
               placeholder_code="Enter code to be added to RHS"
-              setCodeValue={setRHS}
               selectCode={addCodeRHS}
               codeCache={cachedCodeWithDescription}
               appendCodeToCache={appendCodeToCache}
@@ -224,15 +242,37 @@ function RuleCreator(props) {
         </div>
       </div>
 
-      <div className="ageGenderInput">
-        <CodeInputField id_age="inputAgeStart" placeholder_age="Age(Start)" selectAge={addAgeStart} width_age="30%" />
-        <CodeInputField id_age="inputAgeEnd" placeholder_age="Age(End)" selectAge={addAgeEnd} width_age="30%" />
-        <CodeInputField
-          id_gender="inputGender"
-          placeholder_gender="Gender"
-          selectGender={addGender}
-          width_gender="30%"
-        />
+      <div className="admin_input_fields">
+        <div className="admin_age_input_div">
+          <input
+            type="text"
+            name="Age"
+            placeholder="Age(Start)"
+            id="admin_age_input_start"
+            onChange={addAgeStart}
+            // value={props.age ? props.age : ""}
+          />
+        </div>
+        <div className="admin_age_input_div">
+          <input
+            type="text"
+            name="Age"
+            placeholder="Age(End)"
+            id="admin_age_input_end"
+            onChange={addAgeEnd}
+            // value={props.age ? props.age : ""}
+          />
+        </div>
+        <div className="admin_gender_input_div">
+          <select id="admin_gender_input" onChange={addGender} defaultValue="NA">
+            <option disabled value="NA">
+              Gender
+            </option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
       </div>
       <div>
         <Button variant="contained" color="default" className={classes.createButton} onClick={createRule} size="large">
