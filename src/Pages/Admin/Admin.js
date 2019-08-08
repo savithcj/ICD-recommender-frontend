@@ -66,12 +66,10 @@ function Admin(props) {
       <div>
         <MenuBar
           title="Admin Page"
-          firstLinkName="Home"
-          firstLinkRoute="/"
-          secondLinkName="Visualization"
-          secondLinkRoute="/visualization"
-          thirdLinkName="Manage Accounts"
-          thirdLinkRoute="/manage-accounts"
+          homeLink
+          manageAccountsLink
+          visualizationLink
+          aboutLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}

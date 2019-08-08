@@ -2,7 +2,8 @@ import * as actionTypes from "../Actions/actionsTypes";
 
 const initialState = {
   isAuthorized: false,
-  userRole: null
+  userRole: null,
+  isServerDown: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -11,6 +12,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, isAuthorized: action.authBool };
     case actionTypes.SET_USER_ROLE:
       return { ...state, userRole: action.userRole };
+    case actionTypes.SET_IS_SERVER_DOWN:
+      return { ...state, isServerDown: action.serverDownBool };
     default:
       return state;
   }

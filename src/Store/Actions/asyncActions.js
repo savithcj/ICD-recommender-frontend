@@ -225,18 +225,3 @@ export const resetSession = () => {
     dispatch(setGender(null));
   };
 };
-
-/**
- * used to verify the token in the local storage
- */
-export const verifyLSToken = callBackFunction => {
-  return dispatch => {
-    APIUtility.API.makeAPICall(APIUtility.VALIDATE_TOKEN).then(response => {
-      if (response.status === 200) {
-        dispatch(setIsAuthorized(true));
-        dispatch(setUserRole(JSON.parse(localStorage.getItem("tokenObject")).user.role));
-      }
-      callBackFunction();
-    });
-  };
-};

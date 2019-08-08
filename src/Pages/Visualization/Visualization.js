@@ -57,12 +57,8 @@ function Visualization(props) {
       <div>
         <MenuBar
           title="Visualization Page"
-          firstLinkName="Home"
-          firstLinkRoute="/"
-          secondLinkName="Admin"
-          secondLinkRoute="/admin"
-          thirdLinkName="Manage Accounts"
-          thirdLinkRoute="/manage-accounts"
+          homeLink
+          aboutLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}

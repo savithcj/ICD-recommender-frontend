@@ -19,6 +19,7 @@ import ManageAccounts from "./Pages/ManageAccounts/ManageAccounts";
 import About from "./Pages/About/About";
 import NotFound from "./Pages/NotFound/NotFound";
 import Forbidden from "./Pages/Forbidden/Forbidden";
+import ServerDown from "./Pages/ServerDown/ServerDown";
 
 const router = (
   <Provider store={store}>
@@ -37,6 +38,7 @@ const router = (
           <Route path="/manage-accounts" component={ManageAccounts} />
           <Route path="/about" component={About} />
           <Route path="/forbidden" component={Forbidden} />
+          <Route path="/server-down" component={ServerDown} />
           <Route>{NotFound}</Route>
         </Switch>
       </BrowserRouter>
