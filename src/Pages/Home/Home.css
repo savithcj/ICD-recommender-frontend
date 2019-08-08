@@ -49,6 +49,7 @@
 .home_code_input {
   width: auto;
 }
+
 .home_age_input_div {
   display: table-cell;
   width: 80px;
@@ -74,6 +75,48 @@
 
 #home_gender_input {
   width: 100%;
+  left: 5%;
+  height: 52px;
+  padding: 10px 10px 10px 10px;
+  font-family: "Roboto", sans-serif;
+  border: 1px solid #aaa;
+  font-weight: 300;
+  font-size: 16px;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.admin_input_fields {
+  display: table;
+  width: 100%;
+  padding: 10px;
+}
+
+.admin_age_input_div {
+  display: table-cell;
+  width: 200px;
+}
+
+#admin_age_input_start,
+#admin_age_input_end {
+  width: 70%;
+  left: 5%;
+  height: 30px;
+  padding: 10px 10px 10px 10px;
+  font-family: "Roboto", sans-serif;
+  border: 1px solid #aaa;
+  font-weight: 300;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.admin_gender_input_div {
+  display: table-cell;
+  width: 200px;
+}
+
+#admin_gender_input {
+  width: 70%;
   left: 5%;
   height: 52px;
   padding: 10px 10px 10px 10px;

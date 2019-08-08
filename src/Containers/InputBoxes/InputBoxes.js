@@ -3,6 +3,9 @@ import CodeInputField from "../../Components/CodeInputField/CodeInputField";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 
+/**
+ * This component is used to provide input fields on the home page
+ */
 const inputBoxes = props => {
   const handleCodeSelection = enteredCode => {
     // props.addSelectedCode(enteredCode);
