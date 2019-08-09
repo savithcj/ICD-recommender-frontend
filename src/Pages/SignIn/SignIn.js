@@ -118,12 +118,7 @@ function SignIn(props) {
           <Button onClick={getToken} fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
+          <Grid container justify="flex-end">
             <Grid item>
               <Link href="/sign-up" variant="body2">
                 {"Don't have an account? Sign Up"}

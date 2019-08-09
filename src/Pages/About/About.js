@@ -1,8 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { connect } from "react-redux";
+import { Redirect } from "react-router";
+import Loading from "../Loading/Loading";
+import * as APIUtility from "../../Util/API";
 
 function About(props) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // equivalent to componentDidUpdate. used to verify that the token is valid
+  useEffect(() => {
+    APIUtility.API.verifyLSToken(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (props.isServerDown) {
+    return <Redirect to="/server-down" />;
+  }
+
+  if (!props.isAuthorized) {
+    return <Redirect to="/sign-in" />;
+  }
+
   return (
     <div>
       <div>
@@ -22,7 +44,7 @@ function About(props) {
           large constraint for coders which limits the level of completeness the discharge abstracts reach. Typically
           the important codes (the reason for the hospital visit, or codes that Alberta Health Services deem mandatory
           to code) are coded, but the less important codes are often neglected due to the time constraints. The
-          uncomplete coding leads to various problems when trying to make meaningful conclusions from the discharge
+          incomplete coding leads to various problems when trying to make meaningful conclusions from the discharge
           abstract database.
         </p>
         <p>
@@ -103,7 +125,7 @@ function About(props) {
         <h4>Recommended Codes</h4>
         <p>
           When codes appear in the recommended code box, there are a few options. The compass button (same as selected
-          codes) to the left of the code will navigate to that code in the browser. The green checkmark "accepts" the
+          codes) to the left of the code will navigate to that code in the browser. The green check mark "accepts" the
           recommendation and moves that code to the selected code box. Recommendations are then regenerated based on the
           new addition. The red x will "reject" the recommendation. This should be used if the rule can make sense in
           certain situations, but not for the current discharge abstract. The red thumbs down should be used if the rule
@@ -138,7 +160,7 @@ function About(props) {
         <p>
           For every rule, there is a line drawn starting from the block that the left hand side code belongs to, and
           ending at the block that the code in right hand side of the rule belongs to. The colour of the line matches
-          the colour of the originating block, which correpsonds to the chapter the block is in. When a user hovers over
+          the colour of the originating block, which corresponds to the chapter the block is in. When a user hovers over
           one of the blocks, all of the rules originating from that block will become thicker, allowing the user to
           easily see all of the rules from that block. Additionally, the user can hover the mouse over the chapters in
           the legend, and it will highlight all of the rules from all of the blocks in that chapter.
@@ -189,7 +211,7 @@ function About(props) {
           All of the pages allow for the user to customize the layout of the page however they wish. To do so, simply
           open the menu and select "Customize Layout". The different components will now have blue borders around them,
           indicating that customization mode is currently active. The components can be resized and moved around to
-          create the ideal layout for each specific person. When satisfied with the layout, click the checkmark button
+          create the ideal layout for each specific person. When satisfied with the layout, click the check mark button
           to confirm. In order to save the layout for future visits, the page must be refreshed before navigating to
           other pages on the site. There is also a "Reset Layout" button in the menu, which sets the layout to the
           default layout.
@@ -212,7 +234,7 @@ function About(props) {
               When a coder flags a rule for review (red thumbs down), it will show up in this section. The left and
               right hand sides of the rule are displayed, along with the number of times it has been suggested,
               accepted, and rejected. If the rule makes sense, and it should stay in the system, click on the green
-              checkmark. This will keep the rule and it will disallow other users to flag it, as it has already been
+              check mark. This will keep the rule and it will disallow other users to flag it, as it has already been
               reviewed. The red x will disable the rule and prevent it from being recommended. It is possible to reverse
               this later.
             </p>
@@ -240,9 +262,9 @@ function About(props) {
               gender.
             </p>
             <p>
-              The rules have checkmark and x buttons. Only one will be available at a time, depending on the current
+              The rules have check mark and x buttons. Only one will be available at a time, depending on the current
               status of the rule. If the rule is currently active, the red x will be available, which makes the rule
-              inactive. If the rule is inactive, the green checkmark will be available, and this makes the rule active
+              inactive. If the rule is inactive, the green check mark will be available, and this makes the rule active
               again.
             </p>
             <p>
@@ -256,7 +278,7 @@ function About(props) {
             <h4>Unverified Accounts</h4>
             <p>
               When a user creates an account, the status of the account will be unverified. This component displays all
-              of the currently unverified accounts. Admins can click the green checkmark to verify the account, or the
+              of the currently unverified accounts. Admins can click the green check mark to verify the account, or the
               red x to delete the account permanently.
             </p>
           </div>
@@ -268,7 +290,10 @@ function About(props) {
 
 const mapStateToProps = state => {
   return {
-    userRole: state.authentication.userRole
+    alertMessage: state.alert.alertMessage,
+    isAuthorized: state.authentication.isAuthorized,
+    userRole: state.authentication.userRole,
+    isServerDown: state.authentication.isServerDown
   };
 };
 
