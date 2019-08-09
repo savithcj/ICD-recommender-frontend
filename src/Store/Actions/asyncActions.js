@@ -39,7 +39,12 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
         .then(response => response.json())
         .then(results => {
           results.forEach(ruleObj => {
-            ruleObj.descriptionWithScore = ruleObj.description + " ~ Score: " + (ruleObj.score * 100).toFixed(1);
+            ruleObj.descriptionWithScore =
+              ruleObj.description +
+              " ~ Score: " +
+              (ruleObj.score * 100).toFixed(1) +
+              " ~ Suggested because of: " +
+              HelperFunctions.addDotToCode(ruleObj.lhs);
             ruleObj.rule = ruleObj.lhs + " -> " + ruleObj.rhs;
             //dislike button should be disabled if an admin has reviewed and accepted a rule
             //TODO:remove this
