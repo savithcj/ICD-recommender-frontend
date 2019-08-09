@@ -65,6 +65,10 @@ function Admin(props) {
     return <Loading />;
   }
 
+  if (props.isServerDown) {
+    return <Redirect to="/server-down" />;
+  }
+
   if (!props.isAuthorized) {
     return <Redirect to="/sign-in" />;
   }
@@ -124,7 +128,8 @@ const mapStateToProps = state => {
   return {
     alertMessage: state.alert.alertMessage,
     isAuthorized: state.authentication.isAuthorized,
-    userRole: state.authentication.userRole
+    userRole: state.authentication.userRole,
+    isServerDown: state.authentication.isServerDown
   };
 };
 

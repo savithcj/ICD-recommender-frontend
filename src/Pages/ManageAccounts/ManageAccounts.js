@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import { Redirect } from "react-router";
@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { defaultLayouts } from "./layouts";
 import VerifyAccounts from "../../Containers/VerifyAccounts/VerifyAccounts";
+import * as APIUtility from "../../Util/API";
+import Loading from "../Loading/Loading";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
@@ -13,6 +15,12 @@ const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
 function ManageAccounts(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // equivalent to componentDidUpdate. used to verify that the token is valid
+  useEffect(() => {
+    APIUtility.API.verifyLSToken(() => setIsLoading(false));
+  }, []);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
@@ -30,6 +38,10 @@ function ManageAccounts(props) {
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (!props.isAuthorized) {
     return <Redirect to="/sign-in" />;
@@ -73,8 +85,10 @@ function ManageAccounts(props) {
 
 const mapStateToProps = state => {
   return {
+    alertMessage: state.alert.alertMessage,
     isAuthorized: state.authentication.isAuthorized,
-    userRole: state.authentication.userRole
+    userRole: state.authentication.userRole,
+    isServerDown: state.authentication.isServerDown
   };
 };
 
