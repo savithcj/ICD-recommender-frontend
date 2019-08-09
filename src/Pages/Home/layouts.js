@@ -31,7 +31,7 @@ const defaultLayoutXxs = [
   { w: 8, h: 15, x: 0, y: 4, i: "selectedCodes" },
   { w: 8, h: 19, x: 0, y: 36, i: "recommendedCodes" },
   { w: 8, h: 17, x: 0, y: 19, i: "daggerCodes" },
-  { w: 2, h: 4, x: 0, y: 0, i: "inputBoxes" }
+  { w: 8, h: 4, x: 0, y: 0, i: "inputBoxes" }
 ];
 
 export const defaultLayouts = {
