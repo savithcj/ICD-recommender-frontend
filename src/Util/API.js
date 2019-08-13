@@ -1,6 +1,5 @@
 import store from "../Store/configureStore";
 import * as actions from "../Store/Actions/index";
-import secret from "../secret/secrets.json";
 
 // ENDPOINTS----------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -37,10 +36,9 @@ export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
  * Deals with token authorization and all other API calls
  */
 export class API {
-  static serverAdress = window.location.hostname; //Only if API on same server as React
-  static portAdress = ":8000";
-  static urlBeginning = "http://" + this.serverAdress + this.portAdress + "/api/";
-  static authUrlBeginning = "http://" + this.serverAdress + this.portAdress + "/o/";
+  static serverAdress = process.env.REACT_APP_SERVER_ADDRESS; //window.location.hostname; //Only if API on same server as React
+  static urlBeginning = this.serverAdress + "/api/";
+  static authUrlBeginning = this.serverAdress + "/o/";
   static json = "/?format=json";
 
   // MISCELLANEOUS HELPER METHODS--------------------------------------------------------
@@ -141,7 +139,7 @@ export class API {
 
     localStorage.setItem("tokenObject", "");
 
-    const data = { token: tokenFromLS, client_id: secret.client_id };
+    const data = { token: tokenFromLS, client_id: process.env.REACT_APP_CLIENT_ID };
     const options = {
       headers: {
         "Content-Type": "application/json"
@@ -262,7 +260,7 @@ export class API {
         if (options.body === undefined) {
           options.body = {};
         }
-        options.body.client_id = secret.client_id;
+        options.body.client_id = process.env.REACT_APP_CLIENT_ID;
         return this._fetchFromAPI(this.authUrlBeginning + "token/", options);
       case CREATE_USER:
         return this._fetchFromAPI(this.urlBeginning + "createUser/", options);
