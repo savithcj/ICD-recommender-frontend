@@ -15,6 +15,7 @@ import { setIsAuthorized, setUserRole } from "./authentication";
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
     const stringOfCodes = getStringFromListOfCodes(codeObjArray);
+    let oldRecommendations = getState().recommended.recommendedCodes;
 
     const age = getState().ageGender.selectedAge;
     const gender = getState().ageGender.selectedGender;
@@ -58,7 +59,7 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
           dispatch(appendToCache(resultsToCache));
 
           results = HelperFunctions.cleanResults(results, rhsExclusions, rollResults);
-          const cleanedResults = results[0];
+          let cleanedResults = results[0];
           const rolledRules = results[1];
 
           //TODO: get rid of roll results output
@@ -69,6 +70,43 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
 
           dispatch(setRolledRules(rolledRules));
           dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
+
+          // Adding code to new recommendation if it isn't in old recommendations
+          if (oldRecommendations !== null) {
+            let newRecommendations = [];
+            for (let i = 0; i < cleanedResults.length; i++) {
+              let oldBool = false;
+              for (let j = 0; j < oldRecommendations.length; j++) {
+                if (cleanedResults[i].rhs === oldRecommendations[j].rhs) {
+                  oldBool = true;
+                }
+              }
+              if (!oldBool) {
+                newRecommendations.push(cleanedResults[i]);
+              }
+            }
+
+            // removing codes from old recommendations if it's not in cleaned results
+            let rulesToRemove = [];
+            for (let i = 0; i < oldRecommendations.length; i++) {
+              let continueBoolean = false;
+              for (let j = 0; j < cleanedResults.length; j++) {
+                if (oldRecommendations[i].rhs === cleanedResults[j].rhs) {
+                  continueBoolean = true;
+                  break;
+                }
+              }
+              if (continueBoolean) {
+                continue;
+              }
+              rulesToRemove.push(oldRecommendations[i]);
+            }
+            oldRecommendations = oldRecommendations.filter(rule => {
+              return !rulesToRemove.includes(rule);
+            });
+
+            cleanedResults = newRecommendations.concat(oldRecommendations);
+          }
           dispatch(setRecommendedCodes(cleanedResults));
         })
         .catch(error => {

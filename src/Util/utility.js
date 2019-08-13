@@ -123,8 +123,6 @@ export const cleanResults = (ruleObjs, rhsExclusions, rollResults) => {
   let i = 0;
   while (cleanedResults.length < Math.min(ruleObjs.length, 5) && i < ruleObjs.length) {
     if (ruleObjs[i].rollOutcome !== true && !rhsExclusions.includes(ruleObjs[i].rhs)) {
-      console.log("i: ", i);
-      console.log(ruleObjs[i]);
       let addRule = true;
       for (let j = 0; j < cleanedResults.length; j++) {
         if (ruleObjs[i].rhs === cleanedResults[j].rhs) {
