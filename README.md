@@ -6,7 +6,7 @@ Pre-req: A running back-end server that provides:
   - client id for OATH2
 
 Set-up:
-1. Set up environment varialbes:
+1. Set up environment variables:
   - REACT_APP_CLIENT_ID
   - REACT_APP_SERVER_ADDRESS
 
