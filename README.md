@@ -1,3 +1,4 @@
+The following instruction is generally intended for setting up a local development server. For deploying over AWS see detailed report.
 
 Pre-req: A running back-end server that provides: 
   - REST API for comminucation
