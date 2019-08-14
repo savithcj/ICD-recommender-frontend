@@ -27,6 +27,10 @@ Select Github and click on Continue.
 3. The Amplify app should have the following environment variables:
 - REACT_APP_CLIENT_ID
 - REACT_APP_SERVER_ADDRESS
+The REACT_APP_SERVER_ADDRESS should be set to match the subdomain record of the backend Route53, for example:
+```
+https://backend.icdrecommender.xyz
+```
 4. In the domain management, set up domains as the following:
 ![](docs/Picture2.png)
 5. In the Rewrites and redirects, set up the following:
