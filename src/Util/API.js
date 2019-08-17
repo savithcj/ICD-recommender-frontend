@@ -190,9 +190,9 @@ export class API {
 
           // TODO: log the response error.
           // Two functions can't call response.json() at the same time.
-          // response.json().then(response => {
-          //   console.log("RESPONSE", response);
-          // });
+          response.json().then(response => {
+            console.log("RESPONSE", response);
+          });
         }
         if (response.status !== 200) {
           console.log("RESPONSE ERROR", url, response);
