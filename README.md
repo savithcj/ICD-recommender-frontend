@@ -8,6 +8,13 @@ Pre-req: A running back-end server that provides:
 1. Set up environment variables:
   - REACT_APP_CLIENT_ID
   - REACT_APP_SERVER_ADDRESS
+  
+We have provided a script to set up these environment variables temporarily in /docs/dev_env_vars.command
+
+To use it, run it in the same terminal session that you will be running the development servers before starting up the servers:
+```
+source ./docs/dev_env_vars.command
+```
 
 2. Open terminal, navigate to root directory of this repo, and use the commands below.
 Install dependencies using NPM:
