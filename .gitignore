@@ -1,4 +1,4 @@
-
+run.bat
 node_modules/
 frontend/package-lock.json
 *.elasticbeanstalk/
