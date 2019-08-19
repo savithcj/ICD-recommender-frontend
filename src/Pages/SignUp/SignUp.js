@@ -66,16 +66,17 @@ function SignUp(props) {
   function createUser() {
     const fname = document.getElementById("firstName").value;
     const lname = document.getElementById("lastName").value;
+    const email = document.getElementById("email").value;
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    if (fname === "" || lname === "" || username === "" || password === "") {
+    if (fname === "" || lname === "" || email === "" || username === "" || password === "") {
       props.setAlertMessage({ message: "Please fill in the missing fields", messageType: "error" });
     } else {
       const headers = new Headers();
       headers.append("Content-Type", "application/json");
 
-      const body = { fname: fname, lname: lname, username: username, password: password };
+      const body = { fname: fname, lname: lname, email: email, username: username, password: password };
       const options = {
         method: "POST",
         headers: headers,
@@ -147,6 +148,17 @@ function SignUp(props) {
                 name="lastName"
                 autoComplete="lname"
                 onKeyPress={onKeyPress}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
               />
             </Grid>
             <Grid item xs={12}>

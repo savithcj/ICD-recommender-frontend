@@ -122,6 +122,11 @@ function SignIn(props) {
             <Grid item>
               <Link to="/sign-up">{"Don't have an account? Sign Up"}</Link>
             </Grid>
+            <Grid container justify="flex-end">
+              <Grid item>
+                <Link to="/forgot-password">{"Forgot password?"}</Link>
+              </Grid>
+            </Grid>
           </Grid>
         </form>
       </div>
