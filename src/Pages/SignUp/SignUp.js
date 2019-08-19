@@ -84,11 +84,16 @@ function SignUp(props) {
 
       APIUtility.API.makeAPICall(APIUtility.CREATE_USER, null, options)
         .then(response => {
-          if (response.status === 200) {
+          const statusCode = response.status;
+          const data = response.json();
+          return Promise.all([statusCode, data]);
+        })
+        .then(([statusCode, data]) => {
+          if (statusCode === 200) {
             setSignUpSuccessful(true);
-          } else if (response.status == 409) {
+          } else if (statusCode == 409) {
             // duplicate user already exist
-            props.setAlertMessage({ message: "Please try a different username", messageType: "error" });
+            props.setAlertMessage({ message: data.message, messageType: "error" });
           }
         })
         .catch(error => {
