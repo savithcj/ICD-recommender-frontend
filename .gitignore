@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 run.bat
+=======
+
+>>>>>>> d46203c3fe08faad0b9c2bcf108275f65d7003e0
 node_modules/
 frontend/package-lock.json
 *.elasticbeanstalk/

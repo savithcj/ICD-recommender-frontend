@@ -86,6 +86,9 @@ function SignUp(props) {
         .then(response => {
           if (response.status === 200) {
             setSignUpSuccessful(true);
+          } else if (response.status == 409) {
+            // duplicate user already exist
+            props.setAlertMessage({ message: "Please try a different username", messageType: "error" });
           }
         })
         .catch(error => {
