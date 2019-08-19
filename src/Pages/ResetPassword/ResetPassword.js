@@ -2,35 +2,10 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useAlert, positions } from "react-alert";
 import * as actions from "../../Store/Actions/index";
-import * as APIUtility from "../../Util/API";
 import { Link } from "react-router-dom";
 
-function ForgotPassword(props) {
+function ResetPassword(props) {
   const alert = useAlert();
-
-  const sendEmail = () => {
-    const email = document.getElementById("email").value;
-    const body = { email: email };
-    const options = {
-      method: "POST",
-      body: body
-    };
-    console.log(options);
-    APIUtility.API.makeAPICall(APIUtility.FORGOT_PASSWORD, null, options)
-      .then(response => {
-        return response.status;
-      })
-      .then(statusCode => {
-        if (statusCode === 200) {
-          props.setAlertMessage({ message: "Email sent", messageType: "success" });
-        } else {
-          props.setAlertMessage({ message: "Request failed", messageType: "error" });
-        }
-      })
-      .catch(error => {
-        console.log("ERROR:", error);
-      });
-  };
 
   useEffect(() => {
     if (props.alertMessage) {
@@ -45,14 +20,19 @@ function ForgotPassword(props) {
     }
   }, [props.alertMessage]);
 
+  const reset = () => {};
+
   return (
     <React.Fragment>
-      <h1>Forgot Password</h1>
+      <h1>Reset Password</h1>
       <div>
-        Enter your email: <input type="text" id="email" defaultValue="Email Address" />
+        Password: <input type="text" name="password1" defaultValue="Password" />
       </div>
       <div>
-        <button onClick={sendEmail}>Submit</button>
+        Confirm: <input type="text" name="password2" defaultValue="Password" />
+      </div>
+      <div>
+        <button onClick={reset}>Submit</button>
       </div>
       <Link to="/sign-in">Back to Sign-In</Link>
     </React.Fragment>
@@ -72,4 +52,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ForgotPassword);
+)(ResetPassword);

@@ -30,6 +30,7 @@ export const LIST_UNVERIFIED_ACCOUNTS = "LIST_UNVERIFIED_ACCOUNTS";
 export const APPROVE_USER = "APPROVE_USER";
 export const REJECT_USER = "REJECT_USER";
 export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
+export const FORGOT_PASSWORD = "FORGOT_PASSWORD";
 
 /**
  * API class used to connect to the backend
@@ -273,6 +274,8 @@ export class API {
         return this._addAuthorization(this.urlBeginning + "rejectUser/" + input, options);
       case VALIDATE_TOKEN:
         return this._addAuthorization(this.urlBeginning + "validateToken/");
+      case FORGOT_PASSWORD:
+        return this._fetchFromAPI(this.serverAdress + "/pw/password_reset/", options);
       default:
         return null;
     }
