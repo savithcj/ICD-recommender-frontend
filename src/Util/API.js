@@ -275,7 +275,7 @@ export class API {
       case VALIDATE_TOKEN:
         return this._addAuthorization(this.urlBeginning + "validateToken/");
       case FORGOT_PASSWORD:
-        return this._fetchFromAPI(this.serverAdress + "/pw/password_reset/", options);
+        return this._fetchFromAPI(this.urlBeginning + "password_reset/", options);
       default:
         return null;
     }
