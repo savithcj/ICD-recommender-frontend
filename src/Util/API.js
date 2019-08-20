@@ -31,6 +31,7 @@ export const APPROVE_USER = "APPROVE_USER";
 export const REJECT_USER = "REJECT_USER";
 export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
 export const FORGOT_PASSWORD = "FORGOT_PASSWORD";
+export const RESET_PASSWORD = "RESET_PASSWORD";
 
 /**
  * API class used to connect to the backend
@@ -276,6 +277,8 @@ export class API {
         return this._addAuthorization(this.urlBeginning + "validateToken/");
       case FORGOT_PASSWORD:
         return this._fetchFromAPI(this.urlBeginning + "password_reset/", options);
+      case RESET_PASSWORD:
+        return this._fetchFromAPI(this.urlBeginning + "password_reset/confirm", options);
       default:
         return null;
     }
