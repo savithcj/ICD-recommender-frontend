@@ -73,6 +73,8 @@ function Visualization(props) {
       <div>
         <MenuBar
           title="Visualization Page"
+          adminLink={props.userRole === "admin"}
+          manageAccountsLink={props.userRole === "admin"}
           homeLink
           aboutLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
@@ -110,6 +112,7 @@ const mapStateToProps = state => {
   return {
     alertMessage: state.alert.alertMessage,
     isAuthorized: state.authentication.isAuthorized,
+    userRole: state.authentication.userRole,
     isServerDown: state.authentication.isServerDown
   };
 };
