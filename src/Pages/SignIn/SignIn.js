@@ -114,7 +114,6 @@ function SignIn(props) {
             autoComplete="current-password"
             onKeyPress={onKeyPress}
           />
-          <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
           <Button onClick={getToken} fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign In
           </Button>
