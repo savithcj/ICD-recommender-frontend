@@ -62,7 +62,7 @@ function SignIn(props) {
   const classes = useStyles();
 
   const getToken = () => {
-    const username = document.getElementById("username").value;
+    const username = document.getElementById("username").value.toLowerCase();
     const password = document.getElementById("password").value;
     APIUtility.API.getTokenFromAPI(username, password);
   };
