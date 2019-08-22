@@ -62,7 +62,7 @@ const inputBoxes = props => {
       <div className="home_gender_input_div">
         <select id="home_gender_input" onChange={handleGenderSelection} value={props.gender ? props.gender : "NA"}>
           <option disabled value="NA">
-            Gender
+            Sex
           </option>
           <option value="Female">Female</option>
           <option value="Male">Male</option>

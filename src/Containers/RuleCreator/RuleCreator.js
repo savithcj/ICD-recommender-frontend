@@ -266,7 +266,7 @@ function RuleCreator(props) {
         <div className="admin_gender_input_div">
           <select id="admin_gender_input" onChange={addGender} defaultValue="NA">
             <option disabled value="NA">
-              Gender
+              Sex
             </option>
             <option value="Female">Female</option>
             <option value="Male">Male</option>
