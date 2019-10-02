@@ -1904,7 +1904,7 @@ class TreeViewer extends Component {
         codeDesc = codeDesc.slice(0, codeDesc.length - 1); // Slice code description to remove 1 character from the end
       }
       if (d.description) {
-        if (codeDesc !== d.code + ": " + d.description) {
+        if (codeDesc !== addDotToCode(d.code) + ": " + d.description) {
           codeDesc = codeDesc + "...";
         }
       }
