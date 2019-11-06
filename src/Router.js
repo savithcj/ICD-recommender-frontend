@@ -20,6 +20,7 @@ import Forbidden from "./Pages/Forbidden/Forbidden";
 import ServerDown from "./Pages/ServerDown/ServerDown";
 import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
+import Sandbox from "./Pages/Sandbox/Sandbox";
 
 const router = (
   <Provider store={store}>
@@ -39,6 +40,7 @@ const router = (
           <Route path="/server-down" component={ServerDown} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/sandbox" component={Sandbox} />
           <Route>{NotFound}</Route>
         </Switch>
       </BrowserRouter>
