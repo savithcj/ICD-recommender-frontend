@@ -1,8 +1,6 @@
 import React, { useState, useEffect, Component } from "react";
-import ListViewer from "../../Components/ListViewer/ListViewer";
 import * as APIUtility from "../../Util/API";
 import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import "./SelectFile.css";
 
@@ -30,12 +28,11 @@ class SelectFile extends Component {
     } else {
       this.fileData.format = "other";
     }
+    this.fileReader.readAsText(file);
     this.fileReader.onloadend = () => {
       this.fileData.content = this.fileReader.result;
+      console.log(this.fileData);
     };
-    this.fileReader.readAsText(file);
-
-    console.log(this.fileData);
   };
 
   render() {
