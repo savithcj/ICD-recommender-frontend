@@ -7,6 +7,9 @@ env/
 secret/
 .vscode/
 
+# MacOS system file
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
