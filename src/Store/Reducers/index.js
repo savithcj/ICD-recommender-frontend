@@ -8,6 +8,7 @@ import session from "./session";
 import alert from "./alert";
 import tree from "./tree";
 import authentication from "./authentication";
+import fileViewer from "./fileViewer";
 
 export default combineReducers({
   cached,
@@ -18,5 +19,6 @@ export default combineReducers({
   session,
   alert,
   tree,
-  authentication
+  authentication,
+  fileViewer
 });

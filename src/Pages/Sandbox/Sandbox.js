@@ -4,8 +4,7 @@ import { defaultLayouts } from "./layouts";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
-import SelectFile from "../../Containers/SelectFile/SelectFile";
-import FileDisplay from "../../Containers/FileDisplay/FileDisplay";
+import FileViewer from "../../Containers/FileViewer/FileViewer";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
@@ -30,9 +29,7 @@ function Sandbox(props) {
     saveToLS("manageLayouts", "layouts", layouts);
   }
 
-  const highlightEditDiv = isLayoutModifiable
-    ? "grid-border edit-border"
-    : "grid-border";
+  const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
   return (
     <div>
@@ -58,12 +55,7 @@ function Sandbox(props) {
       >
         <div key="0" className={highlightEditDiv}>
           <div className="cardContainer">
-            <SelectFile />
-          </div>
-        </div>
-        <div key="1" className={highlightEditDiv}>
-          <div className="cardContainer">
-            <FileDisplay />
+            <FileViewer />
           </div>
         </div>
       </ResponsiveReactGridLayout>

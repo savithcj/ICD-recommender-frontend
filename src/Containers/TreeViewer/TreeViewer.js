@@ -54,9 +54,7 @@ class TreeViewer extends Component {
     this.rightPadding = this.width * 0.3; // Right padding
     this.cRadius = minSize / 60; // Circle radius
     this.textSize = minSize / 50; // Font size
-    this.middle =
-      (this.width - this.leftPadding - this.rightPadding) / 2 +
-      this.leftPadding; // Middle of the non-padded space
+    this.middle = (this.width - this.leftPadding - this.rightPadding) / 2 + this.leftPadding; // Middle of the non-padded space
     this.buttonWidth = this.rightPadding / 2; // Width of "add code" button
     this.buttonHeight = this.vPadding / 2; // Height of "add code" button
 
@@ -555,19 +553,11 @@ class TreeViewer extends Component {
     let buttonG = this.svg
       .append("g")
       .attr("transform", d => {
-        return (
-          "translate(" +
-          (this.width - 0.75 * this.rightPadding) +
-          "," +
-          (this.height - 0.7 * this.vPadding) +
-          ")"
-        );
+        return "translate(" + (this.width - 0.75 * this.rightPadding) + "," + (this.height - 0.7 * this.vPadding) + ")";
       })
       .attr("class", "buttonG")
       .on("click", () => {
-        this.checkRecommendationsAccepted(
-          this.createAncestorList(this.data.self.code)
-        );
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.self.code));
         this.props.addSelectedCode(this.data.self);
       });
 
@@ -740,13 +730,7 @@ class TreeViewer extends Component {
       let tempG = this.svg
         .append("g")
         .attr("transform", () => {
-          return (
-            "translate(" +
-            this.chainPositions[0] +
-            "," +
-            (this.height - this.vPadding / 2) +
-            ")"
-          );
+          return "translate(" + this.chainPositions[0] + "," + (this.height - this.vPadding / 2) + ")";
         })
         .attr("class", "tempG");
 
@@ -834,13 +818,7 @@ class TreeViewer extends Component {
       let tempG = this.svg
         .append("g")
         .attr("transform", () => {
-          return (
-            "translate(" +
-            (this.width - this.rightPadding) +
-            "," +
-            (this.height - this.vPadding / 2) +
-            ")"
-          );
+          return "translate(" + (this.width - this.rightPadding) + "," + (this.height - this.vPadding / 2) + ")";
         })
         .attr("class", "tempG");
 
@@ -866,13 +844,7 @@ class TreeViewer extends Component {
         .transition()
         .duration(this.duration)
         .attr("transform", () => {
-          return (
-            "translate(" +
-            this.leftPadding +
-            "," +
-            (this.height - this.vPadding / 2) +
-            ")"
-          );
+          return "translate(" + this.leftPadding + "," + (this.height - this.vPadding / 2) + ")";
         });
 
       // Fading out the text
@@ -1250,13 +1222,7 @@ class TreeViewer extends Component {
     let parentg = this.leftG
       .append("g")
       .attr("transform", () => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .on("mouseover", (d, i) => {
         this.setInfoText(0, 0);
@@ -1294,13 +1260,7 @@ class TreeViewer extends Component {
       .selectAll("g.oldParentG")
       .transition()
       .attr("transform", () => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .duration(this.duration);
     this.svg
@@ -1319,13 +1279,7 @@ class TreeViewer extends Component {
       .selectAll("g.siblingG")
       .transition()
       .attr("transform", () => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .duration(this.duration);
     this.svg
@@ -1471,13 +1425,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "childrenG")
       .attr("transform", d => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .on("click", (d, i) => {
         this.singleDoubleClick(d, i, "child");
@@ -1635,13 +1583,7 @@ class TreeViewer extends Component {
       .duration(this.duration)
       .delay(this.duration)
       .attr("transform", d => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .attr("class", "oldParentG");
 
@@ -1677,13 +1619,7 @@ class TreeViewer extends Component {
         })
         .attr("class", "parentG")
         .attr("transform", d => {
-          return (
-            "translate(" +
-            this.middle +
-            "," +
-            this.siblingHeights[this.selfIndex] +
-            ")"
-          );
+          return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
         });
 
       // Adding invisible text
@@ -1778,13 +1714,7 @@ class TreeViewer extends Component {
       })
       .attr("class", "siblingG")
       .attr("transform", d => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       });
     // Add invisible text
     siblingG
@@ -1856,13 +1786,7 @@ class TreeViewer extends Component {
       .selectAll("g.childrenG")
       .transition()
       .attr("transform", () => {
-        return (
-          "translate(" +
-          this.middle +
-          "," +
-          this.siblingHeights[this.selfIndex] +
-          ")"
-        );
+        return "translate(" + this.middle + "," + this.siblingHeights[this.selfIndex] + ")";
       })
       .attr("class", "oldChildrenG")
       .duration(this.duration);
@@ -2069,19 +1993,13 @@ class TreeViewer extends Component {
       clearTimeout(this.dblclick_timer);
       this.dblclick_timer = false;
       if (level === "parent") {
-        this.checkRecommendationsAccepted(
-          this.createAncestorList(this.data.parent.code)
-        );
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.parent.code));
         this.props.addSelectedCode(this.data.parent);
       } else if (level === "sibling") {
-        this.checkRecommendationsAccepted(
-          this.createAncestorList(this.data.siblings[i].code)
-        );
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.siblings[i].code));
         this.props.addSelectedCode(this.data.siblings[i]);
       } else if (level === "child") {
-        this.checkRecommendationsAccepted(
-          this.createAncestorList(this.data.children[i].code)
-        );
+        this.checkRecommendationsAccepted(this.createAncestorList(this.data.children[i].code));
         this.props.addSelectedCode(this.data.children[i]);
       }
     }
@@ -2160,9 +2078,7 @@ class TreeViewer extends Component {
           if (codeList[i] === this.props.recommendedCodes[j].rhs) {
             const acceptedRuleObj = this.props.recommendedCodes[j];
             const rulesToSendBack = this.props.rulesToSendBack;
-            const matchedRule = rulesToSendBack.find(
-              obj => obj.id === acceptedRuleObj.id
-            );
+            const matchedRule = rulesToSendBack.find(obj => obj.id === acceptedRuleObj.id);
             if (matchedRule !== undefined) {
               matchedRule.action = "A";
               this.props.setRulesInSession(rulesToSendBack);
@@ -2190,12 +2106,8 @@ class TreeViewer extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setRulesInSession: listOfRules =>
-      dispatch(actions.setRulesInSession(listOfRules)),
-    addSelectedCode: codeObjectToAdd =>
-      dispatch(
-        actions.addSelectedCodeObjectAndUpdateRecommendations(codeObjectToAdd)
-      )
+    setRulesInSession: listOfRules => dispatch(actions.setRulesInSession(listOfRules)),
+    addSelectedCode: codeObjectToAdd => dispatch(actions.addSelectedCodeObjectAndUpdateRecommendations(codeObjectToAdd))
   };
 };
 

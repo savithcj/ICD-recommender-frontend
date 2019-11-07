@@ -112,7 +112,13 @@ function SignIn(props) {
             autoComplete="current-password"
             onKeyPress={onKeyPress}
           />
-          <Button onClick={getToken} fullWidth variant="contained" color="primary" className={classes.submit}>
+          <Button
+            onClick={getToken}
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
             Sign In
           </Button>
           <Grid container>
@@ -134,7 +140,10 @@ function SignIn(props) {
 }
 
 const mapStateToProps = state => {
-  return { isAuthorized: state.authentication.isAuthorized, alertMessage: state.alert.alertMessage };
+  return {
+    isAuthorized: state.authentication.isAuthorized,
+    alertMessage: state.alert.alertMessage
+  };
 };
 
 const mapDispatchToProps = dispatch => {

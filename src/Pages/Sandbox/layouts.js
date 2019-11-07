@@ -1,6 +1,6 @@
 const defaultLayoutLg = [
-  { w: 6, h: 2, x: 0, y: 0, i: "0" },
-  { w: 6, h: 10, x: 0, y: 2, i: "1" },
+  { w: 6, h: 16, x: 0, y: 0, i: "0" },
+  { w: 6, h: 10, x: 0, y: 16, i: "1" },
   { w: 6, h: 19, x: 6, y: 0, i: "2" }
 ];
 const defaultLayoutMd = [
