@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
 import "./FileViewer.css";
+import DocumentDisplay from "../DocumentDisplay/DocumentDisplay";
 
 class FileViewer extends Component {
   constructor(props) {
@@ -41,6 +42,24 @@ class FileViewer extends Component {
     this.fileReader.onloadend = () => {
       this.fileData.content = this.fileReader.result;
       this.props.setFileText(this.fileReader.result);
+
+      const options = {
+        method: "POST",
+        body: this.fileData
+      };
+
+      APIUtility.API.makeAPICall(APIUtility.UPLOAD_DOCUMENT, null, options)
+        .then(response => {
+          console.log("RESPONSE", response);
+          return response.json();
+        })
+        .then(data => {
+          console.log("DATA", data);
+        })
+        .catch(error => {
+          console.log("ERROR:", error);
+        });
+
       console.log(this.fileData);
     };
   };
@@ -61,7 +80,7 @@ class FileViewer extends Component {
           />
         </div>
         <div>
-          <p>{this.props.textToDisplay}</p>
+          <DocumentDisplay />
         </div>
       </div>
     );
