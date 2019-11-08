@@ -40,8 +40,9 @@ class FileViewer extends Component {
     }
     this.fileReader.readAsText(file);
     this.fileReader.onloadend = () => {
-      this.fileData.content = this.fileReader.result;
-      this.props.setFileText(this.fileReader.result);
+      let text = this.fileReader.result.replace(/\r\n/g, "\n");
+      this.fileData.content = text;
+      this.props.setFileText(text);
 
       const options = {
         method: "POST",
