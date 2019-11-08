@@ -40,7 +40,7 @@ class FileViewer extends Component {
     }
     this.fileReader.readAsText(file);
     this.fileReader.onloadend = () => {
-      let text = this.fileReader.result.replace(/\r\n/g, "\n");
+      let text = this.fileReader.result.replace(/\r\n/g, "\n"); // Replace /r/n with /n for Windows OS
       this.fileData.content = text;
       this.props.setFileText(text);
 

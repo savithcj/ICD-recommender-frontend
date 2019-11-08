@@ -29,6 +29,7 @@
     "react-sortable-table": "^1.3.0",
     "react-swipeable-views": "^0.13.3",
     "react-table": "^6.10.0",
+    "react-text-annotate": "^0.1.0",
     "recursive-install": "^1.4.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
