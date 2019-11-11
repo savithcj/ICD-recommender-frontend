@@ -38,3 +38,7 @@ export const SET_IS_SERVER_DOWN = "SET_IS_SERVER_DOWN";
 
 // File Viewer
 export const SET_FILE_VIEWER_TEXT = "SET_FILE_VIEWER_TEXT";
+
+// Label Management
+export const SET_UPLOADED_LABELS = "SET_UPLOADED_LABELS";
+export const APPEND_TO_UPLOADED_LABELS = "APPEND_TO_UPLOADED_LABELS";

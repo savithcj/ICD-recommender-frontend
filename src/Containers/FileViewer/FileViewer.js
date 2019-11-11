@@ -23,7 +23,6 @@ class FileViewer extends Component {
   }
 
   openExplorer = () => {
-    console.log("clicked browse for file");
     if (this.props.disabled) return;
     this.fileInputRef.current.click();
   };
@@ -38,7 +37,9 @@ class FileViewer extends Component {
     } else {
       this.fileData.format = "other";
     }
+
     this.fileReader.readAsText(file);
+
     this.fileReader.onloadend = () => {
       let text = this.fileReader.result.replace(/\r\n/g, "\n"); // Replace /r/n with /n for Windows OS
       this.fileData.content = text;
@@ -69,12 +70,12 @@ class FileViewer extends Component {
     return (
       <div>
         <div className="fileUpload">
-          <Button onClick={this.openExplorer} fullWidth variant="contained" color="primary">
+          <Button onClick={this.openExplorer} variant="contained" color="primary">
             Browse for File
           </Button>
           <input
             ref={this.fileInputRef}
-            className="FileInput"
+            className="file-input"
             type="file"
             //   multiple
             onChange={e => this.readFile(e.target.files[0])}

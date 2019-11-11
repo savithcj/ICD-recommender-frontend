@@ -16,3 +16,4 @@ export { setAlertMessage } from "./alert";
 export { setCodeInTree } from "./tree";
 export { setIsAuthorized, setUserRole, setIsServerDown } from "./authentication";
 export { setFileText } from "./fileViewer";
+export { setUploadedLabels, appendToUploadedLabels } from "./labelManagement";

@@ -15,6 +15,12 @@ const TAG_COLORS = {
   TOKEN: "#dedd9b"
 };
 
+const annoteStyle = {
+  // fontFamily: "IBM Plex Sans",
+  // maxWidth: 500,
+  // lineHeight: 1.5
+};
+
 class DocumentDisplay extends Component {
   constructor(props) {
     super(props);
@@ -43,11 +49,7 @@ class DocumentDisplay extends Component {
         {/* <div>{this.props.textToDisplay}</div> */}
         <div>
           <TokenAnnotator
-            style={{
-              fontFamily: "IBM Plex Sans",
-              maxWidth: 500,
-              lineHeight: 1.5
-            }}
+            style={annoteStyle}
             tokens={this.props.textToDisplay.split(" ")}
             value={this.state.value}
             onChange={this.handleChange}
