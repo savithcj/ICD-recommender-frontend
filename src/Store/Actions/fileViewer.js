@@ -6,3 +6,31 @@ export const setFileText = fileText => {
     fileText
   };
 };
+
+export const setSections = sections => {
+  return {
+    type: actionTypes.SET_SECTIONS,
+    sections
+  };
+};
+
+export const setSentences = sentences => {
+  return {
+    type: actionTypes.SET_SENTENCES,
+    sentences
+  };
+};
+
+export const setTokens = tokens => {
+  return {
+    type: actionTypes.SET_TOKENS,
+    tokens
+  };
+};
+
+export const setEntities = entities => {
+  return {
+    type: actionTypes.SET_ENTITIES,
+    entities
+  };
+};

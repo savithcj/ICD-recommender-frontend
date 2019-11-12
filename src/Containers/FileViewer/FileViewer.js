@@ -12,14 +12,6 @@ class FileViewer extends Component {
     this.fileInputRef = React.createRef();
     this.fileReader = new FileReader();
     this.fileData = {};
-
-    // for testing purposes
-    // remove after
-    this.data = {};
-    this.data.sections = [];
-    this.data.sentences = [];
-    this.data.tokens = [];
-    this.data.entities = [];
   }
 
   openExplorer = () => {

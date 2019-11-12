@@ -38,6 +38,10 @@ export const SET_IS_SERVER_DOWN = "SET_IS_SERVER_DOWN";
 
 // File Viewer
 export const SET_FILE_VIEWER_TEXT = "SET_FILE_VIEWER_TEXT";
+export const SET_SECTIONS = "SET_SECTIONS";
+export const SET_SENTENCES = "SET_SENTENCES";
+export const SET_TOKENS = "SET_TOKENS";
+export const SET_ENTITIES = "SET_ENTITIES";
 
 // Label Management
 export const SET_UPLOADED_LABELS = "SET_UPLOADED_LABELS";

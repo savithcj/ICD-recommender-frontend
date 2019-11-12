@@ -33,6 +33,7 @@ class DocumentDisplay extends Component {
 
   handleChange = value => {
     this.setState({ value });
+    console.log(value);
   };
 
   render() {
@@ -48,9 +49,9 @@ class DocumentDisplay extends Component {
         </div>
         {/* <div>{this.props.textToDisplay}</div> */}
         <div>
-          <TokenAnnotator
+          <TextAnnotator
             style={annoteStyle}
-            tokens={this.props.textToDisplay.split(" ")}
+            content={this.props.textToDisplay}
             value={this.state.value}
             onChange={this.handleChange}
             getSpan={span => ({
@@ -58,11 +59,6 @@ class DocumentDisplay extends Component {
               tag: this.state.tag,
               color: TAG_COLORS[this.state.tag]
             })}
-            renderMark={props => (
-              <mark key={props.key} onClick={() => props.onClick({ start: props.start, end: props.end })}>
-                {props.content} [{props.tag}]
-              </mark>
-            )}
           />
         </div>
       </div>
