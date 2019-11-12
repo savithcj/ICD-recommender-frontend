@@ -5,6 +5,7 @@ import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import FileViewer from "../../Containers/FileViewer/FileViewer";
+import TagUploader from "../../Containers/TagManagement/TagUploader";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
