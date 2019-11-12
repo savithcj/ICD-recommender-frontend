@@ -3,9 +3,8 @@ import * as APIUtility from "../../Util/API";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
-import { read } from "fs";
 
-const LabelUploader = props => {
+const TagUploader = props => {
   const fileInputRef = React.createRef();
 
   const openExplorer = () => {
@@ -20,9 +19,9 @@ const LabelUploader = props => {
     let fileReader = new FileReader();
 
     fileReader.onload = e => {
-      let labels = e.target.result.replace(/\r\n/g, "\n").split("\n"); // Replace /r/n with /n for Windows OS
-      console.log(labels);
-      props.setUploadedLabels(labels);
+      let tags = e.target.result.replace(/\r\n/g, "\n").split("\n"); // Replace /r/n with /n for Windows OS
+      console.log(tags);
+      props.setUploadedTags(tags);
     };
 
     fileReader.readAsText(files[0]);
@@ -31,27 +30,29 @@ const LabelUploader = props => {
   return (
     <div className="fileUpload">
       <Button onClick={openExplorer} variant="contained" color="primary">
-        Upload Labels
+        Upload Tags
       </Button>
-      <input ref={fileInputRef} className="file-input" type="file" onChange={e => readFile(e.target.files)}></input>
+      <input
+        ref={fileInputRef}
+        className="file-input"
+        type="file"
+        onChange={e => readFile(e.target.files)}
+      ></input>
     </div>
   );
 };
 
 const mapStateToProps = state => {
   return {
-    uploadedLabels: state.uploadedLabels
+    uploadedTags: state.uploadedTags
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setUploadedLabels: labels => dispatch(actions.setUploadedLabels(labels)),
-    appendToUploadedLabels: labels => dispatch(actions.appendToUploadedLabels(labels))
+    setUploadedTags: tags => dispatch(actions.setUploadedTags(tags)),
+    appendToUploadedTags: tags => dispatch(actions.appendToUploadedTags(tags))
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LabelUploader);
+export default connect(mapStateToProps, mapDispatchToProps)(TagUploader);
