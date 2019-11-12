@@ -13,13 +13,13 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SET_FILE_VIEWER_TEXT:
       return { ...state, fileViewerText: action.fileText };
     case actionTypes.SET_SECTIONS:
-    // action.sections
+      return { ...state, sections: action.sections };
     case actionTypes.SET_SENTENCES:
-    // action.sentences
+      return { ...state, sentences: action.sentences };
     case actionTypes.SET_TOKENS:
-    // action.tokens
+      return { ...state, tokens: action.tokens };
     case actionTypes.SET_ENTITIES:
-    // actions.entities
+      return { ...state, entities: action.entities };
     default:
       return state;
   }

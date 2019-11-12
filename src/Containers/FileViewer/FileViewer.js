@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
 import "./FileViewer.css";
 import DocumentDisplay from "../DocumentDisplay/DocumentDisplay";
+import TagUploader from "../../Containers/TagManagement/TagUploader";
 
 class FileViewer extends Component {
   constructor(props) {
@@ -33,7 +34,7 @@ class FileViewer extends Component {
     this.fileReader.readAsText(file);
 
     this.fileReader.onloadend = () => {
-      let text = this.fileReader.result.replace(/\r\n/g, "\n"); // Replace /r/n with /n for Windows OS
+      let text = this.fileReader.result.replace(/\r\n/g, "\n"); // Replaces /r/n with /n for Windows OS
       this.fileData.content = text;
       this.props.setFileText(text);
 
@@ -61,6 +62,9 @@ class FileViewer extends Component {
   render() {
     return (
       <div>
+        <div>
+          <TagUploader />
+        </div>
         <div className="fileUpload">
           <Button onClick={this.openExplorer} variant="contained" color="primary">
             Browse for File
@@ -84,7 +88,6 @@ class FileViewer extends Component {
 const mapStateToProps = state => {
   return {
     textToDisplay: state.fileViewer.fileViewerText
-    // something with the sections/sentences etc
   };
 };
 
