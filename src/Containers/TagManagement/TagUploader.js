@@ -19,13 +19,26 @@ const TagUploader = props => {
     let fileReader = new FileReader();
 
     fileReader.onload = e => {
-      let tags = e.target.result.replace(/\r\n/g, "\n").split("\n"); // Replace /r/n with /n for Windows OS
-      console.log(tags);
-      props.setUploadedTags(tags);
+      let lines = e.target.result.replace(/\r\n/g, "\n").split("\n"); // Replace /r/n with /n for Windows OS
+      const tags = [];
+      lines.map(line => {
+        const items = line.split(",");
+        if (items[0].trim() !== "") {
+          tags.push({
+            id: items[0].trim(),
+            description: items[1] === undefined ? "" : items[1].trim(),
+            disable: items[2] === undefined ? false : items[2].trim() === "d"
+          });
+        }
+      });
+      props.appendToUploadedTags(tags);
     };
 
     fileReader.readAsText(files[0]);
   };
+
+  //TODO
+  const readTagsFromStrings = lines => {};
 
   return (
     <div className="fileUpload">

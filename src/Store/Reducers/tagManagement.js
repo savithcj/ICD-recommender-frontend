@@ -11,9 +11,11 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.APPEND_TO_UPLOADED_TAGS:
       const currentTags = Array.from(state.uploadedTags);
-      for (let i = 0; i < action.uploadedTags.length; ) {
+
+      for (let i = 0; i < action.uploadedTags.length; i++) {
         let thisTag = action.uploadedTags[i];
-        let duplicateTag = currentTags.find(tag => tag === thisTag);
+        let duplicateTag = currentTags.find(tag => tag.id === thisTag.id);
+
         if (duplicateTag === undefined) {
           currentTags.push(thisTag);
         }
