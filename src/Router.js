@@ -22,7 +22,7 @@ import ForgotPassword from "./Pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword/ResetPassword";
 import Sandbox from "./Pages/Sandbox/Sandbox";
 
-import LabelUploader from "./Containers/LabelManagement/LabelUploader";
+import TagUploader from "./Containers/TagManagement/TagUploader";
 
 const router = (
   <Provider store={store}>
@@ -43,7 +43,7 @@ const router = (
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
           <Route path="/sandbox" component={Sandbox} />
-          <Route path="/labels" component={LabelUploader} />
+          <Route path="/tags" component={TagUploader} />
           <Route>{NotFound}</Route>
         </Switch>
       </BrowserRouter>

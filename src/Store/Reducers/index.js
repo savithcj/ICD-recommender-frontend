@@ -9,7 +9,7 @@ import alert from "./alert";
 import tree from "./tree";
 import authentication from "./authentication";
 import fileViewer from "./fileViewer";
-import labelManagement from "./labelManagement";
+import tagManagement from "./tagManagement";
 
 export default combineReducers({
   cached,
@@ -22,5 +22,5 @@ export default combineReducers({
   tree,
   authentication,
   fileViewer,
-  labelManagement
+  tagManagement
 });

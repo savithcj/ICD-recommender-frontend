@@ -43,6 +43,6 @@ export const SET_SENTENCES = "SET_SENTENCES";
 export const SET_TOKENS = "SET_TOKENS";
 export const SET_ENTITIES = "SET_ENTITIES";
 
-// Label Management
-export const SET_UPLOADED_LABELS = "SET_UPLOADED_LABELS";
-export const APPEND_TO_UPLOADED_LABELS = "APPEND_TO_UPLOADED_LABELS";
+// Tag Management
+export const SET_UPLOADED_TAGS = "SET_UPLOADED_TAGS";
+export const APPEND_TO_UPLOADED_TAGS = "APPEND_TO_UPLOADED_TAGS";
