@@ -34,3 +34,24 @@ export const setEntities = entities => {
     entities
   };
 };
+
+export const setSpacyLoading = spacyLoading => {
+  return {
+    type: actionTypes.SET_SPACY_LOADING,
+    spacyLoading
+  };
+};
+
+export const setAnnotationFocus = annotationFocus => {
+  return {
+    type: actionTypes.SET_ANNOTATION_FOCUS,
+    annotationFocus
+  };
+};
+
+export const setAnnotations = annotations => {
+  return {
+    type: actionTypes.SET_ANNOTATIONS,
+    annotations
+  };
+};
