@@ -1,11 +1,19 @@
 import React, { useState, useEffect, Component } from "react";
 import * as APIUtility from "../../Util/API";
 import { connect } from "react-redux";
+import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
 import { useAlert, positions } from "react-alert";
 
+const useStyles = makeStyles(theme => ({
+  button: {
+    margin: theme.spacing(1)
+  }
+}));
+
 const TagUploader = props => {
+  const classes = useStyles();
   const fileInputRef = React.createRef();
 
   const openExplorer = () => {
@@ -46,7 +54,7 @@ const TagUploader = props => {
       if (description !== undefined) {
         description = description.trim();
       } else {
-        description = "";
+        description = id;
       }
 
       if (disabled !== undefined) {
@@ -90,28 +98,37 @@ const TagUploader = props => {
   };
 
   const generateAlert = (descriptionUpdated, newEnabled, newDisabled) => {
-    let message = "";
+    let message = "Upload success! ";
     if (descriptionUpdated.length > 0) {
-      message += "The following descriptions have been updated: \n";
-      descriptionUpdated.map(
-        tag => (message += tag.id + ": " + tag.description + "\n")
-      );
+      message +=
+        descriptionUpdated.length + " tags have updated descriptions. ";
     }
     if (newEnabled.length > 0) {
-      message += "The following tags have been enabled: \n";
-      newEnabled.map(tag => (message += tag.id + "\n"));
+      message += newEnabled.length + " tags was updated to enabled. ";
     }
     if (newDisabled.length > 0) {
-      message += "The following tags have been disabled: \n";
-      newDisabled.map(tag => (message += tag.id + "\n"));
+      message += newDisabled.length + " tags was updated to disabled. ";
     }
     console.log(message);
     props.setAlertMessage({ message: message, messageType: "success" });
   };
 
+  const clearAllTags = () => {
+    props.setUploadedTags([]);
+    props.setAlertMessage({
+      message: "All tags cleared",
+      messageType: "success"
+    });
+  };
+
   return (
     <div className="fileUpload">
-      <Button onClick={openExplorer} variant="contained" color="primary">
+      <Button
+        onClick={openExplorer}
+        variant="contained"
+        color="primary"
+        className={classes.button}
+      >
         Upload Tags
       </Button>
       <input
@@ -120,6 +137,9 @@ const TagUploader = props => {
         type="file"
         onChange={e => readFile(e.target.files)}
       ></input>
+      <Button onClick={clearAllTags} variant="contained" color="secondary">
+        Clear All Tags
+      </Button>
     </div>
   );
 };

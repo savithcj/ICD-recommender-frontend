@@ -81,7 +81,9 @@ const Home = props => {
     }
   }
 
-  const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
+  const highlightEditDiv = isLayoutModifiable
+    ? "grid-border edit-border"
+    : "grid-border";
 
   if (isLoading) {
     return <Loading />;
@@ -103,6 +105,7 @@ const Home = props => {
         manageAccountsLink={props.userRole === "admin"}
         visualizationLink
         aboutLink
+        tagsLink
         handleLayoutConfirm={() => handleLayoutModifierButton()}
         handleResetLayout={resetLayout}
         inModifyMode={isLayoutModifiable}
@@ -158,7 +161,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
