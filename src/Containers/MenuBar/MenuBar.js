@@ -76,26 +76,42 @@ function ButtonAppBar(props) {
           Home
         </MenuItem>
       ) : null}
+
       {props.adminLink ? (
         <MenuItem component={Link} to="/admin">
           Admin
         </MenuItem>
       ) : null}
+
       {props.manageAccountsLink ? (
         <MenuItem component={Link} to="/manage-accounts">
           Manage Accounts
         </MenuItem>
       ) : null}
+
       {props.visualizationLink ? (
         <MenuItem component={Link} to="/visualization">
           Visualization
         </MenuItem>
       ) : null}
-      {props.handleLayoutConfirm ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
-      {props.handleResetLayout ? <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem> : null}
+
+      {props.handleLayoutConfirm ? (
+        <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
+      ) : null}
+
+      {props.handleResetLayout ? (
+        <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
+      ) : null}
+
       {props.aboutLink ? (
         <MenuItem component={Link} to="/about">
           About
+        </MenuItem>
+      ) : null}
+
+      {props.tagsLink ? (
+        <MenuItem component={Link} to="/tags">
+          Manage Tags
         </MenuItem>
       ) : null}
 
@@ -136,7 +152,12 @@ function ButtonAppBar(props) {
     <div className={classes.root}>
       <AppBar className={classes.menuBar} position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu" />
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+          />
           <Typography variant="h6" className={classes.title}>
             {props.title}
           </Typography>
@@ -155,7 +176,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(ButtonAppBar);
+export default connect(null, mapDispatchToProps)(ButtonAppBar);
