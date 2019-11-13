@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
 import { TextAnnotator } from "react-text-annotate";
-import AnnotatorSwitcher from "./AnnotatorSwitcher";
 
 const TAG_COLORS = {
   neg_f: "rgb(255, 0, 0)",
@@ -106,8 +105,8 @@ class DocumentDisplay extends Component {
             Select a tag
           </option>
           {this.props.tags.map(tag => (
-            <option value={tag} key={tag}>
-              {tag}
+            <option value={tag.id} key={tag.id}>
+              {tag.description}
             </option>
           ))}
         </select>
@@ -140,10 +139,7 @@ class DocumentDisplay extends Component {
           {this.displayTypeDropDown()}
           {this.tagDropDown()}
         </div>
-        <div>
-          {/* <AnnotatorSwitcher typeToDisplay={this.props.typeToDisplay} /> */}
-          {this.renderAnnotator()}
-        </div>
+        <div>{this.renderAnnotator()}</div>
       </div>
     );
   }
