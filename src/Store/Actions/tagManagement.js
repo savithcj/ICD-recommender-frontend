@@ -6,10 +6,3 @@ export const setUploadedTags = uploadedTags => {
     uploadedTags
   };
 };
-
-export const appendToUploadedTags = uploadedTags => {
-  return {
-    type: actionTypes.APPEND_TO_UPLOADED_TAGS,
-    uploadedTags
-  };
-};

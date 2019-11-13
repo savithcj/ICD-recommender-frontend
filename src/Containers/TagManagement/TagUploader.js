@@ -3,6 +3,7 @@ import * as APIUtility from "../../Util/API";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
+import { useAlert, positions } from "react-alert";
 
 const TagUploader = props => {
   const fileInputRef = React.createRef();
@@ -20,25 +21,93 @@ const TagUploader = props => {
 
     fileReader.onload = e => {
       let lines = e.target.result.replace(/\r\n/g, "\n").split("\n"); // Replace /r/n with /n for Windows OS
-      const tags = [];
-      lines.map(line => {
-        const items = line.split(",");
-        if (items[0].trim() !== "") {
-          tags.push({
-            id: items[0].trim(),
-            description: items[1] === undefined ? "" : items[1].trim(),
-            disable: items[2] === undefined ? false : items[2].trim() === "d"
-          });
-        }
-      });
-      props.appendToUploadedTags(tags);
+      let tags = readTagsFromStrings(lines);
+      console.log(tags);
+      props.setUploadedTags(tags);
     };
 
     fileReader.readAsText(files[0]);
   };
 
-  //TODO
-  const readTagsFromStrings = lines => {};
+  const readTagsFromStrings = lines => {
+    const oldTags = Array.from(props.uploadedTags);
+    const newTags = [];
+    const descriptionUpdated = []; // Keeps track of duplicate tags id with description update
+    const newEnabled = []; // Keeps track of disabled flags being changed to false
+    const newDisabled = []; // keep track of disabled flags being changed to true
+
+    for (let i = 0; i < lines.length; i++) {
+      const items = lines[i].split(",");
+
+      const id = items[0];
+      let description = items[1];
+      let disabled = items[2];
+
+      if (description !== undefined) {
+        description = description.trim();
+      } else {
+        description = "";
+      }
+
+      if (disabled !== undefined) {
+        disabled = disabled.trim() === "d";
+      } else {
+        disabled = false;
+      }
+
+      if (id !== "") {
+        // line is not empty
+
+        let duplicateTag = oldTags.find(tag => tag.id === id);
+
+        if (duplicateTag !== undefined) {
+          // tag id already exist in oldTags
+
+          if (description !== duplicateTag.description) {
+            // description update
+            duplicateTag.description = description;
+            descriptionUpdated.push(duplicateTag);
+          }
+
+          if (disabled !== duplicateTag.disabled) {
+            // disabled boolean update
+            duplicateTag.disabled = disabled;
+            if (duplicateTag.disabled) {
+              newDisabled.push(duplicateTag);
+            } else {
+              newEnabled.push(duplicateTag);
+            }
+          }
+        } else {
+          // the tag does not exist in oldTags
+          oldTags.push({ id, description, disabled });
+          newTags.push({ id, description, disabled });
+        }
+      }
+    }
+    generateAlert(descriptionUpdated, newEnabled, newDisabled);
+    return oldTags;
+  };
+
+  const generateAlert = (descriptionUpdated, newEnabled, newDisabled) => {
+    let message = "";
+    if (descriptionUpdated.length > 0) {
+      message += "The following descriptions have been updated: \n";
+      descriptionUpdated.map(
+        tag => (message += tag.id + ": " + tag.description + "\n")
+      );
+    }
+    if (newEnabled.length > 0) {
+      message += "The following tags have been enabled: \n";
+      newEnabled.map(tag => (message += tag.id + "\n"));
+    }
+    if (newDisabled.length > 0) {
+      message += "The following tags have been disabled: \n";
+      newDisabled.map(tag => (message += tag.id + "\n"));
+    }
+    console.log(message);
+    props.setAlertMessage({ message: message, messageType: "success" });
+  };
 
   return (
     <div className="fileUpload">
@@ -57,14 +126,14 @@ const TagUploader = props => {
 
 const mapStateToProps = state => {
   return {
-    uploadedTags: state.uploadedTags
+    uploadedTags: state.tagManagement.uploadedTags
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     setUploadedTags: tags => dispatch(actions.setUploadedTags(tags)),
-    appendToUploadedTags: tags => dispatch(actions.appendToUploadedTags(tags))
+    setAlertMessage: newValue => dispatch(actions.setAlertMessage(newValue))
   };
 };
 

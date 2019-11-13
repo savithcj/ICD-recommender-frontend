@@ -48,8 +48,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setUploadedTags: tags => dispatch(actions.setUploadedTags(tags)),
-    appendToUploadedTags: tags => dispatch(actions.appendToUploadedTags(tags))
+    setUploadedTags: tags => dispatch(actions.setUploadedTags(tags))
   };
 };
 

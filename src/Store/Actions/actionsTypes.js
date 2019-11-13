@@ -45,4 +45,3 @@ export const SET_ENTITIES = "SET_ENTITIES";
 
 // Tag Management
 export const SET_UPLOADED_TAGS = "SET_UPLOADED_TAGS";
-export const APPEND_TO_UPLOADED_TAGS = "APPEND_TO_UPLOADED_TAGS";
