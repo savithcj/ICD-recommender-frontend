@@ -15,5 +15,14 @@ export { addRHSToExclusion, setRHSExclusion, setRulesInSession } from "./session
 export { setAlertMessage } from "./alert";
 export { setCodeInTree } from "./tree";
 export { setIsAuthorized, setUserRole, setIsServerDown } from "./authentication";
-export { setFileText, setSections, setSentences, setTokens, setEntities } from "./fileViewer";
+export {
+  setFileText,
+  setSections,
+  setSentences,
+  setTokens,
+  setEntities,
+  setSpacyLoading,
+  setAnnotationFocus,
+  setAnnotations
+} from "./fileViewer";
 export { setUploadedTags, appendToUploadedTags } from "./tagManagement";
