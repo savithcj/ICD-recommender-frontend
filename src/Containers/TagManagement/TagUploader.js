@@ -24,13 +24,11 @@ const TagUploader = props => {
   };
 
   const readFile = files => {
-    console.log("reading file..");
     let fileReader = new FileReader();
 
     fileReader.onload = e => {
       let lines = e.target.result.replace(/\r\n/g, "\n").split("\n"); // Replace /r/n with /n for Windows OS
       let tags = readTagsFromStrings(lines);
-      console.log(tags);
       props.setUploadedTags(tags);
     };
 
@@ -100,17 +98,26 @@ const TagUploader = props => {
   const generateAlert = (descriptionUpdated, newEnabled, newDisabled) => {
     let message = "Upload success! ";
     if (descriptionUpdated.length > 0) {
-      message +=
-        descriptionUpdated.length + " tags have updated descriptions. ";
+      props.setAlertMessage({
+        message:
+          descriptionUpdated.length + " tags have updated descriptions. ",
+        messageType: "success"
+      });
     }
+
     if (newEnabled.length > 0) {
-      message += newEnabled.length + " tags was updated to enabled. ";
+      props.setAlertMessage({
+        message: newEnabled.length + " tags was updated to enabled. ",
+        messageType: "success"
+      });
     }
+
     if (newDisabled.length > 0) {
-      message += newDisabled.length + " tags was updated to disabled. ";
+      props.setAlertMessage({
+        message: newDisabled.length + " tags was updated to enabled. ",
+        messageType: "success"
+      });
     }
-    console.log(message);
-    props.setAlertMessage({ message: message, messageType: "success" });
   };
 
   const clearAllTags = () => {

@@ -10,6 +10,7 @@ import { Redirect } from "react-router";
 import Loading from "../Loading/Loading";
 import TagUploader from "../../Containers/TagManagement/TagUploader";
 import * as APIUtility from "../../Util/API";
+import TagViewer from "../../Containers/TagManagement/TagViewer";
 
 const Tags = props => {
   const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -34,14 +35,14 @@ const Tags = props => {
     setLayoutModifiable(layoutModifiable);
   };
 
-  const highlightEditDiv = isLayoutModifiable
-    ? "grid-border edit-border"
-    : "grid-border";
+  const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
+  // Verify token
   useEffect(() => {
     APIUtility.API.verifyLSToken(() => setIsLoading(false));
   }, []);
 
+  // Display alert message
   useEffect(() => {
     if (props.alertMessage) {
       alert.show(props.alertMessage.message, {
@@ -93,6 +94,11 @@ const Tags = props => {
         <div key="0" className={highlightEditDiv}>
           <div className="cardContainer">
             <TagUploader />
+          </div>
+        </div>
+        <div key="1" className={highlightEditDiv}>
+          <div className="cardContainer">
+            <TagViewer />
           </div>
         </div>
       </ResponsiveReactGridLayout>

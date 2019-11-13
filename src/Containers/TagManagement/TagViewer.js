@@ -6,43 +6,49 @@ import * as actions from "../../Store/Actions/index";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 
 const TagViewer = props => {
-  const tags = [
-    { tag: "negation", description: "some negation description" },
-    { tag: "closure", description: "closure description" }
-  ];
+  const enableAllTags = () => {};
 
-  const resetUploadedTags = () => {
-    props.setUploadedTags([]);
+  const disableAllTags = () => {};
+
+  const shouldHideRemoveButton = index => {
+    return props.uploadedTags[index].disabled ? false : true;
   };
 
-  const selectedTagsComponentMenuItems = [
-    {
-      menuItemOnClick: resetUploadedTags,
-      menuItemText: "Remove All"
-    }
-  ];
+  const shouldHideAcceptButton = index => {
+    return props.uploadedTags[index].disabled ? true : false;
+  };
 
-  const handleRemoveTag = () => {};
+  const disableTag = event => {};
+
+  const enableTag = event => {};
+
+  const selectedTagsComponentMenuItems = [
+    { menuItemOnClick: enableAllTags, menuItemText: "Enable All" },
+    { menuItemOnClick: disableAllTags, menuItemText: "Disable All" }
+  ];
 
   return (
     <ListViewer
       title="Tags"
       disableTitleGutters={true}
       dontAddDotBoolean={true}
-      items={tags}
+      items={props.uploadedTags}
       noItemMessage="No tags available."
-      valueName="tag"
+      valueName="id"
       descriptionName="description"
-      removeItemButton={{ title: "Disable tag", onClick: handleRemoveTag }}
+      acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
+      removeItemButton={{ title: "Disable tag", onClick: disableTag }}
       allowRearrange={true}
-      menuOptions={[]}
+      shouldHideAcceptButton={shouldHideAcceptButton}
+      shouldHideRemoveButton={shouldHideRemoveButton}
+      menuOptions={selectedTagsComponentMenuItems}
     />
   );
 };
 
 const mapStateToProps = state => {
   return {
-    uploadedTags: state.uploadedTags
+    uploadedTags: state.tagManagement.uploadedTags
   };
 };
 
