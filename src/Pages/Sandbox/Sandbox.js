@@ -8,7 +8,7 @@ import FileViewer from "../../Containers/FileViewer/FileViewer";
 import TagUploader from "../../Containers/TagManagement/TagUploader";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("manageLayouts", "layouts") || defaultLayouts;
+const originalLayouts = getFromLS("sandboxLayouts", "layouts") || defaultLayouts;
 
 function Sandbox(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
@@ -17,7 +17,7 @@ function Sandbox(props) {
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("manageLayouts", "layouts", defaultLayouts);
+    saveToLS("sandboxLayouts", "layouts", defaultLayouts);
   };
 
   function handleLayoutModifierButton() {
@@ -27,7 +27,7 @@ function Sandbox(props) {
 
   function onLayoutChange(layouts) {
     setLayouts(layouts);
-    saveToLS("manageLayouts", "layouts", layouts);
+    saveToLS("sandboxLayouts", "layouts", layouts);
   }
 
   const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";

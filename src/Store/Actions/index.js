@@ -1,8 +1,4 @@
-export {
-  addSelectedCode,
-  removeSelectedCode,
-  setSelectedCodes
-} from "./selected";
+export { addSelectedCode, removeSelectedCode, setSelectedCodes } from "./selected";
 export { setRecommendedCodes, removeRecommendedCode } from "./recommended";
 export { appendToCache } from "./cached";
 export { setAge, setGender } from "./ageGender";
@@ -15,23 +11,18 @@ export {
   resetState,
   resetSession
 } from "./asyncActions";
-export {
-  addRHSToExclusion,
-  setRHSExclusion,
-  setRulesInSession
-} from "./session";
+export { addRHSToExclusion, setRHSExclusion, setRulesInSession } from "./session";
 export { setAlertMessage } from "./alert";
 export { setCodeInTree } from "./tree";
-export {
-  setIsAuthorized,
-  setUserRole,
-  setIsServerDown
-} from "./authentication";
+export { setIsAuthorized, setUserRole, setIsServerDown } from "./authentication";
 export {
   setFileText,
   setSections,
   setSentences,
   setTokens,
-  setEntities
+  setEntities,
+  setSpacyLoading,
+  setAnnotationFocus,
+  setAnnotations
 } from "./fileViewer";
-export { setUploadedTags } from "./tagManagement";
+export { setUploadedTags, appendToUploadedTags } from "./tagManagement";

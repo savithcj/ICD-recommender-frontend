@@ -21,6 +21,16 @@ class FileViewer extends Component {
   };
 
   readFile = file => {
+    // reset store if user changes file
+    this.props.setAnnotations([]);
+    this.props.setAnnotationFocus("NA");
+    this.props.setFileText("");
+    this.props.setSpacyLoading(true);
+    this.props.setSections([]);
+    this.props.setSentences([]);
+    this.props.setTokens([]);
+    this.props.setEntities([]);
+
     this.fileData.id = file.name;
     let ext = file.name.split(".")[file.name.split(".").length - 1];
     if (ext === "txt") {
@@ -36,7 +46,6 @@ class FileViewer extends Component {
     this.fileReader.onloadend = () => {
       let text = this.fileReader.result.replace(/\r\n/g, "\n"); // Replaces /r/n with /n for Windows OS
       this.fileData.content = text;
-      this.props.setFileText(text);
 
       const options = {
         method: "POST",
@@ -44,19 +53,37 @@ class FileViewer extends Component {
       };
 
       APIUtility.API.makeAPICall(APIUtility.UPLOAD_DOCUMENT, null, options)
-        .then(response => {
-          console.log("RESPONSE", response);
-          return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
           console.log("DATA", data);
+
+          const sections = this.props.sections;
+          const sentences = this.props.sentences;
+          const tokens = this.props.tokens;
+          const entities = this.props.entities;
+
+          this.props.setSections(sections.concat(this.mapData(data.sections)));
+          this.props.setSentences(sentences.concat(this.mapData(data.sentences)));
+          this.props.setTokens(tokens.concat(this.mapData(data.tokens)));
+          this.props.setEntities(entities.concat(this.mapData(data.entities)));
+
+          this.props.setSpacyLoading(false);
+          this.props.setFileText(text);
         })
         .catch(error => {
           console.log("ERROR:", error);
         });
-
-      console.log(this.fileData);
     };
+  };
+
+  mapData = dataType => {
+    dataType.map(dataPoint => {
+      dataPoint.tag = dataPoint.label;
+      delete dataPoint.label;
+      dataPoint.color = undefined;
+      dataPoint.text = this.props.textToDisplay.slice(dataPoint.start, dataPoint.end);
+    });
+    return dataType;
   };
 
   render() {
@@ -87,13 +114,27 @@ class FileViewer extends Component {
 
 const mapStateToProps = state => {
   return {
-    textToDisplay: state.fileViewer.fileViewerText
+    textToDisplay: state.fileViewer.fileViewerText,
+    sections: state.fileViewer.sections,
+    sentences: state.fileViewer.sentences,
+    tokens: state.fileViewer.tokens,
+    entities: state.fileViewer.entities,
+    // icdCodes:
+    spacyLoading: state.fileViewer.spacyLoading
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setFileText: text => dispatch(actions.setFileText(text))
+    setFileText: text => dispatch(actions.setFileText(text)),
+    setSections: sections => dispatch(actions.setSections(sections)),
+    setSentences: sentences => dispatch(actions.setSentences(sentences)),
+    setTokens: tokens => dispatch(actions.setTokens(tokens)),
+    setEntities: entities => dispatch(actions.setEntities(entities)),
+    // setICDCodes: icdCodes => dispatch
+    setSpacyLoading: spacyLoading => dispatch(actions.setSpacyLoading(spacyLoading)),
+    setAnnotations: annotations => dispatch(actions.setAnnotations(annotations)),
+    setAnnotationFocus: annotationFocus => dispatch(actions.setAnnotationFocus(annotationFocus))
   };
 };
 
