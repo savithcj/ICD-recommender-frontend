@@ -25,7 +25,6 @@ const reducer = (state = initialState, action) => {
       return { ...state, entities: action.entities };
     case actionTypes.SET_SPACY_LOADING:
       return { ...state, spacyLoading: action.spacyLoading };
-
     case actionTypes.SET_ANNOTATION_FOCUS:
       return { ...state, annotationFocus: action.annotationFocus };
     case actionTypes.SET_ANNOTATIONS:
