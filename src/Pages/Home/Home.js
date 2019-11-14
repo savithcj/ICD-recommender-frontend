@@ -81,9 +81,7 @@ const Home = props => {
     }
   }
 
-  const highlightEditDiv = isLayoutModifiable
-    ? "grid-border edit-border"
-    : "grid-border";
+  const highlightEditDiv = isLayoutModifiable ? "grid-border edit-border" : "grid-border";
 
   if (isLoading) {
     return <Loading />;

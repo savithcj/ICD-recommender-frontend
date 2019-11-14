@@ -25,4 +25,4 @@ export {
   setAnnotationFocus,
   setAnnotations
 } from "./fileViewer";
-export { setUploadedTags } from "./tagManagement";
+export { setUploadedTags, enableTagByIndex, disableTagByIndex } from "./tagManagement";

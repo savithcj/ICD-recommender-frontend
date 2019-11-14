@@ -11,16 +11,20 @@ const TagViewer = props => {
   const disableAllTags = () => {};
 
   const shouldHideRemoveButton = index => {
-    return props.uploadedTags[index].disabled ? false : true;
-  };
-
-  const shouldHideAcceptButton = index => {
     return props.uploadedTags[index].disabled ? true : false;
   };
 
-  const disableTag = event => {};
+  const shouldHideAcceptButton = index => {
+    return props.uploadedTags[index].disabled ? false : true;
+  };
 
-  const enableTag = event => {};
+  const disableTag = event => {
+    props.disableTagByIndex(event.currentTarget.id);
+  };
+
+  const enableTag = event => {
+    props.enableTagByIndex(event.currentTarget.id);
+  };
 
   const selectedTagsComponentMenuItems = [
     { menuItemOnClick: enableAllTags, menuItemText: "Enable All" },
@@ -30,7 +34,6 @@ const TagViewer = props => {
   return (
     <ListViewer
       title="Tags"
-      disableTitleGutters={true}
       dontAddDotBoolean={true}
       items={props.uploadedTags}
       noItemMessage="No tags available."
@@ -38,7 +41,10 @@ const TagViewer = props => {
       descriptionName="description"
       acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
       removeItemButton={{ title: "Disable tag", onClick: disableTag }}
-      allowRearrange={true}
+      allowRearrange={props.uploadedTags.length > 1}
+      onSortEndCallback={updatedList => {
+        props.setUploadedTags(updatedList);
+      }}
       shouldHideAcceptButton={shouldHideAcceptButton}
       shouldHideRemoveButton={shouldHideRemoveButton}
       menuOptions={selectedTagsComponentMenuItems}
@@ -54,7 +60,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setUploadedTags: tags => dispatch(actions.setUploadedTags(tags))
+    setUploadedTags: tags => dispatch(actions.setUploadedTags(tags)),
+    enableTagByIndex: index => dispatch(actions.enableTagByIndex(index)),
+    disableTagByIndex: index => dispatch(actions.disableTagByIndex(index))
   };
 };
 

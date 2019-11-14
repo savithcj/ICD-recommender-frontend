@@ -12,9 +12,10 @@ import TagUploader from "../../Containers/TagManagement/TagUploader";
 import * as APIUtility from "../../Util/API";
 import TagViewer from "../../Containers/TagManagement/TagViewer";
 
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLS("tagsLayouts", "layouts") || defaultLayouts;
+
 const Tags = props => {
-  const ResponsiveReactGridLayout = WidthProvider(Responsive);
-  const originalLayouts = getFromLS("tagsLayouts", "layouts") || defaultLayouts;
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,22 +85,19 @@ const Tags = props => {
         />
       </div>
       <ResponsiveReactGridLayout
-        rowHeight={30}
+        className="layout"
+        rowHeight={10}
         layouts={layouts}
         draggableCancel="input,textarea"
         isDraggable={isLayoutModifiable}
         isResizable={isLayoutModifiable}
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
-        <div key="0" className={highlightEditDiv}>
-          <div className="cardContainer">
-            <TagUploader />
-          </div>
+        <div key="tagUploader" className={highlightEditDiv}>
+          <TagUploader />
         </div>
-        <div key="1" className={highlightEditDiv}>
-          <div className="cardContainer">
-            <TagViewer />
-          </div>
+        <div key="tagList" className={highlightEditDiv}>
+          <TagViewer />
         </div>
       </ResponsiveReactGridLayout>
     </div>
