@@ -6,16 +6,6 @@ import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator
 import { TextAnnotator } from "react-text-annotate";
 import "./DocumentDisplay.css";
 
-const TAG_COLORS = {
-  neg_f: "rgb(255, 0, 0)",
-  NEGATION_B: "#88f7af",
-  NEGATION_BI: "#9df283",
-  CLOSURE_BUT: "#f277c3",
-  SECTION: "#7d8c81",
-  SENTENCE: "#9bacde",
-  TOKEN: "#dedd9b"
-};
-
 const annoteStyle = {
   // fontFamily: "IBM Plex Sans",
   // maxWidth: 500,
@@ -26,31 +16,16 @@ class DocumentDisplay extends Component {
   constructor(props) {
     super(props);
     this.tag = "";
-    // this.section = "";
-
-    // APIUtility.API.makeAPICall(APIUtility.GET_SECTIONS)
-    //   .then(response => response.json())
-    //   .then(parsedJson => {
-    //     this.sectionList = parsedJson;
-
-    //     const sectionColormap = require("colormap");
-    //     this.colors = sectionColormap({
-    //       colormap: "hsv",
-    //       nshades: this.sectionList.length,
-    //       format: "hex",
-    //       alpha: 0.8
-    //     });
-    //     console.log(this.colors);
-    //   });
+    this.section = "";
   }
 
   handleTagChange = e => {
     this.tag = e.target.value;
   };
 
-  // handleSectionChange = e => {
-  //   this.section = e.target.value;
-  // };
+  handleSectionChange = e => {
+    this.section = e.target.value;
+  };
 
   // this is called whenever the user selects something to annotate or clicks on an annotation to remove it
   handleAnnotate = annotations => {
@@ -61,10 +36,10 @@ class DocumentDisplay extends Component {
         this.props.setEntities(annotations);
       }
     } else if (this.props.annotationFocus === "Section") {
-      // if (this.section !== "") {
-      this.props.setAnnotations(annotations);
-      this.props.setSections(annotations);
-      // }
+      if (this.tag !== "") {
+        this.props.setAnnotations(annotations);
+        this.props.setSections(annotations);
+      }
     } else if (this.props.annotationFocus === "Sentence") {
       this.props.setAnnotations(annotations);
       this.props.setSentences(annotations);
@@ -80,7 +55,7 @@ class DocumentDisplay extends Component {
 
   handleTypeChange = e => {
     this.tag = ""; // prevents entity tags from being assigned to sections etc
-    // this.section = "";
+    this.section = "";
     this.props.setAnnotationFocus(e.target.value);
     if (e.target.value === "Entity") {
       this.props.setAnnotations(this.props.entities);
@@ -120,11 +95,7 @@ class DocumentDisplay extends Component {
   };
 
   entityTagDropDown = () => {
-    if (
-      !this.props.spacyLoading &&
-      this.props.textToDisplay !== "" // &&
-      // (this.props.annotationFocus === "Entity" || this.props.annotationFocus === "Section")
-    ) {
+    if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Entity") {
       return (
         <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
           <option disabled value="NA">
@@ -140,25 +111,26 @@ class DocumentDisplay extends Component {
     }
   };
 
-  // sectionTagDropDown = () => {
-  //   if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Section") {
-  //     return (
-  //       // <select onChange={this.handleSectionChange} value={this.section ? this.section : "NA"}>
-  //       <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
-  //         <option disabled value="NA">
-  //           Select a tag
-  //         </option>
-  //         {this.sectionList.map(section => (
-  //           <option value={section} key={section}>
-  //             {section}
-  //           </option>
-  //         ))}
-  //       </select>
-  //     );
-  //   }
-  // };
+  sectionTagDropDown = () => {
+    if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Section") {
+      return (
+        // <select onChange={this.handleSectionChange} value={this.section ? this.section : "NA"}>
+        <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
+          <option disabled value="NA">
+            Select a tag
+          </option>
+          {this.props.sectionList.map(section => (
+            <option value={section} key={section}>
+              {section}
+            </option>
+          ))}
+        </select>
+      );
+    }
+  };
 
   renderAnnotator = () => {
+    console.log(this.tag);
     return (
       <TextAnnotator
         style={annoteStyle}
@@ -168,7 +140,7 @@ class DocumentDisplay extends Component {
         getSpan={span => ({
           ...span,
           tag: this.tag,
-          color: TAG_COLORS[this.tag]
+          color: this.props.tagColors[this.tag]
         })}
       />
     );
@@ -180,9 +152,9 @@ class DocumentDisplay extends Component {
         <div>
           {this.displayTypeDropDown()}
           {this.entityTagDropDown()}
-          {/* {this.sectionTagDropDown()} */}
+          {this.sectionTagDropDown()}
         </div>
-        <div>{this.renderAnnotator()}</div>
+        <div id="whiteSpace">{this.renderAnnotator()}</div>
       </div>
     );
   }
@@ -199,7 +171,9 @@ const mapStateToProps = state => {
     // icdCodes:
     spacyLoading: state.fileViewer.spacyLoading,
     annotationFocus: state.fileViewer.annotationFocus,
-    annotations: state.fileViewer.annotations
+    annotations: state.fileViewer.annotations,
+    tagColors: state.fileViewer.tagColors,
+    sectionList: state.fileViewer.sectionList
   };
 };
 
