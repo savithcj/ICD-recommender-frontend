@@ -55,3 +55,17 @@ export const setAnnotations = annotations => {
     annotations
   };
 };
+
+export const setTagColors = tagColors => {
+  return {
+    type: actionTypes.SET_TAG_COLORS,
+    tagColors
+  };
+};
+
+export const setSectionList = sectionList => {
+  return {
+    type: actionTypes.SET_SECTION_LIST,
+    sectionList
+  };
+};

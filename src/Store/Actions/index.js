@@ -23,6 +23,8 @@ export {
   setEntities,
   setSpacyLoading,
   setAnnotationFocus,
-  setAnnotations
+  setAnnotations,
+  setTagColors,
+  setSectionList
 } from "./fileViewer";
 export { setUploadedTags, enableTagByIndex, disableTagByIndex } from "./tagManagement";

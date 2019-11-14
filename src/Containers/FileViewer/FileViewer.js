@@ -13,6 +13,53 @@ class FileViewer extends Component {
     this.fileInputRef = React.createRef();
     this.fileReader = new FileReader();
     this.fileData = {};
+
+    APIUtility.API.makeAPICall(APIUtility.GET_SECTIONS)
+      .then(response => response.json())
+      .then(parsedJson => {
+        this.props.setSectionList(parsedJson);
+
+        const sectionColormap = require("colormap");
+        this.colors = sectionColormap({
+          colormap: [
+            // { index: 0, rgb: [47, 247, 217] },
+            // { index: 0.25, rgb: [107, 190, 192] },
+            // { index: 0.5, rgb: [223, 198, 160] },
+            // { index: 0.75, rgb: [235, 144, 160] },
+            // { index: 1, rgb: [247, 238, 183] }
+            { index: 0, rgb: [172, 205, 239] },
+            { index: 0.1, rgb: [244, 189, 161] },
+            { index: 0.2, rgb: [140, 202, 181] },
+            { index: 0.3, rgb: [241, 174, 195] },
+            { index: 0.4, rgb: [205, 183, 228] },
+            { index: 0.5, rgb: [127, 202, 212] },
+            { index: 0.6, rgb: [149, 156, 243] },
+            { index: 0.7, rgb: [222, 146, 202] },
+            { index: 0.8, rgb: [202, 210, 213] },
+            { index: 0.9, rgb: [244, 196, 199] },
+            { index: 1, rgb: [130, 156, 182] }
+          ],
+          nshades: this.props.sectionList.length,
+          format: "hex",
+          alpha: 0.5
+        });
+
+        this.TAG_COLORS = {
+          neg_f: "rgb(255, 0, 0)",
+          NEGATION_B: "#88f7af",
+          NEGATION_BI: "#9df283",
+          CLOSURE_BUT: "#f277c3",
+          SECTION: "#7d8c81",
+          SENTENCE: "#9bacde",
+          TOKEN: "#dedd9b"
+        };
+
+        for (let i = 0; i < this.props.sectionList.length; i++) {
+          this.TAG_COLORS[this.props.sectionList[i]] = this.colors[i];
+        }
+
+        this.props.setTagColors(this.TAG_COLORS);
+      });
   }
 
   openExplorer = () => {
@@ -55,17 +102,10 @@ class FileViewer extends Component {
       APIUtility.API.makeAPICall(APIUtility.UPLOAD_DOCUMENT, null, options)
         .then(response => response.json())
         .then(data => {
-          console.log("DATA", data);
-
-          const sections = this.props.sections;
-          const sentences = this.props.sentences;
-          const tokens = this.props.tokens;
-          const entities = this.props.entities;
-
-          this.props.setSections(sections.concat(this.mapData(data.sections)));
-          this.props.setSentences(sentences.concat(this.mapData(data.sentences)));
-          this.props.setTokens(tokens.concat(this.mapData(data.tokens)));
-          this.props.setEntities(entities.concat(this.mapData(data.entities)));
+          this.props.setSections(this.mapData(data.sections));
+          this.props.setSentences(this.mapData(data.sentences));
+          this.props.setTokens(this.mapData(data.tokens));
+          this.props.setEntities(this.mapData(data.entities));
 
           this.props.setSpacyLoading(false);
           this.props.setFileText(text);
@@ -80,7 +120,7 @@ class FileViewer extends Component {
     dataType.map(dataPoint => {
       dataPoint.tag = dataPoint.label;
       delete dataPoint.label;
-      dataPoint.color = undefined;
+      dataPoint.color = this.props.tagColors[dataPoint.tag];
       dataPoint.text = this.props.textToDisplay.slice(dataPoint.start, dataPoint.end);
     });
     return dataType;
@@ -120,7 +160,9 @@ const mapStateToProps = state => {
     tokens: state.fileViewer.tokens,
     entities: state.fileViewer.entities,
     // icdCodes:
-    spacyLoading: state.fileViewer.spacyLoading
+    spacyLoading: state.fileViewer.spacyLoading,
+    tagColors: state.fileViewer.tagColors,
+    sectionList: state.fileViewer.sectionList
   };
 };
 
@@ -134,11 +176,10 @@ const mapDispatchToProps = dispatch => {
     // setICDCodes: icdCodes => dispatch
     setSpacyLoading: spacyLoading => dispatch(actions.setSpacyLoading(spacyLoading)),
     setAnnotations: annotations => dispatch(actions.setAnnotations(annotations)),
-    setAnnotationFocus: annotationFocus => dispatch(actions.setAnnotationFocus(annotationFocus))
+    setAnnotationFocus: annotationFocus => dispatch(actions.setAnnotationFocus(annotationFocus)),
+    setTagColors: tagColors => dispatch(actions.setTagColors(tagColors)),
+    setSectionList: sectionList => dispatch(actions.setSectionList(sectionList))
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(FileViewer);
+export default connect(mapStateToProps, mapDispatchToProps)(FileViewer);

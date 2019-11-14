@@ -1,18 +1,10 @@
 import React, { useState, useEffect, Component } from "react";
+import * as APIUtility from "../../Util/API";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
 import { TextAnnotator } from "react-text-annotate";
-
-const TAG_COLORS = {
-  neg_f: "rgb(255, 0, 0)",
-  NEGATION_B: "#88f7af",
-  NEGATION_BI: "#9df283",
-  CLOSURE_BUT: "#f277c3",
-  SECTION: "#7d8c81",
-  SENTENCE: "#9bacde",
-  TOKEN: "#dedd9b"
-};
+import "./DocumentDisplay.css";
 
 const annoteStyle = {
   // fontFamily: "IBM Plex Sans",
@@ -24,10 +16,15 @@ class DocumentDisplay extends Component {
   constructor(props) {
     super(props);
     this.tag = "";
+    this.section = "";
   }
 
   handleTagChange = e => {
     this.tag = e.target.value;
+  };
+
+  handleSectionChange = e => {
+    this.section = e.target.value;
   };
 
   // this is called whenever the user selects something to annotate or clicks on an annotation to remove it
@@ -39,8 +36,10 @@ class DocumentDisplay extends Component {
         this.props.setEntities(annotations);
       }
     } else if (this.props.annotationFocus === "Section") {
-      this.props.setAnnotations(annotations);
-      this.props.setSections(annotations);
+      if (this.tag !== "") {
+        this.props.setAnnotations(annotations);
+        this.props.setSections(annotations);
+      }
     } else if (this.props.annotationFocus === "Sentence") {
       this.props.setAnnotations(annotations);
       this.props.setSentences(annotations);
@@ -56,6 +55,7 @@ class DocumentDisplay extends Component {
 
   handleTypeChange = e => {
     this.tag = ""; // prevents entity tags from being assigned to sections etc
+    this.section = "";
     this.props.setAnnotationFocus(e.target.value);
     if (e.target.value === "Entity") {
       this.props.setAnnotations(this.props.entities);
@@ -94,13 +94,10 @@ class DocumentDisplay extends Component {
     }
   };
 
-  tagDropDown = () => {
-    if (!this.props.spacyLoading && this.props.textToDisplay !== "") {
+  entityTagDropDown = () => {
+    if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Entity") {
       return (
-        <select
-          onChange={this.handleTagChange}
-          value={this.tag && this.props.annotationFocus === "Entity" ? this.tag : "NA"}
-        >
+        <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
           <option disabled value="NA">
             Select a tag
           </option>
@@ -114,8 +111,26 @@ class DocumentDisplay extends Component {
     }
   };
 
+  sectionTagDropDown = () => {
+    if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Section") {
+      return (
+        // <select onChange={this.handleSectionChange} value={this.section ? this.section : "NA"}>
+        <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
+          <option disabled value="NA">
+            Select a tag
+          </option>
+          {this.props.sectionList.map(section => (
+            <option value={section} key={section}>
+              {section}
+            </option>
+          ))}
+        </select>
+      );
+    }
+  };
+
   renderAnnotator = () => {
-    // if (this.state.annotations !== []) {
+    console.log(this.tag);
     return (
       <TextAnnotator
         style={annoteStyle}
@@ -125,11 +140,10 @@ class DocumentDisplay extends Component {
         getSpan={span => ({
           ...span,
           tag: this.tag,
-          color: TAG_COLORS[this.tag]
+          color: this.props.tagColors[this.tag]
         })}
       />
     );
-    // }
   };
 
   render() {
@@ -137,9 +151,10 @@ class DocumentDisplay extends Component {
       <div>
         <div>
           {this.displayTypeDropDown()}
-          {this.tagDropDown()}
+          {this.entityTagDropDown()}
+          {this.sectionTagDropDown()}
         </div>
-        <div>{this.renderAnnotator()}</div>
+        <div id="whiteSpace">{this.renderAnnotator()}</div>
       </div>
     );
   }
@@ -156,7 +171,9 @@ const mapStateToProps = state => {
     // icdCodes:
     spacyLoading: state.fileViewer.spacyLoading,
     annotationFocus: state.fileViewer.annotationFocus,
-    annotations: state.fileViewer.annotations
+    annotations: state.fileViewer.annotations,
+    tagColors: state.fileViewer.tagColors,
+    sectionList: state.fileViewer.sectionList
   };
 };
 
@@ -172,7 +189,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DocumentDisplay);
+export default connect(mapStateToProps, mapDispatchToProps)(DocumentDisplay);

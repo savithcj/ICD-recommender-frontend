@@ -33,6 +33,7 @@ export const VALIDATE_TOKEN = "VALIDATE_TOKEN";
 export const FORGOT_PASSWORD = "FORGOT_PASSWORD";
 export const RESET_PASSWORD = "RESET_PASSWORD";
 export const UPLOAD_DOCUMENT = "UPLOAD_DOCUMENT";
+export const GET_SECTIONS = "GET_SECTIONS";
 
 /**
  * API class used to connect to the backend
@@ -282,6 +283,8 @@ export class API {
         return this._fetchFromAPI(this.urlBeginning + "password_reset/confirm", options);
       case UPLOAD_DOCUMENT:
         return this._addAuthorization(this.urlBeginning + "uploadDoc/", options);
+      case GET_SECTIONS:
+        return this._addAuthorization(this.urlBeginning + "getSections/");
       default:
         return null;
     }

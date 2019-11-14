@@ -8,7 +8,9 @@ const initialState = {
   entities: [],
   spacyLoading: false,
   annotationFocus: "NA",
-  annotations: []
+  annotations: [],
+  tagColors: {},
+  sectionList: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -25,11 +27,14 @@ const reducer = (state = initialState, action) => {
       return { ...state, entities: action.entities };
     case actionTypes.SET_SPACY_LOADING:
       return { ...state, spacyLoading: action.spacyLoading };
-
     case actionTypes.SET_ANNOTATION_FOCUS:
       return { ...state, annotationFocus: action.annotationFocus };
     case actionTypes.SET_ANNOTATIONS:
       return { ...state, annotations: action.annotations };
+    case actionTypes.SET_TAG_COLORS:
+      return { ...state, tagColors: action.tagColors };
+    case actionTypes.SET_SECTION_LIST:
+      return { ...state, sectionList: action.sectionList };
     default:
       return state;
   }
