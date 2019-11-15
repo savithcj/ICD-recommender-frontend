@@ -29,4 +29,4 @@ export {
   setTag,
   setFileReference
 } from "./fileViewer";
-export { setUploadedTags, enableTagByIndex, disableTagByIndex } from "./tagManagement";
+export { setUploadedTags, enableTagByIndex, disableTagByIndex, enableAllTags, disableAllTags } from "./tagManagement";

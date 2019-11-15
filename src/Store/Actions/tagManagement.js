@@ -20,3 +20,15 @@ export const disableTagByIndex = index => {
     index
   };
 };
+
+export const enableAllTags = () => {
+  return {
+    type: actionTypes.ENABLE_ALL_TAGS
+  };
+};
+
+export const disableAllTags = () => {
+  return {
+    type: actionTypes.DISABLE_ALL_TAGS
+  };
+};
