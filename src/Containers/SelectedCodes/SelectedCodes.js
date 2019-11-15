@@ -2,7 +2,7 @@ import React from "react";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
-import { getStringFromListOfCodes } from "../../Util/utility";
+// import { getStringFromListOfCodes } from "../../Util/utility";
 import * as APIUtility from "../../Util/API";
 
 const selectedCodesViewer = props => {
@@ -62,10 +62,10 @@ const selectedCodesViewer = props => {
   };
 
   const copyToClipboard = () => {
-    const codeSelection = getStringFromListOfCodes(props.selectedCodes);
+    // const codeSelection = getStringFromListOfCodes(props.selectedCodes);
     //TODO:fix copy to clipboard issue when connecting to front end from a non local server
     // navigator.clipboard.writeText(codeSelection);
-    props.setAlertMessage({ message: "Selected codes copied to clipboard", messageType: "success" });
+    // props.setAlertMessage({ message: "Selected codes copied to clipboard", messageType: "success" });
   };
 
   const acceptSelectedCodes = () => {

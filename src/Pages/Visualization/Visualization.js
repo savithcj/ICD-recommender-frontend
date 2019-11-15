@@ -77,6 +77,7 @@ function Visualization(props) {
           manageAccountsLink={props.userRole === "admin"}
           homeLink
           aboutLink
+          tagsLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
@@ -117,7 +118,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  null
-)(Visualization);
+export default connect(mapStateToProps, null)(Visualization);

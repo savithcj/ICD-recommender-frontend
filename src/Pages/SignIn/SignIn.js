@@ -51,12 +51,10 @@ function SignIn(props) {
       alert.show(props.alertMessage.message, {
         timeout: 2500,
         position: positions.MIDDLE,
-        type: props.alertMessage.messageType,
-        onClose: () => {
-          props.setAlertMessage(null);
-        }
+        type: props.alertMessage.messageType
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.alertMessage]);
 
   const classes = useStyles();
@@ -112,13 +110,7 @@ function SignIn(props) {
             autoComplete="current-password"
             onKeyPress={onKeyPress}
           />
-          <Button
-            onClick={getToken}
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
+          <Button onClick={getToken} fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign In
           </Button>
           <Grid container>
@@ -154,7 +146,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SignIn);
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

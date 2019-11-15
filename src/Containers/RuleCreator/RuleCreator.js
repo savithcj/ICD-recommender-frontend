@@ -123,8 +123,6 @@ function RuleCreator(props) {
   };
 
   const createRule = async () => {
-    const headers = new Headers();
-
     const LHSCodes = LHS.map(codeObj => codeObj.code);
     const RHSCodes = RHS.map(codeObj => codeObj.code);
 

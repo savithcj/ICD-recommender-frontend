@@ -38,6 +38,7 @@ const Home = props => {
     return () => {
       props.resetState();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // equivalent to componentDidUpdate. used to verify that the token is valid
@@ -52,12 +53,10 @@ const Home = props => {
       alert.show(props.alertMessage.message, {
         timeout: 2500,
         position: positions.MIDDLE,
-        type: props.alertMessage.messageType,
-        onClose: () => {
-          props.setAlertMessage(null);
-        }
+        type: props.alertMessage.messageType
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.alertMessage]);
 
   const resetLayout = () => {

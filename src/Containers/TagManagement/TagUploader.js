@@ -1,10 +1,8 @@
-import React, { useState, useEffect, Component } from "react";
-import * as APIUtility from "../../Util/API";
+import React from "react";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
-import { useAlert, positions } from "react-alert";
 import downloader from "../../Util/download";
 
 const useStyles = makeStyles(theme => ({
@@ -97,7 +95,6 @@ const TagUploader = props => {
   };
 
   const generateAlert = (descriptionUpdated, newEnabled, newDisabled) => {
-    let message = "Upload success! ";
     if (descriptionUpdated.length > 0) {
       props.setAlertMessage({
         message: descriptionUpdated.length + " tags have updated descriptions. ",
@@ -123,7 +120,7 @@ const TagUploader = props => {
   const parseTagsToDownload = () => {
     let tagsAsText = "";
     const tags = props.uploadedTags;
-    tags.map(tag => {
+    tags.forEach(tag => {
       tagsAsText += tag.id + "," + tag.description + "," + (tag.disabled ? "d" : "") + "\n";
     });
     downloader("tags.txt", tagsAsText);

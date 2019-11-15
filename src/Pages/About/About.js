@@ -34,6 +34,7 @@ function About(props) {
           visualizationLink
           adminLink={props.userRole === "admin"}
           manageAccountsLink={props.userRole === "admin"}
+          tagsLink
         />
       </div>
 
@@ -297,7 +298,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  null
-)(About);
+export default connect(mapStateToProps, null)(About);

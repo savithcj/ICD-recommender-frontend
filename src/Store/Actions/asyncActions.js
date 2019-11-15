@@ -10,7 +10,6 @@ import { setRulesInSession, setRolledRules, setRHSExclusion } from "./session";
 import { setAlertMessage } from "./alert";
 import * as HelperFunctions from "../../Util/utility.js";
 import { setCodeInTree } from "./tree";
-import { setIsAuthorized, setUserRole } from "./authentication";
 
 export const fetchRecommendationsAndUpdateCache = codeObjArray => {
   return (dispatch, getState) => {
@@ -20,12 +19,8 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
     const age = getState().ageGender.selectedAge;
     const gender = getState().ageGender.selectedGender;
 
-    const ageParam =
-      age === undefined || age === "" || age === null ? "" : "&age=" + age;
-    const genderParam =
-      gender === undefined || gender === "" || gender === null
-        ? ""
-        : "&gender=" + gender;
+    const ageParam = age === undefined || age === "" || age === null ? "" : "&age=" + age;
+    const genderParam = gender === undefined || gender === "" || gender === null ? "" : "&gender=" + gender;
 
     const rhsExclusions = getState().session.rhsExclusions;
     const rulesToSendBack = getState().session.rulesToSendBack;
@@ -56,9 +51,7 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
             ruleObj.shouldDisableDislikeButton = ruleObj["review_status"] === 2;
           });
           //sort the remaining results in descending order of score
-          results.sort((a, b) =>
-            a.score < b.score ? 1 : b.score < a.score ? -1 : 0
-          );
+          results.sort((a, b) => (a.score < b.score ? 1 : b.score < a.score ? -1 : 0));
           const resultsToCache = results.map(recommendedObj => {
             return {
               code: recommendedObj.rhs,
@@ -67,24 +60,13 @@ export const fetchRecommendationsAndUpdateCache = codeObjArray => {
           });
           dispatch(appendToCache(resultsToCache));
 
-          results = HelperFunctions.cleanResults(
-            results,
-            rhsExclusions,
-            rollResults
-          );
+          results = HelperFunctions.cleanResults(results, rhsExclusions, rollResults);
           let cleanedResults = results[0];
           const rolledRules = results[1];
-          const passedRules = rolledRules.filter(rule => rule.rollOutcome);
+          // const passedRules = rolledRules.filter(rule => rule.rollOutcome);
 
           dispatch(setRolledRules(rolledRules));
-          dispatch(
-            setRulesInSession(
-              HelperFunctions.createRulesToSendBack(
-                cleanedResults,
-                rulesToSendBack
-              )
-            )
-          );
+          dispatch(setRulesInSession(HelperFunctions.createRulesToSendBack(cleanedResults, rulesToSendBack)));
 
           // Adding code to new recommendation if it isn't in old recommendations
           if (oldRecommendations !== null) {
@@ -151,40 +133,20 @@ export const fetchDaggerAsterisksAndUpdateCache = codeObjArray => {
           let promiseList = [];
           results.forEach(result => {
             result.combo = result.dagger + "\u271D " + result.asterisk + "*";
-            if (
-              codeObjArray.find(
-                codeObject => codeObject.code === result.dagger
-              ) === undefined
-            ) {
+            if (codeObjArray.find(codeObject => codeObject.code === result.dagger) === undefined) {
               promiseList.push(
-                APIUtility.API.makeAPICall(
-                  APIUtility.CODE_DESCRIPTION,
-                  result.dagger
-                )
+                APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, result.dagger)
                   .then(response => response.json())
                   .then(codeObject => {
-                    result.description =
-                      HelperFunctions.addDotToCode(codeObject.code) +
-                      ": " +
-                      codeObject.description;
+                    result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
-            } else if (
-              codeObjArray.find(
-                codeObject => codeObject.code === result.asterisk
-              ) === undefined
-            ) {
+            } else if (codeObjArray.find(codeObject => codeObject.code === result.asterisk) === undefined) {
               promiseList.push(
-                APIUtility.API.makeAPICall(
-                  APIUtility.CODE_DESCRIPTION,
-                  result.asterisk
-                )
+                APIUtility.API.makeAPICall(APIUtility.CODE_DESCRIPTION, result.asterisk)
                   .then(response => response.json())
                   .then(codeObject => {
-                    result.description =
-                      HelperFunctions.addDotToCode(codeObject.code) +
-                      ": " +
-                      codeObject.description;
+                    result.description = HelperFunctions.addDotToCode(codeObject.code) + ": " + codeObject.description;
                   })
               );
             } else {
@@ -215,18 +177,12 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
     const selectedCodes = Array.from(getState().selected.selectedCodes);
 
     // check if the code already exist in the selection
-    const getDuplicate = selectedCodes.find(
-      codeObj => codeObj.code === enteredCode
-    );
+    const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCode);
 
     if (getDuplicate === undefined) {
       // get code description from auto-suggest cache
-      const codeDescriptions = Array.from(
-        getState().cached.cachedCodeWithDescription
-      );
-      const cachedCode = codeDescriptions.find(
-        codeObj => codeObj.code === enteredCode
-      );
+      const codeDescriptions = Array.from(getState().cached.cachedCodeWithDescription);
+      const cachedCode = codeDescriptions.find(codeObj => codeObj.code === enteredCode);
 
       // construct new code object
       const newCode = {
@@ -240,10 +196,7 @@ export const addSelectedCodeAndUpdateRecommendations = enteredCode => {
       dispatch(fetchRecommendationsAndUpdateCache(selectedCodes));
       dispatch(fetchDaggerAsterisksAndUpdateCache(selectedCodes));
     } else {
-      console.log(
-        "[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>",
-        enteredCode
-      );
+      console.log("[addSelectedCodeAndUpdate action] Error: trying to add duplicate code =>", enteredCode);
       dispatch(
         setAlertMessage({
           message: enteredCode + " already selected",
@@ -271,9 +224,7 @@ export const addSelectedCodeObjectAndUpdateRecommendations = enteredCodeObject =
           const selectedCodes = Array.from(getState().selected.selectedCodes);
 
           // check if the code already exist in the selection
-          const getDuplicate = selectedCodes.find(
-            codeObj => codeObj.code === enteredCodeObject.code
-          );
+          const getDuplicate = selectedCodes.find(codeObj => codeObj.code === enteredCodeObject.code);
 
           if (getDuplicate === undefined) {
             const newCode = {

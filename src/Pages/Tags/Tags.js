@@ -43,18 +43,16 @@ const Tags = props => {
     APIUtility.API.verifyLSToken(() => setIsLoading(false));
   }, []);
 
-  // Display alert message
+  // // Display alert message
   useEffect(() => {
     if (props.alertMessage) {
       alert.show(props.alertMessage.message, {
         timeout: 5000,
         position: positions.MIDDLE,
-        type: props.alertMessage.messageType,
-        onClose: () => {
-          props.setAlertMessage(null);
-        }
+        type: props.alertMessage.messageType
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.alertMessage]);
 
   if (isLoading) {

@@ -12,7 +12,6 @@ import { Menu } from "@material-ui/core";
 import { ReactComponent as CheckIcon } from "../../Assets/Icons/round-done-24px.svg";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
-import { Redirect } from "react-router";
 import * as APIUtility from "../../Util/API";
 
 const useStyles = makeStyles(theme => ({
@@ -95,13 +94,9 @@ function ButtonAppBar(props) {
         </MenuItem>
       ) : null}
 
-      {props.handleLayoutConfirm ? (
-        <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem>
-      ) : null}
+      {props.handleLayoutConfirm ? <MenuItem onClick={handleToggleLayout}>Customize Layout</MenuItem> : null}
 
-      {props.handleResetLayout ? (
-        <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem>
-      ) : null}
+      {props.handleResetLayout ? <MenuItem onClick={handleResetLayout}>Reset Layout</MenuItem> : null}
 
       {props.aboutLink ? (
         <MenuItem component={Link} to="/about">
@@ -152,12 +147,7 @@ function ButtonAppBar(props) {
     <div className={classes.root}>
       <AppBar className={classes.menuBar} position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-          />
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu" />
           <Typography variant="h6" className={classes.title}>
             {props.title}
           </Typography>

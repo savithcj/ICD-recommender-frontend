@@ -60,6 +60,7 @@ function ManageAccounts(props) {
           adminLink
           visualizationLink
           aboutLink
+          tagsLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
@@ -92,7 +93,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  null
-)(ManageAccounts);
+export default connect(mapStateToProps, null)(ManageAccounts);

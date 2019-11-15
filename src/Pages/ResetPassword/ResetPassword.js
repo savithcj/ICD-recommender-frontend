@@ -48,7 +48,9 @@ function ResetPassword(props) {
 
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
+    console.log(params);
     setToken(params.get("token"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -56,12 +58,10 @@ function ResetPassword(props) {
       alert.show(props.alertMessage.message, {
         timeout: 2500,
         position: positions.MIDDLE,
-        type: props.alertMessage.messageType,
-        onClose: () => {
-          props.setAlertMessage(null);
-        }
+        type: props.alertMessage.messageType
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.alertMessage]);
 
   const classes = useStyles();
@@ -169,7 +169,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResetPassword);
+export default connect(mapStateToProps, mapDispatchToProps)(ResetPassword);

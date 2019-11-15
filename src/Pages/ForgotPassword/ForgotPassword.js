@@ -48,12 +48,10 @@ function ForgotPassword(props) {
       alert.show(props.alertMessage.message, {
         timeout: 2500,
         position: positions.MIDDLE,
-        type: props.alertMessage.messageType,
-        onClose: () => {
-          props.setAlertMessage(null);
-        }
+        type: props.alertMessage.messageType
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.alertMessage]);
 
   const sendEmail = () => {
@@ -134,7 +132,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ForgotPassword);
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);

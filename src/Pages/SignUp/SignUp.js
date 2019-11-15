@@ -53,12 +53,10 @@ function SignUp(props) {
       alert.show(props.alertMessage.message, {
         timeout: 2500,
         position: positions.MIDDLE,
-        type: props.alertMessage.messageType,
-        onClose: () => {
-          props.setAlertMessage(null);
-        }
+        type: props.alertMessage.messageType
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.alertMessage]);
 
   function createUser() {
@@ -90,7 +88,7 @@ function SignUp(props) {
         .then(([statusCode, data]) => {
           if (statusCode === 200) {
             setSignUpSuccessful(true);
-          } else if (statusCode == 409) {
+          } else if (statusCode === 409) {
             // duplicate user already exist
             props.setAlertMessage({ message: data.message, messageType: "error" });
           }
@@ -211,7 +209,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
