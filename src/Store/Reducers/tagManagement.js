@@ -19,6 +19,14 @@ const reducer = (state = initialState, action) => {
     return { uploadedTags: items };
   };
 
+  const setDisableForAllTags = (disable = false) => {
+    const items = [...state.uploadedTags];
+    items.forEach(tag => {
+      tag.disabled = disable;
+    });
+    return { uploadedTags: items };
+  };
+
   switch (action.type) {
     case actionTypes.SET_UPLOADED_TAGS:
       return { uploadedTags: action.uploadedTags };
@@ -28,6 +36,13 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.DISABLE_TAG_BY_INDEX:
       return disableTagByIndex();
+
+    case actionTypes.ENABLE_ALL_TAGS:
+      return setDisableForAllTags(false);
+
+    case actionTypes.DISABLE_ALL_TAGS:
+      return setDisableForAllTags(true);
+
     default:
       return state;
   }

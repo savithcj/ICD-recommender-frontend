@@ -4,10 +4,6 @@ import * as actions from "../../Store/Actions/index";
 import ListViewer from "../../Components/ListViewer/ListViewer";
 
 const TagViewer = props => {
-  const enableAllTags = () => {};
-
-  const disableAllTags = () => {};
-
   const shouldHideRemoveButton = index => {
     return props.uploadedTags[index].disabled ? true : false;
   };
@@ -25,8 +21,8 @@ const TagViewer = props => {
   };
 
   const selectedTagsComponentMenuItems = [
-    { menuItemOnClick: enableAllTags, menuItemText: "Enable All" },
-    { menuItemOnClick: disableAllTags, menuItemText: "Disable All" }
+    { menuItemOnClick: props.enableAllTags, menuItemText: "Enable All" },
+    { menuItemOnClick: props.disableAllTags, menuItemText: "Disable All" }
   ];
 
   return (
@@ -34,12 +30,11 @@ const TagViewer = props => {
       title="Tags"
       dontAddDotBoolean={true}
       items={props.uploadedTags}
-      noItemMessage="No tags available."
       valueName="id"
       descriptionName="description"
       acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
       removeItemButton={{ title: "Disable tag", onClick: disableTag }}
-      allowRearrange={props.uploadedTags.length > 1}
+      allowRearrage={props.uploadedTags.length > 1}
       onSortEndCallback={updatedList => {
         props.setUploadedTags(updatedList);
       }}
@@ -60,7 +55,9 @@ const mapDispatchToProps = dispatch => {
   return {
     setUploadedTags: tags => dispatch(actions.setUploadedTags(tags)),
     enableTagByIndex: index => dispatch(actions.enableTagByIndex(index)),
-    disableTagByIndex: index => dispatch(actions.disableTagByIndex(index))
+    disableTagByIndex: index => dispatch(actions.disableTagByIndex(index)),
+    enableAllTags: () => dispatch(actions.enableAllTags()),
+    disableAllTags: () => dispatch(actions.disableAllTags())
   };
 };
 
