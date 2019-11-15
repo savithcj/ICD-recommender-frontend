@@ -69,3 +69,17 @@ export const setSectionList = sectionList => {
     sectionList
   };
 };
+
+export const setTag = tag => {
+  return {
+    type: actionTypes.SET_TAG,
+    tag
+  };
+};
+
+export const setFileReference = fileReference => {
+  return {
+    type: actionTypes.SET_FILE_REFERENCE,
+    fileReference
+  };
+};

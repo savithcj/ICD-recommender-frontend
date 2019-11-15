@@ -48,6 +48,8 @@ export const SET_ANNOTATION_FOCUS = "SET_ANNOTATION_FOCUS";
 export const SET_ANNOTATIONS = "SET_ANNOTATIONS";
 export const SET_TAG_COLORS = "SET_TAG_COLORS";
 export const SET_SECTION_LIST = "SET_SECTION_LIST";
+export const SET_TAG = "SET_TAG";
+export const SET_FILE_REFERENCE = "SET_FILE_REFERENCE";
 
 // Tag Management
 export const SET_UPLOADED_TAGS = "SET_UPLOADED_TAGS";

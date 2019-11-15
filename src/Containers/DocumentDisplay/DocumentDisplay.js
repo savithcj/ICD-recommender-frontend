@@ -1,5 +1,4 @@
-import React, { useState, useEffect, Component } from "react";
-import * as APIUtility from "../../Util/API";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
@@ -15,28 +14,24 @@ const annoteStyle = {
 class DocumentDisplay extends Component {
   constructor(props) {
     super(props);
-    this.tag = "";
-    this.section = "";
+    this.props.setTag("");
+    // this.section = "";
   }
 
   handleTagChange = e => {
-    this.tag = e.target.value;
-  };
-
-  handleSectionChange = e => {
-    this.section = e.target.value;
+    this.props.setTag(e.target.value);
   };
 
   // this is called whenever the user selects something to annotate or clicks on an annotation to remove it
   handleAnnotate = annotations => {
     //this.props.setAnnotations(annotations);
     if (this.props.annotationFocus === "Entity") {
-      if (this.tag !== "") {
+      if (this.props.tag !== "") {
         this.props.setAnnotations(annotations);
         this.props.setEntities(annotations);
       }
     } else if (this.props.annotationFocus === "Section") {
-      if (this.tag !== "") {
+      if (this.props.tag !== "") {
         this.props.setAnnotations(annotations);
         this.props.setSections(annotations);
       }
@@ -51,11 +46,11 @@ class DocumentDisplay extends Component {
       // this.setState({ annotations });
       // this.props.setICDCodes(annotations);
     }
+    console.log(this.props.sections);
   };
 
   handleTypeChange = e => {
-    this.tag = ""; // prevents entity tags from being assigned to sections etc
-    this.section = "";
+    this.props.setTag(""); // prevents entity tags from being assigned to sections etc
     this.props.setAnnotationFocus(e.target.value);
     if (e.target.value === "Entity") {
       this.props.setAnnotations(this.props.entities);
@@ -97,7 +92,7 @@ class DocumentDisplay extends Component {
   entityTagDropDown = () => {
     if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Entity") {
       return (
-        <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
+        <select onChange={this.handleTagChange} value={this.props.tag ? this.props.tag : "NA"}>
           <option disabled value="NA">
             Select a tag
           </option>
@@ -114,8 +109,7 @@ class DocumentDisplay extends Component {
   sectionTagDropDown = () => {
     if (!this.props.spacyLoading && this.props.textToDisplay !== "" && this.props.annotationFocus === "Section") {
       return (
-        // <select onChange={this.handleSectionChange} value={this.section ? this.section : "NA"}>
-        <select onChange={this.handleTagChange} value={this.tag ? this.tag : "NA"}>
+        <select onChange={this.handleTagChange} value={this.props.tag ? this.props.tag : "NA"}>
           <option disabled value="NA">
             Select a tag
           </option>
@@ -130,7 +124,6 @@ class DocumentDisplay extends Component {
   };
 
   renderAnnotator = () => {
-    console.log(this.tag);
     return (
       <TextAnnotator
         style={annoteStyle}
@@ -139,8 +132,8 @@ class DocumentDisplay extends Component {
         onChange={this.handleAnnotate}
         getSpan={span => ({
           ...span,
-          tag: this.tag,
-          color: this.props.tagColors[this.tag]
+          tag: this.props.tag,
+          color: this.props.tagColors[this.props.tag]
         })}
       />
     );
@@ -173,7 +166,8 @@ const mapStateToProps = state => {
     annotationFocus: state.fileViewer.annotationFocus,
     annotations: state.fileViewer.annotations,
     tagColors: state.fileViewer.tagColors,
-    sectionList: state.fileViewer.sectionList
+    sectionList: state.fileViewer.sectionList,
+    tag: state.fileViewer.tag
   };
 };
 
@@ -185,7 +179,8 @@ const mapDispatchToProps = dispatch => {
     setEntities: entities => dispatch(actions.setEntities(entities)),
     // setICDCodes: icdCodes => dispatch
     setAnnotationFocus: annotationFocus => dispatch(actions.setAnnotationFocus(annotationFocus)),
-    setAnnotations: annotations => dispatch(actions.setAnnotations(annotations))
+    setAnnotations: annotations => dispatch(actions.setAnnotations(annotations)),
+    setTag: tag => dispatch(actions.setTag(tag))
   };
 };
 

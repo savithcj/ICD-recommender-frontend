@@ -25,6 +25,8 @@ export {
   setAnnotationFocus,
   setAnnotations,
   setTagColors,
-  setSectionList
+  setSectionList,
+  setTag,
+  setFileReference
 } from "./fileViewer";
 export { setUploadedTags, enableTagByIndex, disableTagByIndex } from "./tagManagement";
