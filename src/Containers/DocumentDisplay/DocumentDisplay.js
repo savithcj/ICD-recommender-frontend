@@ -36,6 +36,10 @@ class DocumentDisplay extends Component {
         this.props.setSections(annotations);
       }
     } else if (this.props.annotationFocus === "Sentence") {
+      // sorting sentences in order for the purpose of having alternate sentences in different colors
+      annotations = annotations.sort((a, b) => {
+        return a.start < b.start;
+      });
       this.props.setAnnotations(annotations);
       this.props.setSentences(annotations);
     } else if (this.props.annotationFocus === "Token") {
@@ -46,7 +50,6 @@ class DocumentDisplay extends Component {
       // this.setState({ annotations });
       // this.props.setICDCodes(annotations);
     }
-    console.log(this.props.sections);
   };
 
   handleTypeChange = e => {
