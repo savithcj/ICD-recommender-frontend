@@ -16,16 +16,16 @@ class DocumentDisplay extends Component {
   constructor(props) {
     super(props);
     this.tag = "";
-    this.section = "";
+    // this.section = "";
   }
 
   handleTagChange = e => {
     this.tag = e.target.value;
   };
 
-  handleSectionChange = e => {
-    this.section = e.target.value;
-  };
+  // handleSectionChange = e => {
+  //   this.section = e.target.value;
+  // };
 
   // this is called whenever the user selects something to annotate or clicks on an annotation to remove it
   handleAnnotate = annotations => {
@@ -55,7 +55,7 @@ class DocumentDisplay extends Component {
 
   handleTypeChange = e => {
     this.tag = ""; // prevents entity tags from being assigned to sections etc
-    this.section = "";
+    // this.section = "";
     this.props.setAnnotationFocus(e.target.value);
     if (e.target.value === "Entity") {
       this.props.setAnnotations(this.props.entities);
@@ -130,7 +130,6 @@ class DocumentDisplay extends Component {
   };
 
   renderAnnotator = () => {
-    console.log(this.tag);
     return (
       <TextAnnotator
         style={annoteStyle}

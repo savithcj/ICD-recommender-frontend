@@ -25,6 +25,7 @@ export {
   setAnnotationFocus,
   setAnnotations,
   setTagColors,
-  setSectionList
+  setSectionList,
+  setTag
 } from "./fileViewer";
 export { setUploadedTags } from "./tagManagement";

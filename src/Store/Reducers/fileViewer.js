@@ -10,7 +10,8 @@ const initialState = {
   annotationFocus: "NA",
   annotations: [],
   tagColors: {},
-  sectionList: []
+  sectionList: [],
+  tag: ""
 };
 
 const reducer = (state = initialState, action) => {
@@ -35,6 +36,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, tagColors: action.tagColors };
     case actionTypes.SET_SECTION_LIST:
       return { ...state, sectionList: action.sectionList };
+    case actionTypes.SET_TAG:
+      return { ...state, tag: action.tag };
     default:
       return state;
   }

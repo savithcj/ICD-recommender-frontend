@@ -69,3 +69,10 @@ export const setSectionList = sectionList => {
     sectionList
   };
 };
+
+export const setTag = tag => {
+  return {
+    type: actionTypes.SET_TAG,
+    tag
+  };
+};
