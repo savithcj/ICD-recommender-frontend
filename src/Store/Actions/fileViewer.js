@@ -76,3 +76,10 @@ export const setTag = tag => {
     tag
   };
 };
+
+export const setFileReference = fileReference => {
+  return {
+    type: actionTypes.SET_FILE_REFERENCE,
+    fileReference
+  };
+};

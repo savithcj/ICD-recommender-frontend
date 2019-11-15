@@ -11,7 +11,8 @@ const initialState = {
   annotations: [],
   tagColors: {},
   sectionList: [],
-  tag: ""
+  tag: "",
+  fileReference: ""
 };
 
 const reducer = (state = initialState, action) => {
@@ -38,6 +39,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, sectionList: action.sectionList };
     case actionTypes.SET_TAG:
       return { ...state, tag: action.tag };
+    case actionTypes.SET_FILE_REFERENCE:
+      return { ...state, fileReference: action.fileReference };
     default:
       return state;
   }

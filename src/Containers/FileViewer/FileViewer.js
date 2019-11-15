@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { Component } from "react";
 import * as APIUtility from "../../Util/API";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -6,6 +6,7 @@ import * as actions from "../../Store/Actions/index";
 import "./FileViewer.css";
 import DocumentDisplay from "../DocumentDisplay/DocumentDisplay";
 import TagUploader from "../../Containers/TagManagement/TagUploader";
+import ImportExportAnnotations from "../../Containers/ImportExportAnnotations/ImportExportAnnotations";
 
 class FileViewer extends Component {
   constructor(props) {
@@ -22,11 +23,6 @@ class FileViewer extends Component {
         const sectionColormap = require("colormap");
         this.colors = sectionColormap({
           colormap: [
-            // { index: 0, rgb: [47, 247, 217] },
-            // { index: 0.25, rgb: [107, 190, 192] },
-            // { index: 0.5, rgb: [223, 198, 160] },
-            // { index: 0.75, rgb: [235, 144, 160] },
-            // { index: 1, rgb: [247, 238, 183] }
             { index: 0, rgb: [172, 205, 239] },
             { index: 0.1, rgb: [244, 189, 161] },
             { index: 0.2, rgb: [140, 202, 181] },
@@ -80,6 +76,8 @@ class FileViewer extends Component {
 
     this.fileData.id = file.name;
     let ext = file.name.split(".")[file.name.split(".").length - 1];
+    let filename = file.name.slice(0, file.name.length - 1 - ext.length);
+    this.props.setFileReference(filename);
     if (ext === "txt") {
       this.fileData.format = "plain_text";
     } else if (ext === "rtf") {
@@ -132,6 +130,9 @@ class FileViewer extends Component {
         <div>
           <TagUploader />
         </div>
+        <div>
+          <ImportExportAnnotations />
+        </div>
         <div className="fileUpload">
           <Button onClick={this.openExplorer} variant="contained" color="primary">
             Browse for File
@@ -178,7 +179,8 @@ const mapDispatchToProps = dispatch => {
     setAnnotations: annotations => dispatch(actions.setAnnotations(annotations)),
     setAnnotationFocus: annotationFocus => dispatch(actions.setAnnotationFocus(annotationFocus)),
     setTagColors: tagColors => dispatch(actions.setTagColors(tagColors)),
-    setSectionList: sectionList => dispatch(actions.setSectionList(sectionList))
+    setSectionList: sectionList => dispatch(actions.setSectionList(sectionList)),
+    setFileReference: fileReference => dispatch(actions.setFileReference(fileReference))
   };
 };
 

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, Component } from "react";
-import * as APIUtility from "../../Util/API";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
@@ -47,6 +46,7 @@ class DocumentDisplay extends Component {
       // this.setState({ annotations });
       // this.props.setICDCodes(annotations);
     }
+    console.log(this.props.sections);
   };
 
   handleTypeChange = e => {
