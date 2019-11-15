@@ -28,4 +28,4 @@ export {
   setSectionList,
   setTag
 } from "./fileViewer";
-export { setUploadedTags } from "./tagManagement";
+export { setUploadedTags, enableTagByIndex, disableTagByIndex } from "./tagManagement";

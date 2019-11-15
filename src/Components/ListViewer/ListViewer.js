@@ -349,8 +349,9 @@ function ListViewer(props) {
   );
 }
 
+const listsAreEqual = (prevProps, nextProps) => {
+  return prevProps.items === nextProps.items;
+};
+
 //Exporting the memoized ListViewer; used to limit redundant re-renders
-export default React.memo(ListViewer, (prevProps, nextProps) => {
-  // Component will only re-render if the array of objects to be displayed (i.e., props.items) changes
-  return nextProps.items === prevProps.items;
-});
+export default React.memo(ListViewer, listsAreEqual);

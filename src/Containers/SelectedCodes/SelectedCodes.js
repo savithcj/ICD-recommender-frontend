@@ -132,7 +132,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(selectedCodesViewer);
+export default connect(mapStateToProps, mapDispatchToProps)(selectedCodesViewer);

@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import * as actions from "../../Store/Actions/index";
 import { useAlert, positions } from "react-alert";
+import downloader from "../../Util/download";
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -99,8 +100,7 @@ const TagUploader = props => {
     let message = "Upload success! ";
     if (descriptionUpdated.length > 0) {
       props.setAlertMessage({
-        message:
-          descriptionUpdated.length + " tags have updated descriptions. ",
+        message: descriptionUpdated.length + " tags have updated descriptions. ",
         messageType: "success"
       });
     }
@@ -120,6 +120,15 @@ const TagUploader = props => {
     }
   };
 
+  const parseTagsToDownload = () => {
+    let tagsAsText = "";
+    const tags = props.uploadedTags;
+    tags.map(tag => {
+      tagsAsText += tag.id + "," + tag.description + "," + (tag.disabled ? "d" : "") + "\n";
+    });
+    downloader("tags.txt", tagsAsText);
+  };
+
   const clearAllTags = () => {
     props.setUploadedTags([]);
     props.setAlertMessage({
@@ -130,21 +139,15 @@ const TagUploader = props => {
 
   return (
     <div className="fileUpload">
-      <Button
-        onClick={openExplorer}
-        variant="contained"
-        color="primary"
-        className={classes.button}
-      >
+      <Button onClick={openExplorer} variant="contained" color="primary" className={classes.button}>
         Upload Tags
       </Button>
-      <input
-        ref={fileInputRef}
-        className="file-input"
-        type="file"
-        onChange={e => readFile(e.target.files)}
-      ></input>
-      <Button onClick={clearAllTags} variant="contained" color="secondary">
+      <input ref={fileInputRef} className="file-input" type="file" onChange={e => readFile(e.target.files)}></input>
+      <Button onClick={parseTagsToDownload} variant="contained" color="primary" className={classes.button}>
+        {" "}
+        Download Tags
+      </Button>
+      <Button onClick={clearAllTags} variant="contained" color="secondary" className={classes.button}>
         Clear All Tags
       </Button>
     </div>

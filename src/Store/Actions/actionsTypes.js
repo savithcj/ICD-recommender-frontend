@@ -52,3 +52,5 @@ export const SET_TAG = "SET_TAG";
 
 // Tag Management
 export const SET_UPLOADED_TAGS = "SET_UPLOADED_TAGS";
+export const DISABLE_TAG_BY_INDEX = "DISABLE_TAG_BY_INDEX";
+export const ENABLE_TAG_BY_INDEX = "ENABLE_TAG_BY_INDEX";

@@ -6,3 +6,17 @@ export const setUploadedTags = uploadedTags => {
     uploadedTags
   };
 };
+
+export const enableTagByIndex = index => {
+  return {
+    type: actionTypes.ENABLE_TAG_BY_INDEX,
+    index
+  };
+};
+
+export const disableTagByIndex = index => {
+  return {
+    type: actionTypes.DISABLE_TAG_BY_INDEX,
+    index
+  };
+};

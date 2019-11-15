@@ -289,7 +289,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(RuleCreator);
+export default connect(null, mapDispatchToProps)(RuleCreator);
