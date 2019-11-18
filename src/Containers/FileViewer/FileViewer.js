@@ -118,7 +118,9 @@ class FileViewer extends Component {
     dataType.map(dataPoint => {
       dataPoint.tag = dataPoint.label;
       delete dataPoint.label;
-      dataPoint.color = this.props.tagColors[dataPoint.tag];
+      if (this.props.tagColors[dataPoint.tag]) {
+        dataPoint.color = this.props.tagColors[dataPoint.tag];
+      }
       dataPoint.text = this.props.textToDisplay.slice(dataPoint.start, dataPoint.end);
     });
     return dataType;

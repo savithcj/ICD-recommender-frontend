@@ -38,11 +38,28 @@ class DocumentDisplay extends Component {
     } else if (this.props.annotationFocus === "Sentence") {
       // sorting sentences in order for the purpose of having alternate sentences in different colors
       annotations = annotations.sort((a, b) => {
-        return a.start < b.start;
+        return a.start - b.start;
       });
+      for (let i = 0; i < annotations.length; i++) {
+        if (i % 2 == 0) {
+          annotations[i].color = "rgb(149,156,243)";
+        } else {
+          annotations[i].color = "rgb(244,196,199)";
+        }
+      }
       this.props.setAnnotations(annotations);
       this.props.setSentences(annotations);
     } else if (this.props.annotationFocus === "Token") {
+      annotations = annotations.sort((a, b) => {
+        return a.start - b.start;
+      });
+      for (let i = 0; i < annotations.length; i++) {
+        if (i % 2 == 0) {
+          annotations[i].color = "rgb(149,156,243)";
+        } else {
+          annotations[i].color = "rgb(244,196,199)";
+        }
+      }
       this.props.setAnnotations(annotations);
       this.props.setTokens(annotations);
     } else if (this.props.annotationFocus === "ICD Codes") {
@@ -60,6 +77,7 @@ class DocumentDisplay extends Component {
     } else if (e.target.value === "Section") {
       this.props.setAnnotations(this.props.sections);
     } else if (e.target.value === "Sentence") {
+      console.log(this.props.sentences);
       this.props.setAnnotations(this.props.sentences);
     } else if (e.target.value === "Token") {
       this.props.setAnnotations(this.props.tokens);
