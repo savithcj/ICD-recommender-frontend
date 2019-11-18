@@ -50,6 +50,7 @@ export const SET_TAG_COLORS = "SET_TAG_COLORS";
 export const SET_SECTION_LIST = "SET_SECTION_LIST";
 export const SET_TAG = "SET_TAG";
 export const SET_FILE_REFERENCE = "SET_FILE_REFERENCE";
+export const SET_ALTERNATING_COLORS = "SET_ALTERNATING_COLORS";
 
 // Tag Management
 export const SET_UPLOADED_TAGS = "SET_UPLOADED_TAGS";

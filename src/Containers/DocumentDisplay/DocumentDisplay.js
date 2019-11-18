@@ -42,9 +42,9 @@ class DocumentDisplay extends Component {
       });
       for (let i = 0; i < annotations.length; i++) {
         if (i % 2 == 0) {
-          annotations[i].color = "rgb(149,156,243)";
+          annotations[i].color = this.props.alternatingColors[0];
         } else {
-          annotations[i].color = "rgb(244,196,199)";
+          annotations[i].color = this.props.alternatingColors[1];
         }
       }
       this.props.setAnnotations(annotations);
@@ -55,9 +55,9 @@ class DocumentDisplay extends Component {
       });
       for (let i = 0; i < annotations.length; i++) {
         if (i % 2 == 0) {
-          annotations[i].color = "rgb(149,156,243)";
+          annotations[i].color = this.props.alternatingColors[0];
         } else {
-          annotations[i].color = "rgb(244,196,199)";
+          annotations[i].color = this.props.alternatingColors[1];
         }
       }
       this.props.setAnnotations(annotations);
@@ -188,7 +188,8 @@ const mapStateToProps = state => {
     annotations: state.fileViewer.annotations,
     tagColors: state.fileViewer.tagColors,
     sectionList: state.fileViewer.sectionList,
-    tag: state.fileViewer.tag
+    tag: state.fileViewer.tag,
+    alternatingColors: state.fileViewer.alternatingColors
   };
 };
 

@@ -12,7 +12,8 @@ const initialState = {
   tagColors: {},
   sectionList: [],
   tag: "",
-  fileReference: ""
+  fileReference: "",
+  alternatingColors: ["rgb(149,156,243)", "rgb(244,196,199)"]
 };
 
 const reducer = (state = initialState, action) => {
@@ -41,6 +42,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, tag: action.tag };
     case actionTypes.SET_FILE_REFERENCE:
       return { ...state, fileReference: action.fileReference };
+    case actionTypes.SET_ALTERNATING_COLORS:
+      return { ...state, alternatingColors: action.alternatingColors };
     default:
       return state;
   }

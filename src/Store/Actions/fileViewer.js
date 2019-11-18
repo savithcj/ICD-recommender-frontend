@@ -83,3 +83,10 @@ export const setFileReference = fileReference => {
     fileReference
   };
 };
+
+export const setAlternatingColors = alternatingColors => {
+  return {
+    type: actionTypes.SET_ALTERNATING_COLORS,
+    alternatingColors
+  };
+};

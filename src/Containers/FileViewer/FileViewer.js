@@ -101,8 +101,8 @@ class FileViewer extends Component {
         .then(response => response.json())
         .then(data => {
           this.props.setSections(this.mapData(data.sections));
-          this.props.setSentences(this.mapData(data.sentences));
-          this.props.setTokens(this.mapData(data.tokens));
+          this.props.setSentences(this.mapData(data.sentences, "color"));
+          this.props.setTokens(this.mapData(data.tokens, "color"));
           this.props.setEntities(this.mapData(data.entities));
 
           this.props.setSpacyLoading(false);
@@ -114,16 +114,24 @@ class FileViewer extends Component {
     };
   };
 
-  mapData = dataType => {
-    dataType.map(dataPoint => {
+  mapData = (data, coloring = "") => {
+    let i = 0;
+    data.map(dataPoint => {
       dataPoint.tag = dataPoint.label;
       delete dataPoint.label;
-      if (this.props.tagColors[dataPoint.tag]) {
+      if (coloring === "") {
         dataPoint.color = this.props.tagColors[dataPoint.tag];
+      } else if (coloring === "color") {
+        if (i % 2 === 0) {
+          dataPoint.color = this.props.alternatingColors[0];
+        } else {
+          dataPoint.color = this.props.alternatingColors[1];
+        }
+        i += 1;
       }
       dataPoint.text = this.props.textToDisplay.slice(dataPoint.start, dataPoint.end);
     });
-    return dataType;
+    return data;
   };
 
   render() {
@@ -165,7 +173,8 @@ const mapStateToProps = state => {
     // icdCodes:
     spacyLoading: state.fileViewer.spacyLoading,
     tagColors: state.fileViewer.tagColors,
-    sectionList: state.fileViewer.sectionList
+    sectionList: state.fileViewer.sectionList,
+    alternatingColors: state.fileViewer.alternatingColors
   };
 };
 
