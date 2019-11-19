@@ -1,0 +1,109 @@
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "../../Store/Actions/index";
+import * as util from "./utility";
+
+class CustomAnnotator extends Component {
+  constructor(props) {
+    super(props);
+
+    this.rootRef = React.createRef();
+  }
+
+  // adds event listener
+  componentDidMount() {
+    this.rootRef.current.addEventListener("mouseup", this.handleMouseUp);
+  }
+
+  // removes event listener
+  componentWillUnmount() {
+    this.rootRef.current.removeEventListener("mouseup", this.handleMouseUp);
+  }
+
+  handleMouseUp = () => {
+    // if method to handle annotation isn't passed, return
+    if (!this.props.onChange) {
+      return;
+    }
+
+    const selection = window.getSelection();
+
+    // if there is no selection
+    if (util.selectionIsEmpty(selection)) {
+      return;
+    }
+
+    let start = parseInt(selection.anchorNode.parentElement.getAttribute("data-start"), 10) + selection.anchorOffset;
+    let end = parseInt(selection.focusNode.parentElement.getAttribute("data-start"), 10) + selection.focusOffset;
+
+    if (util.selectionIsBackwards(selection)) {
+      [start, end] = [end, start];
+    }
+
+    this.props.onChange([
+      ...this.props.annotations,
+      this.getSpan({ start, end, text: this.props.content.slice(start, end) })
+    ]);
+
+    window.getSelection().empty();
+  };
+
+  handleSplitClick = ({ start, end }) => {
+    const splitIndex = this.props.annotations.findIndex(s => s.start === start && s.end === end);
+    if (splitIndex >= 0) {
+      this.props.onChange([
+        ...this.props.annotations.slice(0, splitIndex),
+        ...this.props.annotations.slice(splitIndex + 1)
+      ]);
+    }
+  };
+
+  getSpan = span => {
+    if (this.props.getSpan) {
+      return this.props.getSpan(span);
+    }
+    return span;
+  };
+
+  render() {
+    const splits = util.splitWithOffsets(this.props.content, this.props.annotations);
+    console.log(splits);
+    return (
+      <div>
+        <div>
+          <p>custom annotator</p>
+        </div>
+        <div style={this.props.style} ref={this.rootRef}>
+          {splits.map(split => (
+            <util.Split key={`${split.start}-${split.end}`} {...split} onClick={this.handleSplitClick} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    //   fileReference: state.fileViewer.fileReference,
+    //   sections: state.fileViewer.sections,
+    //   sentences: state.fileViewer.sentences,
+    //   tokens: state.fileViewer.tokens,
+    //   entities: state.fileViewer.entities,
+    annotations: state.fileViewer.annotations
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    //   setSections: sections => dispatch(actions.setSections(sections)),
+    //   setSentences: sentences => dispatch(actions.setSentences(sentences)),
+    //   setTokens: tokens => dispatch(actions.setTokens(tokens)),
+    //   setEntities: entities => dispatch(actions.setEntities(entities)),
+    //   // setICDCodes: icdCodes => dispatch
+    //   setAnnotationFocus: annotationFocus => dispatch(actions.setAnnotationFocus(annotationFocus)),
+    //   setAnnotations: annotations => dispatch(actions.setAnnotations(annotations))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomAnnotator);

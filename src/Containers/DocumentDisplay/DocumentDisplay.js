@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import LoadingIndicator from "../../Components/LoadingIndicator/LoadingIndicator";
 import { TextAnnotator } from "react-text-annotate";
+import CustomAnnotator from "../../Components/CustomAnnotator/CustomAnnotator";
 import "./DocumentDisplay.css";
 
 const annoteStyle = {
@@ -41,7 +42,7 @@ class DocumentDisplay extends Component {
         return a.start - b.start;
       });
       for (let i = 0; i < annotations.length; i++) {
-        if (i % 2 == 0) {
+        if (i % 2 === 0) {
           annotations[i].color = this.props.alternatingColors[0];
         } else {
           annotations[i].color = this.props.alternatingColors[1];
@@ -54,7 +55,7 @@ class DocumentDisplay extends Component {
         return a.start - b.start;
       });
       for (let i = 0; i < annotations.length; i++) {
-        if (i % 2 == 0) {
+        if (i % 2 === 0) {
           annotations[i].color = this.props.alternatingColors[0];
         } else {
           annotations[i].color = this.props.alternatingColors[1];
@@ -160,15 +161,39 @@ class DocumentDisplay extends Component {
     );
   };
 
+  handleChange = value => {
+    this.props.setAnnotations(value);
+  };
+
+  renderCustomAnnotator = () => {
+    return (
+      <CustomAnnotator
+        style={annoteStyle}
+        content={this.props.textToDisplay}
+        annotations={this.props.annotations}
+        onChange={this.handleAnnotate}
+        getSpan={span => ({
+          ...span,
+          tag: this.props.tag,
+          color: this.props.tagColors[this.props.tag]
+        })}
+      />
+    );
+  };
+
   render() {
     return (
       <div>
+        {/* <div>
+          <h1 qwerty="some random text">some random text</h1>
+        </div> */}
         <div>
           {this.displayTypeDropDown()}
           {this.entityTagDropDown()}
           {this.sectionTagDropDown()}
         </div>
-        <div id="whiteSpace">{this.renderAnnotator()}</div>
+        {/* <div id="whiteSpace">{this.renderAnnotator()}</div> */}
+        <div id="whiteSpace">{this.renderCustomAnnotator()}</div>
       </div>
     );
   }
