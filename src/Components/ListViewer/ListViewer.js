@@ -22,6 +22,9 @@ import arrayMove from "array-move";
 import Menu from "../ComponentMenu/ComponentMenu";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import { addDotToCode } from "../../Util/utility";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/AutoComplete";
+import Grid from "@material-ui/core/Grid";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -57,7 +60,13 @@ const useStyles = makeStyles(() => ({
     fontWeight: "bold",
     textAlign: "left",
     width: "100%",
-    textTransform: "uppercase"
+    flexGrow: 1,
+    textTransform: "uppercase",
+    margin: theme.spacing(1)
+  },
+  listTitleGridItem: {
+    textAlign: "center",
+    width: "90%"
   },
   drag: {
     cursor: "row-resize",
@@ -323,6 +332,30 @@ function ListViewer(props) {
       <Menu menuOptions={props.menuOptions} />
     );
 
+    const showFilterBox = () => {
+      if (props.filterBox) {
+        if (props.items === undefined || props.items === null || props.items.length < 1) {
+          return null;
+        } else {
+          return (
+            <Grid item xs>
+              <div className={classes.listTitleGridItem}>
+                <Autocomplete
+                  id="combo-box"
+                  onChange={props.filterBoxOnChange}
+                  options={props.items}
+                  getOptionLabel={item => item.description}
+                  renderInput={params => <TextField {...params} fullWidth label="Filter" />}
+                />
+              </div>
+            </Grid>
+          );
+        }
+      }
+
+      return null;
+    };
+
     return (
       //This is the final list of SortableElements which the SortableContainer wraps around.
       //If the items prop is a list of objects, this will be a list of SortableElements which
@@ -330,9 +363,14 @@ function ListViewer(props) {
       //item corresponding to a message determined by the value of the items prop
       <List dense={true} className={classes.root}>
         <ListSubheader className={classes.listTitle} disableGutters={props.disableTitleGutters}>
-          {props.title}
-          {showRearrangeConfirmationOrMenu}
-          {showButton}
+          <Grid container direction="row" spacing={1} justify="space-between" alignItems="flex-start">
+            <Grid item>{props.title}</Grid>
+            {showFilterBox()}
+            <Grid item>
+              {showRearrangeConfirmationOrMenu}
+              {showButton}
+            </Grid>
+          </Grid>
         </ListSubheader>
         {displayItems}
       </List>
