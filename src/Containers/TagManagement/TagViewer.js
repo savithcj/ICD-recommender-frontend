@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import ListViewer from "../../Components/ListViewer/ListViewer";
+import ListViewerWithSearch from "../../Components/ListViewer/ListViewerWithSearch";
 
 const TagViewer = props => {
   const shouldHideRemoveButton = index => {
@@ -25,12 +26,18 @@ const TagViewer = props => {
     { menuItemOnClick: props.disableAllTags, menuItemText: "Disable All" }
   ];
 
+  const filterOnChange = e => {
+    console.log("filter change", e);
+  };
+
   return (
     <ListViewer
       title="Tags"
       dontAddDotBoolean={true}
       items={props.uploadedTags}
       valueName="id"
+      filterBox={true}
+      filterBoxOnChange={filterOnChange}
       descriptionName="description"
       acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
       removeItemButton={{ title: "Disable tag", onClick: disableTag }}
