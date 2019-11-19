@@ -62,11 +62,14 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     flexGrow: 1,
     textTransform: "uppercase",
-    margin: theme.spacing(1)
+    margin: theme.spacing(0)
+  },
+  filterTitleText: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(0)
   },
   listTitleGridItem: {
-    textAlign: "center",
-    width: "90%"
+    // textAlign: "center"
   },
   drag: {
     cursor: "row-resize",
@@ -332,28 +335,35 @@ function ListViewer(props) {
       <Menu menuOptions={props.menuOptions} />
     );
 
-    const showFilterBox = () => {
-      if (props.filterBox) {
-        if (props.items === undefined || props.items === null || props.items.length < 1) {
-          return null;
-        } else {
-          return (
-            <Grid item xs>
-              <div className={classes.listTitleGridItem}>
-                <Autocomplete
-                  id="combo-box"
-                  onChange={props.filterBoxOnChange}
-                  options={props.items}
-                  getOptionLabel={item => item.description}
-                  renderInput={params => <TextField {...params} fullWidth label="Filter" />}
-                />
-              </div>
-            </Grid>
-          );
-        }
+    const showFilterHeader = () => {
+      if (!props.enableFilter || props.items === undefined || props.items === null || props.items.length < 1) {
+        return (
+          <TextField
+            disabled
+            label={props.title}
+            fullWidth
+            InputProps={{ readOnly: true }}
+            className={classes.filterTitleText}
+          />
+        );
+      } else {
+        return (
+          <Autocomplete
+            onChange={props.filterOnChange}
+            options={props.items}
+            getOptionLabel={props.filterOptionsGetLabel}
+            renderInput={params => (
+              <TextField
+                {...params}
+                fullWidth
+                label={props.title}
+                placeholder="Filter"
+                className={classes.filterTitleText}
+              />
+            )}
+          />
+        );
       }
-
-      return null;
     };
 
     return (
@@ -364,8 +374,9 @@ function ListViewer(props) {
       <List dense={true} className={classes.root}>
         <ListSubheader className={classes.listTitle} disableGutters={props.disableTitleGutters}>
           <Grid container direction="row" spacing={1} justify="space-between" alignItems="flex-start">
-            <Grid item>{props.title}</Grid>
-            {showFilterBox()}
+            <Grid item xs>
+              {showFilterHeader()}
+            </Grid>
             <Grid item>
               {showRearrangeConfirmationOrMenu}
               {showButton}

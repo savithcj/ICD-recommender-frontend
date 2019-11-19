@@ -36,8 +36,9 @@ const TagViewer = props => {
       dontAddDotBoolean={true}
       items={props.uploadedTags}
       valueName="id"
-      filterBox={true}
-      filterBoxOnChange={filterOnChange}
+      enableFilter={true}
+      filterOptionsGetLabel={item => item.id + ": " + item.description}
+      filterOnChange={filterOnChange}
       descriptionName="description"
       acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
       removeItemButton={{ title: "Disable tag", onClick: disableTag }}
