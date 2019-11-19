@@ -62,10 +62,13 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     flexGrow: 1,
     textTransform: "uppercase",
-    margin: theme.spacing(0)
+    paddingTop: theme.spacing(0),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
   },
   filterTitleText: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(0),
     marginRight: theme.spacing(0)
   },
   listTitleGridItem: {

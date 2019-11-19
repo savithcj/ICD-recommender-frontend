@@ -22,8 +22,8 @@ const TagViewer = props => {
   };
 
   const selectedTagsComponentMenuItems = [
-    { menuItemOnClick: props.enableAllTags, menuItemText: "Enable All" },
-    { menuItemOnClick: props.disableAllTags, menuItemText: "Disable All" }
+    { menuItemOnClick: props.uploadedTags.length < 2 ? null : props.enableAllTags, menuItemText: "Enable All" },
+    { menuItemOnClick: props.uploadedTags.length < 2 ? null : props.disableAllTags, menuItemText: "Disable All" }
   ];
 
   const filterOnChange = e => {
