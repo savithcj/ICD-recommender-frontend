@@ -26,6 +26,14 @@ class CustomAnnotator extends Component {
       return;
     }
 
+    // can't set a section or entity annotation without a tag
+    if (
+      (this.props.annotationFocus === "Entity" || this.props.annotationFocus === "Section") &&
+      this.props.tag === ""
+    ) {
+      return;
+    }
+
     const selection = window.getSelection();
 
     // if there is no selection
@@ -36,18 +44,23 @@ class CustomAnnotator extends Component {
     let start = parseInt(selection.anchorNode.parentElement.getAttribute("data-start"), 10) + selection.anchorOffset;
     let end = parseInt(selection.focusNode.parentElement.getAttribute("data-start"), 10) + selection.focusOffset;
 
+    if (Number.isNaN(start) || Number.isNaN(end)) {
+      return;
+    }
+
     if (util.selectionIsBackwards(selection)) {
       [start, end] = [end, start];
     }
 
     this.props.onChange([
       ...this.props.annotations,
-      this.getSpan({ start, end, text: this.props.content.slice(start, end) })
+      this.getSpan({ start, end, text: this.props.textToDisplay.slice(start, end) })
     ]);
 
     window.getSelection().empty();
   };
 
+  // method to remove an annotation
   handleSplitClick = ({ start, end }) => {
     const splitIndex = this.props.annotations.findIndex(s => s.start === start && s.end === end);
     if (splitIndex >= 0) {
@@ -66,13 +79,12 @@ class CustomAnnotator extends Component {
   };
 
   render() {
-    const splits = util.splitWithOffsets(this.props.content, this.props.annotations);
-    console.log(splits);
+    // const splits = util.splitWithOffsets(this.props.textToDisplay, this.props.annotations);
+    const splits = util.createIntervals(this.props.textToDisplay, this.props.annotations);
+    console.log("in render", this.props.annotations);
+    console.log("splits", splits);
     return (
       <div>
-        <div>
-          <p>custom annotator</p>
-        </div>
         <div style={this.props.style} ref={this.rootRef}>
           {splits.map(split => (
             <util.Split key={`${split.start}-${split.end}`} {...split} onClick={this.handleSplitClick} />
@@ -90,7 +102,10 @@ const mapStateToProps = state => {
     //   sentences: state.fileViewer.sentences,
     //   tokens: state.fileViewer.tokens,
     //   entities: state.fileViewer.entities,
-    annotations: state.fileViewer.annotations
+    annotations: state.fileViewer.annotations,
+    annotationFocus: state.fileViewer.annotationFocus,
+    tag: state.fileViewer.tag,
+    textToDisplay: state.fileViewer.fileViewerText
   };
 };
 

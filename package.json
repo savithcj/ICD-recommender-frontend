@@ -13,6 +13,7 @@
     "d3": "^5.14.1",
     "d3-simple-slider": "^1.5.4",
     "diacritics": "^1.3.0",
+    "interval-tree2": "^1.1.0",
     "material-design-icons": "^3.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",

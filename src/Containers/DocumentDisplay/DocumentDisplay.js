@@ -16,7 +16,6 @@ class DocumentDisplay extends Component {
   constructor(props) {
     super(props);
     this.props.setTag("");
-    // this.section = "";
   }
 
   handleTagChange = e => {
@@ -25,19 +24,12 @@ class DocumentDisplay extends Component {
 
   // this is called whenever the user selects something to annotate or clicks on an annotation to remove it
   handleAnnotate = annotations => {
-    //this.props.setAnnotations(annotations);
     if (this.props.annotationFocus === "Entity") {
-      if (this.props.tag !== "") {
-        this.props.setAnnotations(annotations);
-        this.props.setEntities(annotations);
-      }
+      this.props.setEntities(annotations);
     } else if (this.props.annotationFocus === "Section") {
-      if (this.props.tag !== "") {
-        this.props.setAnnotations(annotations);
-        this.props.setSections(annotations);
-      }
+      this.props.setSections(annotations);
     } else if (this.props.annotationFocus === "Sentence") {
-      // sorting sentences in order for the purpose of having alternate sentences in different colors
+      // sorting sentences in order to have alternating sentences in different colors
       annotations = annotations.sort((a, b) => {
         return a.start - b.start;
       });
@@ -48,7 +40,6 @@ class DocumentDisplay extends Component {
           annotations[i].color = this.props.alternatingColors[1];
         }
       }
-      this.props.setAnnotations(annotations);
       this.props.setSentences(annotations);
     } else if (this.props.annotationFocus === "Token") {
       annotations = annotations.sort((a, b) => {
@@ -61,13 +52,14 @@ class DocumentDisplay extends Component {
           annotations[i].color = this.props.alternatingColors[1];
         }
       }
-      this.props.setAnnotations(annotations);
       this.props.setTokens(annotations);
     } else if (this.props.annotationFocus === "ICD Codes") {
       // TO DO: Implement this
       // this.setState({ annotations });
       // this.props.setICDCodes(annotations);
     }
+    this.props.setAnnotations(annotations);
+    console.log("prop.annot", this.props.annotations);
   };
 
   handleTypeChange = e => {
@@ -78,7 +70,6 @@ class DocumentDisplay extends Component {
     } else if (e.target.value === "Section") {
       this.props.setAnnotations(this.props.sections);
     } else if (e.target.value === "Sentence") {
-      console.log(this.props.sentences);
       this.props.setAnnotations(this.props.sentences);
     } else if (e.target.value === "Token") {
       this.props.setAnnotations(this.props.tokens);
@@ -169,8 +160,6 @@ class DocumentDisplay extends Component {
     return (
       <CustomAnnotator
         style={annoteStyle}
-        content={this.props.textToDisplay}
-        annotations={this.props.annotations}
         onChange={this.handleAnnotate}
         getSpan={span => ({
           ...span,
