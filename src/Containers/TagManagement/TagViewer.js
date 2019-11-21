@@ -22,13 +22,9 @@ const TagViewer = props => {
   };
 
   const selectedTagsComponentMenuItems = [
-    { menuItemOnClick: props.enableAllTags, menuItemText: "Enable All" },
-    { menuItemOnClick: props.disableAllTags, menuItemText: "Disable All" }
+    { menuItemOnClick: props.uploadedTags.length < 2 ? null : props.enableAllTags, menuItemText: "Enable All" },
+    { menuItemOnClick: props.uploadedTags.length < 2 ? null : props.disableAllTags, menuItemText: "Disable All" }
   ];
-
-  const filterOnChange = e => {
-    console.log("filter change", e);
-  };
 
   return (
     <ListViewer
@@ -36,8 +32,8 @@ const TagViewer = props => {
       dontAddDotBoolean={true}
       items={props.uploadedTags}
       valueName="id"
-      filterBox={true}
-      filterBoxOnChange={filterOnChange}
+      enableFilter={true}
+      filterOptionsGetLabel={item => item.id + ": " + item.description}
       descriptionName="description"
       acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
       removeItemButton={{ title: "Disable tag", onClick: disableTag }}

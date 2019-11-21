@@ -25,6 +25,7 @@ import { addDotToCode } from "../../Util/utility";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/AutoComplete";
 import Grid from "@material-ui/core/Grid";
+import Chip from "@material-ui/core/Chip";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
@@ -39,22 +40,10 @@ const useStyles = makeStyles(() => ({
   root: {
     height: "100%",
     width: "100%",
-    flexGrow: 1,
     borderRadius: "5px",
     overflow: "auto",
     backgroundColor: "inherit",
-    padding: 0
-  },
-  listSection: {
-    backgroundColor: "inherit",
-    padding: 0
-  },
-  ul: {
-    backgroundColor: "inherit",
-    padding: "0 2% 2% 2%"
-  },
-  card: {
-    margin: "13px 0"
+    flexGrow: 1
   },
   listTitle: {
     fontWeight: "bold",
@@ -62,11 +51,28 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     flexGrow: 1,
     textTransform: "uppercase",
-    margin: theme.spacing(1)
+    paddingTop: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
   },
-  listTitleGridItem: {
-    textAlign: "center",
-    width: "90%"
+  listTitleText: {
+    marginTop: theme.spacing(0),
+    marginLeft: theme.spacing(0),
+    marginRight: theme.spacing(0),
+    marginBottom: theme.spacing(0)
+  },
+  ul: {
+    height: "100%",
+    overflow: "auto",
+    backgroundColor: "inherit",
+    paddingTop: theme.spacing(0),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
+  },
+  card: {
+    margin: "13px 0"
   },
   drag: {
     cursor: "row-resize",
@@ -151,6 +157,66 @@ function ListViewer(props) {
   const classes = useStyles();
   //The component uses a state to switch back and forth between sortable and locked modes
   const [areItemsSortable, setSortMode] = useState(false);
+  const [showAll, setShowAll] = useState(true);
+  const [filteredValues, setFilteredValues] = useState([]);
+
+  const setFilter = (event, items) => {
+    setFilteredValues(items);
+  };
+
+  //A customizable button shown at the top right of the component allowing the user to
+  //perform an action as specified by the onClick property of the passed button prop
+  const showButton =
+    props.button && !areItemsSortable ? (
+      <Button className={classes.button} onClick={props.button.onClick} title={props.button.title}>
+        {props.button.text}
+      </Button>
+    ) : null;
+
+  //if in sortable mode, the dropdown menu hides and a confirmation icon is shown on the top right, instead of the
+  //button, which when clicked exits the sortable mode
+  const showRearrangeConfirmationOrMenu = areItemsSortable ? (
+    <IconButton className={classes.button} title="Confirm Item Order" onClick={() => setSortMode(false)}>
+      <CheckMark />
+    </IconButton>
+  ) : (
+    <Menu menuOptions={props.menuOptions} />
+  );
+
+  const showFilterHeader = () => {
+    if (!props.enableFilter || props.items === undefined || props.items === null || props.items.length < 1) {
+      return (
+        <TextField
+          disabled
+          label={props.title}
+          fullWidth
+          InputProps={{ readOnly: true }}
+          className={classes.listTitleText}
+        />
+      );
+    } else {
+      return (
+        <Autocomplete
+          multiple
+          filterSelectedOptions
+          options={props.items}
+          onChange={setFilter}
+          getOptionLabel={props.filterOptionsGetLabel}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              label={props.title}
+              placeholder="Filter"
+              margin="normal"
+              fullWidth
+              className={classes.listTitleText}
+            />
+          )}
+        />
+      );
+    }
+  };
 
   //function that gets called after ListViewer cards are rearranged
   //used to reassign the indices of the passed array of objects after the user has rearranged the order of the cards
@@ -266,6 +332,7 @@ function ListViewer(props) {
       } else {
         displayValue = addDotToCode(value[props.valueName]);
       }
+
       return (
         <SortableItem
           key={`item-${index}`}
@@ -297,7 +364,11 @@ function ListViewer(props) {
     } else if (props.items.length === 0) {
       displayItems = <Typography variant="body2">{props.noItemsMessage}</Typography>;
     } else {
-      displayItems = <ul className={classes.ul}>{createItems(props.items)}</ul>;
+      if (filteredValues.length < 1) {
+        displayItems = <ul className={classes.ul}>{createItems(props.items)}</ul>;
+      } else {
+        displayItems = <ul className={classes.ul}>{createItems(filteredValues)}</ul>;
+      }
     }
 
     //If the allowRearrage prop is true, add an item to the menuOptions prop allowing
@@ -313,67 +384,31 @@ function ListViewer(props) {
       }
     }
 
-    //A customizable button shown at the top right of the component allowing the user to
-    //perform an action as specified by the onClick property of the passed button prop
-    const showButton =
-      props.button && !areItemsSortable ? (
-        <Button className={classes.button} onClick={props.button.onClick} title={props.button.title}>
-          {props.button.text}
-        </Button>
-      ) : null;
+    // //A customizable button shown at the top right of the component allowing the user to
+    // //perform an action as specified by the onClick property of the passed button prop
+    // const showButton =
+    //   props.button && !areItemsSortable ? (
+    //     <Button className={classes.button} onClick={props.button.onClick} title={props.button.title}>
+    //       {props.button.text}
+    //     </Button>
+    //   ) : null;
 
-    //if in sortable mode, the dropdown menu hides and a confirmation icon is shown on the top right, instead of the
-    //button, which when clicked exits the sortable mode
-    const showRearrangeConfirmationOrMenu = areItemsSortable ? (
-      <IconButton className={classes.button} title="Confirm Item Order" onClick={() => setSortMode(false)}>
-        <CheckMark />
-      </IconButton>
-    ) : (
-      <Menu menuOptions={props.menuOptions} />
-    );
-
-    const showFilterBox = () => {
-      if (props.filterBox) {
-        if (props.items === undefined || props.items === null || props.items.length < 1) {
-          return null;
-        } else {
-          return (
-            <Grid item xs>
-              <div className={classes.listTitleGridItem}>
-                <Autocomplete
-                  id="combo-box"
-                  onChange={props.filterBoxOnChange}
-                  options={props.items}
-                  getOptionLabel={item => item.description}
-                  renderInput={params => <TextField {...params} fullWidth label="Filter" />}
-                />
-              </div>
-            </Grid>
-          );
-        }
-      }
-
-      return null;
-    };
+    // //if in sortable mode, the dropdown menu hides and a confirmation icon is shown on the top right, instead of the
+    // //button, which when clicked exits the sortable mode
+    // const showRearrangeConfirmationOrMenu = areItemsSortable ? (
+    //   <IconButton className={classes.button} title="Confirm Item Order" onClick={() => setSortMode(false)}>
+    //     <CheckMark />
+    //   </IconButton>
+    // ) : (
+    //   <Menu menuOptions={props.menuOptions} />
+    // );
 
     return (
       //This is the final list of SortableElements which the SortableContainer wraps around.
       //If the items prop is a list of objects, this will be a list of SortableElements which
       //were created by the createItems function. Otherwise, this will be a list with a single
       //item corresponding to a message determined by the value of the items prop
-      <List dense={true} className={classes.root}>
-        <ListSubheader className={classes.listTitle} disableGutters={props.disableTitleGutters}>
-          <Grid container direction="row" spacing={1} justify="space-between" alignItems="flex-start">
-            <Grid item>{props.title}</Grid>
-            {showFilterBox()}
-            <Grid item>
-              {showRearrangeConfirmationOrMenu}
-              {showButton}
-            </Grid>
-          </Grid>
-        </ListSubheader>
-        {displayItems}
-      </List>
+      <List dense={true}>{displayItems}</List>
     );
   });
 
@@ -382,7 +417,24 @@ function ListViewer(props) {
     //This theme provider sets the colors of the accept and remove buttons according to the
     //theme defined earlier
     <ThemeProvider theme={theme}>
-      <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle />
+      <div className={classes.root}>
+        <Grid container direction="column">
+          <Grid container direction="row">
+            <Grid item xs className={classes.listTitle}>
+              {showFilterHeader()}
+            </Grid>
+            <Grid item className={classes.ul}>
+              {showRearrangeConfirmationOrMenu}
+              {showButton}
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs>
+              <SortableContainer onSortEnd={onSortEnd} lockAxis="y" useDragHandle />
+            </Grid>
+          </Grid>
+        </Grid>
+      </div>
     </ThemeProvider>
   );
 }
