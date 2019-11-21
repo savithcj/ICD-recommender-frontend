@@ -8,14 +8,14 @@ import { connect } from "react-redux";
 import { useAlert, positions } from "react-alert";
 import { Redirect } from "react-router";
 import Loading from "../Loading/Loading";
-import TagUploader from "../../Containers/TagManagement/TagUploader";
 import * as APIUtility from "../../Util/API";
-import TagViewer from "../../Containers/TagManagement/TagViewer";
+import TagSelector from "../../Containers/TagManagement/TagSelector";
+import FileViewer from "../../Containers/FileViewer/FileViewer";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("tagsLayouts", "layouts") || defaultLayouts;
+const originalLayouts = getFromLS("annotateLayouts", "layouts") || defaultLayouts;
 
-const Tags = props => {
+const Annotate = props => {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,12 +23,12 @@ const Tags = props => {
 
   const onLayoutChange = layouts => {
     setLayouts(layouts);
-    saveToLS("tagsLayouts", "layouts", layouts);
+    saveToLS("annotateLayouts", "layouts", layouts);
   };
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    saveToLS("tagsLayouts", "layouts", defaultLayouts);
+    saveToLS("annotateLayouts", "layouts", defaultLayouts);
   };
 
   const handleLayoutModifierButton = () => {
@@ -71,13 +71,13 @@ const Tags = props => {
     <div>
       <div>
         <MenuBar
-          title="Manage Tags"
+          title="Annotate"
           homeLink
           adminLink
           manageAccountsLink
           visualizationLink
           aboutLink
-          annotateLink
+          tagsLink
           handleLayoutConfirm={() => handleLayoutModifierButton()}
           handleResetLayout={resetLayout}
           inModifyMode={isLayoutModifiable}
@@ -92,11 +92,11 @@ const Tags = props => {
         isResizable={isLayoutModifiable}
         onLayoutChange={(layout, layouts) => onLayoutChange(layouts)}
       >
-        <div key="tagUploader" className={highlightEditDiv}>
-          <TagUploader />
+        <div key="tagSelector" className={highlightEditDiv}>
+          <TagSelector />
         </div>
-        <div key="tagList" className={highlightEditDiv}>
-          <TagViewer />
+        <div key="document" className={highlightEditDiv}>
+          <FileViewer />
         </div>
       </ResponsiveReactGridLayout>
     </div>
@@ -117,4 +117,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Tags);
+export default connect(mapStateToProps, mapDispatchToProps)(Annotate);
