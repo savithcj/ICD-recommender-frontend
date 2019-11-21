@@ -26,10 +26,6 @@ const TagViewer = props => {
     { menuItemOnClick: props.uploadedTags.length < 2 ? null : props.disableAllTags, menuItemText: "Disable All" }
   ];
 
-  const filterOnChange = e => {
-    console.log("filter change", e);
-  };
-
   return (
     <ListViewer
       title="Tags"
@@ -38,7 +34,6 @@ const TagViewer = props => {
       valueName="id"
       enableFilter={true}
       filterOptionsGetLabel={item => item.id + ": " + item.description}
-      filterOnChange={filterOnChange}
       descriptionName="description"
       acceptItemButton={{ title: "Enable tag", onClick: enableTag }}
       removeItemButton={{ title: "Disable tag", onClick: disableTag }}
