@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import * as util from "./utility";
 
-import IntervalTree from "@flatten-js/interval-tree";
-
 class CustomAnnotator extends Component {
   constructor(props) {
     super(props);
@@ -127,6 +125,7 @@ class CustomAnnotator extends Component {
   render() {
     // this.testTree();
     // const splits = util.splitWithOffsets(this.props.textToDisplay, this.props.annotations);
+    console.log("annotations", this.props.annotations);
     const splits = util.createIntervals(this.props.textToDisplay, this.props.annotations);
     console.log("splits", splits);
     return (
