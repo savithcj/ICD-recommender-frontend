@@ -13,7 +13,8 @@ const initialState = {
   sectionList: [],
   tag: "",
   fileReference: "",
-  alternatingColors: ["rgb(149,156,243)", "rgb(244,196,199)"]
+  alternatingColors: ["rgb(149,156,243)", "rgb(244,196,199)"],
+  linkedListAdd: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -44,6 +45,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, fileReference: action.fileReference };
     case actionTypes.SET_ALTERNATING_COLORS:
       return { ...state, alternatingColors: action.alternatingColors };
+    case actionTypes.SET_LINKED_LIST_ADD:
+      return { ...state, linkedListAdd: action.linkedListAdd };
     default:
       return state;
   }

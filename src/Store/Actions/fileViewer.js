@@ -90,3 +90,10 @@ export const setAlternatingColors = alternatingColors => {
     alternatingColors
   };
 };
+
+export const setLinkedListAdd = linkedListAdd => {
+  return {
+    type: actionTypes.SET_LINKED_LIST_ADD,
+    linkedListAdd
+  };
+};

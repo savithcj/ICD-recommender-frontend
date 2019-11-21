@@ -71,33 +71,65 @@ export const splitWithOffsets = (text, offsets) => {
   return splits;
 };
 
-export const createIntervals = (text, annotations) => {
-  const intervals = [];
-  let lastEnd = 0;
+// export const createIntervals = (text, annotations) => {
+//   const intervals = [];
+//   let lastEnd = 0;
 
-  annotations = annotations.sort((a, b) => {
-    return a.start - b.start;
+//   annotations = annotations.sort((a, b) => {
+//     return a.start - b.start;
+//   });
+
+//   // deep copy of annotations - can change to another method of copying later
+//   annotations = JSON.parse(JSON.stringify(annotations));
+
+//   // something for start? - can maybe do at end -
+//   // check if first interval starts at 0
+//   for (let i = 0; i < annotations.length - 1; i++) {
+//     if (annotations[i].end > lastEnd) {
+//       let j = i + 1;
+//       // iterate through all annotations where the start is before the current (i) interval
+//       while (annotations[j].start < annotations[i].end) {
+//         j += 1;
+//       }
+//     }
+//   }
+//   // something with last annotation (went to length - 1 due to using +1)
+//   // something for end of text
+
+//   console.log("in create intervals", annotations);
+//   return intervals;
+// };
+
+export const createIntervals = (text, annotations) => {
+  let breakPoints = new Set();
+  for (let annotation of annotations) {
+    breakPoints.add(annotation.start);
+    breakPoints.add(annotation.end);
+    breakPoints.add(0);
+    breakPoints.add(text.length - 1);
+  }
+
+  breakPoints = Array.from(breakPoints).sort((a, b) => {
+    return parseInt(a) - parseInt(b);
   });
 
-  // deep copy of annotations - can change to another method of copying later
-  annotations = JSON.parse(JSON.stringify(annotations));
+  let intervals = [];
 
-  // something for start? - can maybe do at end -
-  // check if first interval starts at 0
-  for (let i = 0; i < annotations.length - 1; i++) {
-    if (annotations[i].end > lastEnd) {
-      let j = i + 1;
-      // iterate through all annotations where the start is before the current (i) interval
-      while (annotations[j].start < annotations[i].end) {
-        j += 1;
-      }
-    }
+  for (let i = 0; i < breakPoints.length - 1; i++) {
+    intervals.push({
+      start: breakPoints[i],
+      end: breakPoints[i + 1],
+      content: text.slice(breakPoints[i], breakPoints[i + 1])
+    });
   }
-  // something with last annotation (went to length - 1 due to using +1)
-  // something for end of text
 
-  console.log("in create intervals", annotations);
+  intervals = colorAnnotations(intervals);
+
   return intervals;
+};
+
+const colorAnnotations = intervals => {
+  return intervals; // change later
 };
 
 export const selectionIsBackwards = selection => {
