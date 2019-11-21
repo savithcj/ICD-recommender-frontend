@@ -28,6 +28,7 @@ export {
   setSectionList,
   setTag,
   setFileReference,
-  setAlternatingColors
+  setAlternatingColors,
+  setLinkedListAdd
 } from "./fileViewer";
 export { setUploadedTags, enableTagByIndex, disableTagByIndex, enableAllTags, disableAllTags } from "./tagManagement";
