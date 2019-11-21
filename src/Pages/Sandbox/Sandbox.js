@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "net";
+import React, { useState } from "react";
 import { defaultLayouts } from "./layouts";
 import { getFromLS, saveToLS } from "../../Util/layoutFunctions";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import MenuBar from "../../Containers/MenuBar/MenuBar";
 import FileViewer from "../../Containers/FileViewer/FileViewer";
-import TagUploader from "../../Containers/TagManagement/TagUploader";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("sandboxLayouts", "layouts") || defaultLayouts;
@@ -13,7 +11,6 @@ const originalLayouts = getFromLS("sandboxLayouts", "layouts") || defaultLayouts
 function Sandbox(props) {
   const [layouts, setLayouts] = useState(originalLayouts);
   const [isLayoutModifiable, setLayoutModifiable] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);

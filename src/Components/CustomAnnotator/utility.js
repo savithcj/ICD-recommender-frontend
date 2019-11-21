@@ -36,7 +36,7 @@ export const selectionIsEmpty = selection => {
   return position === 0 && selection.focusOffset === selection.anchorOffset;
 };
 
-// this needs to be modified for overlapping - interal tree instead?
+// this needs to be modified for overlapping - interval tree instead?
 export const splitWithOffsets = (text, offsets) => {
   let lastEnd = 0;
   const splits = [];
@@ -69,6 +69,35 @@ export const splitWithOffsets = (text, offsets) => {
   }
 
   return splits;
+};
+
+export const createIntervals = (text, annotations) => {
+  const intervals = [];
+  let lastEnd = 0;
+
+  annotations = annotations.sort((a, b) => {
+    return a.start - b.start;
+  });
+
+  // deep copy of annotations - can change to another method of copying later
+  annotations = JSON.parse(JSON.stringify(annotations));
+
+  // something for start? - can maybe do at end -
+  // check if first interval starts at 0
+  for (let i = 0; i < annotations.length - 1; i++) {
+    if (annotations[i].end > lastEnd) {
+      let j = i + 1;
+      // iterate through all annotations where the start is before the current (i) interval
+      while (annotations[j].start < annotations[i].end) {
+        j += 1;
+      }
+    }
+  }
+  // something with last annotation (went to length - 1 due to using +1)
+  // something for end of text
+
+  console.log("in create intervals", annotations);
+  return intervals;
 };
 
 export const selectionIsBackwards = selection => {
