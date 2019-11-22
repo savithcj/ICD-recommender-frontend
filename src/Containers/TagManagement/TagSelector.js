@@ -44,7 +44,11 @@ const useStyles = makeStyles(() => ({
     paddingTop: theme.spacing(0),
     paddingLeft: theme.spacing(0),
     paddingRight: theme.spacing(0),
-    paddingBottom: theme.spacing(0)
+    paddingBottom: theme.spacing(0),
+    marginTop: theme.spacing(1),
+    marginLeft: theme.spacing(0),
+    marginRight: theme.spacing(0),
+    marginBottom: theme.spacing(0)
   }
 }));
 
@@ -52,8 +56,16 @@ const TagSelector = props => {
   const classes = useStyles();
 
   const handleTypeChange = event => {
-    props.setAnnotationFocus(event.target.value);
-    switch (event.target.value) {
+    let newSelection = event.target.value;
+    console.log(newSelection);
+    if (newSelection === props.annotationFocus) {
+      // unselecting the currently selected value
+      newSelection = "";
+    }
+
+    props.setAnnotationFocus(newSelection);
+
+    switch (newSelection) {
       case tagTypes.SECTIONS:
         props.setAnnotations(props.sections);
         break;
@@ -71,7 +83,7 @@ const TagSelector = props => {
         console.log("Not implemented");
         break;
       default:
-        console.log("Error encountered with TagSelector.");
+        console.log("No annotation type selected.");
     }
   };
 
@@ -82,6 +94,12 @@ const TagSelector = props => {
 
       case tagTypes.ENTITIES:
         return props.entityTagsList;
+
+      case tagTypes.SENTENCES:
+        return [];
+
+      case tagTypes.TOKENS:
+        return [];
 
       default:
         return [];
@@ -101,6 +119,34 @@ const TagSelector = props => {
     }
   };
 
+  const getTextLabel = () => {
+    switch (props.annotationFocus) {
+      case tagTypes.SECTIONS:
+        return "Search " + tagTypes.SECTIONS;
+      case tagTypes.ENTITIES:
+        return "Search " + tagTypes.ENTITIES;
+      default:
+        return "";
+    }
+  };
+
+  const shouldDisableAutoComplete = () => {
+    switch (props.annotationFocus) {
+      case tagTypes.SECTIONS:
+        return false;
+      case tagTypes.ENTITIES:
+        return false;
+      case tagTypes.SENTENCES:
+        return true;
+      case tagTypes.TOKENS:
+        return true;
+      case tagTypes.ICD_CODES:
+        return false;
+      default:
+        return true;
+    }
+  };
+
   return (
     <div className={classes.root}>
       <div className={classes.radioButtonForm}>
@@ -111,25 +157,25 @@ const TagSelector = props => {
               value={tagTypes.SECTIONS}
               control={<Radio />}
               label={tagTypes.SECTIONS}
-              labelPlacement="top"
+              labelPlacement="right"
             />
             <FormControlLabel
               value={tagTypes.SENTENCES}
               control={<Radio />}
               label={tagTypes.SENTENCES}
-              labelPlacement="top"
+              labelPlacement="right"
             />
             <FormControlLabel
               value={tagTypes.ENTITIES}
               control={<Radio />}
               label={tagTypes.ENTITIES}
-              labelPlacement="top"
+              labelPlacement="right"
             />
             <FormControlLabel
               value={tagTypes.TOKENS}
               control={<Radio />}
               label={tagTypes.TOKENS}
-              labelPlacement="top"
+              labelPlacement="right"
             />
           </RadioGroup>
         </FormControl>
@@ -137,6 +183,7 @@ const TagSelector = props => {
       <div className={classes.searchBox}>
         <Autocomplete
           multiple
+          disabled={shouldDisableAutoComplete()}
           filterSelectedOptions
           options={getCurrentTagOptions()}
           //   onChange={}
@@ -145,8 +192,8 @@ const TagSelector = props => {
             <TextField
               {...params}
               variant="standard"
-              label={"Entity tags"}
-              placeholder="Tags"
+              label={getTextLabel()}
+              placeholder="Select an annotation type to start"
               margin="normal"
               fullWidth
               className={classes.searchBoxText}
