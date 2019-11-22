@@ -102,6 +102,7 @@ const Home = props => {
         manageAccountsLink={props.userRole === "admin"}
         visualizationLink
         aboutLink
+        annotateLink
         tagsLink
         handleLayoutConfirm={() => handleLayoutModifierButton()}
         handleResetLayout={resetLayout}

@@ -104,6 +104,12 @@ function ButtonAppBar(props) {
         </MenuItem>
       ) : null}
 
+      {props.annotateLink ? (
+        <MenuItem component={Link} to="/annotate">
+          Annotate
+        </MenuItem>
+      ) : null}
+
       {props.tagsLink ? (
         <MenuItem component={Link} to="/tags">
           Manage Tags

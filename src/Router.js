@@ -7,6 +7,7 @@ import { Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 
 import Home from "./Pages/Home/Home";
+import Annotate from "./Pages/Annotate/Annotate";
 import Tags from "./Pages/Tags/Tags";
 import Admin from "./Pages/Admin/Admin";
 import Visualization from "./Pages/Visualization/Visualization";
@@ -43,6 +44,7 @@ const router = (
           <Route path="/reset-password" component={ResetPassword} />
           <Route path="/sandbox" component={Sandbox} />
           <Route path="/tags" component={Tags} />
+          <Route path="/annotate" component={Annotate} />
           <Route>{NotFound}</Route>
         </Switch>
       </BrowserRouter>

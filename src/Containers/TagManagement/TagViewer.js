@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import * as actions from "../../Store/Actions/index";
 import ListViewer from "../../Components/ListViewer/ListViewer";
-import ListViewerWithSearch from "../../Components/ListViewer/ListViewerWithSearch";
 
 const TagViewer = props => {
   const shouldHideRemoveButton = index => {

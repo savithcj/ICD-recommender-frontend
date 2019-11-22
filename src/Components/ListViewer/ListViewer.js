@@ -10,7 +10,6 @@ import Card from "@material-ui/core/Card";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
 import ExploreIcon from "@material-ui/icons/ExploreOutlined";
 import CheckIcon from "@material-ui/icons/CheckCircleOutlined";
 import RejectIcon from "@material-ui/icons/HighlightOff";
@@ -25,7 +24,6 @@ import { addDotToCode } from "../../Util/utility";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/AutoComplete";
 import Grid from "@material-ui/core/Grid";
-import Chip from "@material-ui/core/Chip";
 
 //theme used by the accept and reject buttons
 const theme = createMuiTheme({
