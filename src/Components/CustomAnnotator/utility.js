@@ -37,7 +37,16 @@ export const selectionIsEmpty = selection => {
   return position === 0 && selection.focusOffset === selection.anchorOffset;
 };
 
-// this needs to be modified for overlapping - interval tree instead?
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+
+// this needs to be modified for overlapping - createIntervals function
 export const splitWithOffsets = (text, offsets) => {
   let lastEnd = 0;
   const splits = [];
@@ -72,6 +81,11 @@ export const splitWithOffsets = (text, offsets) => {
   return splits;
 };
 
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+
 export const createIntervals = (text, annotations) => {
   let breakPoints = new Set();
   for (let annotation of annotations) {
@@ -97,25 +111,22 @@ export const createIntervals = (text, annotations) => {
 
   intervals = colorAnnotations(intervals, annotations);
 
-  console.log("intervals", intervals);
   return intervals;
 };
 
 // maybe call this something else - see where it goes
 const colorAnnotations = (intervals, annotations) => {
-  let tree = new IntervalTree(); // this library uses inclusive end points
+  let tree = new IntervalTree(); // tree library uses inclusive end points
 
-  for (let annotation of annotations) {
-    tree.insert([annotation.start, annotation.end - 1], annotation.tag);
+  for (let i = 0; i < annotations.length; i++) {
+    console.log("annotations", i, annotations[i]);
+    tree.insert([annotations[i].start, annotations[i].end - 1], i + 1); // i + 1 --- tree library won't let you use 0 as a key
   }
 
   for (let interval of intervals) {
-    tree.search([interval.start, interval.end - 1], (name, inte) => {
-      console.log("start", inte.low, "end", inte.high, "name", name);
-    });
-
-    const treeRes = tree.search([interval.start, interval.end - 1]);
-    console.log("tree res", treeRes);
+    interval.annotes = tree.search([interval.start, interval.end - 1]);
+    interval.numAnnotes = interval.annotes.length;
+    console.log("interval", interval);
   }
 
   // tasks to do

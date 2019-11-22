@@ -97,33 +97,7 @@ class CustomAnnotator extends Component {
     return span;
   };
 
-  // testTree() {
-  //   let tree = new IntervalTree();
-  //   const composers = [
-  //     { name: "AAA", period: [1770, 1827] },
-  //     { name: "AAA", period: [1685, 1750] },
-  //     { name: "Wolfgang Amadeus Mozart", period: [1756, 1791] },
-  //     { name: "Johannes Brahms", period: [1833, 1897] },
-  //     { name: "Richard Wagner", period: [1813, 1883] },
-  //     { name: "Claude Debussy", period: [1862, 1918] },
-  //     { name: "Pyotr Ilyich Tchaikovsky", period: [1840, 1893] },
-  //     { name: "Frédéric Chopin", period: [1810, 1849] },
-  //     { name: "Joseph Haydn", period: [1732, 1809] },
-  //     { name: "AAA", period: [1678, 1741] }
-  //   ];
-  //   for (let composer of composers) {
-  //     tree.insert(composer.period, composer.name);
-  //   }
-
-  //   const searchRes = tree.search([1600, 1700], (name, period) => {
-  //     return `${name} (${period.low}-${period.high})`;
-  //   });
-
-  //   console.log(searchRes);
-  // }
-
   render() {
-    // this.testTree();
     // const splits = util.splitWithOffsets(this.props.textToDisplay, this.props.annotations);
     console.log("annotations", this.props.annotations);
     const splits = util.createIntervals(this.props.textToDisplay, this.props.annotations);
