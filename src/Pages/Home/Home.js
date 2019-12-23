@@ -43,6 +43,7 @@ const Home = props => {
 
   // equivalent to componentDidUpdate. used to verify that the token is valid
   useEffect(() => {
+    setLayouts(getFromLS("homeLayouts", "layouts") || defaultLayouts);
     APIUtility.API.verifyLSToken(() => setIsLoading(false));
   }, []);
 

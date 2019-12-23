@@ -39,6 +39,7 @@ function Admin(props) {
 
   // equivalent to componentDidUpdate. used to verify that the token is valid
   useEffect(() => {
+    setLayouts(getFromLS("adminLayouts", "layouts") || defaultLayouts);
     APIUtility.API.verifyLSToken(() => setIsLoading(false));
   }, []);
 
